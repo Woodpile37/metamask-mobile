@@ -24,6 +24,23 @@ const navigationReducer = (state = initialState, action: any = {}) => {
     default:
       return state;
   }
+	currentRoute: string;
+}
+
+const initialState: InitialState = {
+	currentRoute: 'WalletView',
+};
+
+const navigationReducer = (state = initialState, action: any = {}) => {
+	switch (action.type) {
+		case SET_CURRENT_ROUTE:
+			return {
+				...state,
+				currentRoute: action.payload.route,
+			};
+		default:
+			return state;
+	}
 };
 
 /**

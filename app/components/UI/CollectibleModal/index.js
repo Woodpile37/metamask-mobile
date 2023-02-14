@@ -28,6 +28,23 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: importedColors.transparent,
   },
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0,
+	},
+	round: {
+		borderRadius: 12,
+	},
+	collectibleMediaWrapper: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		marginHorizontal: 16,
+		marginTop: Device.hasNotch() ? 36 : 16,
+		borderRadius: 12,
+		backgroundColor: importedColors.transparent,
+	},
 });
 
 /**
@@ -121,6 +138,31 @@ const CollectibleModal = (props) => {
       </>
     </ReusableModal>
   );
+	return (
+		<ReusableModal ref={modalRef} style={styles.bottomModal}>
+			<>
+				<View style={[styles.collectibleMediaWrapper, { zIndex: mediaZIndex, elevation: mediaZIndex }]}>
+					<CollectibleMedia
+						onClose={() => modalRef.current.dismissModal()}
+						cover
+						renderAnimation
+						collectible={collectible}
+						style={styles.round}
+					/>
+				</View>
+				<View style={[baseStyles.flexStatic, { zIndex: overviewZIndex, elevation: overviewZIndex }]}>
+					<CollectibleOverview
+						navigation={navigation}
+						collectible={{ ...collectible, contractName }}
+						tradable={isTradable()}
+						onSend={onSend}
+						openLink={openLink}
+						onTranslation={onCollectibleOverviewTranslation}
+					/>
+				</View>
+			</>
+		</ReusableModal>
+	);
 };
 
 CollectibleModal.propTypes = {

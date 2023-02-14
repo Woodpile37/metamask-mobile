@@ -7,6 +7,7 @@ import {
   Animated,
   ScrollView,
 } from 'react-native';
+import { StyleSheet, View, InteractionManager, Animated, ScrollView } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import { strings } from '../../../../locales/i18n';
@@ -82,6 +83,48 @@ const createStyles = (colors) =>
       height: 0,
     },
   });
+
+const createStyles = (colors) =>
+	StyleSheet.create({
+		tabUnderlineStyle: {
+			height: 2,
+			backgroundColor: colors.primary.default,
+		},
+		tabStyle: {
+			paddingBottom: 0,
+			backgroundColor: colors.background.default,
+		},
+		textStyle: {
+			fontSize: 12,
+			letterSpacing: 0.5,
+			...fontStyles.bold,
+		},
+		actionViewWrapper: {
+			height: Device.isMediumDevice() ? 230 : 415,
+		},
+		actionViewChildren: {
+			height: 330,
+		},
+		accountTransactionWrapper: {
+			flex: 1,
+		},
+		actionViewQRObject: {
+			height: 624,
+		},
+		accountInfoCardWrapper: {
+			paddingHorizontal: 24,
+			paddingBottom: 12,
+		},
+		transactionData: {
+			position: 'absolute',
+			width: '100%',
+			height: '100%',
+		},
+		hidden: {
+			opacity: 0,
+			height: 0,
+		},
+	});
 
 /**
  * PureComponent that supports reviewing a transaction
@@ -226,6 +269,129 @@ class TransactionReview extends PureComponent {
     conversionRate: undefined,
     fiatValue: undefined,
   };
+	static propTypes = {
+		/**
+		 * Callback triggered when this transaction is cancelled
+		 */
+		onCancel: PropTypes.func,
+		/**
+		 * Called when a user changes modes
+		 */
+		onModeChange: PropTypes.func,
+		/**
+		 * Callback triggered when this transaction is cancelled
+		 */
+		onConfirm: PropTypes.func,
+		/**
+		 * Indicates whether hex data should be shown in transaction editor
+		 */
+		showHexData: PropTypes.bool,
+		/**
+		 * Whether the transaction was confirmed or not
+		 */
+		transactionConfirmed: PropTypes.bool,
+		/**
+		 * Transaction object associated with this transaction
+		 */
+		transaction: PropTypes.object,
+		/**
+		 * Callback to validate transaction in parent state
+		 */
+		validate: PropTypes.func,
+		/**
+		 * Browser/tab information
+		 */
+		browser: PropTypes.object,
+		/**
+		 * ETH to current currency conversion rate
+		 */
+		conversionRate: PropTypes.number,
+		/**
+		 * Currency code of the currently-active currency
+		 */
+		currentCurrency: PropTypes.string,
+		/**
+		 * Object containing token exchange rates in the format address => exchangeRate
+		 */
+		contractExchangeRates: PropTypes.object,
+		/**
+		 * Array of ERC20 assets
+		 */
+		tokens: PropTypes.array,
+		/**
+		 * Current provider ticker
+		 */
+		ticker: PropTypes.string,
+		/**
+		 * Chain id
+		 */
+		chainId: PropTypes.string,
+		/**
+		 * ETH or fiat, depending on user setting
+		 */
+		primaryCurrency: PropTypes.string,
+		/**
+		 * Whether or not basic gas estimates have been fetched
+		 */
+		ready: PropTypes.bool,
+		/**
+		 * Height of custom gas and data modal
+		 */
+		customGasHeight: PropTypes.number,
+		/**
+		 * Drives animated values
+		 */
+		animate: PropTypes.func,
+		/**
+		 * Generates a transform style unique to the component
+		 */
+		generateTransform: PropTypes.func,
+		/**
+		 * Saves the height of TransactionReviewData
+		 */
+		saveTransactionReviewDataHeight: PropTypes.func,
+		/**
+		 * Hides or shows TransactionReviewData
+		 */
+		hideData: PropTypes.bool,
+		/**
+		 * True if transaction is over the available funds
+		 */
+		over: PropTypes.bool,
+		gasEstimateType: PropTypes.string,
+		EIP1559GasData: PropTypes.object,
+		/**
+		 * Function to call when update animation starts
+		 */
+		onUpdatingValuesStart: PropTypes.func,
+		/**
+		 * Function to call when update animation ends
+		 */
+		onUpdatingValuesEnd: PropTypes.func,
+		/**
+		 * If the values should animate upon update or not
+		 */
+		animateOnChange: PropTypes.bool,
+		/**
+		 * Boolean to determine if the animation is happening
+		 */
+		isAnimating: PropTypes.bool,
+		dappSuggestedGas: PropTypes.bool,
+		/**
+		 * List of tokens from TokenListController
+		 */
+		tokenList: PropTypes.object,
+		/**
+		 * Object that represents the navigator
+		 */
+		navigation: PropTypes.object,
+		/**
+		 * If it's a eip1559 network and dapp suggest legact gas then it should show a warning
+		 */
+		dappSuggestedGasWarning: PropTypes.bool,
+		isSigningQRObject: PropTypes.bool,
+		QRState: PropTypes.object,
+	};
 
   componentDidMount = async () => {
     const {
@@ -346,6 +512,10 @@ class TransactionReview extends PureComponent {
     });
     this.setState({ dataVisible: true });
   };
+	getStyles = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		return createStyles(colors);
+	};
 
   getUrlFromBrowser() {
     const { browser, transaction } = this.props;
@@ -503,6 +673,125 @@ class TransactionReview extends PureComponent {
       ? this.renderQRDetails()
       : this.renderTransactionReview();
   }
+	renderTransactionReview = () => {
+		const {
+			transactionConfirmed,
+			primaryCurrency,
+			ready,
+			generateTransform,
+			hideData,
+			saveTransactionReviewDataHeight,
+			customGasHeight,
+			over,
+			gasEstimateType,
+			EIP1559GasData,
+			onUpdatingValuesStart,
+			onUpdatingValuesEnd,
+			animateOnChange,
+			isAnimating,
+			dappSuggestedGas,
+			navigation,
+			dappSuggestedGasWarning,
+		} = this.props;
+		const { actionKey, error, assetAmount, conversionRate, fiatValue, approveTransaction } = this.state;
+		const currentPageInformation = { url: this.getUrlFromBrowser() };
+		const styles = this.getStyles();
+
+		return (
+			<>
+				<Animated.View style={generateTransform('reviewToData', [0, -Device.getDeviceWidth()])}>
+					<TransactionHeader currentPageInformation={currentPageInformation} />
+					<TransactionReviewSummary
+						actionKey={actionKey}
+						assetAmount={assetAmount}
+						conversionRate={conversionRate}
+						fiatValue={fiatValue}
+						approveTransaction={approveTransaction}
+						primaryCurrency={primaryCurrency}
+					/>
+					<View style={styles.actionViewWrapper}>
+						<ActionView
+							confirmButtonMode="confirm"
+							cancelText={strings('transaction.reject')}
+							onCancelPress={this.props.onCancel}
+							onConfirmPress={this.props.onConfirm}
+							confirmed={transactionConfirmed}
+							confirmDisabled={transactionConfirmed || Boolean(error) || isAnimating}
+						>
+							<View style={styles.actionViewChildren}>
+								<ScrollView>
+									<View
+										style={styles.accountTransactionWrapper}
+										onStartShouldSetResponder={() => true}
+									>
+										<View style={styles.accountInfoCardWrapper}>
+											<AccountInfoCard />
+										</View>
+										<TransactionReviewInformation
+											navigation={navigation}
+											error={error}
+											edit={this.edit}
+											ready={ready}
+											assetAmount={assetAmount}
+											fiatValue={fiatValue}
+											toggleDataView={this.toggleDataView}
+											over={over}
+											onCancelPress={this.props.onCancel}
+											gasEstimateType={gasEstimateType}
+											EIP1559GasData={EIP1559GasData}
+											origin={dappSuggestedGas ? currentPageInformation?.url : null}
+											originWarning={dappSuggestedGasWarning}
+											onUpdatingValuesStart={onUpdatingValuesStart}
+											onUpdatingValuesEnd={onUpdatingValuesEnd}
+											animateOnChange={animateOnChange}
+											isAnimating={isAnimating}
+										/>
+									</View>
+								</ScrollView>
+							</View>
+						</ActionView>
+					</View>
+				</Animated.View>
+				<Animated.View
+					style={[
+						styles.transactionData,
+						generateTransform('reviewToData', [Device.getDeviceWidth(), 0]),
+						hideData && styles.hidden,
+					]}
+				>
+					<TransactionReviewData
+						actionKey={actionKey}
+						toggleDataView={this.toggleDataView}
+						saveTransactionReviewDataHeight={saveTransactionReviewDataHeight}
+						customGasHeight={customGasHeight}
+					/>
+				</Animated.View>
+			</>
+		);
+	};
+
+	renderQRDetails() {
+		const currentPageInformation = { url: this.getUrlFromBrowser() };
+		const { QRState } = this.props;
+		const styles = this.getStyles();
+		return (
+			<View style={styles.actionViewQRObject}>
+				<TransactionHeader currentPageInformation={currentPageInformation} />
+				<QRSigningDetails
+					QRState={QRState}
+					tighten
+					showCancelButton
+					showHint={false}
+					bypassAndroidCameraAccessCheck={false}
+				/>
+			</View>
+		);
+	}
+
+	render() {
+		const { isSigningQRObject } = this.props;
+		return isSigningQRObject ? this.renderQRDetails() : this.renderTransactionReview();
+	}
 }
 
 const mapStateToProps = (state) => ({
@@ -528,3 +817,4 @@ TransactionReview.contextType = ThemeContext;
 export default connect(mapStateToProps)(
   withNavigation(withQRHardwareAwareness(TransactionReview)),
 );
+export default connect(mapStateToProps)(withQRHardwareAwareness(TransactionReview));

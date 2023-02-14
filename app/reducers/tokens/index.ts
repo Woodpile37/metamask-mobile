@@ -13,6 +13,7 @@ export const getTokenList = createSelector(
   tokenListSelector,
   (tokenList: TokenListMap) => tokenList,
 );
+export const getTokenList = createSelector(tokenListSelector, (tokenList: TokenListMap) => tokenList);
 
 /**
  * Return token list array from TokenListController.
@@ -22,3 +23,4 @@ export const getTokenListArray = createSelector(
   tokenListSelector,
   tokenListToArray,
 );
+export const getTokenListArray = createSelector(tokenListSelector, tokenListToArray);

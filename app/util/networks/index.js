@@ -12,6 +12,11 @@ import {
   NETWORK_ERROR_MISSING_NETWORK_ID,
   NETWORK_ERROR_UNKNOWN_NETWORK_ID,
   NETWORK_ERROR_MISSING_CHAIN_ID,
+import { MAINNET, ROPSTEN, KOVAN, RINKEBY, GOERLI, RPC } from '../../../app/constants/network';
+import {
+	NETWORK_ERROR_MISSING_NETWORK_ID,
+	NETWORK_ERROR_UNKNOWN_NETWORK_ID,
+	NETWORK_ERROR_MISSING_CHAIN_ID,
 } from '../../../app/constants/error';
 import { util } from '@metamask/controllers';
 import Engine from '../../core/Engine';
@@ -76,6 +81,57 @@ const NetworkList = {
     color: '#f2f3f4',
     networkType: 'rpc',
   },
+	[MAINNET]: {
+		name: 'Ethereum Main Network',
+		shortName: 'Ethereum',
+		networkId: 1,
+		chainId: 1,
+		hexChainId: '0x1',
+		color: '#3cc29e',
+		networkType: 'mainnet',
+	},
+	[ROPSTEN]: {
+		name: 'Ropsten Test Network',
+		shortName: 'Ropsten',
+		networkId: 3,
+		chainId: 3,
+		hexChainId: '0x3',
+		color: '#ff4a8d',
+		networkType: 'ropsten',
+	},
+	[KOVAN]: {
+		name: 'Kovan Test Network',
+		shortName: 'Kovan',
+		networkId: 42,
+		chainId: 42,
+		hexChainId: '0x2a',
+		color: '#7057ff',
+		networkType: 'kovan',
+	},
+	[RINKEBY]: {
+		name: 'Rinkeby Test Network',
+		shortName: 'Rinkeby',
+		networkId: 4,
+		chainId: 4,
+		hexChainId: '0x4',
+		color: '#f6c343',
+		networkType: 'rinkeby',
+	},
+	[GOERLI]: {
+		name: 'Goerli Test Network',
+		shortName: 'Goerli',
+		networkId: 5,
+		chainId: 5,
+		hexChainId: '0x5',
+		color: '#3099f2',
+		networkType: 'goerli',
+	},
+	[RPC]: {
+		name: 'Private Network',
+		shortName: 'Private',
+		color: '#f2f3f4',
+		networkType: 'rpc',
+	},
 };
 
 const NetworkListKeys = Object.keys(NetworkList);
@@ -130,6 +186,21 @@ export function getDefaultNetworkByChainId(chainId) {
   if (!chainId) {
     throw new Error(NETWORK_ERROR_MISSING_CHAIN_ID);
   }
+	if (!id) {
+		throw new Error(NETWORK_ERROR_MISSING_NETWORK_ID);
+	}
+	const network = NetworkListKeys.filter((key) => NetworkList[key].networkId === parseInt(id, 10));
+	if (network.length > 0) {
+		return network[0];
+	}
+
+	throw new Error(`${NETWORK_ERROR_UNKNOWN_NETWORK_ID} ${id}`);
+}
+
+export function getDefaultNetworkByChainId(chainId) {
+	if (!chainId) {
+		throw new Error(NETWORK_ERROR_MISSING_CHAIN_ID);
+	}
 
   let returnNetwork;
 
@@ -192,6 +263,12 @@ export function getBlockExplorerName(blockExplorerUrl) {
   return (
     tempBlockExplorerName[0].toUpperCase() + tempBlockExplorerName.slice(1)
   );
+	if (!blockExplorerUrl) return undefined;
+	const hostname = new URL(blockExplorerUrl).hostname;
+	if (!hostname) return undefined;
+	const tempBlockExplorerName = fastSplit(hostname);
+	if (!tempBlockExplorerName || !tempBlockExplorerName[0]) return undefined;
+	return tempBlockExplorerName[0].toUpperCase() + tempBlockExplorerName.slice(1);
 }
 
 /**

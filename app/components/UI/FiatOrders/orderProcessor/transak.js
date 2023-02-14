@@ -8,6 +8,10 @@ import {
   FIAT_ORDER_STATES,
   NETWORKS_CHAIN_ID,
   TRANSAK_NETWORK_PARAMETERS,
+	FIAT_ORDER_PROVIDERS,
+	FIAT_ORDER_STATES,
+	NETWORKS_CHAIN_ID,
+	TRANSAK_NETWORK_PARAMETERS,
 } from '../../../../constants/on-ramp';
 
 //* env vars
@@ -86,6 +90,14 @@ const TRANSAK_ALLOWED_NETWORKS = [
 ];
 export const isTransakAllowedToBuy = (chainId) =>
   TRANSAK_ALLOWED_NETWORKS.includes(chainId);
+	NETWORKS_CHAIN_ID.MAINNET,
+	NETWORKS_CHAIN_ID.BSC,
+	NETWORKS_CHAIN_ID.POLYGON,
+	NETWORKS_CHAIN_ID.AVAXCCHAIN,
+	NETWORKS_CHAIN_ID.CELO,
+	NETWORKS_CHAIN_ID.FANTOM,
+];
+export const isTransakAllowedToBuy = (chainId) => TRANSAK_ALLOWED_NETWORKS.includes(chainId);
 
 //* Constants
 
@@ -122,6 +134,14 @@ const TRANSAK_ORDER_STATES = {
   EXPIRED: 'EXPIRED',
   FAILED: 'FAILED',
   CANCELLED: 'CANCELLED',
+	AWAITING_PAYMENT_FROM_USER: 'AWAITING_PAYMENT_FROM_USER',
+	PAYMENT_DONE_MARKED_BY_USER: 'PAYMENT_DONE_MARKED_BY_USER',
+	PROCESSING: 'PROCESSING',
+	PENDING_DELIVERY_FROM_TRANSAK: 'PENDING_DELIVERY_FROM_TRANSAK',
+	COMPLETED: 'COMPLETED',
+	EXPIRED: 'EXPIRED',
+	FAILED: 'FAILED',
+	CANCELLED: 'CANCELLED',
 };
 
 //* API
@@ -270,4 +290,18 @@ export const useTransakFlowURL = (address, chainId) => {
     });
   }, [address, chainId]);
   return `${isDevelopment ? TRANSAK_URL_STAGING : TRANSAK_URL}?${params}`;
+	const params = useMemo(() => {
+		const selectedChainId = isTransakAllowedToBuy(chainId) ? chainId : NETWORKS_CHAIN_ID.MAINNET;
+		const [network, defaultCryptoCurrency, cryptoCurrencyList] = TRANSAK_NETWORK_PARAMETERS[selectedChainId];
+		return qs.stringify({
+			apiKey: TRANSAK_API_KEY,
+			defaultCryptoCurrency,
+			cryptoCurrencyList,
+			network,
+			themeColor: '037dd6',
+			walletAddress: address,
+			redirectURL: TRANSAK_REDIRECT_URL,
+		});
+	}, [address, chainId]);
+	return `${isDevelopment ? TRANSAK_URL_STAGING : TRANSAK_URL}?${params}`;
 };

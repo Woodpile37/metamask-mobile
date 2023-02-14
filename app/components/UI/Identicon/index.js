@@ -19,6 +19,10 @@ const Identicon = React.memo((props) => {
   const { colors } = useAppThemeFromContext() || mockTheme;
   if (!address) return null;
   const uri = useBlockieIcon && toDataUrl(address);
+	const { diameter, address, customStyle, noFadeIn, useBlockieIcon } = props;
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	if (!address) return null;
+	const uri = useBlockieIcon && toDataUrl(address);
 
   const image = useBlockieIcon ? (
     <Image
@@ -48,6 +52,10 @@ const Identicon = React.memo((props) => {
       {image}
     </FadeIn>
   );
+	if (noFadeIn) {
+		return image;
+	}
+	return <FadeIn placeholderStyle={{ backgroundColor: colors.background.alternative }}>{image}</FadeIn>;
 });
 
 Identicon.propTypes = {

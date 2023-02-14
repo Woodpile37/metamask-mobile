@@ -21,6 +21,10 @@ export function clearHistory() {
     type: 'CLEAR_BROWSER_HISTORY',
     id: Date.now(),
   };
+	return {
+		type: 'CLEAR_BROWSER_HISTORY',
+		id: Date.now(),
+	};
 }
 
 /**
