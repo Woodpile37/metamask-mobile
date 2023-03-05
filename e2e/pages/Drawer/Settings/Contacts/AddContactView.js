@@ -27,6 +27,9 @@ export default class AddContactView {
   static async tapEditContactCTA() {
     await TestHelpers.tapByText('Edit contact'); // edit CTA button after you make changes to a contact
   }
+	static async tapEditContactCTA() {
+		await TestHelpers.tapByText('Edit contact'); // edit CTA button after you make changes to a contact
+	}
 
   static async tapBackButton() {
     await TestHelpers.tap(BACK_ARROW_BUTTON_ID);

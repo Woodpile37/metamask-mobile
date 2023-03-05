@@ -19,6 +19,9 @@ const allowedChainIds = [
   AVALANCHE_CHAIN_ID,
   SWAPS_TESTNET_CHAIN_ID,
 ];
+const { ETH_CHAIN_ID, BSC_CHAIN_ID, SWAPS_TESTNET_CHAIN_ID, POLYGON_CHAIN_ID, AVALANCHE_CHAIN_ID } = swapsUtils;
+
+const allowedChainIds = [ETH_CHAIN_ID, BSC_CHAIN_ID, POLYGON_CHAIN_ID, AVALANCHE_CHAIN_ID, SWAPS_TESTNET_CHAIN_ID];
 
 export function isSwapsAllowed(chainId) {
   if (!AppConstants.SWAPS.ACTIVE) {

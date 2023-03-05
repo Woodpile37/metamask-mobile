@@ -62,6 +62,49 @@ const CheckIcon = () => {
       name="check-circle"
     />
   );
+	StyleSheet.create({
+		menuItemWarning: {
+			flex: 1,
+			alignSelf: 'center',
+			justifyContent: 'flex-end',
+			flexDirection: 'row',
+			marginRight: 24,
+		},
+		wrapper: {
+			padding: 12,
+			borderRadius: 10,
+			display: 'flex',
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			width: '100%',
+			marginTop: 10,
+		},
+		icon: {
+			marginRight: 4,
+		},
+		red: {
+			backgroundColor: colors.error.muted,
+		},
+		normal: {
+			backgroundColor: colors.background.alternative,
+		},
+		check: {
+			color: colors.success.default,
+		},
+	});
+
+const WarningIcon = () => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return <Icon style={styles.icon} size={16} color={colors.error.default} name="exclamation-triangle" />;
+};
+const CheckIcon = () => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return <MaterialIcon style={[styles.icon, styles.check]} size={16} name="check-circle" />;
 };
 
 const propTypes = {
@@ -102,6 +145,21 @@ const SettingsNotification = ({
       {children}
     </View>
   );
+const SettingsNotification = ({ style, isWarning, isNotification, children }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View
+			style={[
+				isNotification ? Object.assign({}, styles.menuItemWarning, style) : styles.wrapper,
+				isNotification ? null : isWarning ? styles.red : styles.normal,
+			]}
+		>
+			{isWarning ? <WarningIcon /> : <CheckIcon />}
+			{children}
+		</View>
+	);
 };
 
 SettingsNotification.propTypes = propTypes;

@@ -20,6 +20,20 @@ const initialState = {
   networkOnboarded: {
     networkOnboardedState: [{ network: 'mainnet', onboarded: true }],
   },
+	privacy: {
+		approvedHosts: {},
+	},
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: { type: 'mainnet', rpcTarget: 'http://10.0.2.2:8545' },
+			},
+			PreferencesController: { frequentRpcList: ['http://10.0.2.2:8545'] },
+		},
+	},
+	networkOnboarded: {
+		networkOnboardedState: [{ network: 'mainnet', onboarded: true }],
+	},
 };
 const store = mockStore(initialState);
 

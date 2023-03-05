@@ -6,6 +6,10 @@ import {
   FIAT_ORDER_STATES,
   MOONPAY_NETWORK_PARAMETERS,
   NETWORKS_CHAIN_ID,
+	FIAT_ORDER_PROVIDERS,
+	FIAT_ORDER_STATES,
+	MOONPAY_NETWORK_PARAMETERS,
+	NETWORKS_CHAIN_ID,
 } from '../../../../constants/on-ramp';
 import AppConstants from '../../../../core/AppConstants';
 import Logger from '../../../../util/Logger';
@@ -77,6 +81,11 @@ const MOONPAY_TRANSACTION_STATES = {
   WAITING_AUTHORIZATION: 'waitingAuthorization',
   FAILED: 'failed',
   COMPLETED: 'completed',
+	WAITING_PAYMENT: 'waitingPayment',
+	PENDING: 'pending',
+	WAITING_AUTHORIZATION: 'waitingAuthorization',
+	FAILED: 'failed',
+	COMPLETED: 'completed',
 };
 
 /**
@@ -102,6 +111,15 @@ export const isMoonpayAllowedToBuy = (chainId) =>
 
 const getCurrencyCode = (code) =>
   (code?.indexOf('_') > -1 ? code.split('_')[0] : code)?.toUpperCase();
+	NETWORKS_CHAIN_ID.MAINNET,
+	NETWORKS_CHAIN_ID.BSC,
+	NETWORKS_CHAIN_ID.POLYGON,
+	NETWORKS_CHAIN_ID.AVAXCCHAIN,
+	NETWORKS_CHAIN_ID.CELO,
+];
+export const isMoonpayAllowedToBuy = (chainId) => MOONPAY_ALLOWED_NETWORKS.includes(chainId);
+
+const getCurrencyCode = (code) => (code?.indexOf('_') > -1 ? code.split('_')[0] : code)?.toUpperCase();
 
 /**
  * @param {MoonPayTransaction} transaction
@@ -112,6 +130,7 @@ const getTransactionFee = (transaction) =>
       transaction.extraFeeAmount +
       transaction.networkFeeAmount
     : 0;
+	transaction ? transaction.feeAmount + transaction.extraFeeAmount + transaction.networkFeeAmount : 0;
 
 /**
  * @param {MoonPayTransaction} transaction
@@ -120,6 +139,7 @@ const getTransactionAmount = (transaction) =>
   transaction
     ? transaction.baseCurrencyAmount + getTransactionFee(transaction)
     : 0;
+	transaction ? transaction.baseCurrencyAmount + getTransactionFee(transaction) : 0;
 
 //* Constants
 
@@ -130,6 +150,12 @@ const {
   MOONPAY_REDIRECT_URL,
   MOONPAY_SIGN_URL_STAGING,
   MOONPAY_SIGN_URL_PRODUCTION,
+	MOONPAY_URL,
+	MOONPAY_URL_STAGING,
+	MOONPAY_API_URL_PRODUCTION,
+	MOONPAY_REDIRECT_URL,
+	MOONPAY_SIGN_URL_STAGING,
+	MOONPAY_SIGN_URL_PRODUCTION,
 } = AppConstants.FIAT_ORDERS;
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -162,6 +188,28 @@ const getSignature = (url) =>
       url,
     },
   });
+const MOONPAY_API_BASE_URL = isDevelopment ? MOONPAY_API_URL_PRODUCTION : MOONPAY_API_URL_PRODUCTION;
+const MOONPAY_API_KEY = isDevelopment ? MOONPAY_API_KEY_STAGING : MOONPAY_API_KEY_PRODUCTION;
+const MOONPAY_SIGN_API_URL = isDevelopment ? MOONPAY_SIGN_URL_STAGING : MOONPAY_SIGN_URL_PRODUCTION;
+//* API
+
+const moonPayApi = axios.create({
+	baseURL: MOONPAY_API_BASE_URL,
+});
+
+const getOrderStatus = (transactionId) =>
+	moonPayApi.get(`v1/transactions/${transactionId}`, {
+		params: {
+			apiKey: MOONPAY_API_KEY,
+		},
+	});
+
+const getSignature = (url) =>
+	axios.get(MOONPAY_SIGN_API_URL, {
+		params: {
+			url,
+		},
+	});
 
 //* Helpers
 
@@ -186,6 +234,22 @@ const moonPayOrderToFiatOrderState = (moonPayOrderState) => {
       return FIAT_ORDER_STATES.PENDING;
     }
   }
+	switch (moonPayOrderState) {
+		case MOONPAY_TRANSACTION_STATES.WAITING_PAYMENT:
+		case MOONPAY_TRANSACTION_STATES.PENDING:
+		case MOONPAY_TRANSACTION_STATES.WAITING_AUTHORIZATION: {
+			return FIAT_ORDER_STATES.PENDING;
+		}
+		case MOONPAY_TRANSACTION_STATES.FAILED: {
+			return FIAT_ORDER_STATES.FAILED;
+		}
+		case MOONPAY_TRANSACTION_STATES.COMPLETED: {
+			return FIAT_ORDER_STATES.COMPLETED;
+		}
+		default: {
+			return FIAT_ORDER_STATES.PENDING;
+		}
+	}
 };
 
 /**
@@ -209,6 +273,20 @@ const moonPayOrderToFiatOrder = (moonPayTransaction) => ({
   account: moonPayTransaction.walletAddress,
   txHash: null,
   data: moonPayTransaction,
+	id: moonPayTransaction.id,
+	provider: FIAT_ORDER_PROVIDERS.MOONPAY,
+	createdAt: new Date(moonPayTransaction.createdAt).getTime(),
+	amount: getTransactionAmount(moonPayTransaction),
+	fee: getTransactionFee(moonPayTransaction),
+	cryptoAmount: moonPayTransaction.quoteCurrencyAmount,
+	cryptoFee: moonPayTransaction.networkFeeAmount,
+	currency: getCurrencyCode(moonPayTransaction.baseCurrency.code),
+	cryptocurrency: getCurrencyCode(moonPayTransaction.currency.code),
+	amountInUSD: moonPayTransaction.baseCurrencyAmount * moonPayTransaction.usdRate,
+	state: moonPayOrderToFiatOrderState(moonPayTransaction.status),
+	account: moonPayTransaction.walletAddress,
+	txHash: null,
+	data: moonPayTransaction,
 });
 
 /**
@@ -227,6 +305,16 @@ const moonPayCallbackOrderToFiatOrder = (moonPayRedirectObject) => ({
   cryptocurrency: '',
   state: moonPayOrderToFiatOrderState(moonPayRedirectObject.status),
   data: null,
+	id: moonPayRedirectObject.transactionId,
+	provider: FIAT_ORDER_PROVIDERS.MOONPAY,
+	createdAt: Date.now(),
+	amount: 0,
+	fee: null,
+	currency: '',
+	cryptoAmount: null,
+	cryptocurrency: '',
+	state: moonPayOrderToFiatOrderState(moonPayRedirectObject.status),
+	data: null,
 });
 
 //* Handlers
@@ -235,6 +323,7 @@ const moonPayCallbackOrderToFiatOrder = (moonPayRedirectObject) => ({
  * Function to handle MoonPay flow redirect after order creation
  * @param {String} url Custom URL with query params MoonPay flow redirected to.
  *   Query parameters are: `transactionId`, `transactionStatus`.
+ * 	Query parameters are: `transactionId`, `transactionStatus`.
  * @param {String} network Current network selected in the app
  * @param {String} account Current account selected in the app
  * @returns {FiatOrder}
@@ -244,6 +333,10 @@ export const handleMoonPayRedirect = (url, network, account) => {
   const data = qs.parse(url.split(MOONPAY_REDIRECT_URL)[1]);
   const order = { ...moonPayCallbackOrderToFiatOrder(data), network, account };
   return order;
+	/** @type {MoonPayRedirectTransaction} */
+	const data = qs.parse(url.split(MOONPAY_REDIRECT_URL)[1]);
+	const order = { ...moonPayCallbackOrderToFiatOrder(data), network, account };
+	return order;
 };
 
 /**
@@ -274,6 +367,24 @@ export async function processMoonPayOrder(order) {
     });
     return order;
   }
+	try {
+		const { data } = await getOrderStatus(order.id);
+
+		if (!data) {
+			Logger.error('FiatOrders::MoonPayProcessor empty data', order);
+			return order;
+		}
+
+		const updatedOrder = {
+			...order,
+			...moonPayOrderToFiatOrder(data),
+		};
+
+		return updatedOrder;
+	} catch (error) {
+		Logger.error(error, { message: 'FiatOrders::MoonPayProcessor error while processing order', order });
+		return order;
+	}
 }
 
 //* Hooks
@@ -316,4 +427,32 @@ export const useMoonPayFlowURL = (address, chainId) => {
   }, [params]);
 
   return getSignedParams;
+	const params = useMemo(() => {
+		const selectedChainId = isMoonpayAllowedToBuy(chainId) ? chainId : NETWORKS_CHAIN_ID.MAINNET;
+		const [defaultCurrencyCode, showOnlyCurrencies] = MOONPAY_NETWORK_PARAMETERS[selectedChainId];
+		return qs.stringify({
+			apiKey: MOONPAY_API_KEY,
+			colorCode: '#037dd6',
+			walletAddress: address,
+			defaultCurrencyCode,
+			showOnlyCurrencies,
+			walletAddresses: JSON.stringify(
+				showOnlyCurrencies.split(',').reduce((acc, currency) => ({ ...acc, [currency]: address }), {})
+			),
+			redirectURL: MOONPAY_REDIRECT_URL,
+		});
+	}, [address, chainId]);
+
+	const getSignedParams = useCallback(async () => {
+		const originalUrl = `${isDevelopment ? MOONPAY_URL_STAGING : MOONPAY_URL}?${params}`;
+		try {
+			const { data } = await getSignature(originalUrl);
+			return data?.url ?? originalUrl;
+		} catch (error) {
+			Logger.error(error, { message: 'FiatOrders::MoonPayProcessor error while getting signature' });
+			return originalUrl;
+		}
+	}, [params]);
+
+	return getSignedParams;
 };

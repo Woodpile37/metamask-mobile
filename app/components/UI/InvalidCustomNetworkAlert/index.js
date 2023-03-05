@@ -57,6 +57,64 @@ const InvalidCustomNetworkAlert = (props) => {
   const styles = createStyles(colors);
 
   const closeModal = () => props.onClose();
+	StyleSheet.create({
+		wrapper: {
+			backgroundColor: colors.background.default,
+			borderRadius: 10,
+			padding: 20,
+		},
+		titleWrapper: {
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+		},
+		title: {
+			textAlign: 'center',
+			fontSize: 17,
+			marginVertical: 12,
+			marginHorizontal: 20,
+			color: colors.text.default,
+			...fontStyles.bold,
+		},
+		textWrapper: {
+			marginTop: 20,
+			marginBottom: 40,
+		},
+		text: {
+			textAlign: 'center',
+			fontSize: 15,
+			lineHeight: 20,
+			marginBottom: 20,
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		hint: {
+			textAlign: 'center',
+			fontSize: 15,
+			lineHeight: 20,
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		link: {
+			color: colors.primary.default,
+		},
+		button: {
+			marginBottom: 10,
+		},
+	});
+
+const InvalidCustomNetworkAlert = (props) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	const closeModal = () => props.onClose();
+
+	const goToEditNetwork = () => {
+		closeModal();
+		props.navigation.navigate('SettingsView', {
+			screen: 'SettingsFlow',
+			params: { screen: 'NetworkSettings', params: { network: props.network } },
+		});
+	};
 
   const goToEditNetwork = () => {
     closeModal();

@@ -107,6 +107,16 @@ const persistUserTransform = createTransform(
   { whitelist: ['user'] },
 );
 
+const persistUserTransform = createTransform(
+	(inboundState) => {
+		const { initialScreen, isAuthChecked, ...state } = inboundState;
+		// Reconstruct data to persist
+		return state;
+	},
+	null,
+	{ whitelist: ['user'] }
+);
+
 const persistConfig = {
   key: 'root',
   version,
@@ -118,6 +128,15 @@ const persistConfig = {
   timeout: TIMEOUT,
   writeFailHandler: (error) =>
     Logger.error(error, { message: 'Error persisting data' }), // Log error if saving state fails
+	key: 'root',
+	version,
+	blacklist: ['onboarding'],
+	storage: MigratedStorage,
+	transforms: [persistTransform, persistUserTransform],
+	stateReconciler: autoMergeLevel2, // see "Merge Process" section for details.
+	migrate: createMigrate(migrations, { debug: false }),
+	timeout: TIMEOUT,
+	writeFailHandler: (error) => Logger.error(error, { message: 'Error persisting data' }), // Log error if saving state fails
 };
 
 const pReducer = persistReducer(persistConfig, rootReducer);
@@ -129,6 +148,7 @@ export const store = createStore(pReducer);
  */
 const onPersistComplete = () => {
   EngineService.initalizeEngine(store);
+	EngineService.initalizeEngine(store);
 };
 
 export const persistor = persistStore(store, null, onPersistComplete);

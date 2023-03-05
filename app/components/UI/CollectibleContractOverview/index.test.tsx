@@ -25,6 +25,25 @@ const initialState = {
       },
     },
   },
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: {
+					chainId: 1,
+				},
+			},
+			PreferencesController: {
+				selectedAddress: '0x1',
+			},
+			CollectiblesController: {
+				allCollectibles: {
+					'0x1': {
+						1: [],
+					},
+				},
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 

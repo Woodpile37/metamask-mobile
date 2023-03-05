@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { fontStyles, baseStyles } from '../../../styles/common';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
@@ -89,6 +90,77 @@ const createStyles = (colors) =>
       paddingBottom: 10,
     },
   });
+	StyleSheet.create({
+		dropdown: {
+			flexDirection: 'row',
+		},
+		iconDropdown: {
+			marginTop: 7,
+			height: 25,
+			justifyContent: 'flex-end',
+			textAlign: 'right',
+			marginRight: 10,
+		},
+		selectedOption: {
+			flex: 1,
+			alignSelf: 'flex-start',
+			color: colors.text.default,
+			fontSize: 14,
+			paddingHorizontal: 15,
+			paddingTop: 10,
+			paddingBottom: 10,
+			...fontStyles.normal,
+		},
+		accesoryBar: {
+			width: '100%',
+			paddingTop: 5,
+			height: 50,
+			borderBottomColor: colors.border.muted,
+			borderBottomWidth: 1,
+		},
+		label: {
+			textAlign: 'center',
+			flex: 1,
+			paddingVertical: 10,
+			fontSize: 17,
+			...fontStyles.bold,
+			color: colors.text.default,
+		},
+		modal: {
+			margin: 0,
+			width: '100%',
+			padding: 60,
+		},
+		modalView: {
+			backgroundColor: colors.background.default,
+			justifyContent: 'center',
+			alignItems: 'center',
+			borderRadius: 10,
+		},
+		list: {
+			width: '100%',
+		},
+		optionButton: {
+			paddingHorizontal: 15,
+			paddingVertical: 5,
+			flexDirection: 'row',
+			height: Device.isIos() ? ROW_HEIGHT : undefined,
+		},
+		optionLabel: {
+			flex: 1,
+			fontSize: 14,
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		icon: {
+			paddingHorizontal: 10,
+			marginTop: 5,
+		},
+		listWrapper: {
+			flex: 1,
+			paddingBottom: 10,
+		},
+	});
 
 export default class SelectComponent extends PureComponent {
   static propTypes = {
@@ -231,6 +303,69 @@ export default class SelectComponent extends PureComponent {
   render = () => (
     <View style={baseStyles.flexGrow}>{this.renderDropdownSelector()}</View>
   );
+	renderDropdownSelector = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={baseStyles.flexGrow}>
+				<TouchableOpacity onPress={this.showPicker}>
+					<View style={styles.dropdown}>
+						<Text style={styles.selectedOption} numberOfLines={1}>
+							{this.getSelectedValue()}
+						</Text>
+						<Icon
+							name={'arrow-drop-down'}
+							size={24}
+							color={colors.icon.default}
+							style={styles.iconDropdown}
+						/>
+					</View>
+				</TouchableOpacity>
+				<Modal
+					isVisible={this.state.pickerVisible}
+					onBackdropPress={this.hidePicker}
+					onBackButtonPress={this.hidePicker}
+					style={styles.modal}
+					useNativeDriver
+					backdropColor={colors.overlay.default}
+					backdropOpacity={1}
+				>
+					<View style={styles.modalView}>
+						<View style={styles.accesoryBar}>
+							<Text style={styles.label}>{this.props.label}</Text>
+						</View>
+						<ScrollView style={styles.list} ref={this.scrollView}>
+							<View style={styles.listWrapper}>
+								{this.props.options.map((option) => (
+									<TouchableOpacity
+										// eslint-disable-next-line react/jsx-no-bind
+										onPress={() => this.onValueChange(option.value)}
+										style={styles.optionButton}
+										key={option.key}
+									>
+										<Text style={styles.optionLabel} numberOfLines={1}>
+											{option.label}
+										</Text>
+										{this.props.selectedValue === option.value ? (
+											<IconCheck
+												style={styles.icon}
+												name="check"
+												size={24}
+												color={colors.primary.default}
+											/>
+										) : null}
+									</TouchableOpacity>
+								))}
+							</View>
+						</ScrollView>
+					</View>
+				</Modal>
+			</View>
+		);
+	};
+
+	render = () => <View style={baseStyles.flexGrow}>{this.renderDropdownSelector()}</View>;
 }
 
 SelectComponent.contextType = ThemeContext;

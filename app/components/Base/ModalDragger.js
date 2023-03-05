@@ -34,6 +34,35 @@ function ModalDragger({ borderless }) {
       <View style={styles.dragger} />
     </View>
   );
+	StyleSheet.create({
+		draggerWrapper: {
+			width: '100%',
+			height: 33,
+			alignItems: 'center',
+			justifyContent: 'center',
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+		},
+		borderless: {
+			borderColor: importedColors.transparent,
+		},
+		dragger: {
+			width: 48,
+			height: 5,
+			borderRadius: 4,
+			backgroundColor: colors.border.default,
+		},
+	});
+
+function ModalDragger({ borderless }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View style={[styles.draggerWrapper, borderless && styles.borderless]}>
+			<View style={styles.dragger} />
+		</View>
+	);
 }
 
 ModalDragger.propTypes = {
