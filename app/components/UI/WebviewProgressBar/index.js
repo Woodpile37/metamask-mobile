@@ -65,6 +65,23 @@ export default class WebviewProgressBar extends PureComponent {
       </FadeView>
     );
   };
+	render = () => {
+		const colors = this.context.colors || mockTheme.colors;
+
+		return (
+			<FadeView visible={this.state.visible}>
+				<ProgressBar
+					progress={this.props.progress}
+					color={colors.primary.default}
+					width={null}
+					height={3}
+					borderRadius={0}
+					borderWidth={0}
+					useNativeDriver
+				/>
+			</FadeView>
+		);
+	};
 }
 
 WebviewProgressBar.contextType = ThemeContext;

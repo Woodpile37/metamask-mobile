@@ -30,4 +30,21 @@ export default class ImportTokensView {
   static async isVisible() {
     await TestHelpers.checkIfVisible(CUSTOM_TOKEN_CONTAINER_ID);
   }
+	static async typeInTokenName(tokenName) {
+		await TestHelpers.typeTextAndHideKeyboard(TOKEN_INPUT_BOX_ID, tokenName);
+	}
+	static async tapOnToken() {
+		await TestHelpers.tapItemAtIndex(TOKEN_RESULTS_LIST_ID);
+	}
+	static async tapOnImportButton() {
+		await TestHelpers.tapByText('IMPORT');
+	}
+
+	static async tapOnCancelButton() {
+		await TestHelpers.tapByText('CANCEL');
+	}
+
+	static async isVisible() {
+		await TestHelpers.checkIfVisible(CUSTOM_TOKEN_CONTAINER_ID);
+	}
 }

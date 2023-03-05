@@ -28,6 +28,18 @@ exports[`RemoteImage should render svg correctly 1`] = `
     source={
       Object {
         "uri": "https://raw.githubusercontent.com/MetaMask/contract-metadata/master/images/dai.svg",
+<ComponentErrorBoundary
+  componentLabel="RemoteImage-SVG"
+>
+  <View
+    style={Object {}}
+  >
+    <SvgUri
+      height="100%"
+      source={
+        Object {
+          "uri": "https://raw.githubusercontent.com/MetaMask/contract-metadata/master/images/dai.svg",
+        }
       }
     }
   />

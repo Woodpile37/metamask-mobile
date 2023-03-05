@@ -67,6 +67,30 @@ function calculateTotalGas(transaction) {
   }
 
   return hexToBN('0x0');
+	const { gas, gasPrice, gasUsed, estimatedBaseFee, maxPriorityFeePerGas, maxFeePerGas } = transaction;
+
+	if (isEIP1559Transaction(transaction)) {
+		const eip1559GasHex = calculateEIP1559GasFeeHexes({
+			gasLimitHex: gasUsed || gas,
+			estimatedBaseFeeHex: estimatedBaseFee || '0x0',
+			suggestedMaxPriorityFeePerGasHex: maxPriorityFeePerGas,
+			suggestedMaxFeePerGasHex: maxFeePerGas,
+		});
+		return hexToBN(eip1559GasHex.gasFeeMinHex);
+	}
+	const gasBN = hexToBN(gas);
+	const gasPriceBN = hexToBN(gasPrice);
+	const gasUsedBN = gasUsed ? hexToBN(gasUsed) : null;
+
+	if (gasUsedBN && isBN(gasUsedBN) && isBN(gasPriceBN)) {
+		return gasUsedBN.mul(gasPriceBN);
+	}
+
+	if (isBN(gasBN) && isBN(gasPriceBN)) {
+		return gasBN.mul(gasPriceBN);
+	}
+
+	return hexToBN('0x0');
 }
 
 function renderGwei(transaction) {

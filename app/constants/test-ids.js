@@ -8,6 +8,7 @@ export const RESET_WALLET_ID = 'reset-wallet-button';
 
 export const ACCOUNT_APROVAL_MODAL_CONTAINER_ID =
   'account-approval-modal-container';
+export const ACCOUNT_APROVAL_MODAL_CONTAINER_ID = 'account-approval-modal-container';
 export const CANCEL_BUTTON_ID = 'connect-cancel-button';
 export const CONNECT_BUTTON_ID = 'connect-approve-button';
 
@@ -76,3 +77,5 @@ export const SELECTABLE_LIST_ITEM_OVERLAY_ID = 'selectable-list-item-overlay';
 export const TOKEN_AVATAR_IMAGE_ID = 'token-avatar-image';
 export const STACKED_AVATARS_OVERFLOW_COUNTER =
   'stacked-avatar-overflow-counter';
+export const NETWORK_EDUCATION_MODAL_CLOSE_BUTTON_ID = 'network-education-modal-close-button';
+export const NETWORK_EDUCATION_MODAL_NETWORK_NAME_ID = 'network-education-modal-network-name';

@@ -17,6 +17,15 @@ const initialState = {
       },
     },
   },
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: {
+					chainId: 4,
+				},
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 
@@ -38,4 +47,21 @@ describe('QrScanner', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<Provider store={store}>
+				<QrScanner
+					navigation={{}}
+					route={{
+						params: {
+							onScanError: noop,
+							onScanSuccess: noop,
+							onStartScan: noop,
+						},
+					}}
+				/>
+			</Provider>
+		);
+		expect(wrapper).toMatchSnapshot();
+	});
 });

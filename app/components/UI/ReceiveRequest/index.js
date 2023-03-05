@@ -94,6 +94,58 @@ const createStyles = (colors) =>
     },
   });
 
+const createStyles = (colors) =>
+	StyleSheet.create({
+		wrapper: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 10,
+			borderTopRightRadius: 10,
+		},
+		body: {
+			alignItems: 'center',
+			paddingHorizontal: 15,
+		},
+		qrWrapper: {
+			margin: 15,
+		},
+		addressWrapper: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			margin: 15,
+			padding: 9,
+			paddingHorizontal: 15,
+			backgroundColor: colors.background.alternative,
+			borderRadius: 30,
+		},
+		copyButton: {
+			backgroundColor: colors.icon.muted,
+			color: colors.text.default,
+			borderRadius: 12,
+			overflow: 'hidden',
+			paddingVertical: 3,
+			paddingHorizontal: 6,
+			marginHorizontal: 6,
+		},
+		actionRow: {
+			flexDirection: 'row',
+			marginBottom: 15,
+		},
+		actionButton: {
+			flex: 1,
+			marginHorizontal: 8,
+		},
+		title: {
+			...fontStyles.normal,
+			color: colors.text.default,
+			fontSize: 18,
+			flexDirection: 'row',
+			alignSelf: 'center',
+		},
+		titleWrapper: {
+			marginTop: 10,
+		},
+	});
+
 /**
  * PureComponent that renders receive options
  */
@@ -150,6 +202,29 @@ class ReceiveRequest extends PureComponent {
     qrModalVisible: false,
     buyModalVisible: false,
   };
+		showAlert: PropTypes.func,
+		/**
+		 * Network id
+		 */
+		network: PropTypes.string,
+		/**
+		 * Native asset ticker
+		 */
+		ticker: PropTypes.string,
+		/**
+		 * Prompts protect wallet modal
+		 */
+		protectWalletModalVisible: PropTypes.func,
+		/**
+		 * Hides the modal that contains the component
+		 */
+		hideModal: PropTypes.func,
+		/**
+		 * redux flag that indicates if the user
+		 * completed the seed phrase backup flow
+		 */
+		seedphraseBackedUp: PropTypes.bool,
+	};
 
   /**
    * Share current account public address
@@ -211,6 +286,25 @@ class ReceiveRequest extends PureComponent {
       setTimeout(() => this.props.protectWalletModalVisible(), 1500);
     }
   };
+	/**
+	 * Shows an alert message with a coming soon message
+	 */
+	onBuy = async () => {
+		const { navigation, toggleReceiveModal, network } = this.props;
+		if (!allowedToBuy(network)) {
+			Alert.alert(strings('fiat_on_ramp.network_not_supported'), strings('fiat_on_ramp.switch_network'));
+		} else {
+			toggleReceiveModal();
+			navigation.navigate('FiatOnRamp');
+			InteractionManager.runAfterInteractions(() => {
+				Analytics.trackEvent(ANALYTICS_EVENT_OPTS.WALLET_BUY_ETH);
+				AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.ONRAMP_OPENED, {
+					button_location: 'Receive Modal',
+					button_copy: `Buy ${this.props.ticker}`,
+				});
+			});
+		}
+	};
 
   /**
    * Closes QR code modal
@@ -296,6 +390,55 @@ class ReceiveRequest extends PureComponent {
               </>
             )}
           </ModalHandler>
+	render() {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<SafeAreaView style={styles.wrapper}>
+				<ModalDragger />
+				<View style={styles.titleWrapper}>
+					<Text style={styles.title} testID={'receive-request-screen'}>
+						{strings('receive_request.title')}
+					</Text>
+				</View>
+				<View style={styles.body}>
+					<ModalHandler>
+						{({ isVisible, toggleModal }) => (
+							<>
+								<TouchableOpacity
+									style={styles.qrWrapper}
+									// eslint-disable-next-line react/jsx-no-bind
+									onPress={() => {
+										toggleModal();
+										InteractionManager.runAfterInteractions(() => {
+											Analytics.trackEvent(ANALYTICS_EVENT_OPTS.RECEIVE_OPTIONS_QR_CODE);
+										});
+									}}
+								>
+									<QRCode
+										value={`ethereum:${this.props.selectedAddress}@${this.props.network}`}
+										size={Dimensions.get('window').width / 2}
+										color={colors.text.default}
+										backgroundColor={colors.background.default}
+									/>
+								</TouchableOpacity>
+								<Modal
+									isVisible={isVisible}
+									onBackdropPress={toggleModal}
+									onBackButtonPress={toggleModal}
+									onSwipeComplete={toggleModal}
+									swipeDirection={'down'}
+									propagateSwipe
+									testID={'qr-modal'}
+									backdropColor={colors.overlay.default}
+									backdropOpacity={1}
+								>
+									<AddressQRCode closeQrModal={() => this.closeQrModal(toggleModal)} />
+								</Modal>
+							</>
+						)}
+					</ModalHandler>
 
           <Text>{strings('receive_request.scan_address')}</Text>
 
@@ -343,6 +486,41 @@ class ReceiveRequest extends PureComponent {
             </StyledButton>
           </View>
         </View>
+					<TouchableOpacity
+						style={styles.addressWrapper}
+						onPress={this.copyAccountToClipboard}
+						testID={'account-address'}
+					>
+						<Text>
+							<EthereumAddress address={this.props.selectedAddress} type={'short'} />
+						</Text>
+						<Text style={styles.copyButton} small>
+							{strings('receive_request.copy')}
+						</Text>
+						<TouchableOpacity onPress={this.onShare}>
+							<EvilIcons
+								name={Device.isIos() ? 'share-apple' : 'share-google'}
+								size={25}
+								color={colors.icon.default}
+							/>
+						</TouchableOpacity>
+					</TouchableOpacity>
+					<View style={styles.actionRow}>
+						{allowedToBuy(this.props.network) && (
+							<StyledButton type={'blue'} containerStyle={styles.actionButton} onPress={this.onBuy}>
+								{strings('fiat_on_ramp.buy', { ticker: getTicker(this.props.ticker) })}
+							</StyledButton>
+						)}
+						<StyledButton
+							type={'normal'}
+							onPress={this.onReceive}
+							containerStyle={styles.actionButton}
+							testID={'request-payment-button'}
+						>
+							{strings('receive_request.request_payment')}
+						</StyledButton>
+					</View>
+				</View>
 
         <GlobalAlert />
       </SafeAreaView>
@@ -360,6 +538,11 @@ const mapStateToProps = (state) => ({
     state.engine.backgroundState.PreferencesController.selectedAddress,
   receiveAsset: state.modals.receiveAsset,
   seedphraseBackedUp: state.user.seedphraseBackedUp,
+	network: state.engine.backgroundState.NetworkController.network,
+	ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	receiveAsset: state.modals.receiveAsset,
+	seedphraseBackedUp: state.user.seedphraseBackedUp,
 });
 
 const mapDispatchToProps = (dispatch) => ({

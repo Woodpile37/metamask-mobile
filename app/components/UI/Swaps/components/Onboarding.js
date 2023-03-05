@@ -19,6 +19,7 @@ import {
   mockTheme,
   useAssetFromTheme,
 } from '../../../../util/theme';
+import { useAppThemeFromContext, mockTheme, useAssetFromTheme } from '../../../../util/theme';
 
 /* eslint-disable import/no-commonjs */
 const onboardingDeviceImage = require('../../../../images/swaps_onboard_device.png');
@@ -66,6 +67,45 @@ const createStyles = (colors) =>
       marginVertical: 10,
     },
   });
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			paddingHorizontal: 25,
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		content: {
+			flex: 1,
+			justifyContent: 'center',
+			marginVertical: 14,
+		},
+		images: {
+			alignItems: 'center',
+		},
+		title: {
+			fontSize: Device.isSmallDevice() ? 20 : 24,
+			marginHorizontal: 15,
+			marginBottom: Device.isSmallDevice() ? 16 : 24,
+			color: colors.text.default,
+		},
+		aggregatorsImage: {
+			marginVertical: 14,
+			width: Device.isSmallDevice() ? 230 : 300,
+			height: Device.isSmallDevice() ? 85 : 110,
+		},
+		learnMore: {
+			marginVertical: 14,
+		},
+		learnMoreLink: {
+			paddingVertical: Device.isSmallDevice() ? 4 : 8,
+		},
+		actionButtonWrapper: {
+			width: '100%',
+		},
+		actionButton: {
+			marginVertical: 10,
+		},
+	});
 
 if (
   Platform.OS === 'android' &&
@@ -82,6 +122,15 @@ function Onboarding({ setHasOnboarded }) {
     swapsAggregatorsLight,
     swapsAggregatorsDark,
   );
+	const navigation = useNavigation();
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+	const swapsAggregators = useAssetFromTheme(swapsAggregatorsLight, swapsAggregatorsDark);
+
+	const handleStartSwapping = useCallback(() => {
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		setHasOnboarded(true);
+	}, [setHasOnboarded]);
 
   const handleStartSwapping = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

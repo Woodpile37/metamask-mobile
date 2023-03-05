@@ -38,6 +38,39 @@ function TabBar({ ...props }) {
       {...props}
     />
   );
+	StyleSheet.create({
+		tabUnderlineStyle: {
+			height: 2,
+			backgroundColor: colors.primary.default,
+		},
+		tabStyle: {
+			paddingVertical: 8,
+		},
+		textStyle: {
+			...fontStyles.normal,
+			fontSize: 14,
+		},
+		tabBar: {
+			borderColor: colors.border.muted,
+		},
+	});
+
+function TabBar({ ...props }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<DefaultTabBar
+			underlineStyle={styles.tabUnderlineStyle}
+			activeTextColor={colors.primary.default}
+			inactiveTextColor={colors.text.muted}
+			backgroundColor={colors.background.default}
+			tabStyle={styles.tabStyle}
+			textStyle={styles.textStyle}
+			style={styles.tabBar}
+			{...props}
+		/>
+	);
 }
 
 export default TabBar;

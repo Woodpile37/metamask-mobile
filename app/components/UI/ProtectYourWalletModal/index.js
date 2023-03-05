@@ -74,6 +74,54 @@ const createStyles = (colors) =>
       width: 26,
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			marginTop: 24,
+			marginHorizontal: 24,
+			flex: 1,
+		},
+		title: {
+			...fontStyles.bold,
+			color: colors.text.default,
+			textAlign: 'center',
+			fontSize: 20,
+			flex: 1,
+		},
+		imageWrapper: { flexDirection: 'column', alignItems: 'center', marginBottom: 12, marginTop: 30 },
+		image: {
+			width: scaling.scale(135, { baseModel: 1 }),
+			height: scaling.scale(160, { baseModel: 1 }),
+		},
+		text: {
+			...fontStyles.normal,
+			color: colors.text.default,
+			textAlign: 'center',
+			fontSize: 14,
+			marginBottom: 24,
+		},
+		closeIcon: {
+			padding: 5,
+		},
+		learnMoreText: {
+			textAlign: 'center',
+			...fontStyles.normal,
+			color: colors.primary.default,
+			marginBottom: 14,
+			fontSize: 14,
+		},
+		modalXIcon: {
+			fontSize: 16,
+			color: colors.text.default,
+		},
+		titleWrapper: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		auxCenter: {
+			width: 26,
+		},
+	});
 
 /**
  * View that renders an action modal
@@ -169,6 +217,37 @@ class ProtectYourWalletModal extends PureComponent {
           <View style={styles.imageWrapper}>
             <Image source={protectWalletImage} style={styles.image} />
           </View>
+	render() {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<ActionModal
+				modalVisible={this.props.protectWalletModalVisible}
+				cancelText={strings('protect_wallet_modal.top_button')}
+				confirmText={strings('protect_wallet_modal.bottom_button')}
+				onCancelPress={this.goToBackupFlow}
+				onRequestClose={this.onDismiss}
+				onConfirmPress={this.onDismiss}
+				cancelButtonMode={'sign'}
+				confirmButtonMode={'transparent-blue'}
+				verticalButtons
+			>
+				<View style={styles.wrapper} testID={'protect-wallet-modal'}>
+					<View style={styles.titleWrapper}>
+						<View style={styles.auxCenter} />
+						<Text style={styles.title}>{strings('protect_wallet_modal.title')}</Text>
+						<TouchableOpacity
+							onPress={this.onDismiss}
+							style={styles.closeIcon}
+							hitSlop={{ top: 10, left: 10, bottom: 10, right: 10 }}
+						>
+							<Icon name="times" style={styles.modalXIcon} />
+						</TouchableOpacity>
+					</View>
+					<View style={styles.imageWrapper}>
+						<Image source={protectWalletImage} style={styles.image} />
+					</View>
 
           <Text style={styles.text}>
             {strings('protect_wallet_modal.text')}
@@ -204,3 +283,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ProtectYourWalletModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ProtectYourWalletModal);
