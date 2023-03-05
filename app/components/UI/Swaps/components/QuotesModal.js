@@ -132,6 +132,108 @@ const createStyles = (colors) =>
       opacity: 0,
     },
   });
+	StyleSheet.create({
+		modalView: {
+			backgroundColor: colors.background.default,
+			justifyContent: 'center',
+			alignItems: 'center',
+			marginVertical: 50,
+			borderRadius: 10,
+			shadowColor: importedColors.black,
+			shadowOffset: {
+				width: 0,
+				height: 5,
+			},
+			shadowOpacity: 0.36,
+			shadowRadius: 6.68,
+			elevation: 11,
+		},
+		modal: {
+			margin: 0,
+			width: '100%',
+			padding: 25,
+		},
+		title: {
+			width: '100%',
+			paddingVertical: 15,
+			paddingHorizontal: 20,
+			paddingBottom: 5,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			color: colors.text.default,
+		},
+		titleButton: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		closeIcon: {
+			color: colors.text.default,
+		},
+		backIcon: {
+			color: colors.text.default,
+			marginRight: 16,
+		},
+		detailsIcon: {
+			color: colors.text.default,
+			paddingHorizontal: 10,
+		},
+		body: {
+			width: '100%',
+			paddingVertical: 5,
+		},
+		row: {
+			paddingHorizontal: 20,
+			flexDirection: 'row',
+			paddingVertical: 10,
+		},
+		quoteRow: {
+			borderTopWidth: 1,
+			borderTopColor: colors.border.muted,
+			paddingVertical: 15,
+			alignItems: 'center',
+		},
+		detailsRow: {
+			paddingHorizontal: 20,
+			borderTopWidth: 1,
+			borderTopColor: colors.border.muted,
+			paddingVertical: 15,
+		},
+		selectedQuoteRow: {
+			backgroundColor: colors.primary.muted,
+		},
+		columnAmount: {
+			flex: 3,
+			marginRight: 5,
+		},
+		columnFee: {
+			flex: 3,
+			marginRight: 5,
+		},
+		columnValue: {
+			flex: 3,
+			marginRight: 5,
+		},
+		red: {
+			color: colors.error.default,
+		},
+		bestBadge: {
+			flexDirection: 'row',
+		},
+		bestBadgeWrapper: {
+			paddingVertical: 0,
+			paddingHorizontal: 8,
+			backgroundColor: colors.primary.default,
+			borderRadius: 4,
+		},
+		bestBadgeText: {
+			color: colors.primary.inverse,
+		},
+		transparent: {
+			opacity: 0,
+		},
+	});
 
 if (
   Platform.OS === 'android' &&
@@ -160,6 +262,11 @@ function QuotesModal({
     useState(null);
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	const bestOverallValue = quoteValues?.[quotes[0].aggregator]?.overallValueOfQuote ?? 0;
+	const [displayDetails, setDisplayDetails] = useState(false);
+	const [selectedDetailsQuoteIndex, setSelectedDetailsQuoteIndex] = useState(null);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   // When index/quotes change we get a new selected quote in case it exists
   // (quotes.length can be shorter than selected index)
@@ -260,6 +367,32 @@ function QuotesModal({
           ) : (
             <Title>{strings('swaps.quotes_overview')}</Title>
           )}
+	return (
+		<Modal
+			isVisible={isVisible}
+			onBackdropPress={toggleModal}
+			onBackButtonPress={handleBackButtonPress}
+			onSwipeComplete={toggleModal}
+			swipeDirection="down"
+			propagateSwipe
+			style={styles.modal}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+		>
+			<SafeAreaView style={styles.modalView}>
+				<View style={styles.title}>
+					{displayDetails ? (
+						<TouchableOpacity
+							onPress={toggleDetails}
+							style={styles.titleButton}
+							hitSlop={{ top: 10, left: 20, right: 10, bottom: 10 }}
+						>
+							<IonicIcon name="ios-arrow-back" style={styles.backIcon} size={20} />
+							<Title>{strings('swaps.quote_details')}</Title>
+						</TouchableOpacity>
+					) : (
+						<Title>{strings('swaps.quotes_overview')}</Title>
+					)}
 
           <TouchableOpacity
             onPress={toggleModal}

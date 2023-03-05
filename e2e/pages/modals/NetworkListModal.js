@@ -3,6 +3,9 @@ import {
   NETWORK_SCROLL_ID,
   NETWORK_LIST_MODAL_CONTAINER_ID,
   OTHER_NETWORK_LIST_ID,
+	NETWORK_SCROLL_ID,
+	NETWORK_LIST_MODAL_CONTAINER_ID,
+	OTHER_NETWORK_LIST_ID,
 } from '../../../app/constants/test-ids';
 
 export default class NetworkListModal {

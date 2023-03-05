@@ -42,6 +42,43 @@ const createStyles = (colors) =>
       marginRight: 6,
     },
   });
+	StyleSheet.create({
+		root: {
+			...baseStyles.flexGrow,
+			flexDirection: 'row',
+		},
+		circle: {
+			width: 12,
+			height: 12,
+			borderRadius: 12 / 2,
+			backgroundColor: colors.background.default,
+			opacity: 1,
+			margin: 2,
+			borderWidth: 2,
+			borderColor: colors.border.default,
+			marginRight: 6,
+		},
+		option: {
+			flex: 1,
+		},
+		touchableOption: {
+			flex: 1,
+			flexDirection: 'row',
+		},
+		optionText: {
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		selectedCircle: {
+			width: 12,
+			height: 12,
+			borderRadius: 12 / 2,
+			backgroundColor: colors.primary.default,
+			opacity: 1,
+			margin: 2,
+			marginRight: 6,
+		},
+	});
 
 /**
  * Componets that allows to select clicking two options
@@ -125,6 +162,28 @@ export default class PickComponent extends PureComponent {
       </View>
     );
   };
+	render = () => {
+		const { selectedValue, valueFirst, valueSecond, textFirst, textSecond } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={styles.root}>
+				<View style={styles.option}>
+					<TouchableOpacity onPress={this.pickFirst} style={styles.touchableOption}>
+						<View style={selectedValue === valueFirst ? styles.selectedCircle : styles.circle} />
+						<Text style={styles.optionText}>{textFirst}</Text>
+					</TouchableOpacity>
+				</View>
+				<View style={styles.option}>
+					<TouchableOpacity onPress={this.pickSecond} style={styles.touchableOption}>
+						<View style={selectedValue === valueSecond ? styles.selectedCircle : styles.circle} />
+						<Text style={styles.optionText}>{textSecond}</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+		);
+	};
 }
 
 PickComponent.contextType = ThemeContext;

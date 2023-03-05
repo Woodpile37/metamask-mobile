@@ -107,6 +107,81 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+	StyleSheet.create({
+		root: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 20,
+			borderTopRightRadius: 20,
+			minHeight: 200,
+			maxHeight: '95%',
+			paddingTop: 24,
+			paddingBottom: Device.isIphoneX() ? 32 : 24,
+		},
+		wrapper: {
+			paddingHorizontal: 24,
+		},
+		customGasHeader: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			width: '100%',
+			paddingBottom: 20,
+		},
+		headerContainer: {
+			alignItems: 'center',
+			marginBottom: 22,
+		},
+		headerText: {
+			fontSize: 48,
+		},
+		headerTitle: {
+			flexDirection: 'row',
+		},
+		headerTitleSide: {
+			flex: 1,
+		},
+		labelTextContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		hitSlop: {
+			top: 10,
+			left: 10,
+			bottom: 10,
+			right: 10,
+		},
+		labelInfo: {
+			color: colors.text.muted,
+		},
+		advancedOptionsContainer: {
+			marginTop: 25,
+			marginBottom: 30,
+		},
+		advancedOptionsInputsContainer: {
+			marginTop: 14,
+		},
+		rangeInputContainer: {
+			marginBottom: 20,
+		},
+		advancedOptionsButton: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		advancedOptionsIcon: {
+			paddingTop: 1,
+			marginLeft: 5,
+		},
+		warningTextContainer: {
+			paddingLeft: 4,
+			lineHeight: 20,
+			textAlign: 'center',
+		},
+		warningText: {
+			lineHeight: 20,
+			color: colors.text.default,
+		},
+	});
 
 const EditGasFeeLegacy = ({
   selected,
@@ -142,6 +217,13 @@ const EditGasFeeLegacy = ({
   const [gasPriceError, setGasPriceError] = useState();
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	const onlyAdvanced = gasEstimateType !== GAS_ESTIMATE_TYPES.LEGACY;
+	const [showRangeInfoModal, setShowRangeInfoModal] = useState(false);
+	const [showAdvancedOptions, setShowAdvancedOptions] = useState(!selected || onlyAdvanced);
+	const [selectedOption, setSelectedOption] = useState(selected);
+	const [gasPriceError, setGasPriceError] = useState();
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const getAnalyticsParams = useCallback(() => {
     try {
@@ -331,6 +413,55 @@ const EditGasFeeLegacy = ({
 
     return error;
   }, [error, styles, colors]);
+	const renderWarning = useMemo(() => {
+		if (!warning) return null;
+		if (typeof warning === 'string')
+			return (
+				<Alert
+					small
+					type={AlertType.Warning}
+					renderIcon={() => (
+						<MaterialCommunityIcon name="information" size={20} color={colors.warning.default} />
+					)}
+					style={styles.warningContainer}
+				>
+					{() => (
+						<View style={styles.warningTextContainer}>
+							<Text black style={styles.warningText}>
+								{warning}
+							</Text>
+						</View>
+					)}
+				</Alert>
+			);
+
+		return warning;
+	}, [warning, styles, colors]);
+
+	const renderError = useMemo(() => {
+		if (!error) return null;
+		if (typeof error === 'string')
+			return (
+				<Alert
+					small
+					type={AlertType.Error}
+					renderIcon={() => (
+						<MaterialCommunityIcon name="information" size={20} color={colors.error.default} />
+					)}
+					style={styles.warningContainer}
+				>
+					{() => (
+						<View style={styles.warningTextContainer}>
+							<Text red style={styles.warningText}>
+								{error}
+							</Text>
+						</View>
+					)}
+				</Alert>
+			);
+
+		return error;
+	}, [error, styles, colors]);
 
   const isMainnet = isMainnetByChainId(chainId);
   const nativeCurrencySelected = primaryCurrency === 'ETH' || !isMainnet;
@@ -431,6 +562,80 @@ const EditGasFeeLegacy = ({
                             <Text black bold noMargin>
                               {strings('edit_gas_fee_eip1559.gas_limit')}{' '}
                             </Text>
+	return (
+		<View style={styles.root}>
+			<ScrollView style={styles.wrapper}>
+				<TouchableWithoutFeedback>
+					<View>
+						<View>
+							<View style={styles.customGasHeader}>
+								<TouchableOpacity onPress={onCancel}>
+									<Icon name={'ios-arrow-back'} size={24} color={colors.text.default} />
+								</TouchableOpacity>
+								<Text bold black>
+									{strings('transaction.edit_network_fee')}
+								</Text>
+								<Icon name={'ios-arrow-back'} size={24} color={colors.background.default} />
+							</View>
+						</View>
+						{renderWarning}
+						{renderError}
+						<FadeAnimationView
+							valueToWatch={valueToWatch}
+							animateOnChange={animateOnChange}
+							onAnimationStart={onUpdatingValuesStart}
+							onAnimationEnd={onUpdatingValuesEnd}
+						>
+							<View style={styles.headerContainer}>
+								<View style={styles.headerTitle}>
+									<View style={styles.headerTitleSide}>
+										<Text right black style={styles.headerText}>
+											~
+										</Text>
+									</View>
+									<Text black style={styles.headerText}>
+										{gasFeePrimary}
+									</Text>
+									<View style={styles.headerTitleSide} />
+								</View>
+								<Text big black>
+									<Text bold black>
+										{gasFeeSecondary}
+									</Text>
+								</Text>
+							</View>
+							{!onlyAdvanced && (
+								<View>
+									<HorizontalSelector
+										selected={selectedOption}
+										onPress={selectOption}
+										options={renderOptions}
+									/>
+								</View>
+							)}
+							<View style={styles.advancedOptionsContainer}>
+								{!onlyAdvanced && (
+									<TouchableOpacity
+										onPress={toggleAdvancedOptions}
+										style={styles.advancedOptionsButton}
+									>
+										<Text noMargin link bold>
+											{strings('edit_gas_fee_eip1559.advanced_options')}
+										</Text>
+										<Text noMargin link bold style={styles.advancedOptionsIcon}>
+											<Icon name={`ios-arrow-${showAdvancedOptions ? 'up' : 'down'}`} />
+										</Text>
+									</TouchableOpacity>
+								)}
+								{showAdvancedOptions && (
+									<View style={styles.advancedOptionsInputsContainer}>
+										<View style={styles.rangeInputContainer}>
+											<RangeInput
+												leftLabelComponent={
+													<View style={styles.labelTextContainer}>
+														<Text black bold noMargin>
+															{strings('edit_gas_fee_eip1559.gas_limit')}{' '}
+														</Text>
 
                             <TouchableOpacity
                               hitSlop={styles.hitSlop}

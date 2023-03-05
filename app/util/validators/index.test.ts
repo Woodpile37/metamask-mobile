@@ -38,4 +38,16 @@ describe('parseSeedPhrase', () => {
       VALID_12,
     );
   });
+	it('Should handle leading spaces', () => {
+		expect(parseSeedPhrase(`   ${VALID_12}`)).toEqual(VALID_12);
+	});
+	it('Should handle trailing spaces', () => {
+		expect(parseSeedPhrase(`${VALID_12}   `)).toEqual(VALID_12);
+	});
+	it('Should handle additional spaces', () => {
+		expect(parseSeedPhrase(`${VALID_12.split(' ').join('   ')}   `)).toEqual(VALID_12);
+	});
+	it('Should handle uppercase', () => {
+		expect(parseSeedPhrase(`   ${String(VALID_12).toUpperCase()}`)).toEqual(VALID_12);
+	});
 });

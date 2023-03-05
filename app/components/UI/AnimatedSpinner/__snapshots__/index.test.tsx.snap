@@ -5,6 +5,7 @@ exports[`AnimatedSpinner should render correctly 1`] = `
   style={
     Object {
       "borderColor": "#F2F4F6",
+      "borderColor": "#037DD6",
       "borderRadius": 64,
       "borderWidth": 3.5,
       "height": 36,

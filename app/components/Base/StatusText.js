@@ -36,6 +36,14 @@ export const FailedText = (props) => {
       {...props}
     />
   );
+export const ConfirmedText = (props) => <Text bold green style={styles.status} {...props} />;
+export const PendingText = (props) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	return <Text bold style={[styles.status, { color: colors.secondary.default }]} {...props} />;
+};
+export const FailedText = (props) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	return <Text bold style={[styles.status, { color: colors.error.default }]} {...props} />;
 };
 
 function StatusText({ status, context, ...props }) {

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, InteractionManager } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
@@ -98,6 +99,88 @@ const WatchAssetRequest = ({
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
 
+const createStyles = (colors) =>
+	StyleSheet.create({
+		root: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 10,
+			borderTopRightRadius: 10,
+			paddingBottom: Device.isIphoneX() ? 20 : 0,
+			minHeight: Device.isIos() ? '50%' : '60%',
+		},
+		title: {
+			textAlign: 'center',
+			fontSize: 18,
+			marginVertical: 12,
+			marginHorizontal: 20,
+			color: colors.text.default,
+			...fontStyles.bold,
+		},
+		text: {
+			...fontStyles.normal,
+			fontSize: 16,
+			paddingTop: 25,
+			paddingHorizontal: 10,
+			color: colors.text.default,
+		},
+		tokenInformation: {
+			flexDirection: 'row',
+			marginHorizontal: 40,
+			flex: 1,
+			alignItems: 'flex-start',
+			marginVertical: 30,
+		},
+		tokenInfo: {
+			flex: 1,
+			flexDirection: 'column',
+		},
+		infoTitleWrapper: {
+			alignItems: 'center',
+		},
+		infoTitle: {
+			...fontStyles.bold,
+			color: colors.text.default,
+		},
+		infoBalance: {
+			alignItems: 'center',
+		},
+		infoToken: {
+			alignItems: 'center',
+		},
+		token: {
+			flexDirection: 'row',
+		},
+		identicon: {
+			paddingVertical: 10,
+		},
+		signText: {
+			...fontStyles.normal,
+			fontSize: 16,
+			color: colors.text.default,
+		},
+		addMessage: {
+			flexDirection: 'row',
+			margin: 20,
+		},
+		children: {
+			alignItems: 'center',
+			borderTopColor: colors.border.muted,
+			borderTopWidth: 1,
+		},
+	});
+
+const WatchAssetRequest = ({ suggestedAssetMeta, currentPageInformation, selectedAddress, onCancel, onConfirm }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	useEffect(
+		() => async () => {
+			const { TokensController } = Engine.context;
+			typeof suggestedAssetMeta !== undefined && (await TokensController.rejectWatchAsset(suggestedAssetMeta.id));
+		},
+		[suggestedAssetMeta]
+	);
+
   useEffect(
     () => async () => {
       const { TokensController } = Engine.context;
@@ -186,6 +269,15 @@ const WatchAssetRequest = ({
                 </View>
               </View>
             </View>
+							<View style={styles.infoToken}>
+								<View style={styles.token}>
+									<View style={styles.identicon}>
+										<TokenImage asset={asset} />
+									</View>
+									<Text style={styles.text}>{asset.symbol}</Text>
+								</View>
+							</View>
+						</View>
 
             <View style={styles.tokenInfo}>
               <View style={styles.infoTitleWrapper}>
