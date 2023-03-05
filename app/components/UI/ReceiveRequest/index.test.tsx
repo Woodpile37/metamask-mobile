@@ -18,6 +18,18 @@ const initialState = {
   user: {
     seedphraseBackedUp: true,
   },
+	engine: {
+		backgroundState: {
+			PreferencesController: { selectedAddress: '0x' },
+			NetworkController: { network: '1', provider: { ticker: 'ETH' } },
+		},
+	},
+	modals: {
+		receiveAsset: {},
+	},
+	user: {
+		seedphraseBackedUp: true,
+	},
 };
 const store = mockStore(initialState);
 

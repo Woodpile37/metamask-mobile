@@ -17,6 +17,18 @@ const createStyles = (colors) =>
       borderRadius: 4,
     },
   });
+	StyleSheet.create({
+		button: {
+			flex: 1,
+			alignItems: 'center',
+			justifyContent: 'center',
+			backgroundColor: colors.primary.default,
+			paddingVertical: 10,
+			paddingHorizontal: 15,
+			height: 40,
+			borderRadius: 4,
+		},
+	});
 
 /**
  * UI component that wraps GenericButton
@@ -31,6 +43,14 @@ const Button = (props) => {
       {props.children}
     </GenericButton>
   );
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<GenericButton onPress={props.onPress} style={[styles.button, props.style]}>
+			{props.children}
+		</GenericButton>
+	);
 };
 
 Button.propTypes = {

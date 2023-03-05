@@ -21,6 +21,20 @@ const initialState = {
   networkOnboarded: {
     networkOnboardedState: [{ network: MAINNET, onboarded: true }],
   },
+	privacy: {
+		approvedHosts: {},
+	},
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: { type: MAINNET, rpcTarget: '' },
+			},
+			PreferencesController: { useStaticTokenList: true, frequentRpcList: [] },
+		},
+	},
+	networkOnboarded: {
+		networkOnboardedState: [{ network: MAINNET, onboarded: true }],
+	},
 };
 
 const store = mockStore(initialState);
@@ -40,4 +54,18 @@ describe('NetworkInfo', () => {
     );
     expect(wrapper.dive()).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<Provider store={store}>
+				<NetworkInfo
+					type={''}
+					onClose={function (): void {
+						throw new Error('Function not implemented.');
+					}}
+					ticker={''}
+				/>
+			</Provider>
+		);
+		expect(wrapper.dive()).toMatchSnapshot();
+	});
 });

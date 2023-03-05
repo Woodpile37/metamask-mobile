@@ -15,6 +15,15 @@ import {
   TOKEN_METHOD_TRANSFER,
   CONTRACT_METHOD_DEPLOY,
   TOKEN_METHOD_TRANSFER_FROM,
+
+import {
+	generateTransferData,
+	decodeTransferData,
+	getMethodData,
+	getActionKey,
+	TOKEN_METHOD_TRANSFER,
+	CONTRACT_METHOD_DEPLOY,
+	TOKEN_METHOD_TRANSFER_FROM,
 } from '.';
 import Engine from '../../core/Engine';
 import { strings } from '../../../locales/i18n';
@@ -26,6 +35,9 @@ ENGINE_MOCK.context = {
   TransactionController: {
     ethQuery: null,
   },
+	TransactionController: {
+		ethQuery: null,
+	},
 };
 
 const MOCK_ADDRESS1 = '0x0001';
@@ -44,6 +56,12 @@ const spyOnQueryMethod = (returnValue: string | undefined) => {
         resolve(returnValue);
       }),
   );
+	jest.spyOn(util, 'query').mockImplementation(
+		() =>
+			new Promise<string | undefined>((resolve) => {
+				resolve(returnValue);
+			})
+	);
 };
 
 describe('Transactions utils :: generateTransferData', () => {
@@ -378,4 +396,114 @@ describe('Transactions utils :: minimumTokenAllowance', () => {
       minimumTokenAllowance(-1);
     }).toThrow(NEGATIVE_TOKEN_DECIMALS);
   });
+	beforeEach(() => {
+		jest.spyOn(swapsUtils, 'getSwapsContractAddress').mockImplementation(() => 'SWAPS_CONTRACT_ADDRESS');
+	});
+
+	it('should be "Sent Yourself Ether"', async () => {
+		spyOnQueryMethod(undefined);
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS1,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.self_sent_ether'));
+	});
+
+	it('should be labeled as "Sent Yourself UNI"', async () => {
+		spyOnQueryMethod(undefined);
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS1,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, UNI_TICKER, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.self_sent_unit', { unit: UNI_TICKER }));
+	});
+
+	it('should be labeled as "Sent Ether"', async () => {
+		spyOnQueryMethod(undefined);
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS2,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.sent_ether'));
+	});
+
+	it('should be labeled as "Sent UNI"', async () => {
+		spyOnQueryMethod(undefined);
+
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS2,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, UNI_TICKER, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.sent_unit', { unit: UNI_TICKER }));
+	});
+
+	it('should be labeled as "Received Ether"', async () => {
+		spyOnQueryMethod(undefined);
+
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS2,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS2, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.received_ether'));
+	});
+
+	it('should be labeled as "Received UNI"', async () => {
+		spyOnQueryMethod(undefined);
+		const tx = {
+			transaction: {
+				from: MOCK_ADDRESS1,
+				to: MOCK_ADDRESS2,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS2, UNI_TICKER, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.received_unit', { unit: UNI_TICKER }));
+	});
+
+	it('should be labeled as "Smart Contract Interaction" if the receiver is a smart contract', async () => {
+		spyOnQueryMethod(UNI_ADDRESS);
+		const tx = {
+			transaction: {
+				to: UNI_ADDRESS,
+			},
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.smart_contract_interaction'));
+	});
+
+	it('should be labeled as "Smart Contract Interaction" if the tx is to a smart contract', async () => {
+		spyOnQueryMethod(UNI_ADDRESS);
+		const tx = {
+			transaction: {
+				to: UNI_ADDRESS,
+			},
+			toSmartContract: true,
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.smart_contract_interaction'));
+	});
+
+	it('should be labeled as "Contract Deployment" if the tx has no receiver', async () => {
+		spyOnQueryMethod(UNI_ADDRESS);
+		const tx = {
+			transaction: {},
+			toSmartContract: true,
+		};
+		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
+		expect(result).toBe(strings('transactions.contract_deploy'));
+	});
 });

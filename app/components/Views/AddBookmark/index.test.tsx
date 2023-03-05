@@ -12,4 +12,8 @@ describe('AddBookmark', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(<AddBookmark navigation={{ setOptions: () => null }} route={{ params: {} }} />);
+		expect(wrapper).toMatchSnapshot();
+	});
 });

@@ -19,6 +19,7 @@ import {
   baseStyles,
   colors as importedColors,
 } from '../../../../styles/common';
+import { fontStyles, baseStyles, colors as importedColors } from '../../../../styles/common';
 import { getNavigationOptionsTitle } from '../../../UI/Navbar';
 import {
   setShowCustomNonce,
@@ -114,6 +115,75 @@ const createStyles = (colors) =>
       justifyContent: 'center',
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			backgroundColor: colors.background.default,
+			flex: 1,
+			padding: 24,
+			paddingBottom: 48,
+		},
+		title: {
+			...fontStyles.normal,
+			color: colors.text.default,
+			fontSize: 20,
+			lineHeight: 20,
+			paddingTop: 4,
+			marginTop: -4,
+		},
+		desc: {
+			...fontStyles.normal,
+			color: colors.text.alternative,
+			fontSize: 14,
+			lineHeight: 20,
+			marginTop: 12,
+		},
+		marginTop: {
+			marginTop: 18,
+		},
+		switch: {
+			alignSelf: 'flex-start',
+		},
+		setting: {
+			marginTop: 50,
+		},
+		firstSetting: {
+			marginTop: 0,
+		},
+		modalView: {
+			alignItems: 'center',
+			flex: 1,
+			flexDirection: 'column',
+			justifyContent: 'center',
+			padding: 20,
+		},
+		modalText: {
+			...fontStyles.normal,
+			fontSize: 16,
+			textAlign: 'center',
+			color: colors.text.default,
+		},
+		modalTitle: {
+			...fontStyles.bold,
+			fontSize: 24,
+			textAlign: 'center',
+			marginBottom: 20,
+			color: colors.text.default,
+		},
+		picker: {
+			borderColor: colors.border.default,
+			borderRadius: 5,
+			borderWidth: 2,
+			marginTop: 16,
+		},
+		inner: {
+			paddingBottom: 48,
+		},
+		ipfsGatewayLoadingWrapper: {
+			height: 37,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+	});
 
 /**
  * Main view for app configurations
@@ -212,6 +282,39 @@ class AdvancedSettings extends PureComponent {
   componentWillUnmount = () => {
     this.mounted = false;
   };
+	state = {
+		resetModalVisible: false,
+		inputWidth: Device.isAndroid() ? '99%' : undefined,
+		onlineIpfsGateways: [],
+		gotAvailableGateways: false,
+	};
+
+	updateNavBar = () => {
+		const { navigation } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		navigation.setOptions(
+			getNavigationOptionsTitle(strings('app_settings.advanced_title'), navigation, false, colors)
+		);
+	};
+
+	componentDidMount = async () => {
+		this.updateNavBar();
+		await this.handleAvailableIpfsGateways();
+		this.mounted = true;
+		// Workaround https://github.com/facebook/react-native/issues/9958
+		this.state.inputWidth &&
+			setTimeout(() => {
+				this.mounted && this.setState({ inputWidth: '100%' });
+			}, 100);
+	};
+
+	componentDidUpdate = () => {
+		this.updateNavBar();
+	};
+
+	componentWillUnmount = () => {
+		this.mounted = false;
+	};
 
   handleAvailableIpfsGateways = async () => {
     const ipfsGatewaysPromises = ipfsGateways.map(async (ipfsGateway) => {
@@ -274,6 +377,14 @@ class AdvancedSettings extends PureComponent {
     delete fullState.engine.backgroundState.CollectibleDetectionController;
     delete fullState.engine.backgroundState.PhishingController;
     delete fullState.engine.backgroundState.AssetsContractController;
+		// Remove stuff we don't want to sync
+		delete fullState.engine.backgroundState.CollectiblesController;
+		delete fullState.engine.backgroundState.TokensController;
+		delete fullState.engine.backgroundState.AssetsContractController;
+		delete fullState.engine.backgroundState.TokenDetectionController;
+		delete fullState.engine.backgroundState.CollectibleDetectionController;
+		delete fullState.engine.backgroundState.PhishingController;
+		delete fullState.engine.backgroundState.AssetsContractController;
 
     // Remove encrypted vault from logs
     delete fullState.engine.backgroundState.KeyringController.vault;
@@ -480,6 +591,107 @@ class AdvancedSettings extends PureComponent {
       </SafeAreaView>
     );
   };
+	render = () => {
+		const { showHexData, showCustomNonce, setShowHexData, setShowCustomNonce, ipfsGateway } = this.props;
+		const { resetModalVisible, onlineIpfsGateways } = this.state;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<SafeAreaView style={baseStyles.flexGrow}>
+				<KeyboardAwareScrollView style={styles.wrapper} resetScrollToCoords={{ x: 0, y: 0 }}>
+					<View style={styles.inner}>
+						<ActionModal
+							modalVisible={resetModalVisible}
+							confirmText={strings('app_settings.reset_account_confirm_button')}
+							cancelText={strings('app_settings.reset_account_cancel_button')}
+							onCancelPress={this.cancelResetAccount}
+							onRequestClose={this.cancelResetAccount}
+							onConfirmPress={this.resetAccount}
+						>
+							<View style={styles.modalView}>
+								<Text style={styles.modalTitle}>
+									{strings('app_settings.reset_account_modal_title')}
+								</Text>
+								<Text style={styles.modalText}>
+									{strings('app_settings.reset_account_modal_message')}
+								</Text>
+							</View>
+						</ActionModal>
+						<View style={[styles.setting, styles.firstSetting]}>
+							<Text style={styles.title}>{strings('app_settings.reset_account')}</Text>
+							<Text style={styles.desc}>{strings('app_settings.reset_desc')}</Text>
+							<StyledButton
+								type="info"
+								onPress={this.displayResetAccountModal}
+								containerStyle={styles.marginTop}
+							>
+								{strings('app_settings.reset_account_button')}
+							</StyledButton>
+						</View>
+						<View style={[styles.setting]}>
+							<Text style={styles.title}>{strings('app_settings.ipfs_gateway')}</Text>
+							<Text style={styles.desc}>{strings('app_settings.ipfs_gateway_desc')}</Text>
+							<View style={styles.picker}>
+								{this.state.gotAvailableGateways ? (
+									<SelectComponent
+										selectedValue={ipfsGateway}
+										defaultValue={strings('app_settings.ipfs_gateway_down')}
+										onValueChange={this.setIpfsGateway}
+										label={strings('app_settings.ipfs_gateway')}
+										options={onlineIpfsGateways}
+									/>
+								) : (
+									<View style={styles.ipfsGatewayLoadingWrapper}>
+										<ActivityIndicator size="small" />
+									</View>
+								)}
+							</View>
+						</View>
+						<View style={styles.setting}>
+							<Text style={styles.title}>{strings('app_settings.show_hex_data')}</Text>
+							<Text style={styles.desc}>{strings('app_settings.hex_desc')}</Text>
+							<View style={styles.marginTop}>
+								<Switch
+									value={showHexData}
+									onValueChange={setShowHexData}
+									trackColor={{ true: colors.primary.default, false: colors.border.muted }}
+									thumbColor={importedColors.white}
+									style={styles.switch}
+									ios_backgroundColor={colors.border.muted}
+								/>
+							</View>
+						</View>
+						<View style={styles.setting}>
+							<Text style={styles.title}>{strings('app_settings.show_custom_nonce')}</Text>
+							<Text style={styles.desc}>{strings('app_settings.custom_nonce_desc')}</Text>
+							<View style={styles.marginTop}>
+								<Switch
+									value={showCustomNonce}
+									onValueChange={setShowCustomNonce}
+									trackColor={{ true: colors.primary.default, false: colors.border.muted }}
+									thumbColor={importedColors.white}
+									style={styles.switch}
+									ios_backgroundColor={colors.border.muted}
+								/>
+							</View>
+						</View>
+						<View style={styles.setting}>
+							<Text style={styles.title}>{strings('app_settings.state_logs')}</Text>
+							<Text style={styles.desc}>{strings('app_settings.state_logs_desc')}</Text>
+							<StyledButton
+								type="info"
+								onPress={this.downloadStateLogs}
+								containerStyle={styles.marginTop}
+							>
+								{strings('app_settings.state_logs_button')}
+							</StyledButton>
+						</View>
+					</View>
+				</KeyboardAwareScrollView>
+			</SafeAreaView>
+		);
+	};
 }
 
 AdvancedSettings.contextType = ThemeContext;

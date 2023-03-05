@@ -23,4 +23,18 @@ export default class TransactionConfirmationView {
   static async isNetworkNameVisible(text) {
     await TestHelpers.checkIfElementWithTextIsVisible(text);
   }
+	static async tapCancelButton() {
+		await TestHelpers.tapByText('Cancel');
+	}
+
+	static async isTransactionTotalCorrect(amount) {
+		await TestHelpers.checkIfElementHasString(TRANSACTION_AMOUNT_ID, amount);
+	}
+
+	static async isVisible() {
+		await TestHelpers.checkIfVisible(TRANSACTION_VIEW_CONTAINER_ID);
+	}
+	static async isNetworkNameVisible(text) {
+		await TestHelpers.checkIfElementWithTextIsVisible(text);
+	}
 }

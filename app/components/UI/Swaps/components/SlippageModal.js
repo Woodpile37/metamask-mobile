@@ -41,6 +41,56 @@ const createStyles = (colors) =>
 function SlippageModal({ isVisible, dismiss, onChange, slippage }) {
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	StyleSheet.create({
+		modal: {
+			margin: 0,
+			justifyContent: 'flex-end',
+		},
+		modalView: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 10,
+			borderTopRightRadius: 10,
+		},
+		content: {
+			marginVertical: 14,
+			paddingHorizontal: 30,
+		},
+		slippageWrapper: {
+			marginVertical: 10,
+		},
+		warningTextWrapper: {
+			position: 'absolute',
+			width: '85%',
+			bottom: 30,
+			left: 10,
+		},
+		warningText: {
+			color: colors.error.default,
+		},
+	});
+
+function SlippageModal({ isVisible, dismiss, onChange, slippage }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<Modal
+			isVisible={isVisible}
+			onBackdropPress={dismiss}
+			onBackButtonPress={dismiss}
+			onSwipeComplete={dismiss}
+			swipeDirection="down"
+			propagateSwipe
+			style={styles.modal}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+		>
+			<SafeAreaView style={styles.modalView}>
+				<ModalDragger />
+				<View style={styles.content}>
+					<Text bold centered primary>
+						{strings('swaps.max_slippage')}
+					</Text>
 
   return (
     <Modal
