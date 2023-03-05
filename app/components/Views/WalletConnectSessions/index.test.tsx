@@ -7,6 +7,8 @@ describe('WalletConnectSessions', () => {
     const wrapper = shallow(
       <WalletConnectSessions navigation={{ setOptions: () => null }} />,
     );
+	it('should render correctly', () => {
+		const wrapper = shallow(<WalletConnectSessions navigation={{ setOptions: () => null }} />);
 
     expect(wrapper).toMatchSnapshot();
   });

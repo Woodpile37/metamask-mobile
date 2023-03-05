@@ -13,6 +13,13 @@ const initialState = {
       },
     },
   },
+	engine: {
+		backgroundState: {
+			PreferencesController: {
+				selectedAddress: '0x0',
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 
@@ -30,4 +37,15 @@ describe('TypedSign', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<Provider store={store}>
+				<TypedSign
+					currentPageInformation={{ title: 'title', url: 'url' }}
+					messageParams={{ data: { type: 'string', name: 'Message', value: 'Hi, Alice!' } }}
+				/>
+			</Provider>
+		);
+		expect(wrapper).toMatchSnapshot();
+	});
 });

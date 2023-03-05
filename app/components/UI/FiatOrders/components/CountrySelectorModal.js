@@ -82,6 +82,65 @@ function CountrySelectorModal({ isVisible, dismiss, countries, onItemPress }) {
   const [searchString, setSearchString] = useState('');
   const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	StyleSheet.create({
+		modal: {
+			margin: 0,
+			justifyContent: 'flex-end',
+		},
+		modalView: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 10,
+			borderTopRightRadius: 10,
+		},
+		inputWrapper: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginHorizontal: 30,
+			marginVertical: 10,
+			paddingVertical: Device.isAndroid() ? 0 : 10,
+			paddingHorizontal: 5,
+			borderRadius: 5,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+		},
+		searchIcon: {
+			marginHorizontal: 8,
+			color: colors.icon.muted,
+		},
+		input: {
+			...fontStyles.normal,
+			flex: 1,
+			color: colors.text.default,
+		},
+		modalTitle: {
+			marginTop: Device.isIphone5() ? 10 : 15,
+			marginBottom: Device.isIphone5() ? 5 : 5,
+			marginHorizontal: 36,
+		},
+		resultsView: {
+			height: Device.isSmallDevice() ? 130 : 250,
+			marginTop: 10,
+		},
+		resultRow: {
+			borderTopWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+			paddingHorizontal: 20,
+		},
+		flag: {
+			fontSize: 24,
+		},
+		emptyList: {
+			marginVertical: 10,
+			marginHorizontal: 30,
+		},
+	});
+
+function CountrySelectorModal({ isVisible, dismiss, countries, onItemPress }) {
+	const searchInput = useRef(null);
+	const list = useRef();
+	const [searchString, setSearchString] = useState('');
+	const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const countriesFuse = useMemo(
     () =>
@@ -193,6 +252,84 @@ function CountrySelectorModal({ isVisible, dismiss, countries, onItemPress }) {
       </SafeAreaView>
     </Modal>
   );
+	const renderItem = useCallback(
+		({ item }) => (
+			<TouchableOpacity style={styles.resultRow} onPress={() => onItemPress(item.code)}>
+				<ListItem>
+					<ListItem.Content>
+						<ListItem.Icon>
+							<Text style={styles.flag}>{item.label}</Text>
+						</ListItem.Icon>
+						<ListItem.Body>
+							<ListItem.Title>{item.name}</ListItem.Title>
+						</ListItem.Body>
+					</ListItem.Content>
+				</ListItem>
+			</TouchableOpacity>
+		),
+		[onItemPress, styles]
+	);
+
+	const renderEmptyList = useMemo(
+		() => (
+			<View style={styles.emptyList}>
+				<Text>{strings('fiat_on_ramp.no_countries_result', { searchString })}</Text>
+			</View>
+		),
+		[searchString, styles]
+	);
+
+	return (
+		<Modal
+			isVisible={isVisible}
+			onBackdropPress={dismiss}
+			onBackButtonPress={dismiss}
+			onSwipeComplete={dismiss}
+			swipeDirection="down"
+			propagateSwipe
+			avoidKeyboard
+			onModalHide={() => setSearchString('')}
+			style={styles.modal}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+		>
+			<SafeAreaView style={styles.modalView}>
+				<ModalDragger />
+				<View style={styles.modalTitle}>
+					<Text bold centered primary>
+						{strings('fiat_on_ramp.supported_countries')}
+					</Text>
+					<Text centered small>
+						{strings('fiat_on_ramp.select_card_country')}
+					</Text>
+				</View>
+				<TouchableWithoutFeedback onPress={handleSearchPress}>
+					<View style={styles.inputWrapper}>
+						<Icon name="ios-search" size={20} style={styles.searchIcon} />
+						<TextInput
+							ref={searchInput}
+							style={styles.input}
+							placeholder={strings('fiat_on_ramp.search_country')}
+							placeholderTextColor={colors.text.muted}
+							value={searchString}
+							onChangeText={handleSearchTextChange}
+							keyboardAppearance={themeAppearance}
+						/>
+					</View>
+				</TouchableWithoutFeedback>
+				<FlatList
+					ref={list}
+					style={styles.resultsView}
+					keyboardDismissMode="none"
+					keyboardShouldPersistTaps="always"
+					data={countriesSearchResults}
+					renderItem={renderItem}
+					keyExtractor={(item) => item.code}
+					ListEmptyComponent={renderEmptyList}
+				/>
+			</SafeAreaView>
+		</Modal>
+	);
 }
 
 CountrySelectorModal.propTypes = {

@@ -14,4 +14,12 @@ describe('EnterPasswordSimple', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<NavigationContainer>
+				<EnterPasswordSimple route={{ params: {} }} />
+			</NavigationContainer>
+		);
+		expect(wrapper).toMatchSnapshot();
+	});
 });

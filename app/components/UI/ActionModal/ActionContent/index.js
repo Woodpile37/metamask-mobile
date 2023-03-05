@@ -40,6 +40,40 @@ const createStyles = (colors) =>
       flex: 1,
     },
   });
+	StyleSheet.create({
+		viewWrapper: {
+			flexDirection: 'column',
+			justifyContent: 'center',
+			alignItems: 'center',
+			marginHorizontal: 24,
+		},
+		viewContainer: {
+			width: '100%',
+			backgroundColor: colors.background.default,
+			borderRadius: 10,
+		},
+		actionHorizontalContainer: {
+			flexDirection: 'row',
+			padding: 16,
+			borderTopWidth: 1,
+			borderTopColor: colors.border.muted,
+		},
+		actionVerticalContainer: {
+			flexDirection: 'column',
+			paddingHorizontal: 16,
+			paddingVertical: 8,
+		},
+		childrenContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		button: {
+			margin: 8,
+		},
+		buttonHorizontal: {
+			flex: 1,
+		},
+	});
 
 /**
  * View that renders the content of an action modal
@@ -115,6 +149,45 @@ export default function ActionContent({
       </View>
     </View>
   );
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View style={[styles.viewWrapper, viewWrapperStyle]}>
+			<View style={[styles.viewContainer, viewContainerStyle]}>
+				<View style={[styles.childrenContainer, childrenContainerStyle]}>{children}</View>
+				<View
+					style={[
+						verticalButtons ? styles.actionVerticalContainer : styles.actionHorizontalContainer,
+						actionContainerStyle,
+					]}
+				>
+					{displayCancelButton && (
+						<StyledButton
+							disabled={cancelButtonDisabled}
+							testID={cancelTestID}
+							type={cancelButtonMode}
+							onPress={onCancelPress}
+							containerStyle={[styles.button, !verticalButtons && styles.buttonHorizontal]}
+						>
+							{cancelText}
+						</StyledButton>
+					)}
+					{displayConfirmButton && (
+						<StyledButton
+							testID={confirmTestID}
+							type={confirmButtonMode}
+							onPress={onConfirmPress}
+							containerStyle={[styles.button, !verticalButtons && styles.buttonHorizontal]}
+							disabled={confirmDisabled}
+						>
+							{confirmText}
+						</StyledButton>
+					)}
+				</View>
+			</View>
+		</View>
+	);
 }
 
 ActionContent.defaultProps = {

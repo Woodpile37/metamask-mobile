@@ -47,6 +47,38 @@ const createStyles = (colors) =>
       flexDirection: 'row',
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			flex: 1,
+			paddingHorizontal: 20,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderBottomColor: colors.border.muted,
+			alignContent: 'center',
+			alignItems: 'center',
+			paddingBottom: 30,
+		},
+		assetLogo: {
+			marginTop: 20,
+		},
+		information: {
+			flex: 1,
+			flexDirection: 'row',
+			marginTop: 10,
+			marginBottom: 20,
+		},
+		name: {
+			fontSize: 30,
+			textAlign: 'center',
+			color: colors.text.default,
+			...fontStyles.normal,
+		},
+		actions: {
+			width: Device.isSmallDevice() ? '65%' : '50%',
+			justifyContent: 'space-around',
+			alignItems: 'flex-start',
+			flexDirection: 'row',
+		},
+	});
 
 /**
  * View that displays a specific collectible contract
@@ -128,6 +160,26 @@ class CollectibleContractOverview extends PureComponent {
             {ownerOf} {name}
           </Text>
         </View>
+	render() {
+		const {
+			collectibleContract: { name, address },
+			ownerOf,
+		} = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+		const lowerAddress = address.toLowerCase();
+		const leftActionButtonText =
+			lowerAddress in collectiblesTransferInformation
+				? collectiblesTransferInformation[lowerAddress].tradable && strings('asset_overview.send_button')
+				: strings('asset_overview.send_button');
+		return (
+			<View style={styles.wrapper} testID={'collectible-overview-screen'}>
+				<View style={styles.assetLogo}>{this.renderLogo()}</View>
+				<View style={styles.information}>
+					<Text style={styles.name} testID={'collectible-name'}>
+						{ownerOf} {name}
+					</Text>
+				</View>
 
         <View style={styles.actions}>
           <AssetActionButton
@@ -154,6 +206,7 @@ class CollectibleContractOverview extends PureComponent {
 
 const mapStateToProps = (state) => ({
   collectibles: collectiblesSelector(state),
+	collectibles: collectiblesSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -169,3 +222,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(CollectibleContractOverview);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectibleContractOverview);
