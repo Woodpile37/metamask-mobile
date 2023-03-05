@@ -77,6 +77,66 @@ const Skeleton = ({ width, noStyle }) => {
       </SkeletonPlaceholder>
     </View>
   );
+	StyleSheet.create({
+		overview: (noMargin) => ({
+			marginHorizontal: noMargin ? 0 : 24,
+			paddingTop: 10,
+			paddingBottom: 10,
+		}),
+		valuesContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'flex-end',
+		},
+		gasInfoContainer: {
+			paddingLeft: 2,
+		},
+		gasInfoIcon: (hasOrigin) => ({
+			color: hasOrigin ? colors.secondary.default : colors.icon.muted,
+		}),
+		amountContainer: {
+			flex: 1,
+			paddingRight: 10,
+		},
+		gasRowContainer: {
+			flexDirection: 'row',
+			flex: 1,
+			alignItems: 'center',
+			marginBottom: 2,
+		},
+		gasBottomRowContainer: {
+			marginTop: 4,
+		},
+		hitSlop: {
+			top: 10,
+			left: 10,
+			bottom: 10,
+			right: 10,
+		},
+		redInfo: {
+			color: colors.error.default,
+		},
+		timeEstimateContainer: {
+			alignItems: 'center',
+			flexDirection: 'row',
+		},
+		flex: {
+			flex: 1,
+		},
+	});
+
+// eslint-disable-next-line react/prop-types
+const Skeleton = ({ width, noStyle }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View style={[!noStyle && styles.valuesContainer]}>
+			<SkeletonPlaceholder>
+				<SkeletonPlaceholder.Item width={width} height={10} borderRadius={4} />
+			</SkeletonPlaceholder>
+		</View>
+	);
 };
 
 const TransactionReviewEIP1559 = ({
@@ -118,6 +178,15 @@ const TransactionReviewEIP1559 = ({
   }, []);
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	const [showLearnMoreModal, setShowLearnMoreModal] = useState(false);
+	const [isVisibleTimeEstimateInfoModal, , showTimeEstimateInfoModal, hideTimeEstimateInfoModal] =
+		useModalHandler(false);
+	const [isVisibleLegacyLearnMore, , showLegacyLearnMore, hideLegacyLearnMore] = useModalHandler(false);
+	const toggleLearnMoreModal = useCallback(() => {
+		setShowLearnMoreModal((showLearnMoreModal) => !showLearnMoreModal);
+	}, []);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const openLinkAboutGas = useCallback(
     () =>

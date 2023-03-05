@@ -38,6 +38,37 @@ const initialState = {
       },
     },
   },
+	settings: {
+		showCustomNonce: false,
+	},
+	transaction: {
+		value: '',
+		data: '',
+		from: '0x1',
+		gas: '',
+		gasPrice: '',
+		to: '0x2',
+		selectedAsset: { symbol: 'ETH' },
+		assetType: undefined,
+	},
+	engine: {
+		backgroundState: {
+			TransactionController: {
+				transactions: [],
+			},
+			AddressBookController: {
+				addressBook: {},
+			},
+			NetworkController: {
+				provider: {
+					type: ROPSTEN,
+				},
+			},
+			PreferencesController: {
+				selectedAddress: '0x0',
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 const navigation = { state: { params: { address: '0x1' } } } as any;

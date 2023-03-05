@@ -6,6 +6,8 @@ import {
 } from '@storybook/react-native';
 import { withKnobs } from '@storybook/addon-knobs';
 import { ThemeContext, mockTheme } from '../app/util/theme';
+import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
+import { withKnobs } from '@storybook/addon-knobs';
 
 import { loadStories } from './storyLoader';
 
@@ -23,12 +25,15 @@ addDecorator((storyFn) => (
 configure(() => {
   require('./GettingStarted.stories');
   loadStories();
+	require('./GettingStarted.stories');
+	loadStories();
 }, module);
 
 // Refer to https://github.com/storybookjs/storybook/tree/master/app/react-native#start-command-parameters
 // To find allowed options for getStorybookUI
 const StorybookUIRoot = getStorybookUI({
   asyncStorage: null,
+	asyncStorage: null,
 });
 
 export default StorybookUIRoot;

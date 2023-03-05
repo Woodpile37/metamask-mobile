@@ -41,6 +41,41 @@ const CustomNonce = ({ nonce, onNonceEdit }) => {
       </Text>
     </TouchableOpacity>
   );
+	StyleSheet.create({
+		customNonce: {
+			marginTop: 10,
+			marginHorizontal: 24,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: 8,
+			paddingVertical: 14,
+			paddingHorizontal: 16,
+			display: 'flex',
+			flexDirection: 'row',
+		},
+		nonceNumber: {
+			marginLeft: 'auto',
+		},
+	});
+
+const CustomNonce = ({ nonce, onNonceEdit }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<TouchableOpacity style={styles.customNonce} onPress={onNonceEdit}>
+			<Text bold black>
+				{strings('transaction.custom_nonce')}
+			</Text>
+			<Text bold link>
+				{'  '}
+				{strings('transaction.edit')}
+			</Text>
+			<Text bold black style={styles.nonceNumber}>
+				{nonce}
+			</Text>
+		</TouchableOpacity>
+	);
 };
 
 CustomNonce.propTypes = {

@@ -40,6 +40,7 @@ exports[`BrowserBottomBar should render correctly 1`] = `
         Array [
           Object {
             "color": "#24272A",
+            "color": "#6A737D",
             "height": 24,
             "textAlign": "center",
             "width": 24,
@@ -74,6 +75,7 @@ exports[`BrowserBottomBar should render correctly 1`] = `
         Array [
           Object {
             "color": "#24272A",
+            "color": "#6A737D",
             "height": 24,
             "textAlign": "center",
             "width": 24,
@@ -108,6 +110,7 @@ exports[`BrowserBottomBar should render correctly 1`] = `
       style={
         Object {
           "color": "#24272A",
+          "color": "#6A737D",
           "height": 24,
           "textAlign": "center",
           "width": 24,
@@ -164,6 +167,7 @@ exports[`BrowserBottomBar should render correctly 1`] = `
       style={
         Object {
           "color": "#24272A",
+          "color": "#6A737D",
           "height": 24,
           "textAlign": "center",
           "width": 24,
@@ -194,6 +198,7 @@ exports[`BrowserBottomBar should render correctly 1`] = `
       style={
         Object {
           "color": "#24272A",
+          "color": "#6A737D",
           "height": 24,
           "textAlign": "center",
           "width": 24,

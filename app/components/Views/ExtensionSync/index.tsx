@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { View, StyleSheet, Text, Image, InteractionManager, ActivityIndicator, Alert } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import { getOnboardingNavbarOptions } from '../../UI/Navbar';
 import StyledButton from '../../UI/StyledButton';
@@ -41,6 +42,11 @@ import {
   loadingUnset,
   seedphraseNotBackedUp as backedUpSeed,
   passwordSet as passwordIsSet,
+	logIn,
+	loadingSet,
+	loadingUnset,
+	seedphraseNotBackedUp as backedUpSeed,
+	passwordSet as passwordIsSet,
 } from '../../../actions/user';
 import { setLockTime as lockTimeSet } from '../../../actions/settings';
 import { BIOMETRY_TYPE } from 'react-native-keychain';
@@ -117,6 +123,67 @@ const ExtensionSync = ({ navigation, route }: any) => {
   );
   const loading = useSelector((state: any) => state.user.loadingSet);
   const loadingMsg = useSelector((state: any) => state.user.loadingMsg);
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			backgroundColor: colors.background.default,
+			paddingHorizontal: 16,
+			justifyContent: 'space-between',
+			paddingBottom: 16,
+		},
+		fill: {
+			flex: 1,
+		},
+		syncImage: {
+			height: 44,
+			marginTop: 48,
+			width: 112,
+			alignSelf: 'center',
+		},
+		titleLabel: {
+			textAlign: 'center',
+			color: colors.text.default,
+			fontSize: 24,
+			fontFamily: fontStyles.bold.fontFamily,
+			marginTop: 32,
+		},
+		stepsContainer: {
+			marginTop: 32,
+		},
+		stepLabel: {
+			color: colors.text.default,
+			fontSize: scaling.scale(16),
+			fontFamily: fontStyles.normal.fontFamily,
+			marginBottom: 8,
+		},
+		wrapper: {
+			flex: 1,
+			alignItems: 'center',
+			paddingVertical: 30,
+		},
+		loader: {
+			marginTop: 180,
+			justifyContent: 'center',
+			textAlign: 'center',
+		},
+		loadingText: {
+			marginTop: 30,
+			fontSize: 14,
+			textAlign: 'center',
+			color: colors.text.default,
+			fontFamily: fontStyles.normal.fontFamily,
+		},
+	});
+
+// TODO: This file needs typings
+const ExtensionSync = ({ navigation, route }: any) => {
+	const pubnubWrapperRef = useRef<any>(null);
+	const passwordRef = useRef<string | undefined>(undefined);
+	const seedWordsRef = useRef(null);
+	const importedAccountsRef = useRef(null);
+	const dataToSyncRef = useRef<any>(null);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const dispatch = useDispatch();
   const saveOnboardingEvent = useCallback(
@@ -179,6 +246,50 @@ const ExtensionSync = ({ navigation, route }: any) => {
     },
     [saveOnboardingEvent],
   );
+	const dispatch = useDispatch();
+	const saveOnboardingEvent = useCallback((event: any) => dispatch(saveEvent(event)), [dispatch]);
+	const setLoading = useCallback((msg: string) => dispatch(loadingSet(msg)), [dispatch]);
+	const unsetLoading = useCallback(() => dispatch(loadingUnset()), [dispatch]);
+	const passwordHasBeenSet = useCallback(() => dispatch(passwordIsSet()), [dispatch]);
+	const seedphraseBackedUp = useCallback(() => dispatch(backedUpSeed()), [dispatch]);
+	const setLockTime = useCallback((time: number) => dispatch(lockTimeSet(time)), [dispatch]);
+	const setLogIn = useCallback(() => dispatch(logIn()), [dispatch]);
+
+	useEffect(
+		/* eslint-disable-next-line */
+		() => {
+			// Unmount
+			return () => {
+				pubnubWrapperRef.current?.disconnectWebsockets?.();
+				unsetLoading();
+				InteractionManager.runAfterInteractions(PreventScreenshot.allow);
+			};
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
+	useEffect(() => {
+		// Set navigation options
+		navigation.setOptions(getOnboardingNavbarOptions(navigation, route, colors));
+	}, [navigation, route, colors]);
+
+	// TODO: Don't spread this, break it out and type it
+	const track = useCallback(
+		(...eventArgs) => {
+			InteractionManager.runAfterInteractions(async () => {
+				if (Analytics.getEnabled()) {
+					AnalyticsV2.trackEvent(eventArgs[0], eventArgs[1]);
+					return;
+				}
+				const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
+				if (!metricsOptIn) {
+					saveOnboardingEvent(eventArgs);
+				}
+			});
+		},
+		[saveOnboardingEvent]
+	);
 
   const finishSync = useCallback(
     async (opts) => {
@@ -243,6 +354,43 @@ const ExtensionSync = ({ navigation, route }: any) => {
       navigation,
     ],
   );
+			try {
+				await AsyncStorage.removeItem(NEXT_MAKER_REMINDER);
+				await Engine.resetState();
+				await Engine.sync({
+					...dataToSyncRef.current,
+					seed: seedWordsRef.current,
+					importedAccounts: importedAccountsRef.current,
+					pass: opts.password,
+				});
+				await AsyncStorage.setItem(EXISTING_USER, TRUE);
+				await AsyncStorage.removeItem(SEED_PHRASE_HINTS);
+				passwordHasBeenSet();
+				setLogIn();
+				setLockTime(AppConstants.DEFAULT_LOCK_TIMEOUT);
+				seedphraseBackedUp();
+				dataToSyncRef.current = null;
+				track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SYNC_SUCCESSFUL);
+				track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_COMPLETED, {
+					wallet_setup_type: 'sync',
+					new_wallet: false,
+				});
+
+				navigation.push('SyncWithExtensionSuccess');
+				unsetLoading();
+			} catch (e) {
+				track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_FAILURE, {
+					wallet_setup_type: 'sync',
+					error_type: e.toString(),
+				});
+				Logger.error(e, 'Sync::disconnect');
+				Alert.alert(strings('sync_with_extension.error_title'), strings('sync_with_extension.error_message'));
+				unsetLoading();
+				navigation.goBack();
+			}
+		},
+		[setLogIn, unsetLoading, passwordHasBeenSet, setLockTime, seedphraseBackedUp, track, navigation]
+	);
 
   const disconnect = useCallback(async () => {
     let password: string | undefined;
@@ -446,6 +594,29 @@ const ExtensionSync = ({ navigation, route }: any) => {
       </View>
     );
   }, [styles]);
+		[styles]
+	);
+
+	const renderTitle = useCallback(
+		() => <Text style={styles.titleLabel}>{strings('onboarding.scan_title')}</Text>,
+		[styles]
+	);
+
+	const renderSteps = useCallback(() => {
+		const steps = [1, 2, 3, 4];
+		return (
+			<View style={styles.stepsContainer}>
+				{steps.map((stepIndex) => {
+					const text = `onboarding.scan_step_${stepIndex}`;
+					return (
+						<Text style={styles.stepLabel} key={text}>
+							{`${stepIndex}. ${strings(text)}`}
+						</Text>
+					);
+				})}
+			</View>
+		);
+	}, [styles]);
 
   const renderScanButton = useCallback(
     () => (
@@ -485,6 +656,31 @@ const ExtensionSync = ({ navigation, route }: any) => {
     ),
     [renderSyncImage, renderTitle, renderSteps, renderScanButton, styles],
   );
+	const renderLoader = useCallback(
+		() => (
+			<View style={styles.wrapper}>
+				<View style={styles.loader}>
+					<ActivityIndicator size="small" />
+					<Text style={styles.loadingText}>{loadingMsg}</Text>
+				</View>
+			</View>
+		),
+		[loadingMsg, styles]
+	);
+
+	const renderContent = useCallback(
+		() => (
+			<React.Fragment>
+				<View style={styles.fill}>
+					{renderSyncImage()}
+					{renderTitle()}
+					{renderSteps()}
+				</View>
+				{renderScanButton()}
+			</React.Fragment>
+		),
+		[renderSyncImage, renderTitle, renderSteps, renderScanButton, styles]
+	);
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>

@@ -260,6 +260,7 @@ exports[`CustomNonceModal should render correctly 1`] = `
               Object {
                 "backgroundColor": "#FFD33D19",
                 "borderColor": "#F66A0A",
+                "borderColor": "#FFD33D",
                 "borderRadius": 8,
                 "borderWidth": 1,
                 "display": "flex",
