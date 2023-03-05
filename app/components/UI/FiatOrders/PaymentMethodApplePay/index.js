@@ -55,6 +55,10 @@ import {
   mockTheme,
   useAssetFromTheme,
 } from '../../../../util/theme';
+import { fontStyles, colors as importedColors } from '../../../../styles/common';
+import { protectWalletModalVisible } from '../../../../actions/user';
+import { addFiatOrder, fiatOrdersCountrySelector, setFiatOrdersCountry } from '../../../../reducers/fiatOrders';
+import { useAppThemeFromContext, mockTheme, useAssetFromTheme } from '../../../../util/theme';
 
 //* styles and components  */
 
@@ -148,6 +152,95 @@ const applePayButtonStylesLight = StyleSheet.create({
 const applePayButtonStylesDark = StyleSheet.create({
   applePayButtonText: { color: importedColors.black },
   applePayButton: { backgroundColor: importedColors.white },
+	StyleSheet.create({
+		screen: {
+			flexGrow: 1,
+			justifyContent: 'space-between',
+			backgroundColor: colors.background.default,
+		},
+		selectors: {
+			flexDirection: 'row',
+			marginTop: Device.isIphone5() ? 12 : 18,
+			marginHorizontal: 25,
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		spacer: {
+			minWidth: 8,
+		},
+		amountContainer: {
+			margin: Device.isIphone5() ? 0 : 12,
+			padding: Device.isMediumDevice() ? (Device.isIphone5() ? 5 : 10) : 15,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		amount: {
+			...fontStyles.light,
+			color: colors.text.default,
+			fontSize: Device.isIphone5() ? 48 : 48,
+			height: Device.isIphone5() ? 50 : 60,
+		},
+		amountDescription: {
+			minHeight: 22,
+		},
+		amountError: {
+			color: colors.error.default,
+		},
+		content: {
+			flexGrow: 1,
+			justifyContent: 'space-around',
+		},
+		quickAmounts: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-around',
+			marginHorizontal: 70,
+		},
+		quickAmount: {
+			borderRadius: 18,
+			borderColor: colors.border.default,
+			borderWidth: 1,
+			paddingVertical: 5,
+			paddingHorizontal: 8,
+			alignItems: 'center',
+			minWidth: 49,
+		},
+		quickAmountPlaceholder: {
+			backgroundColor: colors.background.alternative,
+			borderColor: colors.background.alternative,
+		},
+		quickAmountSelected: {
+			backgroundColor: colors.primary.default,
+			borderColor: colors.primary.default,
+		},
+		quickAmountSelectedText: {
+			color: colors.primary.inverse,
+		},
+		buttonContainer: {
+			paddingBottom: 20,
+		},
+		applePayButton: {
+			padding: 10,
+			margin: Device.isIphone5() ? 5 : 10,
+			marginHorizontal: 25,
+			alignItems: 'center',
+		},
+		applePayButtonContentDisabled: {
+			opacity: 0.6,
+		},
+		applePayLogo: {
+			marginLeft: 4,
+		},
+	});
+
+const applePayButtonStylesLight = StyleSheet.create({
+	applePayButtonText: { color: importedColors.white },
+	applePayButton: { backgroundColor: importedColors.black },
+});
+
+const applePayButtonStylesDark = StyleSheet.create({
+	applePayButtonText: { color: importedColors.black },
+	applePayButton: { backgroundColor: importedColors.white },
 });
 
 /* eslint-disable import/no-commonjs */
@@ -168,6 +261,13 @@ const ApplePay = ({ disabled }) => {
       ]}
     />
   );
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+	const applePayLogo = useAssetFromTheme(ApplePayLogoLight, ApplePayLogoDark);
+
+	return (
+		<Image source={applePayLogo} style={[styles.applePayLogo, disabled && styles.applePayButtonContentDisabled]} />
+	);
 };
 
 ApplePay.propTypes = {
@@ -209,6 +309,26 @@ const QuickAmount = ({
       </Text>
     </TouchableOpacity>
   );
+const QuickAmount = ({ amount, current, currencySymbol, placeholder, ...props }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	if (placeholder) {
+		return (
+			<View style={[styles.quickAmount, styles.quickAmountPlaceholder]} {...props}>
+				<Text> </Text>
+			</View>
+		);
+	}
+	const selected = amount === current;
+	return (
+		<TouchableOpacity style={[styles.quickAmount, selected && styles.quickAmountSelected]} {...props}>
+			<Text bold={selected} style={[selected && styles.quickAmountSelectedText]}>
+				{currencySymbol}
+				{amount}
+			</Text>
+		</TouchableOpacity>
+	);
 };
 
 QuickAmount.propTypes = {
@@ -618,6 +738,319 @@ function PaymentMethodApplePay({
       </View>
     </ScreenView>
   );
+	const navigation = useNavigation();
+	const [amount, setAmount] = useState('0');
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+	const appleButtonColors = useAssetFromTheme(applePayButtonStylesLight, applePayButtonStylesDark);
+
+	const {
+		symbol: currencySymbol,
+		decimalSeparator,
+		currency: selectedCurrency,
+	} = useCountryCurrency(selectedCountry);
+	const amountWithPeriod = useMemo(() => amount.replace(decimalSeparator, '.'), [amount, decimalSeparator]);
+	const roundAmount = useMemo(
+		() =>
+			hasZerosAsDecimals.test(amountWithPeriod) ||
+			hasZeroAsFirstDecimal.test(amountWithPeriod) ||
+			hasPeriodWithoutDecimal.test(amountWithPeriod)
+				? fastSplit(amountWithPeriod)
+				: amountWithPeriod,
+		[amountWithPeriod]
+	);
+
+	const handleWyreTerms = useWyreTerms(navigation);
+	const wyreCurrencies = useMemo(() => [`${selectedCurrency}ETH`, `USD${selectedCurrency}`], [selectedCurrency]);
+	const [ratesETH, ratesUSD] = useWyreRates(network, wyreCurrencies);
+
+	const quickAmounts = useMemo(() => {
+		if (!ratesUSD || !ratesUSD[selectedCurrency]) {
+			return [];
+		}
+		const quickAmounts = selectedCountry === US ? US_QUICK_AMOUNTS : NON_US_QUICK_AMOUNTS;
+		return quickAmounts.map((amount) => String(Math.ceil(amount * ratesUSD[selectedCurrency])));
+	}, [ratesUSD, selectedCountry, selectedCurrency]);
+
+	const [minAmount, maxAmount] = useMemo(() => {
+		if (!ratesUSD || !ratesUSD[selectedCurrency]) {
+			return [US_MIN_AMOUNT, US_MAX_AMOUNT];
+		}
+		const minMaxAmounts =
+			selectedCountry === US ? [US_MIN_AMOUNT, US_MAX_AMOUNT] : [NON_US_MIN_AMOUNT, NON_US_MAX_AMOUNT];
+		return minMaxAmounts.map((amount) => String(Math.ceil(amount * ratesUSD[selectedCurrency])));
+	}, [ratesUSD, selectedCountry, selectedCurrency]);
+
+	const isUnderMinimum = (amount !== '0' || Number(roundAmount) !== 0) && Number(roundAmount) < minAmount;
+
+	const isOverMaximum = Number(roundAmount) > maxAmount;
+
+	const validAmount = amount !== '0' && !isUnderMinimum && !isOverMaximum;
+
+	const [isLoadingQuotation, quotation] = useWyreOrderQuotation(
+		network,
+		roundAmount,
+		selectedCurrency,
+		selectedAddress,
+		selectedCountry,
+		validAmount,
+		1000
+	);
+
+	const disabledButton = !validAmount || isLoadingQuotation || !quotation;
+
+	const [pay, ABORTED] = useWyreApplePay(selectedAddress, selectedCurrency, network);
+	const handlePressApplePay = useCallback(async () => {
+		if (!quotation) {
+			return;
+		}
+		const prevLockTime = lockTime;
+		setLockTime(-1);
+		try {
+			const order = await pay(
+				roundAmount,
+				quotation.fees[selectedCurrency] + quotation.fees.ETH / quotation.exchangeRate,
+				decimalSeparator ? 2 : 0 // TODO: retrieve decimals with useCurrency in the future
+			);
+			if (order !== ABORTED) {
+				if (order) {
+					addOrder(order);
+					navigation.dangerouslyGetParent()?.pop();
+					protectWalletModalVisible();
+					InteractionManager.runAfterInteractions(() => {
+						NotificationManager.showSimpleNotification(getNotificationDetails(order));
+						AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.ONRAMP_PURCHASE_SUBMITTED, {
+							fiat_amount: { value: order.amount, anonymous: true },
+							fiat_currency: { value: order.currency, anonymous: true },
+							crypto_currency: { value: order.cryptocurrency, anonymous: true },
+							crypto_amount: { value: order.cryptoAmount, anonymous: true },
+							fee_in_fiat: { value: order.fee, anonymous: true },
+							fee_in_crypto: { value: order.cryptoFee, anonymous: true },
+							//TODO(on-ramp): {value: fiat_amount_in_usd: '' anonymous: true},
+							order_id: { value: order.id, anonymous: true },
+							'on-ramp_provider': { value: FIAT_ORDER_PROVIDERS.WYRE_APPLE_PAY, anonymous: true },
+						});
+					});
+				} else {
+					Logger.error('FiatOrders::WyreApplePayProcessor empty order response', order);
+				}
+			}
+		} catch (error) {
+			NotificationManager.showSimpleNotification({
+				duration: 5000,
+				title: strings('fiat_on_ramp.notifications.purchase_failed_title', {
+					currency: 'ETH',
+				}),
+				description: `${error instanceof WyreException ? 'Wyre: ' : ''}${error.message}`,
+				status: 'error',
+			});
+			Logger.error(error, 'FiatOrders::WyreApplePayProcessor Error');
+			InteractionManager.runAfterInteractions(() => {
+				AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.ONRAMP_PURCHASE_SUBMISSION_FAILED, {
+					'on-ramp_provider': { value: FIAT_ORDER_PROVIDERS.WYRE_APPLE_PAY, anonymous: true },
+					failure_reason: { value: error.message, anonymous: true },
+				});
+			});
+		} finally {
+			setLockTime(prevLockTime);
+		}
+	}, [
+		quotation,
+		lockTime,
+		setLockTime,
+		pay,
+		roundAmount,
+		decimalSeparator,
+		selectedCurrency,
+		ABORTED,
+		addOrder,
+		navigation,
+		protectWalletModalVisible,
+	]);
+
+	const handleQuickAmountPress = useCallback((amount) => setAmount(amount), []);
+	const handleKeypadChange = useCallback(
+		(value, key) => {
+			if (isOverMaximum && ![KEYS.BACK, KEYS.INITIAL].includes(key)) {
+				return;
+			}
+			if (value === amount) {
+				return;
+			}
+
+			setAmount(value);
+		},
+		[amount, isOverMaximum]
+	);
+
+	const formatCurrency = useCallback(
+		(number) =>
+			Intl.NumberFormat(I18n.locale, {
+				style: 'currency',
+				currency: selectedCurrency,
+				currencyDisplay: 'symbol',
+			}).format(number),
+		[selectedCurrency]
+	);
+
+	useEffect(() => {
+		navigation.setOptions(
+			getPaymentMethodApplePayNavbar(
+				navigation,
+				() => {
+					InteractionManager.runAfterInteractions(() => {
+						AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.ONRAMP_PURCHASE_EXITED, {
+							payment_rails: PAYMENT_RAILS.APPLE_PAY,
+							payment_category: PAYMENT_CATEGORY.CARD_PAYMENT,
+							'on-ramp_provider': FIAT_ORDER_PROVIDERS.WYRE_APPLE_PAY,
+						});
+					});
+				},
+				() => {
+					InteractionManager.runAfterInteractions(() => {
+						AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.ONRAMP_CLOSED);
+					});
+				},
+				colors
+			)
+		);
+	}, [navigation, colors]);
+
+	useEffect(() => {
+		setAmount('0');
+	}, [selectedCurrency]);
+
+	return (
+		<ScreenView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled">
+			<View>
+				<View style={styles.selectors}>
+					<AccountSelector />
+					<View style={styles.spacer} />
+					<CountrySelector selectedCountry={selectedCountry} setCountry={setFiatOrdersCountry} />
+				</View>
+				<View style={styles.amountContainer}>
+					<Text
+						title
+						style={[styles.amount, isOverMaximum && styles.amountError]}
+						numberOfLines={1}
+						adjustsFontSizeToFit
+					>
+						{currencySymbol}
+						{amount}
+					</Text>
+					<View style={styles.amountDescription}>
+						{!(isUnderMinimum || isOverMaximum) &&
+							(!isLoadingQuotation && ratesETH && ratesETH?.[selectedCurrency] ? (
+								<Text>
+									{roundAmount === '0' && `${formatCurrency(ratesETH[selectedCurrency])}  ≈ 1 ETH`}
+
+									{roundAmount !== '0' && (
+										<>
+											{strings('fiat_on_ramp.wyre_estimated', {
+												currency: 'ETH',
+												amount: (quotation
+													? quotation.destAmount
+													: amountWithPeriod * ratesETH.ETH
+												).toFixed(5),
+											})}
+										</>
+									)}
+								</Text>
+							) : (
+								/* <Text>{strings('fiat_on_ramp.wyre_loading_rates')}</Text> */
+								<ActivityIndicator size="small" />
+							))}
+						{isUnderMinimum && (
+							<Text>
+								{strings('fiat_on_ramp.wyre_minimum_deposit', {
+									amount: `${currencySymbol || ''}${minAmount}`,
+								})}
+							</Text>
+						)}
+						{isOverMaximum && (
+							<Text style={styles.amountError}>
+								{strings('fiat_on_ramp.wyre_maximum_deposit', {
+									amount: `${currencySymbol || ''}${maxAmount}`,
+								})}
+							</Text>
+						)}
+					</View>
+				</View>
+				{quickAmounts.length > 0 ? (
+					<View style={styles.quickAmounts}>
+						{quickAmounts.map((quickAmount, i) => (
+							<QuickAmount
+								key={i}
+								amount={quickAmount}
+								current={roundAmount}
+								currencySymbol={currencySymbol}
+								// eslint-disable-next-line react/jsx-no-bind
+								onPress={() => handleQuickAmountPress(quickAmount)}
+							/>
+						))}
+					</View>
+				) : (
+					<View style={styles.quickAmounts}>
+						<QuickAmount placeholder />
+						<QuickAmount placeholder />
+						<QuickAmount placeholder />
+					</View>
+				)}
+			</View>
+			<View style={styles.content}>
+				<Keypad currency={selectedCurrency} onChange={handleKeypadChange} value={amount} />
+				<View style={styles.buttonContainer}>
+					<StyledButton
+						type="blue"
+						disabled={disabledButton}
+						containerStyle={[styles.applePayButton, appleButtonColors.applePayButton]}
+						onPress={handlePressApplePay}
+					>
+						<Text
+							centered
+							bold
+							style={[
+								appleButtonColors.applePayButtonText,
+								disabledButton && styles.applePayButtonContentDisabled,
+							]}
+						>
+							{strings('fiat_on_ramp.buy_with')}
+						</Text>
+						<ApplePay disabled={disabledButton} />
+					</StyledButton>
+					<Text centered>
+						{disabledButton ? (
+							<Text>
+								<Text bold>
+									{strings(
+										selectedCountry === 'US'
+											? 'fiat_on_ramp.wyre_fees_us_fee'
+											: 'fiat_on_ramp.wyre_fees_outside_us_fee'
+									)}
+								</Text>
+							</Text>
+						) : (
+							<Text>
+								<Text bold>
+									{strings('fiat_on_ramp.plus_fee', {
+										fee: formatCurrency(
+											quotation.fees[selectedCurrency] +
+												quotation.fees.ETH / quotation.exchangeRate
+										),
+									})}
+								</Text>
+							</Text>
+						)}
+					</Text>
+					<TouchableOpacity onPress={handleWyreTerms}>
+						<Text centered link>
+							{strings('fiat_on_ramp.wyre_terms_of_service')}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+		</ScreenView>
+	);
 }
 
 PaymentMethodApplePay.propTypes = {

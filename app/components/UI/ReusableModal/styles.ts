@@ -13,3 +13,15 @@ export default (colors: any) =>
       flex: 1,
     },
   });
+	StyleSheet.create({
+		container: {
+			flex: 1,
+		},
+		overlayBackground: {
+			backgroundColor: colors.overlay.default,
+			...StyleSheet.absoluteFillObject,
+		},
+		fill: {
+			flex: 1,
+		},
+	});

@@ -39,6 +39,15 @@ const createStyles = (colors: any) =>
     },
     placeholder: { backgroundColor: colors.background.alternative },
   });
+	StyleSheet.create({
+		logo: {
+			width: 50,
+			height: 50,
+			borderRadius: 25,
+			overflow: 'hidden',
+		},
+		placeholder: { backgroundColor: colors.background.alternative },
+	});
 
 /**
  * PureComponent that provides an asset icon dependent on OS.
@@ -54,6 +63,13 @@ const AssetIcon = memo((props: Props) => {
   const source: ImageSourcePropType = isImageUrl
     ? { uri: props.logo }
     : (staticLogos as any)[props.logo];
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+	if (!props.logo) return null;
+
+	const style = [styles.logo, props.customStyle];
+	const isImageUrl = isUrl(props.logo) || props.logo.substr(0, 4) === 'ipfs';
+	const source: ImageSourcePropType = isImageUrl ? { uri: props.logo } : (staticLogos as any)[props.logo];
 
   if (!source) {
     return null;

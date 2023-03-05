@@ -41,6 +41,30 @@ const SeedPhraseVideo = ({ style, onClose }) => {
       />
     </View>
   );
+	const video_source_uri =
+		'https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/recovery-phrase.mp4?raw=true';
+
+	const subtitle_source_tracks = [
+		{
+			index: 0,
+			title: strings('secret_phrase_video_subtitle.title'),
+			language: strings('secret_phrase_video_subtitle.language'),
+			type: TextTrackType.VTT,
+			uri: strings('secret_phrase_video_subtitle.uri'),
+		},
+	];
+
+	return (
+		<View style={styles.videoContainer}>
+			<MediaPlayer
+				onClose={onClose}
+				uri={video_source_uri}
+				style={[styles.mediaPlayer, style]}
+				textTracks={subtitle_source_tracks}
+				selectedTextTrack={{ type: 'index', value: 0 }}
+			/>
+		</View>
+	);
 };
 
 SeedPhraseVideo.propTypes = {

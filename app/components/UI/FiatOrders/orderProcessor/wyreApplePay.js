@@ -12,6 +12,7 @@ import {
   FIAT_ORDER_STATES,
   NETWORKS_CHAIN_ID,
 } from '../../../../constants/on-ramp';
+import { FIAT_ORDER_PROVIDERS, FIAT_ORDER_STATES, NETWORKS_CHAIN_ID } from '../../../../constants/on-ramp';
 
 //* env vars
 
@@ -126,6 +127,11 @@ const {
   WYRE_API_ENDPOINT,
   WYRE_API_ENDPOINT_TEST,
 } = AppConstants.FIAT_ORDERS;
+	chainId === NETWORKS_CHAIN_ID.MAINNET || (chainId === NETWORKS_CHAIN_ID.KOVAN && Device.isIos());
+
+//* Constants */
+
+const { WYRE_MERCHANT_ID, WYRE_MERCHANT_ID_TEST, WYRE_API_ENDPOINT, WYRE_API_ENDPOINT_TEST } = AppConstants.FIAT_ORDERS;
 export const WYRE_REGULAR_FEE_PERCENT = 2.9;
 export const WYRE_REGULAR_FEE_FLAT = 0.3;
 export const WYRE_MIN_FEE = 5;
@@ -564,6 +570,10 @@ const paymentOptions = {
   requestPayerEmail: true,
   requestBilling: true,
   merchantCapabilities: ['debit', 'credit'],
+	requestPayerPhone: true,
+	requestPayerEmail: true,
+	requestBilling: true,
+	merchantCapabilities: ['debit', 'credit'],
 };
 
 const createPayload = (network, amount, address, currency, paymentDetails) => {

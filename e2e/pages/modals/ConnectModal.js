@@ -3,6 +3,9 @@ import {
   ACCOUNT_APROVAL_MODAL_CONTAINER_ID,
   CANCEL_BUTTON_ID,
   CONNECT_BUTTON_ID,
+	ACCOUNT_APROVAL_MODAL_CONTAINER_ID,
+	CANCEL_BUTTON_ID,
+	CONNECT_BUTTON_ID,
 } from '../../../app/constants/test-ids';
 
 export default class ConnectModal {

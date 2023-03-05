@@ -3,6 +3,7 @@ import {
   ENTER_ALIAS_INPUT_BOX_ID,
   ADD_ADDRESS_MODAL_CONTAINER_ID,
 } from '../../../app/constants/test-ids';
+import { ENTER_ALIAS_INPUT_BOX_ID, ADD_ADDRESS_MODAL_CONTAINER_ID } from '../../../app/constants/test-ids';
 
 export default class AddAddressModal {
   static async typeInAlias(name) {

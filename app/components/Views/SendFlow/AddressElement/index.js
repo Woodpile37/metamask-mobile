@@ -36,6 +36,33 @@ const createStyles = (colors) =>
       color: colors.text.alternative,
     },
   });
+	StyleSheet.create({
+		addressElementWrapper: {
+			padding: 16,
+			flexDirection: 'row',
+			alignItems: 'center',
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.muted,
+		},
+		addressElementInformation: {
+			flex: 1,
+			flexDirection: 'column',
+		},
+		addressIdenticon: {
+			paddingRight: 16,
+		},
+		addressTextNickname: {
+			...fontStyles.normal,
+			flex: 1,
+			color: colors.text.default,
+			fontSize: 14,
+		},
+		addressTextAddress: {
+			...fontStyles.normal,
+			fontSize: 12,
+			color: colors.text.alternative,
+		},
+	});
 
 class AddressElement extends PureComponent {
   static propTypes = {
@@ -108,6 +135,37 @@ class AddressElement extends PureComponent {
       </TouchableOpacity>
     );
   };
+	render = () => {
+		const { onAccountPress, onAccountLongPress } = this.props;
+		const { name, address } = this.state;
+		const primaryLabel = name && name[0] !== ' ' ? name : renderShortAddress(address);
+		const secondaryLabel = name && name[0] !== ' ' && renderShortAddress(address);
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<TouchableOpacity
+				onPress={() => onAccountPress(address)}
+				onLongPress={() => onAccountLongPress(address)}
+				key={address}
+				style={styles.addressElementWrapper}
+			>
+				<View style={styles.addressIdenticon}>
+					<Identicon address={address} diameter={28} />
+				</View>
+				<View style={styles.addressElementInformation}>
+					<Text style={styles.addressTextNickname} numberOfLines={1}>
+						{primaryLabel}
+					</Text>
+					{!!secondaryLabel && (
+						<Text style={styles.addressTextAddress} numberOfLines={1}>
+							{secondaryLabel}
+						</Text>
+					)}
+				</View>
+			</TouchableOpacity>
+		);
+	};
 }
 
 AddressElement.contextType = ThemeContext;

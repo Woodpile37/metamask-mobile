@@ -36,6 +36,27 @@ const initialState = {
   modals: {
     collectibleContractModalVisible: false,
   },
+	engine: {
+		backgroundState: {
+			PreferencesController: {
+				selectedAddress: '0x0',
+			},
+			NetworkController: {
+				provider: {
+					type: 'mainnet',
+					chainId: '1',
+				},
+			},
+			CollectiblesController: {
+				allCollectibles: {
+					'0x0': { 1: [{ address: '0x0', name: 'collectible', tokenId: 0, image: 'image' }] },
+				},
+			},
+		},
+	},
+	modals: {
+		collectibleContractModalVisible: false,
+	},
 };
 const store = mockStore(initialState);
 
