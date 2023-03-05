@@ -70,6 +70,7 @@ import {
   collectibleContractsSelector,
   collectiblesSelector,
 } from '../../../../reducers/collectibles';
+import { collectibleContractsSelector, collectiblesSelector } from '../../../../reducers/collectibles';
 import { gte } from '../../../../util/lodash';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
 
@@ -301,6 +302,229 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			flex: 1,
+			backgroundColor: colors.background.default,
+		},
+		scrollWrapper: {
+			marginBottom: 60,
+		},
+		buttonNextWrapper: {
+			flex: 1,
+			flexDirection: 'row',
+			alignItems: 'flex-end',
+		},
+		buttonNext: {
+			flex: 1,
+			marginHorizontal: 24,
+		},
+		inputWrapper: {
+			flex: 1,
+			marginTop: 30,
+			marginHorizontal: 24,
+		},
+		actionsWrapper: {
+			flexDirection: 'row',
+		},
+		action: {
+			flex: 1,
+			alignItems: 'center',
+		},
+		actionBorder: {
+			flex: 0.8,
+		},
+		actionDropdown: {
+			...fontStyles.normal,
+			backgroundColor: colors.primary.default,
+			paddingHorizontal: 16,
+			paddingVertical: 2,
+			borderRadius: 100,
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		textDropdown: {
+			...fontStyles.normal,
+			fontSize: 14,
+			color: colors.primary.inverse,
+			paddingVertical: 2,
+		},
+		iconDropdown: {
+			paddingLeft: 10,
+		},
+		maxText: {
+			...fontStyles.normal,
+			fontSize: 12,
+			color: colors.primary.default,
+			alignSelf: 'flex-end',
+			textTransform: 'uppercase',
+		},
+		actionMax: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'flex-end',
+		},
+		actionMaxTouchable: {},
+		inputContainerWrapper: {
+			marginVertical: 16,
+			alignItems: 'center',
+		},
+		inputContainer: {
+			flexDirection: 'row',
+		},
+		inputCurrencyText: {
+			...fontStyles.light,
+			color: colors.text.default,
+			fontSize: 44,
+			marginRight: 8,
+			paddingVertical: Device.isIos() ? 0 : 8,
+			justifyContent: 'center',
+			alignItems: 'center',
+			textTransform: 'uppercase',
+		},
+		textInput: {
+			...fontStyles.light,
+			fontSize: 44,
+			textAlign: 'center',
+			color: colors.text.default,
+		},
+		switch: {
+			flex: 1,
+			marginTop: Device.isIos() ? 0 : 2,
+		},
+		actionSwitch: {
+			paddingHorizontal: 8,
+			paddingVertical: 2,
+			borderRadius: 8,
+			flexDirection: 'row',
+			borderColor: colors.text.alternative,
+			borderWidth: 1,
+			right: -2,
+		},
+		textSwitch: {
+			...fontStyles.normal,
+			fontSize: 14,
+			color: colors.text.alternative,
+			textTransform: 'uppercase',
+		},
+		switchWrapper: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		bottomModal: {
+			justifyContent: 'flex-end',
+			margin: 0,
+		},
+		tokenImage: {
+			width: 36,
+			height: 36,
+			overflow: 'hidden',
+		},
+		assetElementWrapper: {
+			height: 70,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 24,
+		},
+		assetElement: {
+			flexDirection: 'row',
+			flex: 1,
+		},
+		assetsModalWrapper: {
+			backgroundColor: colors.background.default,
+			borderTopLeftRadius: 10,
+			borderTopRightRadius: 10,
+			height: 450,
+		},
+		titleWrapper: {
+			width: '100%',
+			height: 33,
+			alignItems: 'center',
+			justifyContent: 'center',
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+		},
+		dragger: {
+			width: 48,
+			height: 5,
+			borderRadius: 4,
+			backgroundColor: colors.border.default,
+		},
+		textAssetTitle: {
+			...fontStyles.normal,
+			fontSize: 18,
+			color: colors.text.default,
+		},
+		assetInformationWrapper: {
+			flex: 1,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			marginLeft: 16,
+		},
+		assetBalanceWrapper: {
+			flexDirection: 'column',
+		},
+		textAssetBalance: {
+			...fontStyles.normal,
+			fontSize: 18,
+			textAlign: 'right',
+			color: colors.text.default,
+		},
+		textAssetFiat: {
+			...fontStyles.normal,
+			fontSize: 12,
+			color: colors.text.alternative,
+			textAlign: 'right',
+			textTransform: 'uppercase',
+		},
+		errorMessageWrapper: {
+			marginVertical: 16,
+		},
+		CollectibleMedia: {
+			width: 120,
+			height: 120,
+		},
+		collectibleName: {
+			...fontStyles.normal,
+			fontSize: 32,
+			color: colors.text.alternative,
+			textAlign: 'center',
+		},
+		collectibleId: {
+			...fontStyles.normal,
+			fontSize: 14,
+			color: colors.text.alternative,
+			marginTop: 8,
+			textAlign: 'center',
+		},
+		collectibleInputWrapper: {
+			margin: 24,
+		},
+		collectibleInputImageWrapper: {
+			flexDirection: 'column',
+			alignItems: 'center',
+		},
+		collectibleInputInformationWrapper: {
+			marginTop: 12,
+		},
+		nextActionWrapper: {
+			flex: 1,
+			marginBottom: 16,
+		},
+		balanceWrapper: {
+			marginVertical: 16,
+		},
+		balanceText: {
+			...fontStyles.normal,
+			alignSelf: 'center',
+			fontSize: 12,
+			lineHeight: 16,
+			color: colors.text.default,
+		},
+	});
 
 /**
  * View that wraps the wraps the "Send" screen
@@ -411,6 +635,96 @@ class Amount extends PureComponent {
   amountInput = React.createRef();
   tokens = [];
   collectibles = [];
+	static propTypes = {
+		/**
+		 * Map of accounts to information objects including balances
+		 */
+		accounts: PropTypes.object,
+		/**
+		 * Array of collectible objects
+		 */
+		collectibles: PropTypes.array,
+		/**
+		 * An array that represents the user collectible contracts
+		 */
+		collectibleContracts: PropTypes.array,
+		/**
+		 * Object containing token balances in the format address => balance
+		 */
+		contractBalances: PropTypes.object,
+		/**
+		 * ETH to current currency conversion rate
+		 */
+		conversionRate: PropTypes.number,
+		/**
+		 * Currency code of the currently-active currency
+		 */
+		currentCurrency: PropTypes.string,
+		/**
+		 * Object containing token exchange rates in the format address => exchangeRate
+		 */
+		contractExchangeRates: PropTypes.object,
+		/**
+		 * Object that represents the navigator
+		 */
+		navigation: PropTypes.object,
+		/**
+		 * Object that contains navigation props
+		 */
+		route: PropTypes.object,
+		/**
+		 * A string that represents the selected address
+		 */
+		selectedAddress: PropTypes.string,
+		/**
+		 * An array that represents the user tokens
+		 */
+		tokens: PropTypes.array,
+		/**
+		 * Chain Id
+		 */
+		chainId: PropTypes.string,
+		/**
+		 * Current provider ticker
+		 */
+		ticker: PropTypes.string,
+		/**
+		 * Set selected in transaction state
+		 */
+		setSelectedAsset: PropTypes.func,
+		/**
+		 * Set transaction object to be sent
+		 */
+		prepareTransaction: PropTypes.func,
+		/**
+		 * Primary currency, either ETH or Fiat
+		 */
+		primaryCurrency: PropTypes.string,
+		/**
+		 * Selected asset from current transaction state
+		 */
+		selectedAsset: PropTypes.object,
+		/**
+		 * Current transaction state
+		 */
+		transactionState: PropTypes.object,
+		/**
+		 * Network provider type as mainnet
+		 */
+		providerType: PropTypes.string,
+		/**
+		 * Action that sets transaction attributes from object to a transaction
+		 */
+		setTransactionObject: PropTypes.func,
+		/**
+		 * function to call when the 'Next' button is clicked
+		 */
+		onConfirm: PropTypes.func,
+		/**
+		 * Indicates whether the current transaction is a deep link transaction
+		 */
+		isPaymentRequest: PropTypes.bool,
+	};
 
   updateNavBar = () => {
     const { navigation, route } = this.props;
@@ -442,6 +756,25 @@ class Amount extends PureComponent {
     );
     this.onInputChange(readableValue);
     !selectedAsset.tokenId && this.handleSelectedAssetBalance(selectedAsset);
+	updateNavBar = () => {
+		const { navigation, route } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		navigation.setOptions(getSendFlowTitle('send.amount', navigation, route, colors));
+	};
+
+	componentDidMount = async () => {
+		const {
+			tokens,
+			ticker,
+			transactionState: { readableValue },
+			navigation,
+			providerType,
+			selectedAsset,
+			isPaymentRequest,
+		} = this.props;
+		// For analytics
+		this.updateNavBar();
+		navigation.setParams({ providerType, isPaymentRequest });
 
     const { GasFeeController } = Engine.context;
     const [gasEstimates, gas] = await Promise.all([
@@ -517,6 +850,29 @@ class Amount extends PureComponent {
       return false;
     }
   };
+	componentDidUpdate = () => {
+		this.updateNavBar();
+	};
+
+	/**
+	 * Method to validate collectible ownership.
+	 *
+	 * @returns Promise that resolves ownershio as a boolean.
+	 */
+	validateCollectibleOwnership = async () => {
+		const { CollectiblesController } = Engine.context;
+		const {
+			transactionState: {
+				selectedAsset: { address, tokenId },
+			},
+			selectedAddress,
+		} = this.props;
+		try {
+			return await CollectiblesController.isCollectibleOwner(selectedAddress, address, tokenId);
+		} catch (e) {
+			return false;
+		}
+	};
 
   onNext = async () => {
     const {
@@ -739,6 +1095,49 @@ class Amount extends PureComponent {
       from,
       to: transactionTo,
     });
+	/**
+	 * Validates crypto value only
+	 * Independent of current internalPrimaryCurrencyIsCrypto
+	 *
+	 * @param {string} - Crypto value
+	 * @returns - Whether there is an error with the amount
+	 */
+	validateAmount = (inputValue) => {
+		const { accounts, selectedAddress, contractBalances, selectedAsset } = this.props;
+		const { estimatedTotalGas } = this.state;
+		let weiBalance, weiInput, amountError;
+		if (isDecimal(inputValue)) {
+			if (selectedAsset.isETH) {
+				weiBalance = hexToBN(accounts[selectedAddress].balance);
+				weiInput = toWei(inputValue).add(estimatedTotalGas);
+			} else {
+				weiBalance = contractBalances[selectedAsset.address];
+				weiInput = toTokenMinimalUnit(inputValue, selectedAsset.decimals);
+			}
+			// TODO: weiBalance is not always guaranteed to be type BN. Need to consolidate type.
+			amountError = gte(weiBalance, weiInput) ? undefined : strings('transaction.insufficient');
+		} else {
+			amountError = strings('transaction.invalid_amount');
+		}
+		if (amountError) {
+			this.setState({ amountError });
+			dismissKeyboard();
+		}
+		return !!amountError;
+	};
+
+	/**
+	 * Estimate transaction gas with information available
+	 */
+	estimateGasLimit = async () => {
+		const {
+			transaction: { from },
+			transactionTo,
+		} = this.props.transactionState;
+		const { gas } = await getGasLimit({
+			from,
+			to: transactionTo,
+		});
 
     return gas;
   };
@@ -936,6 +1335,22 @@ class Amount extends PureComponent {
     const { address, decimals, symbol } = token;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+	renderToken = (token, index) => {
+		const { accounts, selectedAddress, conversionRate, currentCurrency, contractBalances, contractExchangeRates } =
+			this.props;
+		let balance, balanceFiat;
+		const { address, decimals, symbol } = token;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		if (token.isETH) {
+			balance = renderFromWei(accounts[selectedAddress].balance);
+			balanceFiat = weiToFiat(hexToBN(accounts[selectedAddress].balance), conversionRate, currentCurrency);
+		} else {
+			balance = renderFromTokenMinimalUnit(contractBalances[address], decimals);
+			const exchangeRate = contractExchangeRates[address];
+			balanceFiat = balanceToFiat(balance, conversionRate, exchangeRate, currentCurrency);
+		}
 
     if (token.isETH) {
       balance = renderFromWei(accounts[selectedAddress].balance);
@@ -985,6 +1400,32 @@ class Amount extends PureComponent {
       </TouchableOpacity>
     );
   };
+	renderCollectible = (collectible, index) => {
+		const { name } = collectible;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<TouchableOpacity
+				key={index}
+				style={styles.assetElementWrapper}
+				// eslint-disable-next-line react/jsx-no-bind
+				onPress={() => this.pickSelectedAsset(collectible)}
+			>
+				<View style={styles.assetElement}>
+					<CollectibleMedia
+						small
+						collectible={collectible}
+						iconStyle={styles.tokenImage}
+						containerStyle={styles.tokenImage}
+					/>
+					<View style={styles.assetInformationWrapper}>
+						<Text style={styles.textAssetTitle}>{name}</Text>
+					</View>
+				</View>
+			</TouchableOpacity>
+		);
+	};
 
   renderCollectible = (collectible, index) => {
     const { name } = collectible;
@@ -1041,6 +1482,37 @@ class Amount extends PureComponent {
       });
     return collectibles;
   };
+	renderAssetsModal = () => {
+		const { assetsModalVisible } = this.state;
+		const tradableCollectibles = this.collectibles.filter(({ standard }) => standard === 'ERC721');
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<Modal
+				isVisible={assetsModalVisible}
+				style={styles.bottomModal}
+				onBackdropPress={this.toggleAssetsModal}
+				onBackButtonPress={this.toggleAssetsModal}
+				onSwipeComplete={this.toggleAssetsModal}
+				swipeDirection={'down'}
+				propagateSwipe
+				backdropColor={colors.overlay.default}
+				backdropOpacity={1}
+			>
+				<SafeAreaView style={styles.assetsModalWrapper}>
+					<View style={styles.titleWrapper}>
+						<View style={styles.dragger} />
+					</View>
+					<FlatList
+						data={[...this.tokens, ...tradableCollectibles]}
+						keyExtractor={this.assetKeyExtractor}
+						renderItem={this.renderAsset}
+					/>
+				</SafeAreaView>
+			</Modal>
+		);
+	};
 
   renderAssetsModal = () => {
     const { assetsModalVisible } = this.state;
@@ -1156,6 +1628,149 @@ class Amount extends PureComponent {
       </View>
     );
   };
+	renderTokenInput = () => {
+		const {
+			inputValue,
+			renderableInputValueConversion,
+			amountError,
+			hasExchangeRate,
+			internalPrimaryCurrencyIsCrypto,
+			currentBalance,
+		} = this.state;
+		const { currentCurrency } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const themeAppearance = this.context.themeAppearance || 'light';
+		const styles = createStyles(colors);
+
+		return (
+			<View>
+				<View style={styles.inputContainerWrapper}>
+					<View style={styles.inputContainer}>
+						{!internalPrimaryCurrencyIsCrypto && !!inputValue && (
+							<Text style={styles.inputCurrencyText}>{`${getCurrencySymbol(currentCurrency)} `}</Text>
+						)}
+						<TextInput
+							ref={this.amountInput}
+							style={styles.textInput}
+							value={inputValue}
+							onChangeText={this.onInputChange}
+							keyboardType={'numeric'}
+							placeholder={'0'}
+							placeholderTextColor={colors.text.muted}
+							testID={'txn-amount-input'}
+							keyboardAppearance={themeAppearance}
+						/>
+					</View>
+				</View>
+				{hasExchangeRate && (
+					<View style={styles.actionsWrapper}>
+						<View style={styles.action}>
+							<TouchableOpacity style={styles.actionSwitch} onPress={this.switchCurrency}>
+								<Text style={styles.textSwitch} numberOfLines={1}>
+									{renderableInputValueConversion}
+								</Text>
+								<View styles={styles.switchWrapper}>
+									<MaterialCommunityIcons
+										name="swap-vertical"
+										size={16}
+										color={colors.primary.default}
+										style={styles.switch}
+									/>
+								</View>
+							</TouchableOpacity>
+						</View>
+					</View>
+				)}
+				<View style={styles.balanceWrapper}>
+					<Text style={styles.balanceText}>{`${strings('transaction.balance')}: ${currentBalance}`}</Text>
+				</View>
+				{amountError && (
+					<View style={styles.errorMessageWrapper} testID={'amount-error'}>
+						<ErrorMessage errorMessage={amountError} />
+					</View>
+				)}
+			</View>
+		);
+	};
+
+	renderCollectibleInput = () => {
+		const { amountError } = this.state;
+		const { selectedAsset } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={styles.collectibleInputWrapper}>
+				<View style={styles.collectibleInputImageWrapper}>
+					<CollectibleMedia
+						small
+						containerStyle={styles.CollectibleMedia}
+						iconStyle={styles.CollectibleMedia}
+						collectible={selectedAsset}
+					/>
+				</View>
+				<View style={styles.collectibleInputInformationWrapper}>
+					<Text style={styles.collectibleName}>{selectedAsset.name}</Text>
+					<Text style={styles.collectibleId}>{`#${renderShortText(selectedAsset.tokenId, 10)}`}</Text>
+				</View>
+				{amountError && (
+					<View style={styles.errorMessageWrapper} testID={'amount-error'}>
+						<ErrorMessage errorMessage={amountError} />
+					</View>
+				)}
+			</View>
+		);
+	};
+
+	render = () => {
+		const { estimatedTotalGas } = this.state;
+		const {
+			selectedAsset,
+			transactionState: { isPaymentRequest },
+		} = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<SafeAreaView edges={['bottom']} style={styles.wrapper} testID={'amount-screen'}>
+				<ScrollView style={styles.scrollWrapper}>
+					<View style={styles.inputWrapper}>
+						<View style={styles.actionsWrapper}>
+							<View style={styles.actionBorder} />
+							<View style={styles.action}>
+								<TouchableOpacity
+									style={styles.actionDropdown}
+									disabled={isPaymentRequest}
+									onPress={this.toggleAssetsModal}
+								>
+									<Text style={styles.textDropdown}>
+										{selectedAsset.symbol || strings('wallet.collectible')}
+									</Text>
+									<View styles={styles.arrow}>
+										<Ionicons
+											name="ios-arrow-down"
+											size={16}
+											color={colors.primary.inverse}
+											style={styles.iconDropdown}
+										/>
+									</View>
+								</TouchableOpacity>
+							</View>
+							<View style={[styles.actionBorder, styles.actionMax]}>
+								{!selectedAsset.tokenId && (
+									<TouchableOpacity
+										style={styles.actionMaxTouchable}
+										disabled={!estimatedTotalGas}
+										onPress={this.useMax}
+									>
+										<Text style={styles.maxText}>{strings('transaction.use_max')}</Text>
+									</TouchableOpacity>
+								)}
+							</View>
+						</View>
+						{selectedAsset.tokenId ? this.renderCollectibleInput() : this.renderTokenInput()}
+					</View>
+				</ScrollView>
 
   renderCollectibleInput = () => {
     const { amountError } = this.state;
@@ -1295,6 +1910,22 @@ const mapStateToProps = (state, ownProps) => ({
   transactionState: ownProps.transaction || state.transaction,
   selectedAsset: state.transaction.selectedAsset,
   isPaymentRequest: state.transaction.paymentRequest,
+	accounts: state.engine.backgroundState.AccountTrackerController.accounts,
+	contractBalances: state.engine.backgroundState.TokenBalancesController.contractBalances,
+	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
+	collectibles: collectiblesSelector(state),
+	collectibleContracts: collectibleContractsSelector(state),
+	currentCurrency: state.engine.backgroundState.CurrencyRateController.currentCurrency,
+	conversionRate: state.engine.backgroundState.CurrencyRateController.conversionRate,
+	providerType: state.engine.backgroundState.NetworkController.provider.type,
+	primaryCurrency: state.settings.primaryCurrency,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+	ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+	tokens: state.engine.backgroundState.TokensController.tokens,
+	transactionState: ownProps.transaction || state.transaction,
+	selectedAsset: state.transaction.selectedAsset,
+	isPaymentRequest: state.transaction.paymentRequest,
 });
 
 const mapDispatchToProps = (dispatch) => ({

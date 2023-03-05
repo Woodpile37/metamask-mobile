@@ -58,6 +58,18 @@ export default async function findFirstIncomingTransaction(
       };
     }
   });
+	// Find the tokens received
+	const { contractBalances: tokenBalances } = TokenBalancesController.state;
+	const { tokens } = TokensController.state;
+	let tokenFound = null;
+	tokens.forEach((token) => {
+		if (gt(tokenBalances[token.address], toBN('0'))) {
+			tokenFound = {
+				asset: token.symbol,
+				amount: `${renderFromTokenMinimalUnit(tokenBalances[token.address], token.decimals)} ${token.symbol}`,
+			};
+		}
+	});
 
   return tokenFound;
 }

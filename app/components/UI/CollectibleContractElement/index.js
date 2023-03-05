@@ -67,6 +67,54 @@ const createStyles = (colors) =>
       borderRadius: 16,
     },
   });
+	StyleSheet.create({
+		itemWrapper: {
+			paddingHorizontal: 15,
+			paddingBottom: 16,
+		},
+		collectibleContractIcon: { width: 30, height: 30 },
+		collectibleContractIconContainer: { marginHorizontal: 8, borderRadius: 30 },
+		titleContainer: {
+			flex: 1,
+			flexDirection: 'row',
+		},
+		verticalAlignedContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		titleText: {
+			fontSize: 18,
+			color: colors.text.default,
+			...fontStyles.normal,
+		},
+		collectibleIcon: {
+			width: COLLECTIBLE_WIDTH,
+			height: COLLECTIBLE_WIDTH,
+		},
+		collectibleInTheMiddle: {
+			marginHorizontal: 8,
+		},
+		collectiblesRowContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			marginTop: 15,
+		},
+		collectibleBox: {
+			flex: 1,
+			flexDirection: 'row',
+		},
+		favoritesLogoWrapper: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			// This yellow doesn't change colors between themes
+			backgroundColor: importedColors.yellow,
+			width: 32,
+			height: 32,
+			borderRadius: 16,
+		},
+	});
 
 const splitIntoSubArrays = (array, count) => {
   const newArray = [];
@@ -97,6 +145,12 @@ function CollectibleContractElement({
   const longPressedCollectible = useRef(null);
   const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	const [collectiblesGrid, setCollectiblesGrid] = useState([]);
+	const [collectiblesVisible, setCollectiblesVisible] = useState(propsCollectiblesVisible);
+	const actionSheetRef = useRef();
+	const longPressedCollectible = useRef(null);
+	const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const toggleCollectibles = useCallback(() => {
     setCollectiblesVisible(!collectiblesVisible);
@@ -188,6 +242,25 @@ function CollectibleContractElement({
       styles,
     ],
   );
+	const renderCollectible = useCallback(
+		(collectible, index) => {
+			if (!collectible) return null;
+			const name =
+				collectible.name || collectibleContracts.find(({ address }) => address === collectible.address)?.name;
+			const onPress = () => onPressCollectible({ ...collectible, name });
+			const onLongPress = () => (!asset.favorites ? onLongPressCollectible({ ...collectible, name }) : null);
+			return (
+				<View key={collectible.address + collectible.tokenId} styles={styles.collectibleBox}>
+					<TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
+						<View style={index === 1 ? styles.collectibleInTheMiddle : {}}>
+							<CollectibleMedia style={styles.collectibleIcon} collectible={{ ...collectible, name }} />
+						</View>
+					</TouchableOpacity>
+				</View>
+			);
+		},
+		[asset.favorites, collectibleContracts, onPressCollectible, onLongPressCollectible, styles]
+	);
 
   useEffect(() => {
     const temp = splitIntoSubArrays(contractCollectibles, 3);
@@ -258,6 +331,61 @@ function CollectibleContractElement({
       />
     </View>
   );
+	return (
+		<View style={styles.itemWrapper}>
+			<TouchableOpacity onPress={toggleCollectibles} style={styles.titleContainer}>
+				<View style={styles.verticalAlignedContainer}>
+					<Icon
+						name={`ios-arrow-${collectiblesVisible ? 'down' : 'forward'}`}
+						size={12}
+						color={colors.text.default}
+						style={styles.arrowIcon}
+					/>
+				</View>
+				<View style={styles.collectibleContractIconContainer}>
+					{!asset.favorites ? (
+						<CollectibleMedia
+							iconStyle={styles.collectibleContractIcon}
+							collectible={{
+								name: strings('collectible.untitled_collection'),
+								...asset,
+								image: asset.logo,
+							}}
+							tiny
+						/>
+					) : (
+						<View style={styles.favoritesLogoWrapper}>
+							<AntIcons color={importedColors.white} name={'star'} size={24} />
+						</View>
+					)}
+				</View>
+				<View style={styles.verticalAlignedContainer}>
+					<Text numberOfLines={1} style={styles.titleText}>
+						{asset?.name || strings('collectible.untitled_collection')}
+					</Text>
+				</View>
+			</TouchableOpacity>
+			{collectiblesVisible && (
+				<View style={styles.grid}>
+					{collectiblesGrid.map((row, i) => (
+						<View key={i} style={styles.collectiblesRowContainer}>
+							{row.map((collectible, index) => renderCollectible(collectible, index))}
+						</View>
+					))}
+				</View>
+			)}
+			<ActionSheet
+				ref={actionSheetRef}
+				title={strings('wallet.collectible_action_title')}
+				options={[strings('wallet.refresh_metadata'), strings('wallet.remove'), strings('wallet.cancel')]}
+				cancelButtonIndex={2}
+				destructiveButtonIndex={1}
+				// eslint-disable-next-line react/jsx-no-bind
+				onPress={handleMenuAction}
+				theme={themeAppearance}
+			/>
+		</View>
+	);
 }
 
 CollectibleContractElement.propTypes = {
@@ -297,6 +425,9 @@ const mapStateToProps = (state) => ({
   chainId: state.engine.backgroundState.NetworkController.provider.chainId,
   selectedAddress:
     state.engine.backgroundState.PreferencesController.selectedAddress,
+	collectibleContracts: collectibleContractsSelector(state),
+	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -13,6 +13,13 @@ const initialState = {
       },
     },
   },
+	engine: {
+		backgroundState: {
+			PreferencesController: {
+				selectedAddress: '0x0',
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 
@@ -28,4 +35,15 @@ describe('PersonalSign', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<Provider store={store}>
+				<PersonalSign
+					currentPageInformation={{ title: 'title', url: 'url' }}
+					messageParams={{ data: 'message' }}
+				/>
+			</Provider>
+		);
+		expect(wrapper).toMatchSnapshot();
+	});
 });
