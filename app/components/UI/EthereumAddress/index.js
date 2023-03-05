@@ -56,6 +56,33 @@ class EthereumAddress extends PureComponent {
       </Text>
     );
   }
+		this.state = {
+			ensName: null,
+			address: formatAddress(address, type),
+		};
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.address && prevProps.address !== this.props.address) {
+			requestAnimationFrame(() => {
+				this.formatAndResolveIfNeeded();
+			});
+		}
+	}
+
+	formatAndResolveIfNeeded() {
+		const { address, type } = this.props;
+		const formattedAddress = formatAddress(address, type);
+		this.setState({ address: formattedAddress, ensName: null });
+	}
+
+	render() {
+		return (
+			<Text style={this.props.style} numberOfLines={1}>
+				{this.state.address}
+			</Text>
+		);
+	}
 }
 
 EthereumAddress.defaultProps = {

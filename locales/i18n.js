@@ -45,6 +45,17 @@ export const supportedTranslations = {
 };
 
 export const I18nEvents = new EventEmitter();
+import en from './languages/en.json';
+import es from './languages/es.json';
+import hi from './languages/hi-in.json';
+import id from './languages/id-id.json';
+import ja from './languages/ja-jp.json';
+import ko from './languages/ko-kr.json';
+import pt from './languages/pt-br.json';
+import ru from './languages/ru-ru.json';
+import tl from './languages/tl.json';
+import vi from './languages/vi-vn.json';
+import zh from './languages/zh-cn.json';
 
 // Should the app fallback to English if user locale doesn't exists
 I18n.fallbacks = true;
@@ -89,6 +100,31 @@ getUserPreferableLocale();
 //       return require(`intl/locale-data/jsonp/zh.js`);
 //     default:
 //   }
+// 	switch (locale) {
+// 		case 'es':
+// 			return require(`intl/locale-data/jsonp/es.js`);
+// 		case 'hi':
+// 			return require(`intl/locale-data/jsonp/hi.js`);
+// 		case 'id':
+// 			return require(`intl/locale-data/jsonp/id.js`);
+// 		case 'ja':
+// 			return require(`intl/locale-data/jsonp/ja.js`);
+// 		case 'ko':
+// 			return require(`intl/locale-data/jsonp/ko.js`);
+// 		case 'pt':
+// 			return require(`intl/locale-data/jsonp/pt.js`);
+// 		case 'ru':
+// 			return require(`intl/locale-data/jsonp/ru.js`);
+// 		case 'tl':
+// 			// intl polyfill doesn't support tl at the moment, fallback to en
+// 			// This is consistent between pre and post polyfill behavior
+// 			return require(`intl/locale-data/jsonp/en.js`);
+// 		case 'vi':
+// 			return require(`intl/locale-data/jsonp/vi.js`);
+// 		case 'zh':
+// 			return require(`intl/locale-data/jsonp/zh.js`);
+// 		default:
+// 	}
 // }
 
 // Is it a RTL language?
@@ -100,6 +136,9 @@ export async function setLocale(locale) {
   // Platform.OS === 'ios' && getLocaleData(locale);
   await AsyncStorage.setItem(LANGUAGE, locale);
   I18nEvents.emit('localeChanged', locale);
+	I18n.locale = locale;
+	// Platform.OS === 'ios' && getLocaleData(locale);
+	await AsyncStorage.setItem(LANGUAGE, locale);
 }
 
 // Get languages

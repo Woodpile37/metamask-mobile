@@ -76,6 +76,61 @@ const createStyles = (colors) =>
       flex: 1,
     },
   });
+	StyleSheet.create({
+		container: {
+			backgroundColor: colors.background.default,
+			position: 'absolute',
+			left: 16,
+			right: 16,
+			borderRadius: 8,
+			borderColor: colors.warning.default,
+			borderWidth: 1,
+		},
+		backupAlertWrapper: {
+			flex: 1,
+			backgroundColor: colors.warning.muted,
+			padding: 14,
+		},
+		backupAlertIconWrapper: {
+			marginRight: 10,
+		},
+		backupAlertIcon: {
+			fontSize: 22,
+			...fontStyles.bold,
+			color: colors.text.default,
+		},
+		backupAlertTitle: {
+			fontSize: 14,
+			marginBottom: 14,
+			color: colors.text.default,
+			...fontStyles.bold,
+		},
+		backupAlertMessage: {
+			fontSize: 12,
+			color: colors.primary.default,
+			marginLeft: 14,
+			flex: 1,
+			textAlign: 'right',
+			...fontStyles.normal,
+		},
+		touchableView: {
+			flexDirection: 'row',
+		},
+		modalViewInBrowserView: {
+			bottom: Device.isIphoneX() ? 90 : 80,
+		},
+		modalViewNotInBrowserView: {
+			bottom: Device.isIphoneX() ? 20 : 10,
+		},
+		buttonsWrapper: {
+			flexDirection: 'row-reverse',
+			alignContent: 'flex-end',
+			flex: 1,
+		},
+		dismissButton: {
+			flex: 1,
+		},
+	});
 
 const BLOCKED_LIST = [
   'ImportPrivateKey',
@@ -222,6 +277,46 @@ class BackupAlert extends PureComponent {
       </ElevatedView>
     );
   }
+	render() {
+		const { seedphraseBackedUp, backUpSeedphraseVisible } = this.props;
+		const { inBrowserView, blockedView } = this.state;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		if (seedphraseBackedUp || blockedView || !backUpSeedphraseVisible) return null;
+		return (
+			<ElevatedView
+				elevation={99}
+				style={[
+					styles.container,
+					inBrowserView ? styles.modalViewInBrowserView : styles.modalViewNotInBrowserView,
+				]}
+			>
+				<View style={styles.backupAlertWrapper}>
+					<View style={styles.touchableView} testID={'backup-alert'}>
+						<View style={styles.backupAlertIconWrapper}>
+							<EvilIcons name="bell" style={styles.backupAlertIcon} />
+						</View>
+						<View style={baseStyles.flexGrow}>
+							<Text style={styles.backupAlertTitle}>{strings('backup_alert.title')}</Text>
+							<View style={styles.buttonsWrapper}>
+								<TouchableOpacity onPress={this.goToBackupFlow}>
+									<Text style={[styles.backupAlertMessage, fontStyles.bold]}>
+										{strings('backup_alert.right_button')}
+									</Text>
+								</TouchableOpacity>
+								<TouchableOpacity onPress={this.onDismiss} style={styles.dismissButton}>
+									<Text style={styles.backupAlertMessage} testID={'notification-remind-later-button'}>
+										{strings('backup_alert.left_button')}
+									</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					</View>
+				</View>
+			</ElevatedView>
+		);
+	}
 }
 
 const mapStateToProps = (state) => ({

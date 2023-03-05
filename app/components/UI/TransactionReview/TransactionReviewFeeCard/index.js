@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Linking,
 } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { strings } from '../../../../../locales/i18n';
 import Summary from '../../../Base/Summary';
 import Text from '../../../Base/Text';
@@ -59,6 +60,47 @@ const createStyles = (colors) =>
       right: 10,
     },
   });
+	StyleSheet.create({
+		overview: {
+			marginHorizontal: 24,
+		},
+		loader: {
+			backgroundColor: colors.background.default,
+			height: 10,
+			flex: 1,
+			alignItems: 'flex-end',
+		},
+		over: {
+			color: colors.error.default,
+		},
+		valuesContainer: {
+			flex: 1,
+			flexDirection: 'row',
+		},
+		gasInfoContainer: {
+			paddingHorizontal: 2,
+		},
+		gasInfoIcon: {
+			color: colors.primary.default,
+		},
+		amountContainer: {
+			flex: 1,
+		},
+		gasFeeTitleContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		primaryContainer: (flex) => {
+			if (flex) return { flex: 1 };
+			return { width: 86, marginLeft: 2 };
+		},
+		hitSlop: {
+			top: 10,
+			left: 10,
+			bottom: 10,
+			right: 10,
+		},
+	});
 
 /**
  * PureComponent that displays a transaction's fee and total details inside a card
@@ -147,6 +189,23 @@ class TransactionReviewFeeCard extends PureComponent {
   renderIfGasEstimationReady = (children) => {
     const { gasEstimationReady } = this.props;
     const styles = this.getStyles();
+	getStyles = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		return createStyles(colors);
+	};
+
+	renderIfGasEstimationReady = (children) => {
+		const { gasEstimationReady } = this.props;
+		const styles = this.getStyles();
+
+		return !gasEstimationReady ? (
+			<View style={styles.loader}>
+				<ActivityIndicator size="small" />
+			</View>
+		) : (
+			children
+		);
+	};
 
     return !gasEstimationReady ? (
       <View style={styles.loader}>
@@ -196,6 +255,25 @@ class TransactionReviewFeeCard extends PureComponent {
       />
     );
   };
+	render() {
+		const {
+			totalGasFiat,
+			totalGasEth,
+			totalFiat,
+			fiat,
+			totalValue,
+			transactionValue,
+			primaryCurrency,
+			edit,
+			over,
+			warningGasPriceHigh,
+			chainId,
+			onUpdatingValuesStart,
+			onUpdatingValuesEnd,
+			animateOnChange,
+			isAnimating,
+		} = this.props;
+		const styles = this.getStyles();
 
   render() {
     const {

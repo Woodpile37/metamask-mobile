@@ -8,3 +8,4 @@ export const setCurrentRoute = (route: string) => ({
   type: SET_CURRENT_ROUTE,
   payload: { route },
 });
+export const setCurrentRoute = (route: string) => ({ type: SET_CURRENT_ROUTE, payload: { route } });

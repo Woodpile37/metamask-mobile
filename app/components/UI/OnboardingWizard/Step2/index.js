@@ -128,6 +128,46 @@ class Step2 extends PureComponent {
       </View>
     );
   }
+	getOnboardingStyles = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		return onboardingStyles(colors);
+	};
+
+	/**
+	 * Returns content for this step
+	 */
+	content = () => {
+		const dynamicOnboardingStyles = this.getOnboardingStyles();
+
+		return (
+			<View style={dynamicOnboardingStyles.contentContainer}>
+				<Text style={dynamicOnboardingStyles.content} testID={'step2-title'}>
+					{strings('onboarding_wizard.step2.content1')}
+				</Text>
+				<Text style={dynamicOnboardingStyles.content}>{strings('onboarding_wizard.step2.content2')}</Text>
+			</View>
+		);
+	};
+
+	render() {
+		const dynamicOnboardingStyles = this.getOnboardingStyles();
+
+		return (
+			<View style={styles.main}>
+				<View style={[styles.coachmarkContainer, { top: this.state.coachmarkTop }]}>
+					<Coachmark
+						title={strings('onboarding_wizard.step2.title')}
+						content={this.content()}
+						onNext={this.onNext}
+						onBack={this.onBack}
+						style={dynamicOnboardingStyles.coachmark}
+						topIndicatorPosition={'topCenter'}
+						currentStep={1}
+					/>
+				</View>
+			</View>
+		);
+	}
 }
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { InteractionManager } from 'react-native';
+import { connect } from 'react-redux';
 import AppConstants from '../../../core/AppConstants';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import NotificationManager from '../../../core/NotificationManager';
@@ -18,6 +19,10 @@ import {
 import useInterval from '../../hooks/useInterval';
 import processOrder from '../FiatOnRampAggregator/orderProcessor';
 import { trackEvent } from '../FiatOnRampAggregator/hooks/useAnalytics';
+import processOrder from './orderProcessor';
+import { isTransakAllowedToBuy } from './orderProcessor/transak';
+import { isWyreAllowedToBuy } from './orderProcessor/wyreApplePay';
+import { isMoonpayAllowedToBuy } from './orderProcessor/moonpay';
 
 /**
  * @typedef {import('../../../reducers/fiatOrders').FiatOrder} FiatOrder
@@ -37,6 +42,7 @@ export const allowedToBuy = (chainId) =>
     NETWORKS_CHAIN_ID.CELO,
     NETWORKS_CHAIN_ID.AVAXCCHAIN,
   ].includes(chainId);
+	isWyreAllowedToBuy(chainId) || isTransakAllowedToBuy(chainId) || isMoonpayAllowedToBuy(chainId);
 
 const baseNotificationDetails = {
   duration: NOTIFICATION_DURATION,
@@ -178,6 +184,50 @@ export const getNotificationDetails = (fiatOrder) => {
       };
     }
   }
+	switch (fiatOrder.state) {
+		case FIAT_ORDER_STATES.FAILED: {
+			return {
+				...baseNotificationDetails,
+				title: strings('fiat_on_ramp.notifications.purchase_failed_title', {
+					currency: fiatOrder.cryptocurrency,
+				}),
+				description: strings('fiat_on_ramp.notifications.purchase_failed_description'),
+				status: 'error',
+			};
+		}
+		case FIAT_ORDER_STATES.CANCELLED: {
+			return {
+				...baseNotificationDetails,
+				title: strings('fiat_on_ramp.notifications.purchase_cancelled_title'),
+				description: strings('fiat_on_ramp.notifications.purchase_cancelled_description'),
+				status: 'cancelled',
+			};
+		}
+		case FIAT_ORDER_STATES.COMPLETED: {
+			return {
+				...baseNotificationDetails,
+				title: strings('fiat_on_ramp.notifications.purchase_completed_title', {
+					amount: renderNumber(String(fiatOrder.cryptoAmount)),
+					currency: fiatOrder.cryptocurrency,
+				}),
+				description: strings('fiat_on_ramp.notifications.purchase_completed_description', {
+					currency: fiatOrder.cryptocurrency,
+				}),
+				status: 'success',
+			};
+		}
+		case FIAT_ORDER_STATES.PENDING:
+		default: {
+			return {
+				...baseNotificationDetails,
+				title: strings('fiat_on_ramp.notifications.purchase_pending_title', {
+					currency: fiatOrder.cryptocurrency,
+				}),
+				description: strings('fiat_on_ramp.notifications.purchase_pending_description'),
+				status: 'pending',
+			};
+		}
+	}
 };
 
 export async function processFiatOrder(order, updateFiatOrder) {
