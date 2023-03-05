@@ -41,6 +41,9 @@ export default function CollectibleMediaPlayer({
 }) {
   const { colors } = useAppThemeFromContext() || mockTheme;
   const [fallbackImage, setFallbackImage] = useState(null);
+export default function CollectibleMediaPlayer({ collectible, renderFull, containerStyle, iconStyle }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const [fallbackImage, setFallbackImage] = useState(null);
 
   const fallback = () => {
     const { address, tokenId } = collectible;
@@ -80,6 +83,29 @@ export default function CollectibleMediaPlayer({
       )}
     </View>
   );
+	return (
+		<View style={renderFull ? styles.fullWrapper : [styles.listWrapper, containerStyle]}>
+			{!fallbackImage && collectible?.animation?.length !== 0 && (
+				<MediaPlayer
+					uri={collectible.animation}
+					style={renderFull ? styles.fullImage : [styles.listImage, iconStyle]}
+					onError={mediaFallback}
+				/>
+			)}
+			{collectible?.image?.length !== 0 ? (
+				<RemoteImage
+					fadeIn
+					resizeMode={'contain'}
+					placeholderStyle={{ backgroundColor: colors.background.alternative }}
+					source={{ uri: fallbackImage || collectible.image }}
+					style={renderFull ? styles.fullImage : [styles.listImage, iconStyle]}
+					onError={fallback}
+				/>
+			) : (
+				<Identicon address={collectible.address + collectible.tokenId} customStyle={iconStyle} />
+			)}
+		</View>
+	);
 }
 
 CollectibleMediaPlayer.propTypes = {

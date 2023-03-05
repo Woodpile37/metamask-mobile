@@ -94,6 +94,22 @@ export const getProviderName = (provider, data = {}) => {
       return provider;
     }
   }
+export const getProviderName = (provider) => {
+	switch (provider) {
+		case FIAT_ORDER_PROVIDERS.WYRE:
+		case FIAT_ORDER_PROVIDERS.WYRE_APPLE_PAY: {
+			return 'Wyre';
+		}
+		case FIAT_ORDER_PROVIDERS.TRANSAK: {
+			return 'Transak';
+		}
+		case FIAT_ORDER_PROVIDERS.MOONPAY: {
+			return 'MoonPay';
+		}
+		default: {
+			return provider;
+		}
+	}
 };
 
 const INITIAL_SELECTED_REGION = null;

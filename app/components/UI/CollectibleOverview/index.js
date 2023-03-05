@@ -33,6 +33,7 @@ import {
   addFavoriteCollectible,
   removeFavoriteCollectible,
 } from '../../../actions/collectibles';
+import { addFavoriteCollectible, removeFavoriteCollectible } from '../../../actions/collectibles';
 import { isCollectibleInFavoritesSelector } from '../../../reducers/collectibles';
 import Share from 'react-native-share';
 import {
@@ -129,6 +130,85 @@ const createStyles = (colors) =>
       marginTop: 8,
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			flex: 0,
+			backgroundColor: colors.background.default,
+			borderTopEndRadius: 8,
+			borderTopStartRadius: 8,
+		},
+		generalContainer: {
+			paddingHorizontal: 16,
+		},
+		information: {
+			paddingTop: HAS_NOTCH ? 24 : VERTICAL_ALIGNMENT,
+		},
+		row: {
+			paddingVertical: 6,
+		},
+		name: {
+			fontSize: Device.isSmallDevice() ? 16 : 24,
+			marginBottom: 3,
+		},
+		userContainer: {
+			flexDirection: 'row',
+			paddingBottom: 16,
+		},
+		userImage: {
+			width: 38,
+			height: 38,
+			borderRadius: 100,
+			marginRight: 8,
+		},
+		buttonContainer: {
+			flexDirection: 'row',
+			marginTop: VERTICAL_ALIGNMENT,
+		},
+		button: {
+			alignItems: 'center',
+			justifyContent: 'center',
+			borderWidth: 1.5,
+		},
+		iconButtons: {
+			width: 54,
+			height: 54,
+		},
+		leftButton: {
+			marginRight: 16,
+		},
+		collectibleInfoContainer: {
+			flexDirection: 'row',
+			marginHorizontal: 16,
+			marginBottom: 8,
+		},
+		collectibleInfoKey: {
+			paddingRight: 10,
+		},
+		collectibleDescription: {
+			lineHeight: 22,
+		},
+		userInfoContainer: {
+			justifyContent: 'center',
+		},
+		titleWrapper: {
+			width: '100%',
+			alignItems: 'center',
+			justifyContent: 'center',
+			paddingVertical: VERTICAL_ALIGNMENT,
+		},
+		dragger: {
+			width: 48,
+			height: 5,
+			borderRadius: 4,
+			backgroundColor: colors.border.default,
+		},
+		scrollableDescription: {
+			maxHeight: Device.getDeviceHeight() / 5,
+		},
+		description: {
+			marginTop: 8,
+		},
+	});
 
 /**
  * View that displays the information of a specific ERC-721 Token
@@ -152,6 +232,13 @@ const CollectibleOverview = ({
   const scrollViewRef = useRef(null);
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+	const [headerHeight, setHeaderHeight] = useState(0);
+	const [wrapperHeight, setWrapperHeight] = useState(0);
+	const [position, setPosition] = useState(0);
+	const positionAnimated = useRef(new Animated.Value(0)).current;
+	const scrollViewRef = useRef(null);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   const translationHeight = useMemo(
     () => wrapperHeight - headerHeight - ANIMATION_OFFSET,
@@ -235,6 +322,58 @@ const CollectibleOverview = ({
       },
     ),
   ];
+	const renderCollectibleInfoRow = useCallback(
+		(key, value, onPress) => {
+			if (!value) return null;
+			return (
+				<View style={styles.collectibleInfoContainer} key={key}>
+					<Text noMargin black bold big={!IS_SMALL_DEVICE} style={styles.collectibleInfoKey}>
+						{key}
+					</Text>
+					<Text
+						noMargin
+						big={!IS_SMALL_DEVICE}
+						link={!!onPress}
+						black={!onPress}
+						right
+						style={baseStyles.flexGrow}
+						numberOfLines={1}
+						ellipsizeMode="middle"
+						onPress={onPress}
+					>
+						{value}
+					</Text>
+				</View>
+			);
+		},
+		[styles]
+	);
+
+	const renderCollectibleInfo = () => [
+		renderCollectibleInfoRow(strings('collectible.collectible_token_standard'), collectible?.standard),
+		renderCollectibleInfoRow(
+			strings('collectible.collectible_last_sold'),
+			collectible?.lastSale?.event_timestamp &&
+				toLocaleDate(new Date(collectible?.lastSale?.event_timestamp)).toString()
+		),
+		renderCollectibleInfoRow(
+			strings('collectible.collectible_last_price_sold'),
+			collectible?.lastSale?.total_price && `${renderFromWei(collectible?.lastSale?.total_price)} ETH`
+		),
+		renderCollectibleInfoRow(strings('collectible.collectible_source'), collectible?.imageOriginal, () =>
+			openLink(collectible?.imageOriginal)
+		),
+		renderCollectibleInfoRow(strings('collectible.collectible_link'), collectible?.externalLink, () =>
+			openLink(collectible?.externalLink)
+		),
+		renderCollectibleInfoRow(
+			strings('collectible.collectible_asset_contract'),
+			renderShortAddress(collectible?.address),
+			() => {
+				if (isMainNet(chainId)) openLink(etherscanLink.createTokenTrackerLink(collectible?.address, chainId));
+			}
+		),
+	];
 
   const collectibleToFavorites = useCallback(() => {
     const action = isInFavorites
@@ -373,6 +512,37 @@ const CollectibleOverview = ({
               {renderShortText(collectible.tokenId, 8)}
             </Text>
           </View>
+			<SafeAreaView>
+				<View onLayout={onHeaderLayout}>
+					<View style={styles.generalContainer}>
+						{collectible?.creator && (
+							<View style={styles.userContainer}>
+								<RemoteImage
+									fadeIn
+									placeholderStyle={{ backgroundColor: colors.background.alternative }}
+									source={{ uri: collectible.creator.profile_img_url }}
+									style={styles.userImage}
+								/>
+								<View numberOfLines={1} style={styles.userInfoContainer}>
+									{collectible.creator.user?.username && (
+										<Text black bold noMargin big={!IS_SMALL_DEVICE}>
+											{collectible.creator.user.username}
+										</Text>
+									)}
+									<Text numberOfLines={1} black noMargin small>
+										{collectible.contractName}
+									</Text>
+								</View>
+							</View>
+						)}
+						<Text numberOfLines={2} bold primary noMargin style={styles.name}>
+							{collectible.name}
+						</Text>
+						<Text primary noMargin big>
+							{strings('unit.token_id')}
+							{renderShortText(collectible.tokenId, 8)}
+						</Text>
+					</View>
 
           <View style={[styles.generalContainer, styles.buttonContainer]}>
             {tradable && (
@@ -506,6 +676,9 @@ const mapStateToProps = (state, props) => ({
   selectedAddress:
     state.engine.backgroundState.PreferencesController.selectedAddress,
   isInFavorites: isCollectibleInFavoritesSelector(state, props.collectible),
+	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	isInFavorites: isCollectibleInFavoritesSelector(state, props.collectible),
 });
 
 const mapDispatchToProps = (dispatch) => ({

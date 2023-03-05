@@ -30,6 +30,20 @@ export default class RequestPaymentView {
       amount,
     );
   }
+	static async searchForToken(token) {
+		if (device.getPlatform() === 'android') {
+			await TestHelpers.typeTextAndHideKeyboard(TOKEN_SEARCH_INPUT_BOX, token);
+		} else {
+			await TestHelpers.replaceTextInField(TOKEN_SEARCH_INPUT_BOX, token);
+			await TestHelpers.delay(1000);
+		}
+	}
+	static async tapOnToken(token) {
+		await TestHelpers.tapByText(token, 1);
+	}
+	static async typeInTokenAmount(amount) {
+		await TestHelpers.typeTextAndHideKeyboard(REQUEST_AMOUNT_INPUT_BOX_ID, amount);
+	}
 
   static async isVisible() {
     await TestHelpers.checkIfVisible(REQUEST_PAYMENT_CONTAINER_ID);

@@ -15,6 +15,9 @@ import {
   NETWORK_ERROR_MISSING_NETWORK_ID,
   NETWORK_ERROR_UNKNOWN_NETWORK_ID,
 } from '../../../app/constants/error';
+import { isMainNet, getNetworkName, getAllNetworks, getNetworkTypeById } from '.';
+import { MAINNET, ROPSTEN, GOERLI, RPC, KOVAN } from '../../../app/constants/network';
+import { NETWORK_ERROR_MISSING_NETWORK_ID, NETWORK_ERROR_UNKNOWN_NETWORK_ID } from '../../../app/constants/error';
 
 describe('getAllNetworks', () => {
   const allNetworks = getAllNetworks();
@@ -97,4 +100,23 @@ describe('getNetworkTypeById', () => {
       );
     }
   });
+	it('should get network type by Id', () => {
+		const type = getNetworkTypeById(42);
+		expect(type).toEqual(KOVAN);
+	});
+	it('should fail if network Id is missing', () => {
+		try {
+			getNetworkTypeById();
+		} catch (error) {
+			expect(error.message).toEqual(NETWORK_ERROR_MISSING_NETWORK_ID);
+		}
+	});
+	it('should fail if network Id is unknown', () => {
+		const id = 9999;
+		try {
+			getNetworkTypeById(id);
+		} catch (error) {
+			expect(error.message).toEqual(`${NETWORK_ERROR_UNKNOWN_NETWORK_ID} ${id}`);
+		}
+	});
 });

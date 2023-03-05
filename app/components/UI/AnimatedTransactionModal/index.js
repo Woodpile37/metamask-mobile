@@ -22,6 +22,23 @@ const createStyles = (colors) =>
       paddingTop: 24,
     },
   });
+	StyleSheet.create({
+		root: {
+			backgroundColor: colors.background.default,
+			minHeight: 200,
+			borderTopLeftRadius: 20,
+			borderTopRightRadius: 20,
+			paddingBottom: Device.isIphoneX() ? 24 : 0,
+		},
+		transactionEdit: {
+			position: 'absolute',
+			width: '100%',
+			height: '100%',
+		},
+		transactionReview: {
+			paddingTop: 24,
+		},
+	});
 
 //This is a placeholder to represent the custom gas modal.
 //TODO this custom gas modal needs to be removed from the animated tx modal.
@@ -239,6 +256,32 @@ class AnimatedTransactionModal extends PureComponent {
       modalTransformStyle = this.generateTransform('modal', [70, 0]);
       gasComponent = components[0];
     }
+	render = () => {
+		const {
+			width,
+			hideData,
+			originComponent,
+			customGasHeight,
+			advancedCustomGas,
+			hideGasSelectors,
+			toAdvancedFrom,
+		} = this.state;
+		const { ready, children } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+		const components = React.Children.toArray(children);
+		let gasTransformStyle;
+		let modalTransformStyle;
+		let gasComponent;
+		if (originComponent === 'dapp') {
+			gasTransformStyle = this.generateTransform('reviewToEdit', [width, 0]);
+			modalTransformStyle = this.generateTransform('modal', [this.getTransformValue(), 0]);
+			gasComponent = components[1];
+		} else {
+			gasTransformStyle = this.generateTransform('reviewToEdit', [0, -width]);
+			modalTransformStyle = this.generateTransform('modal', [70, 0]);
+			gasComponent = components[0];
+		}
 
     return (
       <Animated.View

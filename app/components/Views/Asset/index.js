@@ -15,6 +15,7 @@ import {
   TX_PENDING,
   TX_CONFIRMED,
 } from '../../../constants/transaction';
+import { TX_UNAPPROVED, TX_SUBMITTED, TX_SIGNED, TX_PENDING, TX_CONFIRMED } from '../../../constants/transaction';
 import AssetOverview from '../../UI/AssetOverview';
 import Transactions from '../../UI/Transactions';
 import { getNetworkNavbarOptions } from '../../UI/Navbar';
@@ -41,6 +42,21 @@ const createStyles = (colors) =>
       justifyContent: 'center',
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			backgroundColor: colors.background.default,
+			flex: 1,
+		},
+		assetOverviewWrapper: {
+			height: 280,
+		},
+		loader: {
+			backgroundColor: colors.background.default,
+			flex: 1,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+	});
 
 /**
  * View that displays a specific asset (Token or ETH)
@@ -159,6 +175,35 @@ class Asset extends PureComponent {
       this.normalizeTransactions();
     });
   }
+	updateNavBar = () => {
+		const { navigation, route } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		navigation.setOptions(getNetworkNavbarOptions(route.params?.symbol ?? '', false, navigation, colors));
+	};
+
+	componentDidMount() {
+		this.updateNavBar();
+		InteractionManager.runAfterInteractions(() => {
+			this.normalizeTransactions();
+			this.mounted = true;
+		});
+		this.navSymbol = (this.props.route.params?.symbol ?? '').toLowerCase();
+		this.navAddress = (this.props.route.params?.address ?? '').toLowerCase();
+		if (this.navSymbol.toUpperCase() !== 'ETH' && this.navAddress !== '') {
+			this.filter = this.noEthFilter;
+		} else {
+			this.filter = this.ethFilter;
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		this.updateNavBar();
+		if (prevProps.chainId !== this.props.chainId || prevProps.selectedAddress !== this.props.selectedAddress) {
+			this.showLoaderAndNormalize();
+		} else {
+			this.normalizeTransactions();
+		}
+	}
 
   componentWillUnmount() {
     this.mounted = false;
@@ -322,6 +367,107 @@ class Asset extends PureComponent {
     this.isNormalizing = false;
     this.chainId = chainId;
   }
+	normalizeTransactions() {
+		if (this.isNormalizing) return;
+		let accountAddedTimeInsertPointFound = false;
+		const { selectedAddress } = this.props;
+		const addedAccountTime = this.props.identities[selectedAddress]?.importTime;
+		this.isNormalizing = true;
+
+		let submittedTxs = [];
+		const newPendingTxs = [];
+		const confirmedTxs = [];
+		const submittedNonces = [];
+
+		const { chainId, transactions } = this.props;
+		if (transactions.length) {
+			const sortedTransactions = sortTransactions(transactions).filter(
+				(tx, index, self) => self.findIndex((_tx) => _tx.id === tx.id) === index
+			);
+			const filteredTransactions = sortedTransactions.filter((tx) => {
+				const filterResult = this.filter(tx);
+				if (filterResult) {
+					tx.insertImportTime = addAccountTimeFlagFilter(
+						tx,
+						addedAccountTime,
+						accountAddedTimeInsertPointFound
+					);
+					if (tx.insertImportTime) accountAddedTimeInsertPointFound = true;
+					switch (tx.status) {
+						case TX_SUBMITTED:
+						case TX_SIGNED:
+						case TX_UNAPPROVED:
+							submittedTxs.push(tx);
+							return false;
+						case TX_PENDING:
+							newPendingTxs.push(tx);
+							break;
+						case TX_CONFIRMED:
+							confirmedTxs.push(tx);
+							break;
+					}
+				}
+				return filterResult;
+			});
+
+			submittedTxs = submittedTxs.filter(({ transaction: { from, nonce } }) => {
+				if (!toLowerCaseEquals(from, selectedAddress)) {
+					return false;
+				}
+				const alreadySubmitted = submittedNonces.includes(nonce);
+				const alreadyConfirmed = confirmedTxs.find(
+					(confirmedTransaction) =>
+						toLowerCaseEquals(
+							safeToChecksumAddress(confirmedTransaction.transaction.from),
+							selectedAddress
+						) && confirmedTransaction.transaction.nonce === nonce
+				);
+				if (alreadyConfirmed) {
+					return false;
+				}
+				submittedNonces.push(nonce);
+				return !alreadySubmitted;
+			});
+
+			// If the account added "Insert Point" is not found add it to the last transaction
+			if (!accountAddedTimeInsertPointFound && filteredTransactions && filteredTransactions.length) {
+				filteredTransactions[filteredTransactions.length - 1].insertImportTime = true;
+			}
+			// To avoid extra re-renders we want to set the new txs only when
+			// there's a new tx in the history or the status of one of the existing txs changed
+			if (
+				(this.txs.length === 0 && !this.state.transactionsUpdated) ||
+				this.txs.length !== filteredTransactions.length ||
+				this.chainId !== chainId ||
+				this.didTxStatusesChange(newPendingTxs)
+			) {
+				this.txs = filteredTransactions;
+				this.txsPending = newPendingTxs;
+				this.setState({
+					transactionsUpdated: true,
+					loading: false,
+					transactions: filteredTransactions,
+					submittedTxs,
+					confirmedTxs,
+				});
+			}
+		} else if (!this.state.transactionsUpdated) {
+			this.setState({ transactionsUpdated: true, loading: false });
+		}
+		this.isNormalizing = false;
+		this.chainId = chainId;
+	}
+
+	renderLoader = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={styles.loader}>
+				<ActivityIndicator style={styles.loader} size="small" />
+			</View>
+		);
+	};
 
   renderLoader = () => {
     const colors = this.context.colors || mockTheme.colors;
@@ -333,6 +479,18 @@ class Asset extends PureComponent {
       </View>
     );
   };
+	render = () => {
+		const { loading, transactions, submittedTxs, confirmedTxs, transactionsUpdated } = this.state;
+		const {
+			route: { params },
+			navigation,
+			conversionRate,
+			currentCurrency,
+			selectedAddress,
+			chainId,
+		} = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
 
   onRefresh = async () => {
     this.setState({ refreshing: true });

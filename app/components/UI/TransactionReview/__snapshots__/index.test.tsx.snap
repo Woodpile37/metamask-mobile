@@ -2,6 +2,7 @@
 
 exports[`TransactionReview should render correctly 1`] = `
 <withNavigation(QRHardwareAwareness)
+<QRHardwareAwareness
   accounts={Array []}
   browser={
     Object {
