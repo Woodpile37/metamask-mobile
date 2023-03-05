@@ -70,6 +70,20 @@ class Step1 extends PureComponent {
   content = () => {
     const colors = this.context.colors || mockTheme.colors;
     const dynamicOnboardingStyles = onboardingStyles(colors);
+	/**
+	 * Returns content for this step
+	 */
+	content = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		const dynamicOnboardingStyles = onboardingStyles(colors);
+
+		return (
+			<View style={dynamicOnboardingStyles.contentContainer}>
+				<Text style={dynamicOnboardingStyles.content}>{strings('onboarding_wizard.step1.content1')}</Text>
+				<Text style={dynamicOnboardingStyles.content}>{strings('onboarding_wizard.step1.content2')}</Text>
+			</View>
+		);
+	};
 
     return (
       <View style={dynamicOnboardingStyles.contentContainer}>

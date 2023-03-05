@@ -36,6 +36,26 @@ const Title = ({ centered, hero, style: externalStyle, ...props }) => {
       {...props}
     />
   );
+	StyleSheet.create({
+		text: {
+			fontSize: 18,
+			marginVertical: 3,
+			color: colors.text.default,
+			...fontStyles.bold,
+		},
+		hero: {
+			fontSize: 22,
+		},
+		centered: {
+			textAlign: 'center',
+		},
+	});
+
+const Title = ({ centered, hero, style: externalStyle, ...props }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const style = createStyles(colors);
+
+	return <Text style={[style.text, centered && style.centered, hero && style.hero, externalStyle]} {...props} />;
 };
 
 Title.defaultProps = {

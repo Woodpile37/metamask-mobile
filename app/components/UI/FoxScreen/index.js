@@ -20,6 +20,23 @@ const createStyles = (colors) =>
       height: 100,
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			flex: 1,
+			backgroundColor: colors.background.default,
+			alignItems: 'center',
+			justifyContent: 'center',
+			position: 'absolute',
+			top: 0,
+			bottom: 0,
+			left: 0,
+			right: 0,
+		},
+		image: {
+			width: 100,
+			height: 100,
+		},
+	});
 
 const foxImage = require('../../../images/fox.png'); // eslint-disable-line import/no-commonjs
 
@@ -38,6 +55,16 @@ export default class FoxScreen extends PureComponent {
       </View>
     );
   };
+	render = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={styles.wrapper} testID={'fox-screen'}>
+				<Image source={foxImage} style={styles.image} resizeMethod={'auto'} />
+			</View>
+		);
+	};
 }
 
 FoxScreen.contextType = ThemeContext;

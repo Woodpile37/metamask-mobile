@@ -22,6 +22,23 @@ const createStyles = (colors) =>
       marginTop: 16,
     },
   });
+	StyleSheet.create({
+		itemWrapper: {
+			flex: 1,
+			flexDirection: 'row',
+			paddingHorizontal: 15,
+			paddingVertical: 10,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderBottomColor: colors.border.muted,
+		},
+		arrow: {
+			flex: 1,
+			alignSelf: 'flex-end',
+		},
+		arrowIcon: {
+			marginTop: 16,
+		},
+	});
 
 /**
  * Customizable view to render assets in lists
@@ -79,6 +96,24 @@ export default class AssetElement extends PureComponent {
       </TouchableOpacity>
     );
   };
+	render = () => {
+		const { children } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<TouchableOpacity
+				onPress={this.handleOnPress}
+				onLongPress={this.handleOnLongPress}
+				style={styles.itemWrapper}
+			>
+				{children}
+				<View styles={styles.arrow}>
+					<Icon name="ios-arrow-forward" size={24} color={colors.icon.muted} style={styles.arrowIcon} />
+				</View>
+			</TouchableOpacity>
+		);
+	};
 }
 
 AssetElement.contextType = ThemeContext;

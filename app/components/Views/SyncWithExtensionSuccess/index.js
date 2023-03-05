@@ -85,6 +85,70 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
   },
+	mainWrapper: {
+		backgroundColor: colors.white,
+		flex: 1,
+	},
+	wrapper: {
+		flex: 1,
+		padding: 30,
+		alignItems: 'center',
+	},
+	title: {
+		fontSize: 32,
+		marginTop: 20,
+		marginBottom: 10,
+		color: colors.fontPrimary,
+		justifyContent: 'center',
+		textAlign: 'center',
+		...fontStyles.bold,
+	},
+	textContainer: {
+		flex: 1,
+	},
+	text: {
+		marginTop: 20,
+		fontSize: 16,
+		textAlign: 'center',
+		color: colors.fontPrimary,
+		...fontStyles.normal,
+	},
+	bold: {
+		...fontStyles.bold,
+	},
+	button: {
+		marginTop: 40,
+		flex: 1,
+	},
+	check: {
+		fontSize: 45,
+	},
+	passwordTipContainer: {
+		padding: 16,
+
+		borderWidth: 1,
+		borderRadius: 8,
+		marginTop: 29,
+	},
+	passwordTipText: {
+		fontSize: 12,
+		lineHeight: 17,
+	},
+	learnMoreText: {
+		marginTop: 29,
+		textAlign: 'center',
+		fontSize: 16,
+		...fontStyles.normal,
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+	},
+	hitSlopLearnMore: {
+		top: 10,
+		left: 10,
+		bottom: 10,
+		right: 10,
+	},
 });
 
 const hardwareBackPress = () => ({});

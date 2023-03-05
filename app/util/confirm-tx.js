@@ -26,6 +26,8 @@ const NON_ISO4217_CRYPTO_CODES = [
   'WINGS',
   'ZEC',
 ];
+import { conversionUtil, addCurrencies, multiplyCurrencies, conversionGreaterThan } from './conversion';
+import I18n from '../../locales/i18n';
 
 export function increaseLastGasPrice(lastGasPrice) {
   return addHexPrefix(
@@ -127,6 +129,15 @@ export function formatCurrency(value, currencyCode) {
       }).format(Number(value));
 
   return formatedCurrency;
+	const upperCaseCurrencyCode = currencyCode.toUpperCase();
+
+	const formatedCurrency = new Intl.NumberFormat(I18n.locale, {
+		currency: upperCaseCurrencyCode,
+		style: 'currency',
+		// eslint-disable-next-line no-mixed-spaces-and-tabs
+	}).format(Number(value));
+
+	return formatedCurrency;
 }
 
 export function convertTokenToFiat({

@@ -10,6 +10,11 @@ const InfoIcon = (props) => (
     size={Device.isAndroid() ? 14 : 16}
     {...props}
   />
+	<IonicIcon
+		name={Device.isAndroid() ? 'md-information-circle' : 'ios-information-circle'}
+		size={Device.isAndroid() ? 14 : 16}
+		{...props}
+	/>
 );
 
 export default InfoIcon;

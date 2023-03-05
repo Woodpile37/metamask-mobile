@@ -107,6 +107,59 @@ export default function ActionView({
       </KeyboardAwareScrollView>
     </View>
   );
+	const { colors } = useAppThemeFromContext() || mockTheme;
+
+	return (
+		<View style={baseStyles.flexGrow}>
+			<KeyboardAwareScrollView
+				style={[baseStyles.flexGrow, style]}
+				resetScrollToCoords={{ x: 0, y: 0 }}
+				keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+			>
+				<TouchableWithoutFeedback
+					style={baseStyles.flexGrow}
+					// eslint-disable-next-line react/jsx-no-bind
+					onPress={() => {
+						if (keyboardShouldPersistTaps === 'handled') {
+							Keyboard.dismiss();
+						}
+						onTouchablePress && onTouchablePress();
+					}}
+				>
+					{children}
+				</TouchableWithoutFeedback>
+
+				<View style={styles.actionContainer}>
+					{showCancelButton && (
+						<StyledButton
+							testID={cancelTestID}
+							type={confirmButtonMode === 'sign' ? 'signingCancel' : 'cancel'}
+							onPress={onCancelPress}
+							containerStyle={[styles.button, styles.cancel]}
+							disabled={confirmed}
+						>
+							{cancelText}
+						</StyledButton>
+					)}
+					{showConfirmButton && (
+						<StyledButton
+							testID={confirmTestID}
+							type={confirmButtonMode}
+							onPress={onConfirmPress}
+							containerStyle={[styles.button, styles.confirm]}
+							disabled={confirmed || confirmDisabled}
+						>
+							{confirmed ? (
+								<ActivityIndicator size="small" color={colors.primary.inverse} />
+							) : (
+								confirmText
+							)}
+						</StyledButton>
+					)}
+				</View>
+			</KeyboardAwareScrollView>
+		</View>
+	);
 }
 
 ActionView.defaultProps = {
