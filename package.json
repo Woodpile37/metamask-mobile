@@ -332,7 +332,7 @@
     "@storybook/addon-links": "^5.3",
     "@storybook/addon-ondevice-actions": "^5.3.23",
     "@storybook/addon-ondevice-knobs": "^5.3.25",
-    "@storybook/react-native": "^5.3.25",
+    "@storybook/react-native": "^6.5.6",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/enzyme": "^3.10.9",
     "@types/jest": "^27.0.1",
