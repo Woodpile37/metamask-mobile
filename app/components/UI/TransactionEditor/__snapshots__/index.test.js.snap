@@ -5,12 +5,16 @@ exports[`TransactionEditor should render correctly 1`] = `
   <EditGasFeeLegacy
     chainId="1"
     gasFee={Object {}}
+    ignoreOptions={Array []}
     onCancel={[Function]}
     onChange={[Function]}
     onSave={[Function]}
+    onUpdatingValuesEnd={[Function]}
+    onUpdatingValuesStart={[Function]}
     over={false}
     primaryCurrency="fiat"
     selected="medium"
+    warningMinimumEstimateOption="low"
   />
 </Fragment>
 `;

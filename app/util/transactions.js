@@ -565,32 +565,11 @@ export const calculateERC20EIP1559 = ({
 	];
 };
 
-export const parseTransactionEIP1559 = (
-	{
-		selectedGasFee,
-		contractExchangeRates,
-		conversionRate,
-		currentCurrency,
-		nativeCurrency,
-		transactionState: { selectedAsset, transaction: { value, data } } = { selectedAsset: '', transaction: {} }
-	},
-	{ onlyGas } = {}
-) => {
-	value = value || '0x0';
-
-	const suggestedMaxPriorityFeePerGas = String(selectedGasFee.suggestedMaxPriorityFeePerGas);
-	const suggestedMaxFeePerGas = String(selectedGasFee.suggestedMaxFeePerGas);
-
-	// Convert to hex
-	const estimatedBaseFeeHex = decGWEIToHexWEI(selectedGasFee.estimatedBaseFee);
-	const suggestedMaxPriorityFeePerGasHex = decGWEIToHexWEI(suggestedMaxPriorityFeePerGas);
-	const suggestedMaxFeePerGasHex = decGWEIToHexWEI(suggestedMaxFeePerGas);
-	const gasLimitHex = BNToHex(new BN(selectedGasFee.suggestedGasLimit));
-
-	const { GasFeeController } = Engine.context;
-
+export const calculateEIP1559Times = (suggestedMaxPriorityFeePerGas, suggestedMaxFeePerGas) => {
 	let timeEstimate = 'Unknown processing time';
 	let timeEstimateColor = 'red';
+	const { GasFeeController } = Engine.context;
+
 	try {
 		const time = GasFeeController.getTimeEstimate(suggestedMaxPriorityFeePerGas, suggestedMaxFeePerGas);
 
@@ -610,6 +589,37 @@ export const parseTransactionEIP1559 = (
 	} catch (error) {
 		console.log('ERROR ESTIMATING TIME', error);
 	}
+
+	return { timeEstimate, timeEstimateColor };
+};
+
+export const parseTransactionEIP1559 = (
+	{
+		selectedGasFee,
+		contractExchangeRates,
+		conversionRate,
+		currentCurrency,
+		nativeCurrency,
+		transactionState: { selectedAsset, transaction: { value, data } } = { selectedAsset: '', transaction: {} }
+	},
+	{ onlyGas } = {}
+) => {
+	value = value || '0x0';
+
+	const suggestedMaxPriorityFeePerGas = String(selectedGasFee.suggestedMaxPriorityFeePerGas);
+	const suggestedMaxFeePerGas = String(selectedGasFee.suggestedMaxFeePerGas);
+	const estimatedBaseFee = selectedGasFee.estimatedBaseFee || '0';
+
+	// Convert to hex
+	const estimatedBaseFeeHex = decGWEIToHexWEI(estimatedBaseFee);
+	const suggestedMaxPriorityFeePerGasHex = decGWEIToHexWEI(suggestedMaxPriorityFeePerGas);
+	const suggestedMaxFeePerGasHex = decGWEIToHexWEI(suggestedMaxFeePerGas);
+	const gasLimitHex = BNToHex(new BN(selectedGasFee.suggestedGasLimit));
+
+	const { timeEstimate, timeEstimateColor } = calculateEIP1559Times(
+		suggestedMaxPriorityFeePerGas,
+		suggestedMaxFeePerGas
+	);
 
 	// Hex calculations
 	const estimatedBaseFee_PLUS_suggestedMaxPriorityFeePerGasHex = addCurrencies(
@@ -647,7 +657,11 @@ export const parseTransactionEIP1559 = (
 		conversionRate
 	});
 
-	const renderableMaxPriorityFeeNative = formatETHFee(maxPriorityFeeNative, nativeCurrency);
+	const renderableMaxPriorityFeeNative = formatETHFee(
+		maxPriorityFeeNative,
+		nativeCurrency,
+		Boolean(gasFeeMinHex) && gasFeeMinHex !== '0x0'
+	);
 	const renderableMaxPriorityFeeConversion = formatCurrency(maxPriorityFeeConversion, currentCurrency);
 
 	const maxFeePerGasNative = getTransactionFee({
@@ -664,8 +678,11 @@ export const parseTransactionEIP1559 = (
 		numberOfDecimals: 2,
 		conversionRate
 	});
-
-	const renderableMaxFeePerGasNative = formatETHFee(maxFeePerGasNative, nativeCurrency);
+	const renderableMaxFeePerGasNative = formatETHFee(
+		maxFeePerGasNative,
+		nativeCurrency,
+		Boolean(gasFeeMaxHex) && gasFeeMaxHex !== '0x0'
+	);
 	const renderableMaxFeePerGasConversion = formatCurrency(maxFeePerGasConversion, currentCurrency);
 
 	// Gas fee min numbers
@@ -722,13 +739,15 @@ export const parseTransactionEIP1559 = (
 			renderableGasFeeMaxNative,
 			gasFeeMaxConversion,
 			renderableGasFeeMaxConversion,
+			maxPriorityFeeNative,
 			renderableMaxPriorityFeeNative,
+			maxPriorityFeeConversion,
 			renderableMaxPriorityFeeConversion,
 			renderableMaxFeePerGasNative,
 			renderableMaxFeePerGasConversion,
 			timeEstimate,
 			timeEstimateColor,
-			estimatedBaseFee: selectedGasFee.estimatedBaseFee,
+			estimatedBaseFee,
 			suggestedMaxPriorityFeePerGas,
 			suggestedMaxPriorityFeePerGasHex,
 			suggestedMaxFeePerGas,
@@ -812,7 +831,9 @@ export const parseTransactionEIP1559 = (
 		renderableGasFeeMaxNative,
 		gasFeeMaxConversion,
 		renderableGasFeeMaxConversion,
+		maxPriorityFeeNative,
 		renderableMaxPriorityFeeNative,
+		maxPriorityFeeConversion,
 		renderableMaxPriorityFeeConversion,
 		renderableMaxFeePerGasNative,
 		renderableMaxFeePerGasConversion,
@@ -826,7 +847,7 @@ export const parseTransactionEIP1559 = (
 		renderableTotalMaxNative,
 		totalMaxConversion,
 		renderableTotalMaxConversion,
-		estimatedBaseFee: selectedGasFee.estimatedBaseFee,
+		estimatedBaseFee,
 		suggestedMaxPriorityFeePerGas,
 		suggestedMaxPriorityFeePerGasHex,
 		suggestedMaxFeePerGas,
@@ -916,4 +937,9 @@ export const parseTransactionLegacy = (
 		suggestedGasLimitHex: gasLimitHex,
 		totalHex
 	};
+};
+
+export const isEIP1559Transaction = transaction => {
+	const hasOwnProp = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+	return hasOwnProp(transaction, 'maxFeePerGas') && hasOwnProp(transaction, 'maxPriorityFeePerGas');
 };
