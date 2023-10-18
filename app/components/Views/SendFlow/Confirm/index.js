@@ -587,7 +587,7 @@ class Confirm extends PureComponent {
 
 		if (selectedAsset.isETH) {
 			fromAccountBalance = `${renderFromWei(accounts[fromSelectedAddress].balance)} ${parsedTicker}`;
-			transactionValue = `${renderFromWei(value)} ${parsedTicker}`;
+			transactionValue = `${fromWei(value)} ${parsedTicker}`;
 			transactionValueFiat = weiToFiat(valueBN, conversionRate, currentCurrency);
 			transactionTo = to;
 		} else if (selectedAsset.tokenId) {
@@ -1253,7 +1253,13 @@ class Confirm extends PureComponent {
 					{!selectedAsset.tokenId ? (
 						<View style={styles.amountWrapper}>
 							<Text style={styles.textAmountLabel}>{strings('transaction.amount')}</Text>
-							<Text style={styles.textAmount} testID={'confirm-txn-amount'}>
+							<Text
+								style={styles.textAmount}
+								numberOfLines={1}
+								adjustsFontSizeToFit
+								allowFontScaling
+								testID={'confirm-txn-amount'}
+							>
 								{transactionValue}
 							</Text>
 							{isMainnetByChainId(chainId) && (
