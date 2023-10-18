@@ -14,7 +14,6 @@ JS_ENV_FILE=".js.env"
 ANDROID_ENV_FILE=".android.env"
 IOS_ENV_FILE=".ios.env"
 
-
 envFileMissing() {
 	FILE="$1"
 	echo "'$FILE' is missing, you'll need to add it to the root of the project."
@@ -110,7 +109,6 @@ checkParameters(){
 prebuild(){
 	# Import provider
 	cp node_modules/@metamask/mobile-provider/dist/index.js app/core/InpageBridgeWeb3.js
-	yarn --ignore-engines build:static-logos
 
 	# Load JS specific env variables
 	if [ "$PRE_RELEASE" = false ] ; then
@@ -130,7 +128,6 @@ prebuild_ios(){
 	fi
 	# Required to install mixpanel dep
 	git submodule update --init --recursive
-	unset PREFIX
 }
 
 prebuild_android(){
@@ -141,7 +138,6 @@ prebuild_android(){
 	yes | cp -rf app/core/InpageBridgeWeb3.js android/app/src/main/assets/.
 	# Copy fonts with iconset
 	yes | cp -rf ./app/fonts/Metamask.ttf ./android/app/src/main/assets/fonts/Metamask.ttf
-
 	if [ "$PRE_RELEASE" = false ] ; then
 		if [ -e $ANDROID_ENV_FILE ]
 		then
@@ -152,64 +148,27 @@ prebuild_android(){
 
 buildAndroidRun(){
 	prebuild_android
-	react-native run-android --variant=prodDebug --active-arch-only
+	react-native run-android
 }
 
-buildAndroidRunQA(){
+buildAndroidRunE2E(){
 	prebuild_android
-	react-native run-android --variant=qaDebug --active-arch-only
+	source .android.env && cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..
 }
 
 buildIosSimulator(){
 	prebuild_ios
-	SIM="${IOS_SIMULATOR:-"iPhone 12 Pro"}"
-	react-native run-ios --simulator "$SIM"
-}
-
-buildIosSimulatorQA(){
-	prebuild_ios
-	SIM="${IOS_SIMULATOR:-"iPhone 12 Pro"}"
-	react-native run-ios --simulator "$SIM" --scheme "MetaMask-QA"
+	react-native run-ios --simulator "iPhone 11 Pro"
 }
 
 buildIosSimulatorE2E(){
 	prebuild_ios
-	cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask -configuration Debug  -sdk iphonesimulator -derivedDataPath build
-}
-
-buildIosQASimulatorE2E(){
-	prebuild_ios
-	cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask-QA -configuration Debug  -sdk iphonesimulator -derivedDataPath build
-}
-
-runIosE2E(){
-  cd e2e && yarn ios:debug
+	xcodebuild -workspace ios/MetaMask.xcworkspace -scheme MetaMask -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build
 }
 
 buildIosDevice(){
 	prebuild_ios
 	react-native run-ios --device
-}
-
-buildIosDeviceQA(){
-	prebuild_ios
-	react-native run-ios --device --scheme "MetaMask-QA"
-}
-
-generateArchivePackages() {
-  scheme="$1"
-
-  if [ "$scheme" = "MetaMask-QA" ] ; then
-    exportOptionsPlist="MetaMask/IosExportOptionsMetaMaskQARelease.plist"
-  else
-    exportOptionsPlist="MetaMask/IosExportOptionsMetaMaskRelease.plist"
-  fi
-
-  echo "exportOptionsPlist: $exportOptionsPlist"
-  echo "Generating archive packages for $scheme"
-	xcodebuild -workspace MetaMask.xcworkspace -scheme $scheme -configuration Release COMIPLER_INDEX_STORE_ENABLE=NO archive -archivePath build/$scheme.xcarchive -destination generic/platform=ios
-  echo "Generating ipa for $scheme"
-  xcodebuild -exportArchive -archivePath build/$scheme.xcarchive -exportPath build/output -exportOptionsPlist $exportOptionsPlist
 }
 
 buildIosRelease(){
@@ -221,15 +180,14 @@ buildIosRelease(){
 		echo "$IOS_ENV" | tr "|" "\n" > $IOS_ENV_FILE
 		echo "Build started..."
 		brew install watchman
-		cd ios
-		generateArchivePackages "MetaMask"
+		cd ios && bundle install
 		# Generate sourcemaps
 		yarn sourcemaps:ios
 	else
 		if [ ! -f "ios/release.xcconfig" ] ; then
 			echo "$IOS_ENV" | tr "|" "\n" > ios/release.xcconfig
 		fi
-		./node_modules/.bin/react-native run-ios  --configuration Release --simulator "iPhone 12 Pro"
+		./node_modules/.bin/react-native run-ios  --configuration Release --simulator "iPhone 11 Pro"
 	fi
 }
 
@@ -240,69 +198,17 @@ buildIosReleaseE2E(){
 	if [ "$PRE_RELEASE" = true ] ; then
 		echo "Setting up env vars...";
 		echo "$IOS_ENV" | tr "|" "\n" > $IOS_ENV_FILE
-		echo "Pre-release E2E Build started..."
-		brew install watchman
-		cd ios
-		generateArchivePackages "MetaMask"
-	else
-		echo "Release E2E Build started..."
-		if [ ! -f "ios/release.xcconfig" ] ; then
-			echo "$IOS_ENV" | tr "|" "\n" > ios/release.xcconfig
-		fi
-		cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask -configuration Release -sdk iphonesimulator -derivedDataPath build
-	fi
-}
-
-buildIosQA(){
-	prebuild_ios
-
-  echo "Start QA build..."
-  echo "BITRISE_GIT_BRANCH: $BITRISE_GIT_BRANCH"
-
-	# Replace release.xcconfig with ENV vars
-	if [ "$PRE_RELEASE" = true ] ; then
-		echo "Setting up env vars...";
-    echo "$IOS_ENV"
-		echo "$IOS_ENV" | tr "|" "\n" > $IOS_ENV_FILE
 		echo "Build started..."
 		brew install watchman
-		cd ios
-		generateArchivePackages "MetaMask-QA"
+		cd ios && bundle install
 		# Generate sourcemaps
 		yarn sourcemaps:ios
 	else
 		if [ ! -f "ios/release.xcconfig" ] ; then
 			echo "$IOS_ENV" | tr "|" "\n" > ios/release.xcconfig
 		fi
-		./node_modules/.bin/react-native run-ios --scheme MetaMask-QA  --configuration Release --simulator "iPhone 12 Pro"
+		xcodebuild -workspace ios/MetaMask.xcworkspace -scheme MetaMask -configuration Release -sdk iphonesimulator -derivedDataPath ios/build
 	fi
-}
-
-
-buildAndroidQA(){
-	if [ "$PRE_RELEASE" = false ] ; then
-		adb uninstall io.metamask.qa
-	fi
-
-	prebuild_android
-	# Generate APK
-	cd android && ./gradlew assembleQaRelease --no-daemon --max-workers 2
-
-	# GENERATE BUNDLE
-	if [ "$GENERATE_BUNDLE" = true ] ; then
-		./gradlew bundleQaRelease
-	fi
-
-	if [ "$PRE_RELEASE" = true ] ; then
-		# Generate sourcemaps
-		yarn sourcemaps:android
-		# Generate checksum
-		yarn build:android:checksum:qa
-	fi
-
-	 if [ "$PRE_RELEASE" = false ] ; then
-	 	adb install app/build/outputs/apk/qa/release/app-qa-release.apk
-	 fi
 }
 
 buildAndroidRelease(){
@@ -311,12 +217,19 @@ buildAndroidRelease(){
 	fi
 	prebuild_android
 
+	if [ "$PRE_RELEASE" = true ] ; then
+		TARGET="android/app/build.gradle"
+		sed -i'' -e 's/getPassword("mm","mm-upload-key")/"ANDROID_KEY"/' $TARGET;
+		sed -i'' -e "s/ANDROID_KEY/$ANDROID_KEY/" $TARGET;
+		echo "$ANDROID_KEYSTORE" | base64 --decode > android/keystores/release.keystore
+	fi
+
 	# GENERATE APK
-	cd android && ./gradlew assembleProdRelease --no-daemon --max-workers 2
+	cd android && ./gradlew assembleRelease --no-daemon --max-workers 2
 
 	# GENERATE BUNDLE
 	if [ "$GENERATE_BUNDLE" = true ] ; then
-		./gradlew bundleProdRelease
+		./gradlew bundleRelease
 	fi
 
 	if [ "$PRE_RELEASE" = true ] ; then
@@ -327,65 +240,34 @@ buildAndroidRelease(){
 	fi
 
 	if [ "$PRE_RELEASE" = false ] ; then
-		adb install app/build/outputs/apk/prod/release/app-prod-release.apk
+		adb install app/build/outputs/apk/release/app-release.apk
 	fi
 }
 
 buildAndroidReleaseE2E(){
 	prebuild_android
-	cd android && ./gradlew assembleProdRelease app:assembleProdReleaseAndroidTest -PminSdkVersion=26 -DtestBuildType=release
-}
-
-buildAndroidQAE2E(){
-	prebuild_android
-	cd android && ./gradlew assembleQaRelease app:assembleQaReleaseAndroidTest -PminSdkVersion=26 -DtestBuildType=release
+	source .android.env && cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..
 }
 
 buildAndroid() {
 	if [ "$MODE" == "release" ] ; then
 		buildAndroidRelease
-	elif [ "$MODE" == "QA" ] ; then
-		buildAndroidQA
 	elif [ "$MODE" == "releaseE2E" ] ; then
 		buildAndroidReleaseE2E
-	elif [ "$MODE" == "QAE2E" ] ; then
-		buildAndroidQAE2E
-  elif [ "$MODE" == "debugE2E" ] ; then
+	elif [ "$MODE" == "debugE2E" ] ; then
 		buildAndroidRunE2E
-	elif [ "$MODE" == "qaDebug" ] ; then
-		buildAndroidRunQA
 	else
 		buildAndroidRun
 	fi
 }
 
-buildAndroidRunE2E(){
-	prebuild_android
-	if [ -e $ANDROID_ENV_FILE ]
-	then
-		source $ANDROID_ENV_FILE
-	fi
-	cd android && ./gradlew assembleProdDebug app:assembleAndroidTest -DtestBuildType=debug && cd ..
-}
-
 buildIos() {
-	echo "Build iOS $MODE started..."
 	if [ "$MODE" == "release" ] ; then
 		buildIosRelease
 	elif [ "$MODE" == "releaseE2E" ] ; then
 		buildIosReleaseE2E
-  elif [ "$MODE" == "debugE2E" ] ; then
+	elif [ "$MODE" == "debugE2E" ] ; then
 		buildIosSimulatorE2E
-  elif [ "$MODE" == "qadebugE2E" ] ; then
-		buildIosQASimulatorE2E
-	elif [ "$MODE" == "QA" ] ; then
-		buildIosQA
-	elif [ "$MODE" == "qaDebug" ] ; then
-		if [ "$RUN_DEVICE" = true ] ; then
-			buildIosDeviceQA
-		else
-			buildIosSimulatorQA
-		fi
 	else
 		if [ "$RUN_DEVICE" = true ] ; then
 			buildIosDevice
@@ -397,10 +279,9 @@ buildIos() {
 
 startWatcher() {
 	source $JS_ENV_FILE
-	yarn --ignore-engines build:static-logos
 	if [ "$MODE" == "clean" ]; then
 		watchman watch-del-all
-		rm -rf $TMPDIR/metro-cache
+		rm -rf $TMPDIR/react-*
 		react-native start -- --reset-cache
 	else
 		react-native start
@@ -410,40 +291,30 @@ startWatcher() {
 checkAuthToken() {
 	local propertiesFileName="$1"
 
+	if [ ! -e "./${propertiesFileName}" ]; then
+		if [ -n "${MM_SENTRY_AUTH_TOKEN}" ]; then
+			cp "./${propertiesFileName}.example" "./${propertiesFileName}"
+		else
+			printError "Missing '${propertiesFileName}' file (see '${propertiesFileName}.example' or set MM_SENTRY_AUTH_TOKEN to generate)"
+			exit 1
+		fi
+	fi
+
 	if [ -n "${MM_SENTRY_AUTH_TOKEN}" ]; then
 		sed -i'' -e "s/auth.token.*/auth.token=${MM_SENTRY_AUTH_TOKEN}/" "./${propertiesFileName}";
 	elif ! grep -qE '^auth.token=[[:alnum:]]+$' "./${propertiesFileName}"; then
 		printError "Missing auth token in '${propertiesFileName}'; add the token, or set it as MM_SENTRY_AUTH_TOKEN"
 		exit 1
 	fi
-
-	if [ ! -e "./${propertiesFileName}" ]; then
-		if [ -n "${MM_SENTRY_AUTH_TOKEN}" ]; then
-			cp "./${propertiesFileName}.example" "./${propertiesFileName}"
-			sed -i'' -e "s/auth.token.*/auth.token=${MM_SENTRY_AUTH_TOKEN}/" "./${propertiesFileName}";
-		else
-			printError "Missing '${propertiesFileName}' file (see '${propertiesFileName}.example' or set MM_SENTRY_AUTH_TOKEN to generate)"
-			exit 1
-		fi
-	fi
 }
 
 checkParameters "$@"
 
 printTitle
-if [ "$MODE" == "release" ] || [ "$MODE" == "releaseE2E" ] || [ "$MODE" == "QA" ] || [ "$MODE" == "QAE2E" ]; then
 
- 	if [ "$PRE_RELEASE" = false ]; then
-		echo "RELEASE SENTRY PROPS"
- 		checkAuthToken 'sentry.release.properties'
- 		export SENTRY_PROPERTIES="${REPO_ROOT_DIR}/sentry.release.properties"
- 	else
-	 	echo "DEBUG SENTRY PROPS"
- 		checkAuthToken 'sentry.debug.properties'
- 		export SENTRY_PROPERTIES="${REPO_ROOT_DIR}/sentry.debug.properties"
- 	fi
-
-
+if [ "$MODE" == "release" ] || [ "$MODE" == "releaseE2E" ] ; then
+	checkAuthToken 'sentry.release.properties'
+	export SENTRY_PROPERTIES="${REPO_ROOT_DIR}/sentry.release.properties"
 	if [ -z "$METAMASK_ENVIRONMENT" ]; then
 		printError "Missing METAMASK_ENVIRONMENT; set to 'production' for a production release, 'prerelease' for a pre-release, or 'local' otherwise"
 		exit 1
