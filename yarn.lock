@@ -9599,11 +9599,6 @@ graceful-fs@^4.2.3:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
-graceful-fs@^4.2.9:
-  version "4.2.10"
-  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
-  integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
-
 graceful-fs@~2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-2.0.3.tgz#7cd2cdb228a4a3f36e95efa6cc142de7d1a136d0"
@@ -14570,10 +14565,10 @@ react-native-browser-polyfill@0.1.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-camera@^3.36.0:
-  version "3.44.3"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-3.44.3.tgz#f8f35f2484e508b0694dee54a8801a1e0833d851"
-  integrity sha512-Efb5aKhFsE7qnqvTnbSEwFAom79L5BT4jMn+B2wYVUnZeRgWh45gNSG7Ou3MQ6zU2DpUHBPlBFKGVS5yOSfSZQ==
+react-native-camera@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-4.2.1.tgz#caf74081f055e89d7e9b0cd5108965d808c60e90"
+  integrity sha512-+Vkql24PFYQfsPRznJCvPwJQfyzCnjlcww/iZ4Ej80bgivKjL9eU0IMQIXp4yi6XCrKi4voWXxIDPMupQZKeIQ==
   dependencies:
     prop-types "^15.6.2"
 
