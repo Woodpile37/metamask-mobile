@@ -10,21 +10,21 @@ import {
  * @property {string} id - Original id given by Provider. Orders are identified by (provider, id)
  * @property {FIAT_ORDER_PROVIDERS}  provider Fiat Provider
  * @property {number} createdAt Fiat amount
- * @property {string|number} amount Fiat amount
- * @property {string|number} [fee] Fiat fee
- * @property {string|number} [cryptoAmount] Crypto currency amount
- * @property {string|number} [cryptoFee] Crypto currency fee
+ * @property {string} amount Fiat amount
+ * @property {string?} fee Fiat fee
+ * @property {string?} cryptoAmount Crypto currency amount
+ * @property {string?} cryptoFee Crypto currency fee
  * @property {string} currency "USD"
  * @property {string} cryptocurrency "ETH"
- * @property {string} [currencySymbol] "$"
- * @property {string} [amountInUSD] Fiat amount in USD
+ * @property {string|undefined} currencySymbol "$"
+ * @property {string?} amountInUSD Fiat amount in USD
  * @property {FIAT_ORDER_STATES} state Order state
  * @property {string} account <account wallet address>
  * @property {string} network <network>
  * @property {?string} txHash <transaction hash | null>
- * @property {object|import('@consensys/on-ramp-sdk').Order} data original provider data
- * @property {object} [data.order] : Wyre order response
- * @property {object} [data.transfer] : Wyre transfer response
+ * @property {object} data original provider data
+ * @property {object} data.order : Wyre order response
+ * @property {object} data.transfer : Wyre transfer response
  */
 
 /** Action Creators */
@@ -94,22 +94,6 @@ export const getProviderName = (provider, data = {}) => {
       return provider;
     }
   }
-export const getProviderName = (provider) => {
-	switch (provider) {
-		case FIAT_ORDER_PROVIDERS.WYRE:
-		case FIAT_ORDER_PROVIDERS.WYRE_APPLE_PAY: {
-			return 'Wyre';
-		}
-		case FIAT_ORDER_PROVIDERS.TRANSAK: {
-			return 'Transak';
-		}
-		case FIAT_ORDER_PROVIDERS.MOONPAY: {
-			return 'MoonPay';
-		}
-		default: {
-			return provider;
-		}
-	}
 };
 
 const INITIAL_SELECTED_REGION = null;
@@ -196,9 +180,6 @@ const fiatOrderReducer = (state = initialState, action) => {
       const orders = state.orders;
       const order = action.payload;
       const index = findOrderIndex(order.provider, order.id, orders);
-      if (index === -1) {
-        return state;
-      }
       return {
         ...state,
         orders: [

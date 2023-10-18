@@ -19,8 +19,7 @@ exports[`AssetActionButtons should render correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -31,19 +30,33 @@ exports[`AssetActionButtons should render correctly 1`] = `
     }
   />
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    mock text
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
 
@@ -66,8 +79,7 @@ exports[`AssetActionButtons should render type add correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -92,19 +104,33 @@ exports[`AssetActionButtons should render type add correctly 1`] = `
     />
   </View>
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    mock text
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
 
@@ -127,8 +153,7 @@ exports[`AssetActionButtons should render type information correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -153,19 +178,33 @@ exports[`AssetActionButtons should render type information correctly 1`] = `
     />
   </View>
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    mock text
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
 
@@ -188,8 +227,7 @@ exports[`AssetActionButtons should render type receive correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -226,19 +264,33 @@ exports[`AssetActionButtons should render type receive correctly 1`] = `
     />
   </View>
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    receive...
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
 
@@ -261,8 +313,7 @@ exports[`AssetActionButtons should render type send correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -287,19 +338,33 @@ exports[`AssetActionButtons should render type send correctly 1`] = `
     />
   </View>
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    mock text
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
 
@@ -322,8 +387,7 @@ exports[`AssetActionButtons should render type swap correctly 1`] = `
     style={
       Object {
         "alignContent": "center",
-        "alignItems": "center",
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037DD6",
         "borderRadius": 18,
         "height": 36,
         "justifyContent": "center",
@@ -354,18 +418,32 @@ exports[`AssetActionButtons should render type swap correctly 1`] = `
     />
   </View>
   <Text
+    bigger={false}
+    black={false}
+    blue={false}
+    bold={false}
     centered={true}
+    disclaimer={false}
+    green={false}
+    link={false}
+    modal={false}
+    muted={false}
     numberOfLines={1}
+    primary={false}
+    red={false}
+    reset={false}
+    right={false}
+    small={false}
+    strikethrough={false}
     style={
       Object {
-        "color": "#0376C9",
+        "color": "#037DD6",
         "fontSize": 14,
-        "marginHorizontal": 3,
         "marginTop": 8,
       }
     }
-  >
-    mock text
-  </Text>
+    underline={false}
+    upper={false}
+  />
 </TouchableOpacity>
 `;
