@@ -211,8 +211,8 @@
     "url-parse": "1.5.9",
     "valid-url": "1.0.9",
     "vm-browserify": "1.1.2",
-	"web3-provider-engine": "git+https://github.com/MetaMask/web3-provider-engine.git#feature/use-ethereumjs/tx",
-	"zxcvbn": "4.4.2"
+    "web3-provider-engine": "git+https://github.com/MetaMask/web3-provider-engine.git#feature/use-ethereumjs/tx",
+    "zxcvbn": "4.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
