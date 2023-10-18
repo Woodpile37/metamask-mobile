@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`StyledButton should render correctly on Android the button with type cancel 1`] = `
-<TouchableNativeFeedback
-  accessibilityRole="button"
-  accessible={true}
->
+<TouchableNativeFeedback>
   <View
     style={
       Array [
@@ -15,7 +12,7 @@ exports[`StyledButton should render correctly on Android the button with type ca
         },
         Object {
           "backgroundColor": "#FFFFFF",
-          "borderColor": "#535A61",
+          "borderColor": "#848c96",
           "borderWidth": 1,
         },
         null,
@@ -27,10 +24,7 @@ exports[`StyledButton should render correctly on Android the button with type ca
 `;
 
 exports[`StyledButton should render correctly on Android the button with type confirm 1`] = `
-<TouchableNativeFeedback
-  accessibilityRole="button"
-  accessible={true}
->
+<TouchableNativeFeedback>
   <View
     style={
       Array [
@@ -40,7 +34,7 @@ exports[`StyledButton should render correctly on Android the button with type co
           "padding": 15,
         },
         Object {
-          "backgroundColor": "#0376C9",
+          "backgroundColor": "#037dd6",
           "minHeight": 50,
         },
         null,
@@ -52,10 +46,7 @@ exports[`StyledButton should render correctly on Android the button with type co
 `;
 
 exports[`StyledButton should render correctly on Android the button with type normal 1`] = `
-<TouchableNativeFeedback
-  accessibilityRole="button"
-  accessible={true}
->
+<TouchableNativeFeedback>
   <View
     style={
       Array [
@@ -66,7 +57,7 @@ exports[`StyledButton should render correctly on Android the button with type no
         },
         Object {
           "backgroundColor": "#FFFFFF",
-          "borderColor": "#0376C9",
+          "borderColor": "#037dd6",
           "borderWidth": 1,
         },
         null,
@@ -78,10 +69,7 @@ exports[`StyledButton should render correctly on Android the button with type no
 `;
 
 exports[`StyledButton should render correctly on Android the button with type orange 1`] = `
-<TouchableNativeFeedback
-  accessibilityRole="button"
-  accessible={true}
->
+<TouchableNativeFeedback>
   <View
     style={
       Array [
@@ -91,7 +79,7 @@ exports[`StyledButton should render correctly on Android the button with type or
           "padding": 15,
         },
         Object {
-          "borderColor": "#F66A0A",
+          "borderColor": "#f66a0a",
           "borderWidth": 1,
         },
         null,
@@ -104,7 +92,6 @@ exports[`StyledButton should render correctly on Android the button with type or
 
 exports[`StyledButton should render correctly on iOS the button with type cancel 1`] = `
 <Button
-  accessibilityRole="button"
   containerStyle={
     Array [
       Object {
@@ -114,7 +101,7 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
       },
       Object {
         "backgroundColor": "#FFFFFF",
-        "borderColor": "#535A61",
+        "borderColor": "#848c96",
         "borderWidth": 1,
       },
       undefined,
@@ -130,7 +117,7 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
         "textAlign": "center",
       },
       Object {
-        "color": "#535A61",
+        "color": "#848c96",
       },
       undefined,
     ]
@@ -141,7 +128,6 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
 
 exports[`StyledButton should render correctly on iOS the button with type confirm 1`] = `
 <Button
-  accessibilityRole="button"
   containerStyle={
     Array [
       Object {
@@ -150,7 +136,7 @@ exports[`StyledButton should render correctly on iOS the button with type confir
         "padding": 15,
       },
       Object {
-        "backgroundColor": "#0376C9",
+        "backgroundColor": "#037dd6",
         "minHeight": 50,
       },
       undefined,
@@ -166,7 +152,7 @@ exports[`StyledButton should render correctly on iOS the button with type confir
         "textAlign": "center",
       },
       Object {
-        "color": "#FCFCFC",
+        "color": "#FFFFFF",
       },
       undefined,
     ]
@@ -177,7 +163,6 @@ exports[`StyledButton should render correctly on iOS the button with type confir
 
 exports[`StyledButton should render correctly on iOS the button with type normal 1`] = `
 <Button
-  accessibilityRole="button"
   containerStyle={
     Array [
       Object {
@@ -187,7 +172,7 @@ exports[`StyledButton should render correctly on iOS the button with type normal
       },
       Object {
         "backgroundColor": "#FFFFFF",
-        "borderColor": "#0376C9",
+        "borderColor": "#037dd6",
         "borderWidth": 1,
       },
       undefined,
@@ -203,7 +188,7 @@ exports[`StyledButton should render correctly on iOS the button with type normal
         "textAlign": "center",
       },
       Object {
-        "color": "#0376C9",
+        "color": "#037dd6",
       },
       undefined,
     ]
@@ -214,7 +199,6 @@ exports[`StyledButton should render correctly on iOS the button with type normal
 
 exports[`StyledButton should render correctly on iOS the button with type orange 1`] = `
 <Button
-  accessibilityRole="button"
   containerStyle={
     Array [
       Object {
@@ -223,7 +207,7 @@ exports[`StyledButton should render correctly on iOS the button with type orange
         "padding": 15,
       },
       Object {
-        "borderColor": "#F66A0A",
+        "borderColor": "#f66a0a",
         "borderWidth": 1,
       },
       undefined,
@@ -239,7 +223,7 @@ exports[`StyledButton should render correctly on iOS the button with type orange
         "textAlign": "center",
       },
       Object {
-        "color": "#F66A0A",
+        "color": "#f66a0a",
       },
       undefined,
     ]

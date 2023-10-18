@@ -1,28 +1,32 @@
 import React, { PureComponent } from 'react';
-import { SafeAreaView, StyleSheet, Alert, InteractionManager } from 'react-native';
+import { StyleSheet, AppState, Alert, InteractionManager } from 'react-native';
 import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
 import TransactionEditor from '../../UI/TransactionEditor';
-import { BNToHex, hexToBN } from '../../../util/number';
+import Modal from 'react-native-modal';
+import { addHexPrefix, BNToHex, hexToBN } from '../../../util/number';
 import { getTransactionOptionsTitle } from '../../UI/Navbar';
-import { colors } from '../../../styles/common';
 import { resetTransaction } from '../../../actions/transaction';
 import { connect } from 'react-redux';
-import TransactionsNotificationManager from '../../../core/TransactionsNotificationManager';
+import NotificationManager from '../../../core/NotificationManager';
 import Analytics from '../../../core/Analytics';
 import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
-import { getTransactionReviewActionKey } from '../../../util/transactions';
+import { getTransactionReviewActionKey, getNormalizedTxState, getActiveTabUrl } from '../../../util/transactions';
 import { strings } from '../../../../locales/i18n';
 import { safeToChecksumAddress } from '../../../util/address';
+import { WALLET_CONNECT_ORIGIN } from '../../../util/walletconnect';
+import Logger from '../../../util/Logger';
+import AnalyticsV2 from '../../../util/analyticsV2';
+import { GAS_ESTIMATE_TYPES } from '@metamask/controllers';
 
 const REVIEW = 'review';
 const EDIT = 'edit';
 const APPROVAL = 'Approval';
 
 const styles = StyleSheet.create({
-	wrapper: {
-		backgroundColor: colors.white,
-		flex: 1
+	bottomModal: {
+		justifyContent: 'flex-end',
+		margin: 0
 	}
 });
 
@@ -36,7 +40,7 @@ class Approval extends PureComponent {
 		/**
 		 * react-navigation object used for switching between screens
 		 */
-		navigation: PropTypes.object,
+		navigation: PropTypes.object.isRequired,
 		/**
 		 * Action that cleans transaction state
 		 */
@@ -52,7 +56,28 @@ class Approval extends PureComponent {
 		/**
 		 * A string representing the network name
 		 */
-		networkType: PropTypes.string
+		networkType: PropTypes.string,
+		/**
+		 * Hides or shows the dApp transaction modal
+		 */
+		toggleDappTransactionModal: PropTypes.func,
+		/**
+		 * Tells whether or not dApp transaction modal is visible
+		 */
+		dappTransactionModalVisible: PropTypes.bool,
+		/**
+		 * Indicates whether custom nonce should be shown in transaction editor
+		 */
+		showCustomNonce: PropTypes.bool,
+		nonce: PropTypes.number,
+		/**
+		 * Active tab URL, the currently active tab url
+		 */
+		activeTabUrl: PropTypes.string,
+		/**
+		 * A string representing the network chainId
+		 */
+		chainId: PropTypes.string
 	};
 
 	state = {
@@ -67,13 +92,24 @@ class Approval extends PureComponent {
 			Engine.context.TransactionController.cancelTransaction(transaction.id);
 		}
 		Engine.context.TransactionController.hub.removeAllListeners(`${transaction.id}:finished`);
+		AppState.removeEventListener('change', this.handleAppStateChange);
 		this.clear();
+	};
+
+	handleAppStateChange = appState => {
+		if (appState !== 'active') {
+			const { transaction } = this.props;
+			transaction && transaction.id && Engine.context.TransactionController.cancelTransaction(transaction.id);
+			this.props.toggleDappTransactionModal(false);
+		}
 	};
 
 	componentDidMount = () => {
 		const { navigation } = this.props;
+		AppState.addEventListener('change', this.handleAppStateChange);
 		navigation && navigation.setParams({ mode: REVIEW, dispatch: this.onModeChange });
-		this.trackConfirmScreen();
+
+		AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.DAPP_TRANSACTION_STARTED, this.getAnalyticsParams());
 	};
 
 	/**
@@ -133,6 +169,23 @@ class Approval extends PureComponent {
 		};
 	};
 
+	getAnalyticsParams = () => {
+		try {
+			const { activeTabUrl, chainId, transaction, networkType } = this.props;
+			const { selectedAsset } = transaction;
+			return {
+				dapp_host_name: transaction?.origin,
+				dapp_url: activeTabUrl,
+				network_name: networkType,
+				chain_id: chainId,
+				active_currency: { value: selectedAsset?.symbol, anonymous: true },
+				asset_type: { value: transaction?.assetType, anonymous: true }
+			};
+		} catch (error) {
+			return {};
+		}
+	};
+
 	/**
 	 * Transaction state is erased, ready to create a new clean transaction
 	 */
@@ -140,33 +193,60 @@ class Approval extends PureComponent {
 		this.props.resetTransaction();
 	};
 
+	showWalletConnectNotification = (confirmation = false) => {
+		const { transaction } = this.props;
+		InteractionManager.runAfterInteractions(() => {
+			transaction.origin &&
+				transaction.origin.includes(WALLET_CONNECT_ORIGIN) &&
+				NotificationManager.showSimpleNotification({
+					status: `simple_notification${!confirmation ? '_rejected' : ''}`,
+					duration: 5000,
+					title: confirmation
+						? strings('notifications.wc_sent_tx_title')
+						: strings('notifications.wc_sent_tx_rejected_title'),
+					description: strings('notifications.wc_description')
+				});
+		});
+	};
+
 	onCancel = () => {
-		this.props.navigation.pop();
+		this.props.toggleDappTransactionModal();
 		this.state.mode === REVIEW && this.trackOnCancel();
+		this.showWalletConnectNotification();
+		AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.DAPP_TRANSACTION_CANCELLED, this.getAnalyticsParams());
 	};
 
 	/**
 	 * Callback on confirm transaction
 	 */
-	onConfirm = async () => {
+	onConfirm = async ({ gasEstimateType, EIP1559GasData }) => {
 		const { TransactionController } = Engine.context;
 		const {
 			transactions,
-			transaction: { assetType, selectedAsset }
+			transaction: { assetType, selectedAsset },
+			showCustomNonce
 		} = this.props;
 		let { transaction } = this.props;
+		const { nonce } = transaction;
+		if (showCustomNonce && nonce) transaction.nonce = BNToHex(nonce);
+
 		try {
 			if (assetType === 'ETH') {
-				transaction = this.prepareTransaction(transaction);
+				transaction = this.prepareTransaction({ transaction, gasEstimateType, EIP1559GasData });
 			} else {
-				transaction = this.prepareAssetTransaction(transaction, selectedAsset);
+				transaction = this.prepareAssetTransaction({
+					transaction,
+					selectedAsset,
+					gasEstimateType,
+					EIP1559GasData
+				});
 			}
 
 			TransactionController.hub.once(`${transaction.id}:finished`, transactionMeta => {
 				if (transactionMeta.status === 'submitted') {
 					this.setState({ transactionHandled: true });
-					this.props.navigation.pop();
-					TransactionsNotificationManager.watchSubmittedTransaction({
+					this.props.toggleDappTransactionModal();
+					NotificationManager.watchSubmittedTransaction({
 						...transactionMeta,
 						assetType: transaction.assetType
 					});
@@ -179,13 +259,15 @@ class Approval extends PureComponent {
 			const updatedTx = { ...fullTx, transaction };
 			await TransactionController.updateTransaction(updatedTx);
 			await TransactionController.approveTransaction(transaction.id);
+			this.showWalletConnectNotification(true);
 		} catch (error) {
 			Alert.alert(strings('transactions.transaction_error'), error && error.message, [
 				{ text: strings('navigation.ok') }
 			]);
+			Logger.error(error, 'error while trying to send transaction (Approval)');
 			this.setState({ transactionHandled: false });
 		}
-		this.trackOnConfirm();
+		AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.DAPP_TRANSACTION_COMPLETED, this.getAnalyticsParams());
 	};
 
 	/**
@@ -209,13 +291,26 @@ class Approval extends PureComponent {
 	 *
 	 * @param {object} transaction - Transaction object
 	 */
-	prepareTransaction = transaction => ({
-		...transaction,
-		gas: BNToHex(transaction.gas),
-		gasPrice: BNToHex(transaction.gasPrice),
-		value: BNToHex(transaction.value),
-		to: safeToChecksumAddress(transaction.to)
-	});
+	prepareTransaction = ({ transaction, gasEstimateType, EIP1559GasData }) => {
+		const transactionToSend = {
+			...transaction,
+			value: BNToHex(transaction.value),
+			to: safeToChecksumAddress(transaction.to)
+		};
+
+		if (gasEstimateType === GAS_ESTIMATE_TYPES.FEE_MARKET) {
+			transactionToSend.gas = EIP1559GasData.gasLimitHex;
+			transactionToSend.maxFeePerGas = addHexPrefix(EIP1559GasData.suggestedMaxFeePerGasHex); //'0x2540be400'
+			transactionToSend.maxPriorityFeePerGas = addHexPrefix(EIP1559GasData.suggestedMaxPriorityFeePerGasHex); //'0x3b9aca00';
+			transactionToSend.to = safeToChecksumAddress(transaction.to);
+			delete transactionToSend.gasPrice;
+		} else {
+			transactionToSend.gas = BNToHex(transaction.gas);
+			transactionToSend.gasPrice = BNToHex(transaction.gasPrice);
+		}
+
+		return transactionToSend;
+	};
 
 	/**
 	 * Returns transaction object with gas and gasPrice in hex format, value set to 0 in hex format
@@ -224,13 +319,24 @@ class Approval extends PureComponent {
 	 * @param {object} transaction - Transaction object
 	 * @param {object} selectedAsset - Asset object
 	 */
-	prepareAssetTransaction = (transaction, selectedAsset) => ({
-		...transaction,
-		gas: BNToHex(transaction.gas),
-		gasPrice: BNToHex(transaction.gasPrice),
-		value: '0x0',
-		to: selectedAsset.address
-	});
+	prepareAssetTransaction = ({ transaction, selectedAsset, gasEstimateType, EIP1559GasData }) => {
+		const transactionToSend = {
+			...transaction,
+			value: '0x0',
+			to: selectedAsset.address
+		};
+
+		if (gasEstimateType === GAS_ESTIMATE_TYPES.FEE_MARKET) {
+			transactionToSend.gas = EIP1559GasData.gasLimitHex;
+			transactionToSend.maxFeePerGas = addHexPrefix(EIP1559GasData.suggestedMaxFeePerGasHex); //'0x2540be400'
+			transactionToSend.maxPriorityFeePerGas = addHexPrefix(EIP1559GasData.suggestedMaxPriorityFeePerGasHex); //'0x3b9aca00';
+			transactionToSend.to = safeToChecksumAddress(transaction.to);
+			delete transactionToSend.gasPrice;
+		} else {
+			transactionToSend.gas = BNToHex(transaction.gas);
+			transactionToSend.gasPrice = BNToHex(transaction.gasPrice);
+		}
+	};
 
 	sanitizeTransaction(transaction) {
 		transaction.gas = hexToBN(transaction.gas);
@@ -240,10 +346,23 @@ class Approval extends PureComponent {
 	}
 
 	render = () => {
-		const { transaction } = this.props;
+		const { transaction, dappTransactionModalVisible } = this.props;
 		const { mode } = this.state;
 		return (
-			<SafeAreaView style={styles.wrapper} testID={'confirm-transaction-screen'}>
+			<Modal
+				isVisible={dappTransactionModalVisible}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={styles.bottomModal}
+				backdropOpacity={0.7}
+				animationInTiming={600}
+				animationOutTiming={600}
+				onBackdropPress={this.onCancel}
+				onBackButtonPress={this.onCancel}
+				onSwipeComplete={this.onCancel}
+				swipeDirection={'down'}
+				propagateSwipe
+			>
 				<TransactionEditor
 					promptedFromApproval
 					mode={mode}
@@ -251,17 +370,20 @@ class Approval extends PureComponent {
 					onConfirm={this.onConfirm}
 					onModeChange={this.onModeChange}
 					transaction={transaction}
-					navigation={this.props.navigation}
+					dappTransactionModalVisible={dappTransactionModalVisible}
 				/>
-			</SafeAreaView>
+			</Modal>
 		);
 	};
 }
 
 const mapStateToProps = state => ({
-	transaction: state.transaction,
+	transaction: getNormalizedTxState(state),
 	transactions: state.engine.backgroundState.TransactionController.transactions,
-	networkType: state.engine.backgroundState.NetworkController.provider.type
+	networkType: state.engine.backgroundState.NetworkController.provider.type,
+	showCustomNonce: state.settings.showCustomNonce,
+	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+	activeTabUrl: getActiveTabUrl(state)
 });
 
 const mapDispatchToProps = dispatch => ({

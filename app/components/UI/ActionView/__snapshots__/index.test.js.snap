@@ -8,7 +8,7 @@ exports[`ActionView should render correctly 1`] = `
     }
   }
 >
-  <KeyboardAwareScrollViewMock
+  <KeyboardAwareScrollView
     enableAutomaticScroll={true}
     enableOnAndroid={false}
     enableResetScrollToCoords={true}
@@ -37,72 +37,70 @@ exports[`ActionView should render correctly 1`] = `
         }
       }
     />
-  </KeyboardAwareScrollViewMock>
-  <View
-    style={
-      Object {
-        "borderTopColor": "#bbc0c5",
-        "borderTopWidth": 1,
-        "flex": 0,
-        "flexDirection": "row",
-        "paddingHorizontal": 24,
-        "paddingVertical": 16,
-      }
-    }
-  >
-    <StyledButton
-      containerStyle={
-        Array [
-          Object {
-            "flex": 1,
-          },
-          Object {
-            "marginRight": 8,
-          },
-        ]
-      }
-      disabled={false}
-      disabledContainerStyle={
+    <View
+      style={
         Object {
-          "opacity": 0.6,
+          "flex": 0,
+          "flexDirection": "row",
+          "paddingHorizontal": 24,
+          "paddingVertical": 16,
         }
       }
-      styleDisabled={
-        Object {
-          "opacity": 0.6,
-        }
-      }
-      testID=""
-      type="cancel"
     >
-      Cancel
-    </StyledButton>
-    <StyledButton
-      containerStyle={
-        Array [
-          Object {
-            "flex": 1,
-          },
-          Object {
-            "marginLeft": 8,
-          },
-        ]
-      }
-      disabledContainerStyle={
-        Object {
-          "opacity": 0.6,
+      <StyledButton
+        containerStyle={
+          Array [
+            Object {
+              "flex": 1,
+            },
+            Object {
+              "marginRight": 8,
+            },
+          ]
         }
-      }
-      styleDisabled={
-        Object {
-          "opacity": 0.6,
+        disabled={false}
+        disabledContainerStyle={
+          Object {
+            "opacity": 0.6,
+          }
         }
-      }
-      testID=""
-      type="normal"
-    >
-      Confirm
-    </StyledButton>
-  </View>
+        styleDisabled={
+          Object {
+            "opacity": 0.6,
+          }
+        }
+        testID=""
+        type="cancel"
+      >
+        Cancel
+      </StyledButton>
+      <StyledButton
+        containerStyle={
+          Array [
+            Object {
+              "flex": 1,
+            },
+            Object {
+              "marginLeft": 8,
+            },
+          ]
+        }
+        disabledContainerStyle={
+          Object {
+            "opacity": 0.6,
+          }
+        }
+        styleDisabled={
+          Object {
+            "opacity": 0.6,
+          }
+        }
+        testID=""
+        type="normal"
+      >
+        Confirm
+      </StyledButton>
+    </View>
+  </KeyboardAwareScrollView>
 </View>
 `;

@@ -1,8 +1,16 @@
 import { BN } from 'ethereumjs-util';
-import { renderFromWei, weiToFiat, toWei } from './number';
+import { renderFromWei, weiToFiat, toWei, conversionUtil } from './number';
 import { strings } from '../../locales/i18n';
 import Logger from '../util/Logger';
 import TransactionTypes from '../core/TransactionTypes';
+import Engine from '../core/Engine';
+import { isMainnetByChainId } from '../util/networks';
+import { util } from '@metamask/controllers';
+const { hexToBN } = util;
+
+export const ETH = 'ETH';
+export const GWEI = 'GWEI';
+export const WEI = 'WEI';
 
 /**
  * Calculates wei value of estimate gas price in gwei
@@ -21,7 +29,7 @@ export function apiEstimateModifiedToWEI(estimate) {
  * @returns {string} - The GWEI value as a string
  */
 export function convertApiValueToGWEI(val) {
-	return (parseInt(val, 10) / 10).toString();
+	return parseInt(val, 10).toString();
 }
 
 /**
@@ -103,47 +111,31 @@ export function parseWaitTime(min) {
  * @returns {Object} - Object containing basic estimates
  */
 export async function fetchBasicGasEstimates() {
-	const apiKey = process.env.ETH_GAS_STATION_API_KEY ? `?api-key=${process.env.ETH_GAS_STATION_API_KEY}` : '';
-	const endpoint = 'https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json';
-	return await fetch(`${endpoint}${apiKey}`, {
+	// Timeout in 7 seconds
+	const timeout = 7000;
+
+	const fetchPromise = fetch(`https://api.metaswap.codefi.network/gasPrices`, {
 		headers: {},
-		referrer: 'http://ethgasstation.info/json/',
 		referrerPolicy: 'no-referrer-when-downgrade',
 		body: null,
 		method: 'GET',
 		mode: 'cors'
 	})
 		.then(r => r.json())
-		.then(
-			({
-				average,
-				avgWait,
-				block_time: blockTime,
-				blockNum,
-				fast,
-				fastest,
-				fastestWait,
-				fastWait,
-				safeLow,
-				safeLowWait,
-				speed
-			}) => {
-				const basicEstimates = {
-					average,
-					averageWait: avgWait,
-					blockTime,
-					blockNum,
-					fast,
-					fastest,
-					fastestWait,
-					fastWait,
-					safeLow,
-					safeLowWait,
-					speed
-				};
-				return basicEstimates;
-			}
-		);
+		.then(({ SafeGasPrice, ProposeGasPrice, FastGasPrice }) => {
+			const basicEstimates = {
+				average: ProposeGasPrice,
+				safeLow: SafeGasPrice,
+				fast: FastGasPrice
+			};
+
+			return basicEstimates;
+		});
+
+	return Promise.race([
+		fetchPromise,
+		new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+	]);
 }
 
 /**
@@ -152,41 +144,106 @@ export async function fetchBasicGasEstimates() {
  * @returns {Object} - Object containing formatted wait times
  */
 export async function getBasicGasEstimates() {
-	const {
-		CUSTOM_GAS: { AVERAGE_GAS, FAST_GAS, LOW_GAS }
-	} = TransactionTypes;
-
-	let basicGasEstimates;
-	try {
-		basicGasEstimates = await fetchBasicGasEstimates();
-	} catch (error) {
-		Logger.log('Error while trying to get gas limit estimates', error);
-		basicGasEstimates = {
-			average: AVERAGE_GAS,
-			averageWait: 2,
-			safeLow: LOW_GAS,
-			safeLowWait: 4,
-			fast: FAST_GAS,
-			fastWait: 1
-		};
-	}
+	const basicGasEstimates = await fetchBasicGasEstimates();
 
 	// Handle api failure returning same gas prices
-	let { average, fast, safeLow } = basicGasEstimates;
-	const { averageWait, fastWait, safeLowWait } = basicGasEstimates;
+	const { average, fast, safeLow } = basicGasEstimates;
 
 	if (average === fast && average === safeLow) {
-		average = AVERAGE_GAS;
-		safeLow = LOW_GAS;
-		fast = FAST_GAS;
+		throw new Error('Api returned same gas prices');
 	}
 
 	return {
 		averageGwei: convertApiValueToGWEI(average),
 		fastGwei: convertApiValueToGWEI(fast),
-		safeLowGwei: convertApiValueToGWEI(safeLow),
-		averageWait: parseWaitTime(averageWait),
-		fastWait: parseWaitTime(fastWait),
-		safeLowWait: parseWaitTime(safeLowWait)
+		safeLowGwei: convertApiValueToGWEI(safeLow)
 	};
+}
+
+export async function getGasLimit(transaction) {
+	const { TransactionController } = Engine.context;
+
+	let estimation;
+	try {
+		estimation = await TransactionController.estimateGas(transaction);
+	} catch (error) {
+		estimation = {
+			gas: TransactionTypes.CUSTOM_GAS.DEFAULT_GAS_LIMIT
+		};
+	}
+
+	const gas = hexToBN(estimation.gas);
+	return { gas };
+}
+export async function getGasPriceByChainId(transaction) {
+	const { TransactionController, NetworkController } = Engine.context;
+	const chainId = NetworkController.state.provider.chainId;
+
+	let estimation, basicGasEstimates;
+	try {
+		estimation = await TransactionController.estimateGas(transaction);
+		basicGasEstimates = {
+			average: getValueFromWeiHex({
+				value: estimation.gasPrice.toString(16),
+				numberOfDecimals: 4,
+				toDenomination: 'GWEI'
+			})
+		};
+	} catch (error) {
+		estimation = {
+			gas: TransactionTypes.CUSTOM_GAS.DEFAULT_GAS_LIMIT,
+			gasPrice: TransactionTypes.CUSTOM_GAS.AVERAGE_GAS
+		};
+		basicGasEstimates = {
+			average: estimation.gasPrice
+		};
+		Logger.log('Error while trying to get gas price from the network', error);
+	}
+
+	if (isMainnetByChainId(chainId)) {
+		try {
+			basicGasEstimates = await fetchBasicGasEstimates();
+		} catch (error) {
+			Logger.log('Error while trying to get gas limit estimates', error);
+			// Will use gas price from network that was fetched above
+		}
+	}
+	const gas = hexToBN(estimation.gas);
+	const gasPrice = toWei(convertApiValueToGWEI(basicGasEstimates.average), 'gwei');
+	return { gas, gasPrice };
+}
+
+export async function getBasicGasEstimatesByChainId() {
+	const { NetworkController } = Engine.context;
+	const chainId = NetworkController.state.provider.chainId;
+
+	if (!isMainnetByChainId(chainId)) {
+		return null;
+	}
+	try {
+		const basicGasEstimates = await getBasicGasEstimates();
+		return basicGasEstimates;
+	} catch (e) {
+		return null;
+	}
+}
+
+export function getValueFromWeiHex({
+	value,
+	fromCurrency = ETH,
+	toCurrency,
+	conversionRate,
+	numberOfDecimals,
+	toDenomination
+}) {
+	return conversionUtil(value, {
+		fromNumericBase: 'hex',
+		toNumericBase: 'dec',
+		fromCurrency,
+		toCurrency,
+		numberOfDecimals,
+		fromDenomination: WEI,
+		toDenomination,
+		conversionRate
+	});
 }

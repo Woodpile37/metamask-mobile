@@ -20,10 +20,11 @@ const styles = StyleSheet.create({
 		color: colors.white
 	},
 	orange: {
-		backgroundColor: colors.blue
+		borderColor: colors.orange,
+		borderWidth: 1
 	},
 	orangeText: {
-		color: colors.white
+		color: colors.orange
 	},
 	infoText: {
 		color: colors.blue

@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TransactionEditor should render correctly 1`] = `
+<Fragment>
+  <EditGasFeeLegacy
+    chainId="1"
+    gasFee={Object {}}
+    onCancel={[Function]}
+    onChange={[Function]}
+    onSave={[Function]}
+    over={false}
+    primaryCurrency="fiat"
+    selected="medium"
+  />
+</Fragment>
+`;

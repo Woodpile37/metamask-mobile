@@ -36,7 +36,10 @@ describe('Confirm', () => {
 						identities: {}
 					},
 					KeyringController: {
-						keyrings: {}
+						keyrings: [{ accounts: ['0x'], type: 'HD Key Tree' }]
+					},
+					GasFeeController: {
+						gasEstimates: {}
 					}
 				}
 			},
