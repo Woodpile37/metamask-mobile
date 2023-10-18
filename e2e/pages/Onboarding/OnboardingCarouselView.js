@@ -2,9 +2,9 @@ import TestHelpers from '../../helpers';
 import {
   WELCOME_SCREEN_CAROUSEL_TITLE_ID,
   WELCOME_SCREEN_GET_STARTED_BUTTON_ID,
-} from '../../../wdio/screen-objects/testIDs/Screens/WelcomeScreen.testIds';
+} from '../../../wdio/features/testIDs/Screens/WelcomeScreen.testIds';
 
-const ONBOARDING_CAROUSEL_ID = 'onboarding-carouselcarousel-screen--screen';
+const ONBOARDING_CAROUSEL_ID = 'welcome-screen-carousel-container-id';
 
 const CAROUSEL_SCREEN_ONE_IMAGE_ID = 'carousel-one-image';
 const CAROUSEL_SCREEN_TWO_IMAGE_ID = 'carousel-two-image';
@@ -14,13 +14,8 @@ export default class OnboardingCarouselView {
   static async swipeCarousel() {
     await TestHelpers.swipe(ONBOARDING_CAROUSEL_ID, 'left');
   }
-
   static async tapOnGetStartedButton() {
     await TestHelpers.waitAndTap(WELCOME_SCREEN_GET_STARTED_BUTTON_ID);
-  }
-
-  static async isGetStartedButtonVisible() {
-    await TestHelpers.checkIfVisible(WELCOME_SCREEN_GET_STARTED_BUTTON_ID);
   }
 
   static async isMetaMaskWelcomeTextVisible() {
@@ -29,7 +24,6 @@ export default class OnboardingCarouselView {
       'Welcome to MetaMask',
     );
   }
-
   static async isWelcomeToMetaMaskImageVisible() {
     await TestHelpers.checkIfVisible(CAROUSEL_SCREEN_ONE_IMAGE_ID);
   }
@@ -57,9 +51,7 @@ export default class OnboardingCarouselView {
   }
 
   static async isVisible() {
-    if (device.getPlatform() === 'ios') {
-      await TestHelpers.checkIfVisible(ONBOARDING_CAROUSEL_ID);
-    }
+    await TestHelpers.checkIfVisible(ONBOARDING_CAROUSEL_ID);
   }
 
   static async isNotVisible() {

@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, import/no-commonjs */
 import React from 'react';
-import { Animated, Dimensions, View, StyleSheet } from 'react-native';
+import { Animated, Dimensions, View, StyleSheet, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import LottieView from 'lottie-react-native';
-import {
-  useAppThemeFromContext,
-  mockTheme,
-  useAssetFromTheme,
-} from '../../../util/theme';
-import { useAppThemeFromContext, mockTheme, useAssetFromTheme } from '../../../util/theme';
+import { useTheme, useAssetFromTheme } from '../../../util/theme';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import { SPLASH_SCREEN_METAMASK_ANIMATION_ID } from '../../../../wdio/features/testIDs/Components/MetaMaskAnimation.testIds';
 
 const LOGO_SIZE = 175;
 const LOGO_PADDING = 25;
@@ -68,7 +65,7 @@ const MetaMaskAnimation = ({
   animationName: any;
   onAnimationFinish: () => void;
 }): JSX.Element => {
-  const { colors } = useAppThemeFromContext() || mockTheme;
+  const { colors } = useTheme();
   const styles = createStyles(colors);
   const wordmark = useAssetFromTheme(wordmarkLight, wordmarkDark);
 
@@ -76,7 +73,10 @@ const MetaMaskAnimation = ({
     <View style={styles.main}>
       <Animated.View style={[styles.logoWrapper, { opacity }]}>
         <View style={styles.fox}>
-          <View style={styles.foxAndName}>
+          <View
+            style={styles.foxAndName}
+            {...generateTestId(Platform, SPLASH_SCREEN_METAMASK_ANIMATION_ID)}
+          >
             <LottieView
               ref={animation}
               style={styles.animation}
@@ -104,92 +104,6 @@ MetaMaskAnimation.propTypes = {
   animation: PropTypes.object,
   animationName: PropTypes.object,
   onAnimationFinish: PropTypes.func,
-	StyleSheet.create({
-		main: {
-			...StyleSheet.absoluteFillObject,
-			backgroundColor: colors.background.default,
-		},
-		metamaskName: {
-			marginTop: 10,
-			height: 25,
-			width: 170,
-			alignSelf: 'center',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-		logoWrapper: {
-			paddingTop: 50,
-			marginTop: Dimensions.get('window').height / 2 - LOGO_SIZE / 2 - LOGO_PADDING,
-			height: LOGO_SIZE + LOGO_PADDING * 2,
-		},
-		foxAndName: {
-			alignSelf: 'center',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-		animation: {
-			width: 110,
-			height: 110,
-			alignSelf: 'center',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-		fox: {
-			width: 110,
-			height: 110,
-			alignSelf: 'center',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-	});
-
-const MetaMaskAnimation = ({
-	opacity,
-	animation,
-	animationName,
-	onAnimationFinish,
-}: {
-	opacity: number;
-	animation: any;
-	animationName: any;
-	onAnimationFinish: () => void;
-}): JSX.Element => {
-	const { colors } = useAppThemeFromContext() || mockTheme;
-	const styles = createStyles(colors);
-	const wordmark = useAssetFromTheme(wordmarkLight, wordmarkDark);
-
-	return (
-		<View style={styles.main}>
-			<Animated.View style={[styles.logoWrapper, { opacity }]}>
-				<View style={styles.fox}>
-					<View style={styles.foxAndName}>
-						<LottieView
-							ref={animation}
-							style={styles.animation}
-							loop={false}
-							// eslint-disable-next-line
-							source={require('../../../animations/fox-in.json')}
-							onAnimationFinish={onAnimationFinish}
-						/>
-						<LottieView
-							ref={animationName}
-							style={styles.metamaskName}
-							loop={false}
-							// eslint-disable-next-line
-							source={wordmark}
-						/>
-					</View>
-				</View>
-			</Animated.View>
-		</View>
-	);
-};
-
-MetaMaskAnimation.propTypes = {
-	opacity: PropTypes.object,
-	animation: PropTypes.object,
-	animationName: PropTypes.object,
-	onAnimationFinish: PropTypes.func,
 };
 
 export default MetaMaskAnimation;
