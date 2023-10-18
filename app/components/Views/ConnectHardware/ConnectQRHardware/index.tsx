@@ -6,27 +6,23 @@ import React, {
   useState,
 } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Engine from '../../../core/Engine';
-import AnimatedQRScannerModal from '../../UI/QRHardware/AnimatedQRScanner';
+import Engine from '../../../../core/Engine';
+import AnimatedQRScannerModal from '../../../UI/QRHardware/AnimatedQRScanner';
 import SelectQRAccounts from './SelectQRAccounts';
 import ConnectQRInstruction from './Instruction';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import BlockingActionModal from '../../UI/BlockingActionModal';
-import { strings } from '../../../../locales/i18n';
+import BlockingActionModal from '../../../UI/BlockingActionModal';
+import { strings } from '../../../../../locales/i18n';
 import { IAccount } from './types';
 import { UR } from '@ngraveio/bc-ur';
-import Alert, { AlertType } from '../../Base/Alert';
-import { MetaMetricsEvents } from '../../../core/Analytics';
-import AnalyticsV2 from '../../../util/analyticsV2';
-
+import Alert, { AlertType } from '../../../Base/Alert';
+import AnalyticsV2 from '../../../../util/analyticsV2';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Device from '../../../util/device';
-import { useTheme } from '../../../util/theme';
-import { SUPPORTED_UR_TYPE } from '../../../constants/qr';
-import { fontStyles } from '../../../styles/common';
-import Logger from '../../../util/Logger';
-import { removeAccountsFromPermissions } from '../../../core/Permissions';
-import { safeToChecksumAddress } from '../../../util/address';
+import Device from '../../../../util/device';
+import { mockTheme, useAppThemeFromContext } from '../../../../util/theme';
+import { SUPPORTED_UR_TYPE } from '../../../../constants/qr';
+import { fontStyles } from '../../../../styles/common';
+import Logger from '../../../../util/Logger';
 
 interface IConnectQRHardwareProps {
   navigation: any;
@@ -74,7 +70,7 @@ const createStyles = (colors: any) =>
   });
 
 const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
-  const { colors } = useTheme();
+  const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
 
   const KeyringController = useMemo(() => {
@@ -166,9 +162,12 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
   }, [QRState.sync, hideScanner, showScanner]);
 
   const onConnectHardware = useCallback(async () => {
-    AnalyticsV2.trackEvent(MetaMetricsEvents.CONTINUE_QR_HARDWARE_WALLET, {
-      device_type: 'QR Hardware',
-    });
+    AnalyticsV2.trackEvent(
+      AnalyticsV2.ANALYTICS_EVENTS.CONTINUE_QR_HARDWARE_WALLET,
+      {
+        device_type: 'QR Hardware',
+      },
+    );
     resetError();
     const _accounts = await KeyringController.connectQRHardware(0);
     setAccounts(_accounts);
@@ -178,7 +177,7 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
     (ur: UR) => {
       hideScanner();
       AnalyticsV2.trackEvent(
-        MetaMetricsEvents.CONNECT_HARDWARE_WALLET_SUCCESS,
+        AnalyticsV2.ANALYTICS_EVENTS.CONNECT_HARDWARE_WALLET_SUCCESS,
         {
           device_type: 'QR Hardware',
         },
@@ -194,13 +193,11 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
   );
 
   const onScanError = useCallback(
-    async (error: string) => {
+    (error: string) => {
       hideScanner();
       setErrorMsg(error);
-      const qrKeyring = await KeyringController.getOrAddQRKeyring();
-      qrKeyring.cancelSync();
     },
-    [hideScanner, KeyringController],
+    [hideScanner],
   );
 
   const nextPage = useCallback(async () => {
@@ -262,22 +259,12 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
       Logger.log('Error: Connecting QR hardware wallet', err);
     }
     setBlockingModalVisible(false);
-    navigation.goBack();
+    navigation.popToTop();
   }, [KeyringController, checkedAccounts, navigation, resetError]);
 
   const onForget = useCallback(async () => {
-    const { PreferencesController } = Engine.context as any;
     resetError();
-    // removedAccounts and remainingAccounts are not checksummed here.
-    const { removedAccounts, remainingAccounts } =
-      await KeyringController.forgetQRDevice();
-    PreferencesController.setSelectedAddress(
-      remainingAccounts[remainingAccounts.length - 1],
-    );
-    const checksummedRemovedAccounts = removedAccounts.map(
-      safeToChecksumAddress,
-    );
-    removeAccountsFromPermissions(checksummedRemovedAccounts);
+    await KeyringController.forgetQRDevice();
     navigation.goBack();
   }, [KeyringController, navigation, resetError]);
 

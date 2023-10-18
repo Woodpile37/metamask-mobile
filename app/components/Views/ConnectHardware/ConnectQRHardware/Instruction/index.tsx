@@ -3,18 +3,17 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import { strings } from '../../../../../locales/i18n';
+import { strings } from '../../../../../../locales/i18n';
 import {
-  KEYSTONE_LEARN_MORE,
   KEYSTONE_SUPPORT,
   KEYSTONE_SUPPORT_VIDEO,
-} from '../../../../constants/urls';
+} from '../../../../../constants/urls';
 import {
   fontStyles,
   colors as importedColors,
-} from '../../../../styles/common';
-import { useTheme } from '../../../../util/theme';
-import StyledButton from '../../../UI/StyledButton';
+} from '../../../../../styles/common';
+import { useAppThemeFromContext, mockTheme } from '../../../../../util/theme';
+import StyledButton from '../../../../UI/StyledButton';
 
 interface IConnectQRInstructionProps {
   navigation: any;
@@ -80,22 +79,11 @@ const createStyles = (colors: any) =>
       marginTop: 40,
       marginBottom: 40,
     },
-    keystone: {
-      height: 48,
-      fontSize: 24,
-    },
-    buttonGroup: {
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    linkMarginRight: {
-      marginRight: 16,
-    },
   });
 
 const ConnectQRInstruction = (props: IConnectQRInstructionProps) => {
   const { onConnect, renderAlert, navigation } = props;
-  const { colors } = useTheme();
+  const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
 
   const navigateToVideo = () => {
@@ -104,15 +92,6 @@ const ConnectQRInstruction = (props: IConnectQRInstructionProps) => {
       params: {
         url: KEYSTONE_SUPPORT_VIDEO,
         title: strings('connect_qr_hardware.description2'),
-      },
-    });
-  };
-  const navigateToLearnMore = () => {
-    navigation.navigate('Webview', {
-      screen: 'SimpleWebview',
-      params: {
-        url: KEYSTONE_LEARN_MORE,
-        title: strings('connect_qr_hardware.keystone'),
       },
     });
   };
@@ -143,23 +122,9 @@ const ConnectQRInstruction = (props: IConnectQRInstructionProps) => {
           <Text style={styles.text}>
             {strings('connect_qr_hardware.description3')}
           </Text>
-          <Text style={styles.keystone}>
-            {strings('connect_qr_hardware.keystone')}
+          <Text style={[styles.text, styles.link]} onPress={navigateToTutorial}>
+            {strings('connect_qr_hardware.description4')}
           </Text>
-          <View style={styles.buttonGroup}>
-            <Text
-              style={[styles.text, styles.link, styles.linkMarginRight]}
-              onPress={navigateToLearnMore}
-            >
-              {strings('connect_qr_hardware.learnMore')}
-            </Text>
-            <Text
-              style={[styles.text, styles.link]}
-              onPress={navigateToTutorial}
-            >
-              {strings('connect_qr_hardware.tutorial')}
-            </Text>
-          </View>
           <Text style={styles.text}>
             {strings('connect_qr_hardware.description5')}
           </Text>

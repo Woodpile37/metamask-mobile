@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   KeyboardAvoidingView,
+  Switch,
   ActivityIndicator,
   Alert,
   Text,
@@ -12,57 +13,55 @@ import {
   ScrollView,
   Image,
   InteractionManager,
-  Platform,
 } from 'react-native';
+// eslint-disable-next-line import/no-unresolved
 import CheckBox from '@react-native-community/checkbox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import AsyncStorage from '../../../store/async-storage-wrapper';
+import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux';
-import { passwordSet, seedphraseNotBackedUp } from '../../../actions/user';
+import {
+  passwordSet,
+  passwordUnset,
+  seedphraseNotBackedUp,
+} from '../../../actions/user';
 import { setLockTime } from '../../../actions/settings';
 import StyledButton from '../../UI/StyledButton';
 import Engine from '../../../core/Engine';
 import Device from '../../../util/device';
-import { fontStyles, baseStyles } from '../../../styles/common';
+import {
+  fontStyles,
+  baseStyles,
+  colors as importedColors,
+} from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { getNavigationOptionsTitle } from '../../UI/Navbar';
+import SecureKeychain from '../../../core/SecureKeychain';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AppConstants from '../../../core/AppConstants';
 import zxcvbn from 'zxcvbn';
+import Logger from '../../../util/Logger';
 import { ONBOARDING, PREVIOUS_SCREEN } from '../../../constants/navigation';
 import {
+  EXISTING_USER,
   TRUE,
   BIOMETRY_CHOICE_DISABLED,
-  PASSCODE_DISABLED,
 } from '../../../constants/storage';
 import {
   getPasswordStrengthWord,
   passwordRequirementsMet,
 } from '../../../util/password';
 import NotificationManager from '../../../core/NotificationManager';
-import {
-  passcodeType,
-  updateAuthTypeStorageFlags,
-} from '../../../util/authentication';
-import { Authentication } from '../../../core';
-import AUTHENTICATION_TYPE from '../../../constants/userProperties';
+import { syncPrefs } from '../../../util/sync';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import AnimatedFox from 'react-native-animated-fox';
 import {
   CREATE_PASSWORD_CONTAINER_ID,
+  CREATE_PASSWORD_INPUT_BOX_ID,
+  CONFIRM_PASSWORD_INPUT_BOX_ID,
   IOS_I_UNDERSTAND_BUTTON_ID,
+  ANDROID_I_UNDERSTAND_BUTTON_ID,
+  CONFIRM_CHANGE_PASSWORD_INPUT_BOX_ID,
 } from '../../../constants/test-ids';
-import {
-  RESET_PASSWORD_INPUT_ID,
-  RESET_PASSWORD_INPUT_BOX_ID,
-  RESET_PASSWORD_CONFIRM_INPUT_BOX_ID,
-  RESET_PASSWORD_ANDROID_TERM_CHECKBOX_ID,
-} from '../../../../wdio/screen-objects/testIDs/Screens/ChangePasswordScreensIDs.testIds';
-import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
-import { recreateVaultWithNewPassword } from '../../../core/Vault';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import Logger from '../../../util/Logger';
-import { selectSelectedAddress } from '../../../selectors/preferencesController';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -232,12 +231,15 @@ const createStyles = (colors) =>
       top: 0,
       right: 0,
     },
+    // eslint-disable-next-line react-native/no-unused-styles
     strength_weak: {
       color: colors.error.default,
     },
+    // eslint-disable-next-line react-native/no-unused-styles
     strength_good: {
       color: colors.primary.default,
     },
+    // eslint-disable-next-line react-native/no-unused-styles
     strength_strong: {
       color: colors.success.default,
     },
@@ -337,27 +339,13 @@ class ResetPassword extends PureComponent {
 
   async componentDidMount() {
     this.updateNavBar();
+    const biometryType = await SecureKeychain.getSupportedBiometryType();
 
     const state = { view: CONFIRM_PASSWORD };
-    const authData = await Authentication.getType();
-    const previouslyDisabled = await AsyncStorage.getItem(
-      BIOMETRY_CHOICE_DISABLED,
-    );
-    const passcodePreviouslyDisabled = await AsyncStorage.getItem(
-      PASSCODE_DISABLED,
-    );
-    if (authData.currentAuthType === AUTHENTICATION_TYPE.PASSCODE)
-      this.setState({
-        biometryType: passcodeType(authData.currentAuthType),
-        biometryChoice: !(
-          passcodePreviouslyDisabled && passcodePreviouslyDisabled === TRUE
-        ),
-      });
-    else if (authData.availableBiometryType)
-      this.setState({
-        biometryType: authData.availableBiometryType,
-        biometryChoice: !(previouslyDisabled && previouslyDisabled === TRUE),
-      });
+    if (biometryType) {
+      state.biometryType = Device.isAndroid() ? 'biometrics' : biometryType;
+      state.biometryChoice = true;
+    }
 
     this.setState(state);
 
@@ -391,7 +379,8 @@ class ResetPassword extends PureComponent {
   };
 
   onPressCreate = async () => {
-    const { loading, isSelected, password, confirmPassword } = this.state;
+    const { loading, isSelected, password, confirmPassword, originalPassword } =
+      this.state;
     const passwordsMatch = password !== '' && password === confirmPassword;
     const canSubmit = passwordsMatch && isSelected;
 
@@ -407,22 +396,29 @@ class ResetPassword extends PureComponent {
     try {
       this.setState({ loading: true });
 
-      await this.recreateVault();
+      await this.recreateVault(originalPassword);
       // Set biometrics for new password
-      await Authentication.resetPassword();
+      await SecureKeychain.resetGenericPassword();
       try {
-        // compute and store the new authentication method
-        const authData = await Authentication.componentAuthenticationType(
-          this.state.biometryChoice,
-          this.state.rememberMe,
-        );
-        await Authentication.storePassword(password, authData.currentAuthType);
+        if (this.state.biometryType && this.state.biometryChoice) {
+          await SecureKeychain.setGenericPassword(
+            password,
+            SecureKeychain.TYPES.BIOMETRICS,
+          );
+        } else if (this.state.rememberMe) {
+          await SecureKeychain.setGenericPassword(
+            password,
+            SecureKeychain.TYPES.REMEMBER_ME,
+          );
+        }
       } catch (error) {
         Logger.error(error);
       }
 
-      this.props.setLockTime(AppConstants.DEFAULT_LOCK_TIMEOUT);
+      await AsyncStorage.setItem(EXISTING_USER, TRUE);
       this.props.passwordSet();
+      this.props.setLockTime(AppConstants.DEFAULT_LOCK_TIMEOUT);
+
       this.setState({ loading: false });
       InteractionManager.runAfterInteractions(() => {
         this.props.navigation.navigate('SecuritySettings');
@@ -450,15 +446,91 @@ class ResetPassword extends PureComponent {
   /**
    * Recreates a vault
    *
+   * @param password - Password to recreate and set the vault with
    */
-  recreateVault = async () => {
+  recreateVault = async (password) => {
     const { originalPassword, password: newPassword } = this.state;
-    // Recreate keyring with password
-    await recreateVaultWithNewPassword(
-      originalPassword,
-      newPassword,
-      this.props.selectedAddress,
-    );
+    const { KeyringController, PreferencesController } = Engine.context;
+    const seedPhrase = await this.getSeedPhrase();
+    const oldPrefs = PreferencesController.state;
+
+    let importedAccounts = [];
+    try {
+      const keychainPassword = originalPassword;
+      // Get imported accounts
+      const simpleKeyrings = KeyringController.state.keyrings.filter(
+        (keyring) => keyring.type === 'Simple Key Pair',
+      );
+      for (let i = 0; i < simpleKeyrings.length; i++) {
+        const simpleKeyring = simpleKeyrings[i];
+        const simpleKeyringAccounts = await Promise.all(
+          simpleKeyring.accounts.map((account) =>
+            KeyringController.exportAccount(keychainPassword, account),
+          ),
+        );
+        importedAccounts = [...importedAccounts, ...simpleKeyringAccounts];
+      }
+    } catch (e) {
+      Logger.error(
+        e,
+        'error while trying to get imported accounts on recreate vault',
+      );
+    }
+
+    // Recreate keyring with password given to this method
+    await KeyringController.createNewVaultAndRestore(newPassword, seedPhrase);
+
+    // Get props to restore vault
+    const hdKeyring = KeyringController.state.keyrings[0];
+    const existingAccountCount = hdKeyring.accounts.length;
+    const selectedAddress = this.props.selectedAddress;
+
+    // Create previous accounts again
+    for (let i = 0; i < existingAccountCount - 1; i++) {
+      await KeyringController.addNewAccount();
+    }
+
+    try {
+      // Import imported accounts again
+      for (let i = 0; i < importedAccounts.length; i++) {
+        await KeyringController.importAccountWithStrategy('privateKey', [
+          importedAccounts[i],
+        ]);
+      }
+    } catch (e) {
+      Logger.error(
+        e,
+        'error while trying to import accounts on recreate vault',
+      );
+    }
+
+    //Persist old account/identities names
+    const preferencesControllerState = PreferencesController.state;
+    const prefUpdates = syncPrefs(oldPrefs, preferencesControllerState);
+
+    // Set preferencesControllerState again
+    await PreferencesController.update(prefUpdates);
+    // Reselect previous selected account if still available
+    if (hdKeyring.accounts.includes(selectedAddress)) {
+      PreferencesController.setSelectedAddress(selectedAddress);
+    } else {
+      PreferencesController.setSelectedAddress(hdKeyring.accounts[0]);
+    }
+  };
+
+  /**
+   * Returns current vault seed phrase
+   * It does it using an empty password or a password set by the user
+   * depending on the state the app is currently in
+   */
+  getSeedPhrase = async () => {
+    const { KeyringController } = Engine.context;
+    const { originalPassword } = this.state;
+    const keychainPassword = originalPassword;
+    const mnemonic = await KeyringController.exportSeedPhrase(
+      keychainPassword,
+    ).toString();
+    return JSON.stringify(mnemonic).replace(/"/g, '');
   };
 
   jumpToConfirmPassword = () => {
@@ -467,22 +539,59 @@ class ResetPassword extends PureComponent {
   };
 
   updateBiometryChoice = async (biometryChoice) => {
-    await updateAuthTypeStorageFlags(biometryChoice);
+    if (!biometryChoice) {
+      await AsyncStorage.setItem(BIOMETRY_CHOICE_DISABLED, TRUE);
+    } else {
+      await AsyncStorage.removeItem(BIOMETRY_CHOICE_DISABLED);
+    }
     this.setState({ biometryChoice });
   };
 
   renderSwitch = () => {
-    const { biometryType, biometryChoice } = this.state;
-    const handleUpdateRememberMe = (rememberMe) => {
-      this.setState({ rememberMe });
-    };
+    const { biometryType, rememberMe, biometryChoice } = this.state;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
     return (
-      <LoginOptionsSwitch
-        shouldRenderBiometricOption={biometryType}
-        biometryChoiceState={biometryChoice}
-        onUpdateBiometryChoice={this.updateBiometryChoice}
-        onUpdateRememberMe={handleUpdateRememberMe}
-      />
+      <View style={styles.biometrics}>
+        {biometryType ? (
+          <>
+            <Text style={styles.biometryLabel}>
+              {strings(`biometrics.enable_${biometryType.toLowerCase()}`)}
+            </Text>
+            <View>
+              <Switch
+                onValueChange={this.updateBiometryChoice} // eslint-disable-line react/jsx-no-bind
+                value={biometryChoice}
+                style={styles.biometrySwitch}
+                trackColor={{
+                  true: colors.primary.default,
+                  false: colors.border.muted,
+                }}
+                thumbColor={importedColors.white}
+                ios_backgroundColor={colors.border.muted}
+              />
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.biometryLabel}>
+              {strings(`choose_password.remember_me`)}
+            </Text>
+            <Switch
+              onValueChange={(rememberMe) => this.setState({ rememberMe })} // eslint-disable-line react/jsx-no-bind
+              value={rememberMe}
+              style={styles.biometrySwitch}
+              trackColor={{
+                true: colors.primary.default,
+                false: colors.border.muted,
+              }}
+              thumbColor={importedColors.white}
+              ios_backgroundColor={colors.border.muted}
+            />
+          </>
+        )}
+      </View>
     );
   };
 
@@ -579,7 +688,7 @@ class ResetPassword extends PureComponent {
                 onChangeText={this.onPasswordChange}
                 secureTextEntry
                 onSubmitEditing={this.tryUnlock}
-                {...generateTestId(Platform, RESET_PASSWORD_INPUT_ID)}
+                testID={CONFIRM_CHANGE_PASSWORD_INPUT_BOX_ID}
                 keyboardAppearance={themeAppearance}
               />
               {warningIncorrectPassword && (
@@ -687,7 +796,7 @@ class ResetPassword extends PureComponent {
                     secureTextEntry={secureTextEntry}
                     placeholder=""
                     placeholderTextColor={colors.text.muted}
-                    {...generateTestId(Platform, RESET_PASSWORD_INPUT_BOX_ID)}
+                    testID={CREATE_PASSWORD_INPUT_BOX_ID}
                     onSubmitEditing={this.jumpToConfirmPassword}
                     returnKeyType="next"
                     autoCapitalize="none"
@@ -717,10 +826,7 @@ class ResetPassword extends PureComponent {
                     secureTextEntry={secureTextEntry}
                     placeholder={''}
                     placeholderTextColor={colors.text.muted}
-                    {...generateTestId(
-                      Platform,
-                      RESET_PASSWORD_CONFIRM_INPUT_BOX_ID,
-                    )}
+                    testID={CONFIRM_PASSWORD_INPUT_BOX_ID}
                     zasdfasfasf
                     onSubmitEditing={this.onPressCreate}
                     returnKeyType={'done'}
@@ -756,10 +862,7 @@ class ResetPassword extends PureComponent {
                   <Text
                     style={styles.label}
                     onPress={this.setSelection}
-                    {...generateTestId(
-                      Platform,
-                      RESET_PASSWORD_ANDROID_TERM_CHECKBOX_ID,
-                    )}
+                    testID={ANDROID_I_UNDERSTAND_BUTTON_ID}
                   >
                     {strings('reset_password.i_understand')}{' '}
                     <Text onPress={this.learnMore} style={styles.learnMore}>
@@ -813,11 +916,13 @@ class ResetPassword extends PureComponent {
 ResetPassword.contextType = ThemeContext;
 
 const mapStateToProps = (state) => ({
-  selectedAddress: selectSelectedAddress(state),
+  selectedAddress:
+    state.engine.backgroundState.PreferencesController.selectedAddress,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   passwordSet: () => dispatch(passwordSet()),
+  passwordUnset: () => dispatch(passwordUnset()),
   setLockTime: (time) => dispatch(setLockTime(time)),
   seedphraseNotBackedUp: () => dispatch(seedphraseNotBackedUp()),
 });
