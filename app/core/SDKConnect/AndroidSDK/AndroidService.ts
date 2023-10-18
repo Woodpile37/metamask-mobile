@@ -125,11 +125,11 @@ export default class AndroidService extends EventEmitter2 {
 
         try {
           if (!this.connectedClients?.[clientInfo.clientId]) {
+            await this.requestApproval(clientInfo);
             this.setupBridge(clientInfo);
             // Save session to SDKConnect
             SDKConnect.getInstance().addAndroidConnection({
               id: clientInfo.clientId,
-              lastAuthorized: Date.now(),
               origin: AppConstants.MM_SDK.ANDROID_SDK,
               originatorInfo: clientInfo.originatorInfo,
               otherPublicKey: '',
@@ -331,13 +331,11 @@ export default class AndroidService extends EventEmitter2 {
 
     const bridge = new BackgroundBridge({
       webview: null,
-      isMMSDK: true,
+      isMMSDK: false,
       url: PROTOCOLS.METAMASK + '://' + AppConstants.MM_SDK.SDK_REMOTE_ORIGIN,
       isRemoteConn: true,
       sendMessage: this.sendMessage.bind(this),
-      getApprovedHosts: (host: string) => ({
-        [host]: true,
-      }),
+      getApprovedHosts: () => false,
       remoteConnHost:
         clientInfo.originatorInfo.url ?? clientInfo.originatorInfo.title,
       getRpcMethodMiddleware: ({
@@ -350,12 +348,10 @@ export default class AndroidService extends EventEmitter2 {
           hostname:
             clientInfo.originatorInfo.url ?? clientInfo.originatorInfo.title,
           getProviderState,
-          isMMSDK: true,
+          isMMSDK: false,
           navigation: null, //props.navigation,
-          getApprovedHosts: (host: string) => ({
-            [host]: true,
-          }),
-          setApprovedHosts: () => true,
+          getApprovedHosts: () => ({}),
+          setApprovedHosts: () => ({}),
           approveHost: () => ({}),
           // Website info
           url: {
