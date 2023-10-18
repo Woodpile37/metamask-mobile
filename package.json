@@ -137,7 +137,7 @@
     "@exodus/react-native-payments": "git+https://github.com/MetaMask/react-native-payments.git#dbc8cbbed570892d2fea5e3d183bf243e062c1e5",
     "@keystonehq/bc-ur-registry-eth": "^0.7.7",
     "@keystonehq/metamask-airgapped-keyring": "^0.3.0",
-    "@keystonehq/ur-decoder": "^0.6.1",
+    "@keystonehq/ur-decoder": "^0.12.2",
     "@metamask/address-book-controller": "^1.0.1",
     "@metamask/approval-controller": "^1.1.0",
     "@metamask/assets-controllers": "^3.0.1",

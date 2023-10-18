@@ -2553,14 +2553,13 @@
     rlp "^2.2.6"
     uuid "^8.3.2"
 
-"@keystonehq/ur-decoder@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@keystonehq/ur-decoder/-/ur-decoder-0.6.1.tgz#1034da3ad459e053ed8e4e4c824e24a5e24a8589"
-  integrity sha512-ZYC4KNv0655ljOMOgMSDAUy741kYn8RNP0gdAHx8IMEbfiIRm5Paf4I7+5JcxwQ6N1vHf79btr3h/VSfSH2jDQ==
+"@keystonehq/ur-decoder@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@keystonehq/ur-decoder/-/ur-decoder-0.12.2.tgz#78707d95012bc6d31c947c76c27e076d4a1c071c"
+  integrity sha512-qFmNFR2fsk3YAs3bF6nFO2Ny79Cl0gaZC5S7fjzQPyClUxFL2OwuEYLBcFT+Q7n6mbInuH4rCBHU4UWXf3FKGg==
   dependencies:
     "@keystonehq/bc-ur-registry-eth" "^0.6.12"
     "@ngraveio/bc-ur" "^1.1.6"
-    typescript "^4.6.2"
 
 "@lavamoat/allow-scripts@^1.0.6":
   version "1.0.6"
@@ -22793,11 +22792,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
-
-typescript@^4.6.2:
-  version "4.9.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 typescript@^5.2.2:
   version "5.2.2"
