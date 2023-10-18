@@ -1,37 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App should render correctly when logged in 1`] = `
-<ContextProvider
-  value={
-    Object {
-      "store": Object {
-        "clearActions": [Function],
-        "dispatch": [Function],
-        "getActions": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-      },
-      "subscription": Subscription {
-        "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "clearActions": [Function],
-          "dispatch": [Function],
-          "getActions": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-        },
-        "unsubscribe": null,
-      },
-    }
-  }
+exports[`App should render correctly 1`] = `
+<__Sentry.TouchEventBoundary
+  breadcrumbCategory="touch"
+  breadcrumbType="user"
+  ignoreNames={Array []}
+  maxComponentTreeSize={20}
 >
-  <Component />
-</ContextProvider>
+  <ReactNativeProfiler
+    disabled={false}
+    includeRender={true}
+    includeUpdates={true}
+    name="Root"
+  >
+    <App />
+  </ReactNativeProfiler>
+</__Sentry.TouchEventBoundary>
 `;
