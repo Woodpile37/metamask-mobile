@@ -13,3 +13,7 @@ storiesOf('Components / UI / ButtonReveal', module)
       onLongPress={action('onLongPress')}
     />
   ));
+	.addDecorator((getStory) => getStory())
+	.add('Default', () => (
+		<ButtonReveal label={text('label', 'Hold to reveal SRP')} onLongPress={action('onLongPress')} />
+	));

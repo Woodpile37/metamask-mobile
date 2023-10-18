@@ -8,7 +8,7 @@ workflows:
         steps:
             - activate-ssh-key@4:
                   run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
-            - git-clone@6: {}
+            - git-clone@4: {}
             - nvm@1.3.0:
                   inputs:
                       - node_version: '14'
@@ -323,10 +323,14 @@ app:
           PROJECT_LOCATION_IOS: ios
         - opts:
               is_expand: false
-          VERSION_NAME: 5.7.0
+          VERSION_NAME: 5.4.0
         - opts:
               is_expand: false
-          VERSION_NUMBER: 972
+          VERSION_NUMBER: 931
+          VERSION_NAME: 5.0.1
+        - opts:
+              is_expand: false
+          VERSION_NUMBER: 877
         - opts:
               is_expand: false
           ANDROID_APK_LINK: ''
@@ -338,4 +342,4 @@ app:
           IOS_APP_LINK: ''
 meta:
     bitrise.io:
-        stack: osx-xcode-13.4.x
+        stack: osx-xcode-13.3.x

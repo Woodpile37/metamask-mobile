@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { strings } from '../../../../locales/i18n';
 import { TRANSACTION_TYPES } from '../../../util/transactions';
 import Summary from '../../Base/Summary';
@@ -20,6 +21,12 @@ const createStyles = (colors) =>
       height: 10,
     },
   });
+	StyleSheet.create({
+		loader: {
+			backgroundColor: colors.background.default,
+			height: 10,
+		},
+	});
 
 export default class TransactionSummary extends PureComponent {
   static propTypes = {
@@ -37,6 +44,19 @@ export default class TransactionSummary extends PureComponent {
     const { gasEstimationReady } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+	renderIfGastEstimationReady = (children) => {
+		const { gasEstimationReady } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return !gasEstimationReady ? (
+			<View style={styles.loader}>
+				<ActivityIndicator size="small" />
+			</View>
+		) : (
+			children
+		);
+	};
 
     return !gasEstimationReady ? (
       <View style={styles.loader}>

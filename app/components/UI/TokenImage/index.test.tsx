@@ -32,4 +32,12 @@ describe('TokenImage', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly', () => {
+		const wrapper = shallow(
+			<Provider store={store}>
+				<TokenImage asset={{ address: '0x123', symbol: 'ABC', decimals: 18, image: 'invalid-uri' }} />
+			</Provider>
+		);
+		expect(wrapper.dive()).toMatchSnapshot();
+	});
 });

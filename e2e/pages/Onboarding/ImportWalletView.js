@@ -10,6 +10,12 @@ import {
 } from '../../../app/constants/test-ids';
 import { IMPORT_FROM_SEED_SCREEN_SEED_PHRASE_INPUT_ID } from '../../../wdio/screen-objects/testIDs/Screens/ImportFromSeedScreen.testIds';
 
+const IMPORT_PASSWORD_CONTAINER_ID = 'import-from-seed-screen';
+const SECRET_RECOVERY_PHRASE_INPUT_BOX_ID = 'input-seed-phrase';
+const CREATE_PASSWORD_INPUT_BOX_ID = 'input-password-field';
+const CONFIRM_PASSWORD_INPUT_BOX_ID = 'input-password-field-confirm';
+const IOS_I_UNDERSTAND_BUTTON_ID = 'password-understand-box';
+const ANDROID_I_UNDERSTAND_BUTTON_ID = 'i-understand-text';
 const REMEMBER_ME_ID = 'remember-me-toggle';
 const CREATE_PASSWORD_BUTTON_ID = 'submit-button';
 
@@ -78,6 +84,14 @@ export default class ImportWalletView {
   static async isVisible() {
     await TestHelpers.checkIfVisible(IMPORT_PASSWORD_CONTAINER_ID);
   }
+	static async toggleRememberMe() {
+		await TestHelpers.tap(REMEMBER_ME_ID);
+	}
+
+	// Assertions
+	static async isVisible() {
+		await TestHelpers.checkIfVisible(IMPORT_PASSWORD_CONTAINER_ID);
+	}
 
   static async isNotVisible() {
     await TestHelpers.checkIfNotVisible(IMPORT_PASSWORD_CONTAINER_ID);

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { swapsUtils } from '@metamask/swaps-controller';
+import { useAppThemeFromContext, mockTheme } from '../../../../util/theme';
 
 import EditPermission from '../../ApproveTransactionReview/EditPermission';
 import { fromTokenMinimalUnitString, hexToBN } from '../../../../util/number';
@@ -56,6 +57,11 @@ function ApprovalTransactionEditionModal({
     () => setSpendLimitUnlimitedSelected(true),
     [],
   );
+	/* Approval transaction if any */
+	const [approvalTransactionAmount, setApprovalTransactionAmount] = useState('');
+	const [approvalCustomValue, setApprovalCustomValue] = useState(minimumSpendLimit);
+	const [spendLimitUnlimitedSelected, setSpendLimitUnlimitedSelected] = useState(true);
+	const { colors } = useAppThemeFromContext() || mockTheme;
 
   const onPressSpendLimitCustomSelected = useCallback(
     () => setSpendLimitUnlimitedSelected(false),
@@ -150,6 +156,41 @@ function ApprovalTransactionEditionModal({
       </KeyboardAwareScrollView>
     </Modal>
   );
+	return (
+		<Modal
+			isVisible={editQuoteTransactionsVisible}
+			animationIn="slideInUp"
+			animationOut="slideOutDown"
+			style={styles.bottomModal}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+			animationInTiming={600}
+			animationOutTiming={600}
+			onBackdropPress={onCancelEditQuoteTransactions}
+			onBackButtonPress={onCancelEditQuoteTransactions}
+			onSwipeComplete={onCancelEditQuoteTransactions}
+			swipeDirection={'down'}
+			propagateSwipe
+		>
+			<KeyboardAwareScrollView contentContainerStyle={styles.keyboardAwareWrapper}>
+				{Boolean(approvalTransaction) && (
+					<EditPermission
+						host={'Swaps'}
+						minimumSpendLimit={minimumSpendLimit}
+						spendLimitUnlimitedSelected={spendLimitUnlimitedSelected}
+						tokenSymbol={sourceToken.symbol}
+						spendLimitCustomValue={approvalCustomValue}
+						originalApproveAmount={approvalTransactionAmount}
+						onSetApprovalAmount={onSetApprovalAmount}
+						onSpendLimitCustomValueChange={onSpendLimitCustomValueChange}
+						onPressSpendLimitUnlimitedSelected={onPressSpendLimitUnlimitedSelected}
+						onPressSpendLimitCustomSelected={onPressSpendLimitCustomSelected}
+						toggleEditPermission={onCancelEditQuoteTransactions}
+					/>
+				)}
+			</KeyboardAwareScrollView>
+		</Modal>
+	);
 }
 
 ApprovalTransactionEditionModal.propTypes = {

@@ -95,6 +95,29 @@ const swapsControllerAndUserTokens = createSelector(
     return [...values];
   },
 );
+export const swapsControllerTokens = (state) => state.engine.backgroundState.SwapsController.tokens;
+const tokensSelectors = (state) => state.engine.backgroundState.TokensController.tokens;
+
+const swapsControllerAndUserTokens = createSelector(swapsControllerTokens, tokensSelectors, (swapsTokens, tokens) => {
+	const values = [...(swapsTokens || []), ...(tokens || [])]
+		.filter(Boolean)
+		.reduce((map, { balanceError, image, ...token }) => {
+			const key = token.address.toLowerCase();
+
+			if (!map.has(key)) {
+				map.set(key, {
+					occurrences: 0,
+					...token,
+					decimals: Number(token.decimals),
+					address: key,
+				});
+			}
+			return map;
+		}, new Map())
+		.values();
+
+	return [...values];
+});
 
 export const swapsTokensSelector = createSelector(
   chainIdSelector,
@@ -168,6 +191,42 @@ export const swapsTokensWithBalanceSelector = createSelector(
     );
     return addMetadata(chainId, result);
   },
+	chainIdSelector,
+	swapsControllerAndUserTokens,
+	balances,
+	(chainId, tokens, balances) => {
+		if (!tokens) {
+			return [];
+		}
+		const baseTokens = tokens;
+		const tokensAddressesWithBalance = Object.entries(balances)
+			.filter(([, balance]) => balance !== 0)
+			.sort(([, balanceA], [, balanceB]) => (lte(balanceB, balanceA) ? -1 : 1))
+			.map(([address]) => address.toLowerCase());
+		const tokensWithBalance = [];
+		const originalTokens = [];
+
+		for (let i = 0; i < baseTokens.length; i++) {
+			if (tokensAddressesWithBalance.includes(baseTokens[i].address)) {
+				tokensWithBalance.push(baseTokens[i]);
+			} else {
+				originalTokens.push(baseTokens[i]);
+			}
+
+			if (
+				tokensWithBalance.length === tokensAddressesWithBalance.length &&
+				tokensWithBalance.length + originalTokens.length >= MAX_TOKENS_WITH_BALANCE
+			) {
+				break;
+			}
+		}
+
+		const result = [...tokensWithBalance, ...originalTokens].slice(
+			0,
+			Math.max(tokensWithBalance.length, MAX_TOKENS_WITH_BALANCE)
+		);
+		return addMetadata(chainId, result);
+	}
 );
 
 /**

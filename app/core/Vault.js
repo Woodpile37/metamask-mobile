@@ -55,6 +55,28 @@ export const recreateVaultWithSamePassword = async (
 
   const qrKeyring = await KeyringController.getOrAddQRKeyring();
   const serializedQRKeyring = await qrKeyring.serialize();
+	let importedAccounts = [];
+	try {
+		// Get imported accounts
+		const simpleKeyrings = KeyringController.state.keyrings.filter(
+			(keyring) => keyring.type === KeyringTypes.simple
+		);
+		for (let i = 0; i < simpleKeyrings.length; i++) {
+			const simpleKeyring = simpleKeyrings[i];
+			const simpleKeyringAccounts = await Promise.all(
+				simpleKeyring.accounts.map((account) => KeyringController.exportAccount(password, account))
+			);
+			importedAccounts = [...importedAccounts, ...simpleKeyringAccounts];
+		}
+	} catch (e) {
+		Logger.error(e, 'error while trying to get imported accounts on recreate vault');
+	}
+
+	const qrKeyring = await KeyringController.getOrAddQRKeyring();
+	const serializedQRKeyring = await qrKeyring.serialize();
+
+	// Recreate keyring with password given to this method
+	await KeyringController.createNewVaultAndRestore(password, seedPhrase);
 
   // Recreate keyring with password given to this method
   await KeyringController.createNewVaultAndRestore(password, seedPhrase);
@@ -62,6 +84,12 @@ export const recreateVaultWithSamePassword = async (
   // Get props to restore vault
   const hdKeyring = KeyringController.state.keyrings[0];
   const existingAccountCount = hdKeyring.accounts.length;
+	await KeyringController.restoreQRKeyring(serializedQRKeyring);
+
+	// Create previous accounts again
+	for (let i = 0; i < existingAccountCount - 1; i++) {
+		await KeyringController.addNewAccount();
+	}
 
   await KeyringController.restoreQRKeyring(serializedQRKeyring);
 

@@ -20,6 +20,17 @@ const createStyles = (colors) =>
       textDecorationLine: 'underline',
     },
   });
+	StyleSheet.create({
+		text: {
+			...fontStyles.normal,
+			color: colors.text.alternative,
+			textAlign: 'center',
+			fontSize: 10,
+		},
+		link: {
+			textDecorationLine: 'underline',
+		},
+	});
 
 /**
  * View that is displayed in the flow to agree terms and conditions
@@ -62,6 +73,19 @@ export default class TermsAndConditions extends PureComponent {
       </TouchableOpacity>
     );
   }
+	render() {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<TouchableOpacity onPress={this.press}>
+				<Text style={styles.text}>
+					{strings('terms_and_conditions.description')}
+					<Text style={styles.link}>{strings('terms_and_conditions.terms')}</Text>.
+				</Text>
+			</TouchableOpacity>
+		);
+	}
 }
 
 TermsAndConditions.contextType = ThemeContext;

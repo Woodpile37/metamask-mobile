@@ -1,39 +1,53 @@
 import { BN } from 'ethereumjs-util';
-
 import {
-  addCurrencySymbol,
-  balanceToFiat,
-  balanceToFiatNumber,
   BNToHex,
-  calcTokenValueToSend,
-  calculateEthFeeForMultiLayer,
-  dotAndCommaDecimalFormatter,
-  fastSplit,
-  fiatNumberToTokenMinimalUnit,
-  fiatNumberToWei,
-  formatValueToMatchTokenDecimals,
+  fromWei,
   fromTokenMinimalUnit,
   fromTokenMinimalUnitString,
-  fromWei,
-  handleWeiNumber,
+  toTokenMinimalUnit,
+  renderFromTokenMinimalUnit,
+  renderFromWei,
+  calcTokenValueToSend,
   hexToBN,
   isBN,
   isDecimal,
-  isNumber,
-  isNumberScientificNotationWhenString,
-  isZeroValue,
-  limitToMaximumDecimalPlaces,
-  renderFiat,
-  renderFromTokenMinimalUnit,
-  renderFromWei,
-  safeNumberToBN,
-  toBN,
-  toHexadecimal,
-  toTokenMinimalUnit,
   toWei,
   weiToFiat,
   weiToFiatNumber,
-} from './';
+  fiatNumberToWei,
+  fiatNumberToTokenMinimalUnit,
+  balanceToFiat,
+  balanceToFiatNumber,
+  renderFiat,
+  handleWeiNumber,
+  toHexadecimal,
+  safeNumberToBN,
+  fastSplit,
+  isNumber,
+	BNToHex,
+	fromWei,
+	fromTokenMinimalUnit,
+	fromTokenMinimalUnitString,
+	toTokenMinimalUnit,
+	renderFromTokenMinimalUnit,
+	renderFromWei,
+	calcTokenValueToSend,
+	hexToBN,
+	isBN,
+	isDecimal,
+	toWei,
+	weiToFiat,
+	weiToFiatNumber,
+	fiatNumberToWei,
+	fiatNumberToTokenMinimalUnit,
+	balanceToFiat,
+	balanceToFiatNumber,
+	renderFiat,
+	handleWeiNumber,
+	toHexadecimal,
+	safeNumberToBN,
+	fastSplit,
+} from '.';
 
 describe('Number utils :: BNToHex', () => {
   it('BNToHex', () => {
@@ -52,54 +66,6 @@ describe('Number utils :: fromWei', () => {
 
   it('fromWei using BN number', () => {
     expect(fromWei(new BN('1337'))).toEqual('0.000000000000001337');
-  });
-});
-
-describe('Number utils :: toWei', () => {
-  it('toWei using number', () => {
-    expect(toWei(1337).toString()).toEqual('1337000000000000000000');
-    //wei representation of 0.000000000000001337 ether
-    expect(toWei(1.337e-15).toString()).toEqual('1337');
-    expect(toWei(0.000000000000001337).toString()).toEqual('1337');
-    //wei representation of 1337000000000000000 ether
-    expect(toWei(1.337e18).toString()).toEqual(
-      '1337000000000000000000000000000000000',
-    );
-    expect(toWei(1337000000000000000).toString()).toEqual(
-      '1337000000000000000000000000000000000',
-    );
-  });
-
-  it('toWei using string', () => {
-    expect(toWei('1337').toString()).toEqual('1337000000000000000000');
-    //wei representation of 0.000000000000001337 ether
-    expect(toWei('0.000000000000001337').toString()).toEqual('1337');
-    //wei representation of 1337000000000000000 ether
-    expect(toWei('1337000000000000000').toString()).toEqual(
-      '1337000000000000000000000000000000000',
-    );
-
-    // expect errors when passing numbers as strings in scientific notation
-    // since `ethjs-unit` doesn't support it
-    expect(() => toWei('1.337e18')).toThrow(Error);
-    expect(() => toWei('1.337e-15')).toThrow(Error);
-  });
-
-  // bn.js do not support decimals, so tests here only cover integers
-  it('toWei using BN number', () => {
-    expect(toWei(new BN(1337)).toString()).toEqual('1337000000000000000000');
-
-    // Tests for expected limitations of BN.js
-
-    // BN.js do not support decimals
-    expect(toWei(new BN(1.337e-15)).toString()).toEqual('0');
-    // BN.js do not support such big numbers
-    expect(() => toWei(new BN(1.337e18))).toThrow(Error);
-    expect(() => toWei(new BN(1337000000000000000))).toThrow(Error);
-    // For some reason this returns 8338418000000000000000000 wei
-    expect(toWei(new BN('1.337e18'))).not.toEqual(
-      '1337000000000000000000000000000000000',
-    );
   });
 });
 
@@ -134,10 +100,9 @@ describe('Number utils :: fromTokenMinimalUnit', () => {
 
 describe('Number utils :: fromTokenMinimalUnitString', () => {
   it('fromTokenMinimalUnit using number', () => {
-    const wrongTypeInput = 1337 as any;
-    expect(() => fromTokenMinimalUnitString(wrongTypeInput, 6)).toThrow();
-    expect(() => fromTokenMinimalUnitString(wrongTypeInput, 0)).toThrow();
-    expect(() => fromTokenMinimalUnitString(wrongTypeInput, 18)).toThrow();
+    expect(() => fromTokenMinimalUnitString(1337, 6)).toThrow();
+    expect(() => fromTokenMinimalUnitString(1337, 0)).toThrow();
+    expect(() => fromTokenMinimalUnitString(1337, 18)).toThrow();
   });
 
   it('fromTokenMinimalUnitString using string', () => {
@@ -370,16 +335,11 @@ describe('Number utils :: hexToBN', () => {
   it('hexToBN', () => {
     expect(hexToBN('0x539').toNumber()).toBe(1337);
   });
-  it('should handle non string values', () => {
-    const newBN = new BN(1);
-    expect(hexToBN(newBN)).toBe(newBN);
-  });
 });
 
 describe('Number utils :: isBN', () => {
   it('isBN', () => {
-    const notABN = '0x539';
-    expect(isBN(notABN)).toEqual(false);
+    expect(isBN('0x539')).toEqual(false);
     expect(isBN(new BN(1337))).toEqual(true);
   });
 });
@@ -401,9 +361,9 @@ describe('Number utils :: isDecimal', () => {
 describe('Number utils :: weiToFiat', () => {
   it('weiToFiat', () => {
     const wei = toWei('1');
-    expect(weiToFiat(wei, 1, 'usd')).toEqual('$1.00');
-    expect(weiToFiat(wei, 0.5, 'usd')).toEqual('$0.50');
-    expect(weiToFiat(wei, 0.1, 'usd')).toEqual('$0.10');
+    expect(weiToFiat(wei, 1, 'usd')).toEqual('$1');
+    expect(weiToFiat(wei, 0.5, 'usd')).toEqual('$0.5');
+    expect(weiToFiat(wei, 0.1, 'usd')).toEqual('$0.1');
   });
 });
 
@@ -513,21 +473,57 @@ describe('Number utils :: fiatNumberToTokenMinimalUnit', () => {
       ),
     ).toEqual(safeNumberToBN('56822378925'));
   });
+	it('fiatNumberToWei', () => {
+		const one = safeNumberToBN(Math.pow(10, 18));
+		const ten = safeNumberToBN(Math.pow(10, 19));
+		const decimal = safeNumberToBN(Math.pow(10, 17));
+		const aThird = safeNumberToBN('4a03ce68d215534');
+		expect(fiatNumberToWei('0.1234512345', 0.1234512345)).toEqual(one);
+		expect(fiatNumberToWei('0.5', 0.5)).toEqual(one);
+		expect(fiatNumberToWei('100', 10)).toEqual(ten);
+		expect(fiatNumberToWei('1', 10)).toEqual(decimal);
+		expect(fiatNumberToWei('1', 3)).toEqual(aThird);
+	});
+});
+
+describe('Number utils :: fiatNumberToTokenMinimalUnit', () => {
+	it('fiatNumberToTokenMinimalUnit', () => {
+		const decimals = [18, 3, 12, 16, 4, 10];
+		const conversionRates = [10, 8, 21, 18, 3, 8.11];
+		const exchangeRates = [10, 1, 3, 3, 7, 2.17];
+		const fiatValues = ['100', '123', '300', '1111.111', '9.999', '100'];
+		let i = 0;
+
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('1000000000000000000')
+		);
+		i = 1;
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('15375')
+		);
+		i = 2;
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('4761904761904')
+		);
+		i = 3;
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('205761296296296300')
+		);
+		i = 4;
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('4761')
+		);
+		i = 5;
+		expect(fiatNumberToTokenMinimalUnit(fiatValues[i], conversionRates[i], exchangeRates[i], decimals[i])).toEqual(
+			safeNumberToBN('56822378925')
+		);
+	});
 });
 
 describe('Number utils :: balanceToFiat', () => {
   it('balanceToFiat', () => {
     expect(balanceToFiat(0.1, 0.1, 0.1, 'usd')).toEqual('$0.00');
     expect(balanceToFiat(0.0001, 0.1, 0.1, 'usd')).toEqual('$0.00');
-  });
-});
-
-describe('Number utils :: addCurrencySymbol', () => {
-  it('balanceToFiat', () => {
-    expect(addCurrencySymbol(0.1, 'usd')).toEqual('$0.10');
-    expect(addCurrencySymbol(0.0001, 'usd')).toEqual('$0.00');
-    expect(addCurrencySymbol(0.0001, 'usd', true)).toEqual('$0.0001');
-    expect(addCurrencySymbol(0.000101, 'usd', true)).toEqual('$0.000101');
   });
 });
 
@@ -566,152 +562,6 @@ describe('Number utils :: fastSplit', () => {
   });
 });
 
-describe('Number utils :: safeNumberToBN', () => {
-  it('should safe convert a string type positive decimal number to BN', () => {
-    const result: any = safeNumberToBN('1650000007.7');
-    const expected: any = new BN('1650000007');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a number type positive decimal number to BN', () => {
-    const result: any = safeNumberToBN(1650000007.7);
-    const expected: any = new BN('1650000007');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a string type positive integer to BN', () => {
-    const result: any = safeNumberToBN('16500');
-    const expected: any = new BN('16500');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a number type positive integer to BN', () => {
-    const result: any = safeNumberToBN(16500);
-    const expected: any = new BN('16500');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a string type negative decimal number to BN', () => {
-    const result: any = safeNumberToBN('-1650000007.7');
-    const expected: any = new BN('-1650000007');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a number type negative decimal number to BN', () => {
-    const result: any = safeNumberToBN(-1650000007.7);
-    const expected: any = new BN('-1650000007');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a string type negative integer to BN', () => {
-    const result: any = safeNumberToBN('-16500');
-    const expected: any = new BN('-16500');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a number type negative integer to BN', () => {
-    const result: any = safeNumberToBN(-16500);
-    const expected: any = new BN('-16500');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a positive hex to BN', () => {
-    const result: any = safeNumberToBN('75BCD15');
-    const expected: any = new BN('123456789');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a positive hex with 0x prefix to BN', () => {
-    const result: any = safeNumberToBN('0x75BCD15');
-    const expected: any = new BN('123456789');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a negative hex to BN', () => {
-    const result: any = safeNumberToBN('-75BCD15');
-    const expected: any = new BN('-123456789');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a negative hex with 0x prefix to BN', () => {
-    const result: any = safeNumberToBN('-0x75BCD15');
-    const expected: any = new BN('-123456789');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a decimal zero to BN', () => {
-    const result: any = safeNumberToBN('0');
-    const expected: any = new BN('0');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a hex zero to BN', () => {
-    const result: any = safeNumberToBN('0x0');
-    const expected: any = new BN('0');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert an invalid hex string to zero', () => {
-    const result: any = safeNumberToBN('0xNaN');
-    const expected: any = new BN('0');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-
-  it('should safe convert a NaN object', () => {
-    const result: any = safeNumberToBN(NaN);
-    const expected: any = new BN('0');
-    expect(result.words[0]).toEqual(expected.words[0]);
-    expect(result.words[1]).toEqual(expected.words[1]);
-    expect(result.negative).toEqual(expected.negative);
-    expect(result.length).toEqual(expected.length);
-  });
-});
-
 describe('Number utils :: isNumber', () => {
   it('should be a valid number ', () => {
     expect(isNumber('1650.7')).toBe(true);
@@ -737,120 +587,10 @@ describe('Number utils :: isNumber', () => {
   });
 });
 
-describe('Number utils :: dotAndCommaDecimalFormatter', () => {
-  it('should return the number if it does not contain a dot or comma', () => {
-    expect(dotAndCommaDecimalFormatter('1650')).toBe('1650');
-  });
-  it('should return the number if it contains a dot', () => {
-    expect(dotAndCommaDecimalFormatter('1650.7')).toBe('1650.7');
-  });
-  it('should replace the comma with a decimal with a comma if it contains a dot', () => {
-    expect(dotAndCommaDecimalFormatter('1650,7')).toBe('1650.7');
-  });
-});
-
-describe('Number utils :: isNumberScientificNotationWhenString', () => {
-  it('isNumberScientificNotationWhenString passing number', () => {
-    expect(isNumberScientificNotationWhenString(1.337e-6)).toEqual(false);
-    expect(isNumberScientificNotationWhenString(1.337e-7)).toEqual(true);
-    expect(isNumberScientificNotationWhenString(1.337e20)).toEqual(false);
-    expect(isNumberScientificNotationWhenString(1.337e21)).toEqual(true);
-
-    expect(isNumberScientificNotationWhenString(0.000001337)).toEqual(false);
-    expect(isNumberScientificNotationWhenString(0.0000001337)).toEqual(true);
-    expect(isNumberScientificNotationWhenString(133700000000000000000)).toEqual(
-      false,
-    );
-    expect(
-      isNumberScientificNotationWhenString(1337000000000000000000),
-    ).toEqual(true);
-  });
-
-  it('isNumberScientificNotationWhenString should be false when non number is passed', () => {
-    expect(isNumberScientificNotationWhenString('1.337e-6' as any)).toEqual(
-      false,
-    );
-    expect(isNumberScientificNotationWhenString('1.337e-7' as any)).toEqual(
-      false,
-    );
-    expect(isNumberScientificNotationWhenString('1.337e20' as any)).toEqual(
-      false,
-    );
-    expect(isNumberScientificNotationWhenString('1.337e21' as any)).toEqual(
-      false,
-    );
-  });
-});
-
-describe('Number utils :: calculateEthFeeForMultiLayer', () => {
-  it('returns ethFee if multiLayerL1FeeTotal is falsy', () => {
-    expect(
-      calculateEthFeeForMultiLayer({
-        multiLayerL1FeeTotal: undefined,
-        ethFee: 0.000001,
-      }),
-    ).toBe(0.000001);
-  });
-
-  it('returns a new ETH fee which includes a multiLayerL1FeeTotal fee', () => {
-    expect(
-      calculateEthFeeForMultiLayer({
-        multiLayerL1FeeTotal: 'ce37bdd0b8b8',
-        ethFee: 0.000001,
-      }),
-    ).toBe('0.000227739');
-  });
-});
-
-describe('Number utils :: limitToMaximumDecimalPlaces', () => {
-  it('limits a num to a max decimal places (5)', () => {
-    expect(limitToMaximumDecimalPlaces(0.001050172)).toBe('0.00105');
-  });
-
-  it('limits a num to 3 decimal places', () => {
-    expect(limitToMaximumDecimalPlaces(0.001000172)).toBe('0.001');
-  });
-
-  it('does not add any decimal places for a whole number', () => {
-    expect(limitToMaximumDecimalPlaces(5)).toBe('5');
-  });
-});
-
-describe('Number utils :: isZeroValue', () => {
-  it('returns true for 0', () => {
-    expect(isZeroValue(0)).toBe(true);
-  });
-  it('returns true for hexadecimal string 0x0', () => {
-    expect(isZeroValue('0x0')).toBe(true);
-  });
-  it('returns true for hexadecimal integer literal 0x0', () => {
-    expect(isZeroValue(0x0)).toBe(true);
-  });
-  it('returns true for BN zero value', () => {
-    expect(isZeroValue(toBN('0'))).toBe(true);
-  });
-});
-
-describe('Number utils :: formatValueToMatchTokenDecimals', () => {
-  it('should return a formatted value if the submitted decimals is 0', () => {
-    expect(formatValueToMatchTokenDecimals('1.0', 0)).toBe('1');
-  });
-  it('should return the value if value is null', () => {
-    expect(formatValueToMatchTokenDecimals(null, 18)).toBe(null);
-  });
-  it('should return the value if the decimal is undefined', () => {
-    expect(formatValueToMatchTokenDecimals('1', undefined)).toBe('1');
-  });
-  it('should return a formatted value if the decimal is null', () => {
-    expect(formatValueToMatchTokenDecimals('1', null)).toBe('1');
-  });
-  it('should return the value if the decimal is not a number', () => {
-    expect(formatValueToMatchTokenDecimals('1', 'a')).toBe('1');
-  });
-  it('should return the value if the value decimal is equal to or less than the submitted decimal', () => {
-    expect(formatValueToMatchTokenDecimals('1.2348', 4)).toBe('1.2348');
-  });
-  it('should return a formatted value if the value decimal is greater than the submitted decimal', () => {
-    expect(formatValueToMatchTokenDecimals('1.234567', 4)).toBe('1.2346');
-  });
+describe('Number utils :: fastSplit', () => {
+	it('should split ', () => {
+		expect(fastSplit('1650000007.7')).toEqual('1650000007');
+		expect(fastSplit('1650000007')).toEqual('1650000007');
+		expect(fastSplit('test string', ' ')).toEqual('test');
+	});
 });

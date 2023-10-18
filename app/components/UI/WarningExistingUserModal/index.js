@@ -53,6 +53,46 @@ const Default = () => {
       </Text>
     </View>
   );
+	StyleSheet.create({
+		warningModalView: {
+			margin: 24,
+		},
+		warningModalTitle: {
+			...fontStyles.bold,
+			color: colors.error.default,
+			textAlign: 'center',
+			fontSize: 20,
+			marginBottom: 16,
+		},
+		warningModalText: {
+			...fontStyles.normal,
+			color: colors.text.default,
+			textAlign: 'center',
+			fontSize: 14,
+			lineHeight: 18,
+		},
+		warningModalTextBold: {
+			...fontStyles.bold,
+			color: colors.text.default,
+		},
+	});
+
+const Default = () => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View style={styles.warningModalView}>
+			<Text style={styles.warningModalTitle}>{strings('onboarding.warning_title')}</Text>
+			<Text style={styles.warningModalText}>
+				{strings('onboarding.warning_text_1')}
+				<Text style={styles.warningModalTextBold}>{` ${strings('onboarding.warning_text_2')} `}</Text>
+				{strings('onboarding.warning_text_3')}
+			</Text>
+			<Text />
+			<Text style={styles.warningModalText}>{strings('onboarding.warning_text_4')}</Text>
+		</View>
+	);
 };
 
 /**

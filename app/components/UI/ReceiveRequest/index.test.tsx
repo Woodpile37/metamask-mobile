@@ -6,6 +6,18 @@ import { Provider } from 'react-redux';
 
 const mockStore = configureMockStore();
 const initialState = {
+  engine: {
+    backgroundState: {
+      PreferencesController: { selectedAddress: '0x' },
+      NetworkController: { network: '1', provider: { ticker: 'ETH' } },
+    },
+  },
+  modals: {
+    receiveAsset: {},
+  },
+  user: {
+    seedphraseBackedUp: true,
+  },
 	engine: {
 		backgroundState: {
 			PreferencesController: { selectedAddress: '0x' },
@@ -22,12 +34,12 @@ const initialState = {
 const store = mockStore(initialState);
 
 describe('ReceiveRequest', () => {
-	it('should render correctly', () => {
-		const wrapper = shallow(
-			<Provider store={store}>
-				<ReceiveRequest />
-			</Provider>
-		);
-		expect(wrapper.dive()).toMatchSnapshot();
-	});
+  it('should render correctly', () => {
+    const wrapper = shallow(
+      <Provider store={store}>
+        <ReceiveRequest />
+      </Provider>,
+    );
+    expect(wrapper.dive()).toMatchSnapshot();
+  });
 });

@@ -11,15 +11,12 @@ import {
   weiToFiatNumber,
   addCurrencySymbol,
   toBN,
-  BNToHex,
-  limitToMaximumDecimalPlaces,
 } from '../../../util/number';
 import { strings } from '../../../../locales/i18n';
 import {
   renderFullAddress,
   safeToChecksumAddress,
 } from '../../../util/address';
-import { sumHexWEIs } from '../../../util/conversions';
 import {
   decodeTransferData,
   isCollectibleAddress,
@@ -33,7 +30,8 @@ import { swapsUtils } from '@metamask/swaps-controller';
 import { isSwapsNativeAsset } from '../Swaps/utils';
 import { toLowerCaseEquals } from '../../../util/general';
 import Engine from '../../../core/Engine';
-import { isEIP1559Transaction } from '@metamask/transaction-controller';
+import { util } from '@metamask/controllers';
+const { isEIP1559Transaction } = util;
 
 const { getSwapsContractAddress } = swapsUtils;
 
@@ -45,8 +43,8 @@ function calculateTotalGas(transaction) {
     estimatedBaseFee,
     maxPriorityFeePerGas,
     maxFeePerGas,
-    multiLayerL1FeeTotal,
   } = transaction;
+
   if (isEIP1559Transaction(transaction)) {
     const eip1559GasHex = calculateEIP1559GasFeeHexes({
       gasLimitHex: gasUsed || gas,
@@ -59,17 +57,40 @@ function calculateTotalGas(transaction) {
   const gasBN = hexToBN(gas);
   const gasPriceBN = hexToBN(gasPrice);
   const gasUsedBN = gasUsed ? hexToBN(gasUsed) : null;
-  let totalGas = hexToBN('0x0');
+
   if (gasUsedBN && isBN(gasUsedBN) && isBN(gasPriceBN)) {
-    totalGas = gasUsedBN.mul(gasPriceBN);
+    return gasUsedBN.mul(gasPriceBN);
   }
+
   if (isBN(gasBN) && isBN(gasPriceBN)) {
-    totalGas = gasBN.mul(gasPriceBN);
+    return gasBN.mul(gasPriceBN);
   }
-  if (multiLayerL1FeeTotal) {
-    totalGas = hexToBN(sumHexWEIs([BNToHex(totalGas), multiLayerL1FeeTotal]));
-  }
-  return totalGas;
+
+  return hexToBN('0x0');
+	const { gas, gasPrice, gasUsed, estimatedBaseFee, maxPriorityFeePerGas, maxFeePerGas } = transaction;
+
+	if (isEIP1559Transaction(transaction)) {
+		const eip1559GasHex = calculateEIP1559GasFeeHexes({
+			gasLimitHex: gasUsed || gas,
+			estimatedBaseFeeHex: estimatedBaseFee || '0x0',
+			suggestedMaxPriorityFeePerGasHex: maxPriorityFeePerGas,
+			suggestedMaxFeePerGasHex: maxFeePerGas,
+		});
+		return hexToBN(eip1559GasHex.gasFeeMinHex);
+	}
+	const gasBN = hexToBN(gas);
+	const gasPriceBN = hexToBN(gasPrice);
+	const gasUsedBN = gasUsed ? hexToBN(gasUsed) : null;
+
+	if (gasUsedBN && isBN(gasUsedBN) && isBN(gasPriceBN)) {
+		return gasUsedBN.mul(gasPriceBN);
+	}
+
+	if (isBN(gasBN) && isBN(gasPriceBN)) {
+		return gasBN.mul(gasPriceBN);
+	}
+
+	return hexToBN('0x0');
 }
 
 function renderGwei(transaction) {
@@ -606,7 +627,7 @@ function decodeConfirmTx(args) {
   if (actionKey === strings('transactions.approve'))
     transactionType = TRANSACTION_TYPES.APPROVE;
   else if (actionKey === strings('transactions.swaps_transaction'))
-    transactionType = TRANSACTION_TYPES.SWAPS_TRANSACTION;
+    transactionType = TRANSACTION_TYPES.SITE_INTERACTION;
   else if (
     actionKey === strings('transactions.smart_contract_interaction') ||
     (!actionKey.includes(strings('transactions.sent')) &&
@@ -715,18 +736,9 @@ function decodeSwapsTx(args) {
         : swapTransaction.destinationAmount,
       swapTransaction.destinationToken.decimals,
     );
-  let totalAmountForEthSourceTokenFormatted;
-  if (sourceToken.symbol === 'ETH') {
-    const totalAmountForEthSourceToken =
-      Number(!isNaN(totalEthGas) ? totalEthGas : 0) +
-      Number(decimalSourceAmount);
-    totalAmountForEthSourceTokenFormatted = `${limitToMaximumDecimalPlaces(
-      totalAmountForEthSourceToken,
-    )} ${ticker}`;
-  }
   const cryptoSummaryTotalAmount =
     sourceToken.symbol === 'ETH'
-      ? totalAmountForEthSourceTokenFormatted
+      ? `${Number(totalEthGas) + Number(decimalSourceAmount)} ${ticker}`
       : decimalSourceAmount
       ? `${decimalSourceAmount} ${sourceToken.symbol} + ${totalEthGas} ${ticker}`
       : `${totalEthGas} ${ticker}`;

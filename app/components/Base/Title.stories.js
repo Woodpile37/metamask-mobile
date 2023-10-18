@@ -17,3 +17,9 @@ storiesOf('Components / Base / Title', module)
       {text('children', 'This is a Title component')}
     </Title>
   ));
+	.addDecorator((getStory) => getStory())
+	.add('Default', () => (
+		<Title onPress={action('onPress')} centered={boolean('centered', false)} hero={boolean('hero', false)}>
+			{text('children', 'This is a Title component')}
+		</Title>
+	));

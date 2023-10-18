@@ -50,6 +50,45 @@ const createStyles = (colors: any) =>
       height: 50,
     },
   });
+	StyleSheet.create({
+		item: {
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			padding: 8,
+			marginBottom: 8,
+			borderRadius: 8,
+		},
+		assetListElement: {
+			flex: 1,
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+		},
+		text: {
+			...(fontStyles.normal as any),
+			color: colors.text.default,
+		},
+		textSymbol: {
+			...fontStyles.normal,
+			paddingBottom: 4,
+			fontSize: 16,
+			color: colors.text.default,
+		} as any,
+		assetInfo: {
+			flex: 1,
+			flexDirection: 'column',
+			alignSelf: 'center',
+			padding: 4,
+		},
+		assetIcon: {
+			flexDirection: 'column',
+			alignSelf: 'center',
+			marginRight: 12,
+		},
+		ethLogo: {
+			width: 50,
+			height: 50,
+		},
+	});
 
 interface Props {
   /**
@@ -97,6 +136,31 @@ const AssetList = ({
     },
     [tokenList, styles],
   );
+const AssetList = ({ searchResults, handleSelectAsset, emptyMessage }: Props) => {
+	const tokenList = useSelector(getTokenList);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	/**
+	 * Render logo according to asset. Could be ETH, Identicon or contractMap logo
+	 *
+	 * @param {object} asset - Asset to generate the logo to render
+	 */
+	const renderLogo = useCallback(
+		(asset: any) => {
+			const { address, isETH } = asset;
+			if (isETH) {
+				return <NetworkMainAssetLogo big style={styles.ethLogo} />;
+			}
+			const token = tokenList?.[toChecksumAddress(address)] || tokenList?.[address.toLowerCase()];
+			const iconUrl = token?.iconUrl;
+			if (!iconUrl) {
+				return <Identicon address={address} />;
+			}
+			return <AssetIcon logo={iconUrl} />;
+		},
+		[tokenList, styles]
+	);
 
   return (
     <View testID={'add-searched-token-screen'}>

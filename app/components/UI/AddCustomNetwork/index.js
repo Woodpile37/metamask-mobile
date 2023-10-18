@@ -127,6 +127,113 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+	StyleSheet.create({
+		root: {
+			backgroundColor: colors.background.default,
+			paddingTop: 24,
+			borderTopLeftRadius: 20,
+			borderTopRightRadius: 20,
+			minHeight: 200,
+			paddingBottom: Device.isIphoneX() ? 20 : 0,
+		},
+		accountCardWrapper: {
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: 10,
+			padding: 16,
+			margin: 24,
+		},
+		intro: {
+			fontSize: Device.isSmallDevice() ? 18 : 24,
+			marginBottom: 16,
+			marginTop: 16,
+			marginRight: 24,
+			marginLeft: 24,
+		},
+		warning: {
+			paddingHorizontal: 24,
+			fontSize: 13,
+			width: '100%',
+			paddingBottom: 12,
+		},
+		warningSubtext: {
+			lineHeight: 20,
+			paddingHorizontal: 24,
+			fontSize: 13,
+			width: '100%',
+		},
+		actionContainer: {
+			flex: 0,
+			flexDirection: 'row',
+			padding: 24,
+		},
+		button: {
+			flex: 1,
+		},
+		cancel: {
+			marginRight: 8,
+		},
+		confirm: {
+			marginLeft: 8,
+		},
+		actionTouchable: {
+			flexDirection: 'column',
+			alignItems: 'center',
+		},
+		viewDetailsText: {
+			fontSize: 12,
+			lineHeight: 16,
+		},
+		textSection: {
+			flexDirection: 'row',
+			paddingBottom: 7,
+		},
+		textSectionLast: {
+			flexDirection: 'row',
+		},
+		networkInfoTitle: {
+			paddingRight: 10,
+		},
+		networkInfoValue: {
+			flex: 1,
+			fontSize: 13,
+		},
+		detailsBackButton: {
+			height: 24,
+			width: 24,
+			justifyContent: 'space-around',
+			alignItems: 'center',
+			textAlign: 'center',
+			padding: 24,
+		},
+		detailsBackIcon: {
+			width: 24,
+			height: 24,
+			color: colors.text.default,
+			textAlign: 'center',
+		},
+		detailsContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		flexAux: {
+			flex: 1,
+		},
+		alertContainer: {
+			marginHorizontal: 24,
+			marginBottom: 16,
+		},
+		alertIcon: {
+			fontSize: 20,
+			...fontStyles.bold,
+			color: colors.warning.default,
+			marginRight: 6,
+		},
+		alertText: {
+			lineHeight: 18,
+			color: colors.text.default,
+		},
+	});
 
 /**
  * Account access approval component
@@ -140,6 +247,10 @@ const AddCustomNetwork = ({
   const [viewDetails, setViewDetails] = useState(false);
   const { colors } = useTheme();
   const styles = createStyles(colors);
+const AddCustomNetwork = ({ customNetworkInformation, currentPageInformation, onCancel, onConfirm }) => {
+	const [viewDetails, setViewDetails] = useState(false);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   /**
    * Calls onConfirm callback and analytics to track connect confirmed event
@@ -331,6 +442,79 @@ const AddCustomNetwork = ({
       </View>
     </ScrollView>
   );
+		return (
+			<Alert
+				type={AlertType.Warning}
+				testID={'error-message-warning'}
+				style={styles.alertContainer}
+				renderIcon={() => <EvilIcons name="bell" style={styles.alertIcon} />}
+			>
+				<Text primary noMargin style={styles.alertText}>
+					<Text primary bold noMargin style={styles.alertText}>
+						{alertText}
+						{'\n'}
+					</Text>
+					<Text primary noMargin>
+						{strings('add_custom_network.alert_recommend')}{' '}
+						<Text primary link noMargin onPress={openHowToVerifyCustomNetworks}>
+							{strings('add_custom_network.alert_verify')}
+						</Text>
+						.
+					</Text>
+				</Text>
+			</Alert>
+		);
+	};
+
+	const renderApproval = () => (
+		<ScrollView>
+			<TransactionHeader currentPageInformation={currentPageInformation} />
+			<Text centered bold primary noMargin style={styles.intro}>
+				{strings('add_custom_network.title')}
+			</Text>
+			<Text primary centered noMargin style={styles.warning}>
+				{strings('add_custom_network.warning')}
+			</Text>
+			<Text primary centered noMargin style={styles.warningSubtext}>
+				<Text primary bold noMargin>
+					{strings('add_custom_network.warning_subtext_1')}
+				</Text>{' '}
+				{strings('add_custom_network.warning_subtext_2')}
+				<Text primary link noMargin onPress={openHowToUseCustomNetworks}>
+					{' '}
+					{strings('add_custom_network.warning_subtext_3')}
+				</Text>
+				.
+			</Text>
+			{renderNetworkInfo()}
+			{renderAlert()}
+			<TouchableOpacity style={styles.actionTouchable} onPress={toggleViewDetails}>
+				<View style={styles.viewDetailsWrapper}>
+					<Text bold link centered noMargin style={styles.viewDetailsText}>
+						{strings('spend_limit_edition.view_details')}
+					</Text>
+				</View>
+			</TouchableOpacity>
+			<View style={styles.actionContainer}>
+				<StyledButton
+					type={'cancel'}
+					onPress={cancel}
+					containerStyle={[styles.button, styles.cancel]}
+					testID={CANCEL_BUTTON_ID}
+				>
+					{strings('spend_limit_edition.cancel')}
+				</StyledButton>
+				<StyledButton
+					type={'confirm'}
+					onPress={confirm}
+					containerStyle={[styles.button, styles.confirm]}
+					testID={'connect-approve-button'}
+				>
+					{strings('spend_limit_edition.approve')}
+				</StyledButton>
+			</View>
+		</ScrollView>
+	);
 
   return (
     <View style={styles.root}>

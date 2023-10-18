@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import { WebView } from 'react-native-webview';
-import type { NetworkState } from '@metamask/network-controller';
-
-import Text, {
-  TextVariant,
-} from '../../../../component-library/components/Texts/Text';
-import { RPC } from '../../../../constants/network';
+import { View, StyleSheet } from 'react-native';
+import WebviewProgressBar from '../../../UI/WebviewProgressBar';
 import {
   getEtherscanAddressUrl,
   getEtherscanBaseUrl,
 } from '../../../../util/etherscan';
-import { findBlockExplorerForRpc } from '../../../../util/networks';
-import WebviewProgressBar from '../../../UI/WebviewProgressBar';
+import { getEtherscanAddressUrl, getEtherscanBaseUrl } from '../../../../util/etherscan';
+import { WebView } from 'react-native-webview';
+import Text from '../../../Base/Text';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 const styles = StyleSheet.create({
   progressBarWrapper: {
@@ -25,52 +20,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 999999,
   },
-  container: {
-    height: '100%',
-  },
 });
 
 interface ShowBlockExplorerProps {
-  address: string;
+  contractAddress: string;
   type: string;
   setIsBlockExplorerVisible: (isBlockExplorerVisible: boolean) => void;
   headerWrapperStyle?: any;
   headerTextStyle?: any;
   iconStyle?: any;
-  providerRpcTarget?: string;
-  networkConfigurations: NetworkState['networkConfigurations'];
-  learnMoreURL?: string;
 }
 
 const ShowBlockExplorer = (props: ShowBlockExplorerProps) => {
   const {
     type,
-    address,
+    contractAddress,
     setIsBlockExplorerVisible,
     headerWrapperStyle,
     headerTextStyle,
     iconStyle,
-    providerRpcTarget,
-    networkConfigurations,
-    learnMoreURL,
   } = props;
-
-  const [loading, setLoading] = useState<number>(0);
-
-  const url =
-    learnMoreURL ||
-    (type === RPC
-      ? `${findBlockExplorerForRpc(
-          providerRpcTarget,
-          networkConfigurations,
-        )}/address/${address}`
-      : getEtherscanAddressUrl(type, address));
-  const title =
-    type === RPC
-      ? new URL(
-          findBlockExplorerForRpc(providerRpcTarget, networkConfigurations),
-        ).hostname
-      : getEtherscanBaseUrl(type).replace('https://', '');
+  const [loading, setLoading] = useState(0);
+  const url = getEtherscanAddressUrl(type, contractAddress);
+  const etherscan_url = getEtherscanBaseUrl(type).replace('https://', '');
 
   const onLoadProgress = ({
     nativeEvent: { progress },
@@ -87,13 +59,11 @@ const ShowBlockExplorer = (props: ShowBlockExplorerProps) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <View style={headerWrapperStyle}>
-        {!learnMoreURL && (
-          <Text variant={TextVariant.BodyMDBold} style={headerTextStyle}>
-            {title}
-          </Text>
-        )}
+        <Text bold style={headerTextStyle}>
+          {etherscan_url}
+        </Text>
         <AntDesignIcon
           name={'close'}
           size={20}
@@ -103,8 +73,61 @@ const ShowBlockExplorer = (props: ShowBlockExplorerProps) => {
       </View>
       <WebView source={{ uri: url }} onLoadProgress={onLoadProgress} />
       {renderProgressBar()}
-    </SafeAreaView>
+    </>
   );
+	progressBarWrapper: {
+		height: 3,
+		width: '100%',
+		left: 0,
+		right: 0,
+		bottom: 0,
+		position: 'absolute',
+		zIndex: 999999,
+	},
+});
+
+interface ShowBlockExplorerProps {
+	contractAddress: string;
+	type: string;
+	setIsBlockExplorerVisible: (isBlockExplorerVisible: boolean) => void;
+	headerWrapperStyle?: any;
+	headerTextStyle?: any;
+	iconStyle?: any;
+}
+
+const ShowBlockExplorer = (props: ShowBlockExplorerProps) => {
+	const { type, contractAddress, setIsBlockExplorerVisible, headerWrapperStyle, headerTextStyle, iconStyle } = props;
+	const [loading, setLoading] = useState(0);
+	const url = getEtherscanAddressUrl(type, contractAddress);
+	const etherscan_url = getEtherscanBaseUrl(type).replace('https://', '');
+
+	const onLoadProgress = ({ nativeEvent: { progress } }: { nativeEvent: { progress: number } }) => {
+		setLoading(progress);
+	};
+
+	const renderProgressBar = () => (
+		<View style={styles.progressBarWrapper}>
+			<WebviewProgressBar progress={loading} />
+		</View>
+	);
+
+	return (
+		<>
+			<View style={headerWrapperStyle}>
+				<Text bold style={headerTextStyle}>
+					{etherscan_url}
+				</Text>
+				<AntDesignIcon
+					name={'close'}
+					size={20}
+					style={iconStyle}
+					onPress={() => setIsBlockExplorerVisible(false)}
+				/>
+			</View>
+			<WebView source={{ uri: url }} onLoadProgress={onLoadProgress} />
+			{renderProgressBar()}
+		</>
+	);
 };
 
 export default ShowBlockExplorer;

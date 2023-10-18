@@ -38,6 +38,9 @@ export function findRouteNameFromNavigatorState(routes) {
   if (name === 'Main' || name === 'WalletTabHome' || name === 'Home')
     name = 'WalletView';
   if (name === 'TransactionsHome') name = 'TransactionsView';
+	// For compatibility with the previous way on react navigation 4
+	if (name === 'Main' || name === 'WalletTabHome' || name === 'Home') name = 'WalletView';
+	if (name === 'TransactionsHome') name = 'TransactionsView';
 
   return name;
 }

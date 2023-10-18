@@ -62,6 +62,44 @@ const createStyles = (colors) =>
       textAlign: 'center',
     },
   });
+	StyleSheet.create({
+		bottomBar: {
+			backgroundColor: colors.background.default,
+			flexDirection: 'row',
+			paddingBottom:
+				Device.isIphoneX() && Device.isIos()
+					? defaultBottomBarPadding + HOME_INDICATOR_HEIGHT
+					: defaultBottomBarPadding,
+			flex: 0,
+			borderTopWidth: Device.isAndroid() ? 0 : StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+			justifyContent: 'space-between',
+		},
+		iconButton: {
+			height: 24,
+			width: 24,
+			justifyContent: 'space-around',
+			alignItems: 'center',
+			textAlign: 'center',
+			flex: 1,
+			paddingTop: 30,
+			paddingBottom: 30,
+		},
+		tabIcon: {
+			marginTop: 0,
+			width: 24,
+			height: 24,
+		},
+		disabledIcon: {
+			color: colors.icon.muted,
+		},
+		icon: {
+			width: 24,
+			height: 24,
+			color: colors.icon.default,
+			textAlign: 'center',
+		},
+	});
 
 /**
  * Browser bottom bar that contains icons for navigation
@@ -130,6 +168,11 @@ export default class BrowserBottomBar extends PureComponent {
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+	render() {
+		const { canGoBack, goBack, canGoForward, goForward, showTabs, goHome, showUrlModal, toggleOptions } =
+			this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
 
     const onSearchPress = () => {
       showUrlModal();

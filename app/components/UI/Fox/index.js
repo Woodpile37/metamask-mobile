@@ -27,6 +27,47 @@ function Fox({
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const opacityControl = useSharedValue(0);
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
+const createStyles = (colors) =>
+	StyleSheet.create({
+		webView: {
+			flex: 1,
+			backgroundColor: colors.background.default,
+		},
+	});
+
+function Fox({ style, customStyle, customContent = '', forwardedRef, ...props }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+	const opacityControl = useSharedValue(0);
+
+	/* eslint-disable-next-line */
+	const webViewStyle = useAnimatedStyle(() => {
+		return {
+			opacity: opacityControl.value,
+		};
+	});
+
+	const showWebView = () => {
+		opacityControl.value = withTiming(1, { duration: 500 });
+	};
+
+	return (
+		<Animated.View style={[styles.webView, webViewStyle]}>
+			<WebView
+				ref={forwardedRef}
+				style={[styles.webView, style]}
+				onLoadEnd={showWebView}
+				source={{
+					html: `
+					<!DOCTYPE html>
+					<html>
+					<head>
+					<style>
+					html, body{
+						height: 100%;
+					}
 
   /* eslint-disable-next-line */
   const webViewStyle = useAnimatedStyle(() => {
@@ -1541,6 +1582,18 @@ function Fox({
       />
     </Animated.View>
   );
+					</script>
+					</body>
+					</html>
+				`,
+				}}
+				javaScriptEnabled
+				bounces={false}
+				scrollEnabled={false}
+				{...props}
+			/>
+		</Animated.View>
+	);
 }
 
 Fox.propTypes = {

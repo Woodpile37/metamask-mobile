@@ -21,19 +21,15 @@ import {
   renderFromWei,
   toWei,
   weiToFiat,
-  calculateEthFeeForMultiLayer,
 } from '../../../../util/number';
 import { getQuotesSourceMessage } from '../utils';
 import Text from '../../../Base/Text';
 import Title from '../../../Base/Title';
 import Ratio from './Ratio';
-import { useTheme } from '../../../../util/theme';
-import {
-  selectConversionRate,
-  selectCurrentCurrency,
-} from '../../../../selectors/currencyRateController';
+import { useAppThemeFromContext, mockTheme } from '../../../../util/theme';
+import { colors as importedColors } from '../../../../styles/common';
 
-const createStyles = (colors, shadows) =>
+const createStyles = (colors) =>
   StyleSheet.create({
     modalView: {
       backgroundColor: colors.background.default,
@@ -41,7 +37,13 @@ const createStyles = (colors, shadows) =>
       alignItems: 'center',
       marginVertical: 50,
       borderRadius: 10,
-      ...shadows.size.sm,
+      shadowColor: importedColors.black,
+      shadowOffset: {
+        width: 0,
+        height: 5,
+      },
+      shadowOpacity: 0.36,
+      shadowRadius: 6.68,
       elevation: 11,
     },
     modal: {
@@ -130,6 +132,108 @@ const createStyles = (colors, shadows) =>
       opacity: 0,
     },
   });
+	StyleSheet.create({
+		modalView: {
+			backgroundColor: colors.background.default,
+			justifyContent: 'center',
+			alignItems: 'center',
+			marginVertical: 50,
+			borderRadius: 10,
+			shadowColor: importedColors.black,
+			shadowOffset: {
+				width: 0,
+				height: 5,
+			},
+			shadowOpacity: 0.36,
+			shadowRadius: 6.68,
+			elevation: 11,
+		},
+		modal: {
+			margin: 0,
+			width: '100%',
+			padding: 25,
+		},
+		title: {
+			width: '100%',
+			paddingVertical: 15,
+			paddingHorizontal: 20,
+			paddingBottom: 5,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			color: colors.text.default,
+		},
+		titleButton: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		closeIcon: {
+			color: colors.text.default,
+		},
+		backIcon: {
+			color: colors.text.default,
+			marginRight: 16,
+		},
+		detailsIcon: {
+			color: colors.text.default,
+			paddingHorizontal: 10,
+		},
+		body: {
+			width: '100%',
+			paddingVertical: 5,
+		},
+		row: {
+			paddingHorizontal: 20,
+			flexDirection: 'row',
+			paddingVertical: 10,
+		},
+		quoteRow: {
+			borderTopWidth: 1,
+			borderTopColor: colors.border.muted,
+			paddingVertical: 15,
+			alignItems: 'center',
+		},
+		detailsRow: {
+			paddingHorizontal: 20,
+			borderTopWidth: 1,
+			borderTopColor: colors.border.muted,
+			paddingVertical: 15,
+		},
+		selectedQuoteRow: {
+			backgroundColor: colors.primary.muted,
+		},
+		columnAmount: {
+			flex: 3,
+			marginRight: 5,
+		},
+		columnFee: {
+			flex: 3,
+			marginRight: 5,
+		},
+		columnValue: {
+			flex: 3,
+			marginRight: 5,
+		},
+		red: {
+			color: colors.error.default,
+		},
+		bestBadge: {
+			flexDirection: 'row',
+		},
+		bestBadgeWrapper: {
+			paddingVertical: 0,
+			paddingHorizontal: 8,
+			backgroundColor: colors.primary.default,
+			borderRadius: 4,
+		},
+		bestBadgeText: {
+			color: colors.primary.inverse,
+		},
+		transparent: {
+			opacity: 0,
+		},
+	});
 
 if (
   Platform.OS === 'android' &&
@@ -150,15 +254,19 @@ function QuotesModal({
   quoteValues,
   showOverallValue,
   ticker,
-  multiLayerL1ApprovalFeeTotal,
 }) {
   const bestOverallValue =
     quoteValues?.[quotes[0].aggregator]?.overallValueOfQuote ?? 0;
   const [displayDetails, setDisplayDetails] = useState(false);
   const [selectedDetailsQuoteIndex, setSelectedDetailsQuoteIndex] =
     useState(null);
-  const { colors, shadows } = useTheme();
-  const styles = createStyles(colors, shadows);
+  const { colors } = useAppThemeFromContext() || mockTheme;
+  const styles = createStyles(colors);
+	const bestOverallValue = quoteValues?.[quotes[0].aggregator]?.overallValueOfQuote ?? 0;
+	const [displayDetails, setDisplayDetails] = useState(false);
+	const [selectedDetailsQuoteIndex, setSelectedDetailsQuoteIndex] = useState(null);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
 
   // When index/quotes change we get a new selected quote in case it exists
   // (quotes.length can be shorter than selected index)
@@ -229,14 +337,6 @@ function QuotesModal({
     }
   }, [displayDetails, selectedDetailsQuote]);
 
-  let selectedDetailsQuoteValuesEthFee = selectedDetailsQuoteValues?.ethFee;
-  if (multiLayerL1ApprovalFeeTotal) {
-    selectedDetailsQuoteValuesEthFee = calculateEthFeeForMultiLayer({
-      multiLayerL1FeeTotal: multiLayerL1ApprovalFeeTotal,
-      ethFee: selectedDetailsQuoteValuesEthFee,
-    });
-  }
-
   return (
     <Modal
       isVisible={isVisible}
@@ -267,6 +367,32 @@ function QuotesModal({
           ) : (
             <Title>{strings('swaps.quotes_overview')}</Title>
           )}
+	return (
+		<Modal
+			isVisible={isVisible}
+			onBackdropPress={toggleModal}
+			onBackButtonPress={handleBackButtonPress}
+			onSwipeComplete={toggleModal}
+			swipeDirection="down"
+			propagateSwipe
+			style={styles.modal}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+		>
+			<SafeAreaView style={styles.modalView}>
+				<View style={styles.title}>
+					{displayDetails ? (
+						<TouchableOpacity
+							onPress={toggleDetails}
+							style={styles.titleButton}
+							hitSlop={{ top: 10, left: 20, right: 10, bottom: 10 }}
+						>
+							<IonicIcon name="ios-arrow-back" style={styles.backIcon} size={20} />
+							<Title>{strings('swaps.quote_details')}</Title>
+						</TouchableOpacity>
+					) : (
+						<Title>{strings('swaps.quotes_overview')}</Title>
+					)}
 
           <TouchableOpacity
             onPress={toggleModal}
@@ -329,14 +455,14 @@ function QuotesModal({
                   <View style={styles.detailsRow}>
                     <Text small>{strings('swaps.estimated_network_fees')}</Text>
                     <Text primary>
-                      {renderFromWei(toWei(selectedDetailsQuoteValuesEthFee))}{' '}
+                      {renderFromWei(toWei(selectedDetailsQuoteValues.ethFee))}{' '}
                       <Text reset bold>
                         {ticker}
                       </Text>{' '}
                       <Text>
                         (~
                         {weiToFiat(
-                          toWei(selectedDetailsQuoteValuesEthFee),
+                          toWei(selectedDetailsQuoteValues.ethFee),
                           conversionRate,
                           currentCurrency,
                         )}
@@ -400,13 +526,6 @@ function QuotesModal({
                       const { aggregator } = quote;
                       const isSelected = aggregator === selectedQuote;
                       const quoteValue = quoteValues[aggregator];
-                      let quoteEthFee = quoteValue?.ethFee;
-                      if (multiLayerL1ApprovalFeeTotal) {
-                        quoteEthFee = calculateEthFeeForMultiLayer({
-                          multiLayerL1FeeTotal: multiLayerL1ApprovalFeeTotal,
-                          ethFee: quoteEthFee,
-                        });
-                      }
                       return (
                         <TouchableOpacity
                           key={aggregator}
@@ -429,7 +548,7 @@ function QuotesModal({
                           <View style={styles.columnFee}>
                             <Text primary bold={isSelected}>
                               {weiToFiat(
-                                toWei(quoteEthFee),
+                                toWei(quoteValue?.ethFee ?? 0),
                                 conversionRate,
                                 currentCurrency,
                               )}
@@ -525,12 +644,13 @@ QuotesModal.propTypes = {
   ticker: PropTypes.string,
   quoteValues: PropTypes.object,
   showOverallValue: PropTypes.bool,
-  multiLayerL1ApprovalFeeTotal: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({
-  conversionRate: selectConversionRate(state),
-  currentCurrency: selectCurrentCurrency(state),
+  conversionRate:
+    state.engine.backgroundState.CurrencyRateController.conversionRate,
+  currentCurrency:
+    state.engine.backgroundState.CurrencyRateController.currentCurrency,
   quoteValues: state.engine.backgroundState.SwapsController.quoteValues,
 });
 

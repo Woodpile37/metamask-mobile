@@ -74,6 +74,43 @@ const createStyles = (colors) =>
       paddingTop: 10,
     },
   });
+import { util } from '@metamask/controllers';
+import Engine from '../../../../core/Engine';
+import { ThemeContext, mockTheme } from '../../../../util/theme';
+
+const createStyles = (colors) =>
+	StyleSheet.create({
+		viewOnEtherscan: {
+			fontSize: 16,
+			color: colors.primary.default,
+			...fontStyles.normal,
+			textAlign: 'center',
+		},
+		touchableViewOnEtherscan: {
+			marginBottom: 24,
+			marginTop: 12,
+		},
+		summaryWrapper: {
+			marginVertical: 8,
+		},
+		actionContainerStyle: {
+			height: 25,
+			width: 70,
+			padding: 0,
+		},
+		speedupActionContainerStyle: {
+			marginRight: 10,
+		},
+		actionStyle: {
+			fontSize: 10,
+			padding: 0,
+			paddingHorizontal: 10,
+		},
+		transactionActionsContainer: {
+			flexDirection: 'row',
+			paddingTop: 10,
+		},
+	});
 
 /**
  * View that renders a transaction details as part of transactions list
@@ -409,6 +446,138 @@ class TransactionDetails extends PureComponent {
       </DetailsModal.Body>
     ) : null;
   };
+	getStyles = () => {
+		const colors = this.context.colors || mockTheme.colors;
+		return createStyles(colors);
+	};
+
+	showSpeedUpModal = () => {
+		const { showSpeedUpModal, close } = this.props;
+		if (close) {
+			close();
+			showSpeedUpModal();
+		}
+	};
+
+	showCancelModal = () => {
+		const { showCancelModal, close } = this.props;
+		if (close) {
+			close();
+			showCancelModal();
+		}
+	};
+
+	renderSpeedUpButton = () => {
+		const styles = this.getStyles();
+
+		return (
+			<StyledButton
+				type={'normal'}
+				containerStyle={[styles.actionContainerStyle, styles.speedupActionContainerStyle]}
+				style={styles.actionStyle}
+				onPress={this.showSpeedUpModal}
+			>
+				{strings('transaction.speedup')}
+			</StyledButton>
+		);
+	};
+
+	renderCancelButton = () => {
+		const styles = this.getStyles();
+
+		return (
+			<StyledButton
+				type={'cancel'}
+				containerStyle={styles.actionContainerStyle}
+				style={styles.actionStyle}
+				onPress={this.showCancelModal}
+			>
+				{strings('transaction.cancel')}
+			</StyledButton>
+		);
+	};
+
+	render = () => {
+		const {
+			chainId,
+			transactionDetails,
+			transactionObject: { status, time, transaction },
+		} = this.props;
+		const styles = this.getStyles();
+
+		const renderTxActions = status === 'submitted' || status === 'approved';
+		const { rpcBlockExplorer, l1Fee } = this.state;
+
+		return transactionDetails ? (
+			<DetailsModal.Body>
+				<DetailsModal.Section borderBottom>
+					<DetailsModal.Column>
+						<DetailsModal.SectionTitle>{strings('transactions.status')}</DetailsModal.SectionTitle>
+						<StatusText status={status} />
+						{!!renderTxActions && (
+							<View style={styles.transactionActionsContainer}>
+								{this.renderSpeedUpButton()}
+								{this.renderCancelButton()}
+							</View>
+						)}
+					</DetailsModal.Column>
+					<DetailsModal.Column end>
+						<DetailsModal.SectionTitle>{strings('transactions.date')}</DetailsModal.SectionTitle>
+						<Text small primary>
+							{toDateFormat(time)}
+						</Text>
+					</DetailsModal.Column>
+				</DetailsModal.Section>
+				<DetailsModal.Section borderBottom={!!transaction?.nonce}>
+					<DetailsModal.Column>
+						<DetailsModal.SectionTitle>{strings('transactions.from')}</DetailsModal.SectionTitle>
+						<Text small primary>
+							<EthereumAddress type="short" address={transactionDetails.renderFrom} />
+						</Text>
+					</DetailsModal.Column>
+					<DetailsModal.Column end>
+						<DetailsModal.SectionTitle>{strings('transactions.to')}</DetailsModal.SectionTitle>
+						<Text small primary>
+							<EthereumAddress type="short" address={transactionDetails.renderTo} />
+						</Text>
+					</DetailsModal.Column>
+				</DetailsModal.Section>
+				<DetailsModal.Section>
+					<DetailsModal.Column>
+						<DetailsModal.SectionTitle upper>{strings('transactions.nonce')}</DetailsModal.SectionTitle>
+						{!!transaction?.nonce && (
+							<Text small primary>{`#${parseInt(transaction.nonce.replace(/^#/, ''), 16)}`}</Text>
+						)}
+					</DetailsModal.Column>
+				</DetailsModal.Section>
+				<View style={[styles.summaryWrapper, !transaction?.nonce && styles.touchableViewOnEtherscan]}>
+					<TransactionSummary
+						amount={transactionDetails.summaryAmount}
+						fee={transactionDetails.summaryFee}
+						totalAmount={transactionDetails.summaryTotalAmount}
+						secondaryTotalAmount={
+							isMainNet(chainId) ? transactionDetails.summarySecondaryTotalAmount : undefined
+						}
+						gasEstimationReady
+						transactionType={transactionDetails.transactionType}
+						l1Fee={l1Fee}
+					/>
+				</View>
+
+				{transactionDetails.transactionHash &&
+					status !== 'cancelled' &&
+					rpcBlockExplorer !== NO_RPC_BLOCK_EXPLORER && (
+						<TouchableOpacity onPress={this.viewOnEtherscan} style={styles.touchableViewOnEtherscan}>
+							<Text reset style={styles.viewOnEtherscan}>
+								{(rpcBlockExplorer &&
+									`${strings('transactions.view_on')} ${getBlockExplorerName(rpcBlockExplorer)}`) ||
+									strings('transactions.view_on_etherscan')}
+							</Text>
+						</TouchableOpacity>
+					)}
+			</DetailsModal.Body>
+		) : null;
+	};
 }
 
 const mapStateToProps = (state) => ({

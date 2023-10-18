@@ -6,6 +6,7 @@ import {
   ViewPropTypes,
   TouchableNativeFeedback,
 } from 'react-native';
+import { Text, View, ViewPropTypes, TouchableNativeFeedback } from 'react-native';
 import coalesceNonElementChildren from 'react-native-button/coalesceNonElementChildren';
 import getStyles from './styledButtonStyles';
 import { ThemeContext, mockTheme } from '../../../util/theme';
@@ -118,6 +119,16 @@ export default class StyledButton extends PureComponent {
       this.props.disabled ? this.props.disabledContainerStyle : null,
       this.props.containerStyle,
     ];
+	render = () => {
+		const { type } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const { fontStyle, containerStyle } = getStyles(type, colors);
+		const touchableProps = {};
+		const containerStyles = [
+			...containerStyle,
+			this.props.disabled ? this.props.disabledContainerStyle : null,
+			this.props.containerStyle,
+		];
 
     if (!this.props.disabled) {
       touchableProps.onPress = this.props.onPress;

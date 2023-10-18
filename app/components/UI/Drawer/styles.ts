@@ -7,4 +7,10 @@ export default StyleSheet.create({
   absoluteFill: {
     ...StyleSheet.absoluteFillObject,
   },
+	fill: {
+		flex: 1,
+	},
+	absoluteFill: {
+		...StyleSheet.absoluteFillObject,
+	},
 });

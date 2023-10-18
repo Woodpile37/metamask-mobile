@@ -131,6 +131,13 @@ export default class WalletView {
   static async isNFTNameVisible(nftName) {
     await TestHelpers.checkIfElementHasString(NFT_CONTAINER_ID, nftName);
   }
+	static async tokenIsNotVisibleInWallet(tokenName) {
+		await TestHelpers.checkIfElementWithTextIsNotVisible(tokenName);
+	}
+
+	static async isNFTNameVisible(nftName) {
+		await TestHelpers.checkIfElementHasString(NFT_CONTAINER_ID, nftName);
+	}
 
   static async isNetworkNameVisible(networkName) {
     await TestHelpers.checkIfElementHasString(

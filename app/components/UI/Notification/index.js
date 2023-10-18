@@ -47,6 +47,16 @@ function Notification({
     () => findRouteNameFromNavigatorState(routes) === BROWSER_ROUTE,
     [routes],
   );
+	const prevNotificationIsVisible = usePrevious(currentNotificationIsVisible);
+
+	const animatedTimingStart = useCallback((animatedRef, toValue, callback) => {
+		Animated.timing(animatedRef, {
+			toValue,
+			duration: 500,
+			easing: EasingNode.linear,
+			useNativeDriver: true,
+		}).start(({ finished }) => finished && callback?.());
+	}, []);
 
   useEffect(
     () => () => {

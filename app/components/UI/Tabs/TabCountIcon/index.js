@@ -25,6 +25,23 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
     },
   });
+	StyleSheet.create({
+		tabIcon: {
+			borderWidth: 2,
+			borderColor: colors.text.alternative,
+			borderRadius: 6,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		tabCount: {
+			color: colors.text.alternative,
+			flex: 0,
+			fontSize: 15,
+			textAlign: 'center',
+			alignSelf: 'center',
+			...fontStyles.normal,
+		},
+	});
 
 /**
  * PureComponent that renders an icon showing
@@ -58,6 +75,17 @@ class TabCountIcon extends PureComponent {
       </View>
     );
   }
+	render() {
+		const { tabCount, style } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={[styles.tabIcon, style]}>
+				<Text style={styles.tabCount}>{tabCount}</Text>
+			</View>
+		);
+	}
 }
 
 const mapStateToProps = (state) => ({
