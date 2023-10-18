@@ -417,7 +417,15 @@ class Main extends PureComponent {
 		/**
 		 * A string representing the network name
 		 */
-		providerType: PropTypes.string
+		providerType: PropTypes.string,
+		/**
+		 * Indicates whether the current transaction is a payment channel transaction
+		 */
+		isPaymentChannelTransaction: PropTypes.bool,
+		/**
+		 * Indicates whether the current transaction is a deep link transaction
+		 */
+		isDeepLinkTransaction: PropTypes.bool
 	};
 
 	state = {
@@ -1061,12 +1069,20 @@ class Main extends PureComponent {
 	};
 
 	render() {
+		const { isPaymentChannelTransaction, isDeepLinkTransaction } = this.props;
 		const { forceReload } = this.state;
 
 		return (
 			<React.Fragment>
 				<View style={styles.flex}>
-					{!forceReload ? <MainNavigator navigation={this.props.navigation} /> : this.renderLoader()}
+					{!forceReload ? (
+						<MainNavigator
+							navigation={this.props.navigation}
+							screenProps={{ isPaymentChannelTransaction, isDeepLinkTransaction }}
+						/>
+					) : (
+						this.renderLoader()
+					)}
 					<GlobalAlert />
 					<FlashMessage
 						position="bottom"
@@ -1092,7 +1108,9 @@ const mapStateToProps = state => ({
 	paymentChannelsEnabled: state.settings.paymentChannelsEnabled,
 	providerType: state.engine.backgroundState.NetworkController.provider.type,
 	allTokens: state.engine.backgroundState.AssetsController.allTokens,
-	contractBalances: state.engine.backgroundState.TokenBalancesController.contractBalances
+	contractBalances: state.engine.backgroundState.TokenBalancesController.contractBalances,
+	isPaymentChannelTransaction: state.transaction.paymentChannelTransaction,
+	isDeepLinkTransaction: state.transaction.deepLinkTransaction
 });
 
 const mapDispatchToProps = dispatch => ({
