@@ -1,0 +1,45 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@babel/core > lodash':
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: '@babel/core > lodash'
+    - detox > @babel/core > lodash:
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > @babel/core > lodash
+    - eslint > inquirer > lodash:
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint > inquirer > lodash
+    - detox > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > @babel/core > @babel/helper-module-transforms > lodash
+    - eth-json-rpc-infura > eth-json-rpc-middleware > ethereumjs-block > async > lodash:
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          eth-json-rpc-infura > eth-json-rpc-middleware > ethereumjs-block >
+          async > lodash
+    - '@metamask/controllers > eth-json-rpc-infura > eth-json-rpc-middleware > ethereumjs-block > async > lodash':
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @metamask/controllers > eth-json-rpc-infura > eth-json-rpc-middleware
+          > ethereumjs-block > async > lodash
+    - '@metamask/controllers > web3-provider-engine > eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-block > async > lodash':
+        patched: '2023-10-19T01:11:47.287Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @metamask/controllers > web3-provider-engine > eth-json-rpc-filters >
+          eth-json-rpc-middleware > ethereumjs-block > async > lodash
+  'npm:semver:20150403':
+    - react-native-level-fs > levelup > semver:
+        patched: '2023-10-19T01:11:47.287Z'
+        id: 'npm:semver:20150403'
+        path: react-native-level-fs > levelup > semver
