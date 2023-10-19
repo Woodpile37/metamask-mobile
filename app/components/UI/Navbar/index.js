@@ -1,20 +1,10 @@
-/* eslint-disable react/display-name */
 import React from 'react';
 import NavbarTitle from '../NavbarTitle';
 import ModalNavbarTitle from '../ModalNavbarTitle';
 import AccountRightButton from '../AccountRightButton';
 import NavbarBrowserTitle from '../NavbarBrowserTitle';
-import {
-  Alert,
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Image,
-  Keyboard,
-  InteractionManager,
-} from 'react-native';
-import { fontStyles, colors as importedColors } from '../../../styles/common';
+import { Alert, Text, TouchableOpacity, View, StyleSheet, Image, Keyboard, InteractionManager } from 'react-native';
+import { fontStyles, colors } from '../../../styles/common';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -26,82 +16,131 @@ import DeeplinkManager from '../../../core/DeeplinkManager';
 import Analytics from '../../../core/Analytics';
 import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
 import { importAccountFromPrivateKey } from '../../../util/address';
-import Device from '../../../util/device';
+import Device from '../../../util/Device';
 import { isGatewayUrl } from '../../../lib/ens-ipfs/resolver';
 import { getHost } from '../../../util/browser';
-import { BACK_ARROW_BUTTON_ID } from '../../../constants/test-ids';
 
 const { HOMEPAGE_URL } = AppConstants;
 
-const trackEvent = (event) => {
-  InteractionManager.runAfterInteractions(() => {
-    Analytics.trackEvent(event);
-  });
+const trackEvent = event => {
+	InteractionManager.runAfterInteractions(() => {
+		Analytics.trackEvent(event);
+	});
 };
 
 const trackEventWithParameters = (event, params) => {
-  InteractionManager.runAfterInteractions(() => {
-    Analytics.trackEventWithParameters(event, params);
-  });
+	InteractionManager.runAfterInteractions(() => {
+		Analytics.trackEventWithParameters(event, params);
+	});
 };
 
 const styles = StyleSheet.create({
-  metamaskName: {
-    width: 122,
-    height: 15,
-  },
-  metamaskFox: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
-  backIconIOS: {
-    marginHorizontal: 4,
-    marginTop: -4,
-  },
-  shareIconIOS: {
-    marginHorizontal: -5,
-  },
-  hamburgerButton: {
-    paddingLeft: Device.isAndroid() ? 22 : 18,
-    paddingRight: Device.isAndroid() ? 22 : 18,
-    paddingTop: Device.isAndroid() ? 14 : 10,
-    paddingBottom: Device.isAndroid() ? 14 : 10,
-  },
-  backButton: {
-    paddingLeft: Device.isAndroid() ? 22 : 18,
-    paddingRight: Device.isAndroid() ? 22 : 18,
-    marginTop: 5,
-  },
-  closeButton: {
-    paddingHorizontal: Device.isAndroid() ? 22 : 18,
-    paddingVertical: Device.isAndroid() ? 14 : 8,
-  },
-  infoButton: {
-    paddingLeft: Device.isAndroid() ? 22 : 18,
-    paddingRight: Device.isAndroid() ? 22 : 18,
-    marginTop: 5,
-  },
-  browserRightButton: {
-    flex: 1,
-    marginRight: Device.isAndroid() ? 10 : 0,
-  },
-  disabled: {
-    opacity: 0.3,
-  },
-  optinHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: Device.isIos() ? 20 : 0,
-  },
-  metamaskNameTransparentWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  metamaskNameWrapper: {
-    marginLeft: Device.isAndroid() ? 20 : 0,
-  },
+	rightButton: {
+		marginTop: 7,
+		marginRight: 12,
+		marginBottom: 12
+	},
+	metamaskName: {
+		width: 122,
+		height: 15
+	},
+	metamaskFox: {
+		width: 40,
+		height: 40,
+		marginRight: 10
+	},
+	closeIcon: {
+		paddingLeft: Device.isAndroid() ? 22 : 18,
+		color: colors.blue
+	},
+	backIcon: {
+		color: colors.blue
+	},
+	backIconIOS: {
+		marginHorizontal: 4,
+		marginTop: -4
+	},
+	shareIconIOS: {
+		marginHorizontal: -5
+	},
+	hamburgerButton: {
+		paddingLeft: Device.isAndroid() ? 22 : 18,
+		paddingRight: Device.isAndroid() ? 22 : 18,
+		paddingTop: Device.isAndroid() ? 14 : 10,
+		paddingBottom: Device.isAndroid() ? 14 : 10
+	},
+	backButton: {
+		paddingLeft: Device.isAndroid() ? 22 : 18,
+		paddingRight: Device.isAndroid() ? 22 : 18,
+		marginTop: 5
+	},
+	closeButton: {
+		paddingHorizontal: Device.isAndroid() ? 22 : 18,
+		paddingVertical: Device.isAndroid() ? 14 : 8
+	},
+	infoButton: {
+		paddingLeft: Device.isAndroid() ? 22 : 18,
+		paddingRight: Device.isAndroid() ? 22 : 18,
+		marginTop: 5
+	},
+	infoIcon: {
+		color: colors.blue
+	},
+	flex: {
+		flex: 1
+	},
+	closeButtonText: {
+		color: colors.blue,
+		fontSize: 14,
+		...fontStyles.normal
+	},
+	title: {
+		fontSize: 18,
+		...fontStyles.normal
+	},
+	titleWrapper: {
+		alignItems: 'center',
+		flex: 1
+	},
+	browserRightButton: {
+		flex: 1,
+		marginRight: Device.isAndroid() ? 10 : 0
+	},
+	tabIconAndroidWrapper: {
+		alignItems: 'center',
+		width: 36,
+		marginLeft: 5
+	},
+	disabled: {
+		opacity: 0.3
+	},
+	optinHeaderLeft: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginHorizontal: Device.isIos() ? 20 : 0
+	},
+	tabIconAndroid: {
+		marginTop: 13,
+		marginLeft: 0,
+		marginRight: 3,
+		width: 24,
+		height: 24
+	},
+	metamaskNameTransparentWrapper: {
+		alignItems: 'center',
+		flex: 1
+	},
+	metamaskNameWrapper: {
+		marginLeft: Device.isAndroid() ? 20 : 0
+	},
+	webviewTitle: {
+		fontSize: 20,
+		color: colors.fontPrimary,
+		textAlign: 'center',
+		...fontStyles.normal,
+		alignItems: 'center',
+		flex: 1
+	}
 });
 
 const metamask_name = require('../../../images/metamask-name.png'); // eslint-disable-line
@@ -116,46 +155,26 @@ const metamask_fox = require('../../../images/fox.png'); // eslint-disable-line
  * @param {bool} disableNetwork - Boolean that specifies if the network can be changed, defaults to false
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerLeft, headerTruncatedBackTitle and headerRight
  */
-export default function getNavbarOptions(
-  title,
-  disableNetwork = false,
-  drawerRef,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
+export default function getNavbarOptions(title, navigation, disableNetwork = false) {
+	function onPress() {
+		Keyboard.dismiss();
+		navigation.openDrawer();
+		trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
+	}
 
-  function onPress() {
-    Keyboard.dismiss();
-    drawerRef.current?.showDrawer?.();
-    trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
-  }
-
-  return {
-    headerTitle: () => (
-      <NavbarTitle title={title} disableNetwork={disableNetwork} />
-    ),
-    headerLeft: () => (
-      <TouchableOpacity onPress={onPress} style={styles.backButton}>
-        <IonicIcon
-          name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
-          size={Device.isAndroid() ? 24 : 28}
-          style={innerStyles.headerIcon}
-        />
-      </TouchableOpacity>
-    ),
-    headerRight: () => <AccountRightButton />,
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+	return {
+		headerTitle: <NavbarTitle title={title} disableNetwork={disableNetwork} />,
+		headerLeft: (
+			<TouchableOpacity onPress={onPress} style={styles.backButton}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerRight: <AccountRightButton />
+	};
 }
 
 /**
@@ -166,60 +185,28 @@ export default function getNavbarOptions(
  * @param {Object} navigation - Navigation object required to push new views
  * @returns {Object} - Corresponding navbar options containing title and headerTitleStyle
  */
-export function getNavigationOptionsTitle(
-  title,
-  navigation,
-  isFullScreenModal,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      ...fontStyles.normal,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  function navigationPop() {
-    navigation.pop();
-  }
-  return {
-    title,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerRight: () =>
-      isFullScreenModal ? (
-        <TouchableOpacity onPress={navigationPop} style={styles.closeButton}>
-          <IonicIcon
-            name={'ios-close'}
-            size={38}
-            style={[innerStyles.headerIcon, styles.backIconIOS]}
-          />
-        </TouchableOpacity>
-      ) : null,
-    headerLeft: () =>
-      isFullScreenModal ? null : (
-        <TouchableOpacity
-          onPress={navigationPop}
-          style={styles.backButton}
-          testID={BACK_ARROW_BUTTON_ID}
-        >
-          <IonicIcon
-            name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
-            size={Device.isAndroid() ? 24 : 28}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getNavigationOptionsTitle(title, navigation) {
+	function navigationPop() {
+		navigation.pop();
+	}
+	return {
+		title,
+		headerTitleStyle: {
+			fontSize: 20,
+			color: colors.fontPrimary,
+			...fontStyles.normal
+		},
+		headerTintColor: colors.blue,
+		headerLeft: (
+			<TouchableOpacity onPress={navigationPop} style={styles.backButton} testID={'title-back-arrow-button'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		)
+	};
 }
 
 /**
@@ -230,64 +217,42 @@ export function getNavigationOptionsTitle(
  * @param {Object} navigation - Navigation object required to push new views
  * @returns {Object} - Corresponding navbar options
  */
-export function getEditableOptions(title, navigation, route, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      ...fontStyles.normal,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  function navigationPop() {
-    navigation.pop();
-  }
-  const rightAction = route.params?.dispatch;
-  const editMode = route.params?.editMode === 'edit';
-  const addMode = route.params?.mode === 'add';
-  return {
-    title,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerLeft: () => (
-      <TouchableOpacity
-        onPress={navigationPop}
-        style={styles.backButton}
-        testID={'edit-contact-back-button'}
-      >
-        <IonicIcon
-          name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
-          size={Device.isAndroid() ? 24 : 28}
-          style={innerStyles.headerIcon}
-        />
-      </TouchableOpacity>
-    ),
-    headerRight: () =>
-      !addMode ? (
-        <TouchableOpacity onPress={rightAction} style={styles.backButton}>
-          <Text style={innerStyles.headerButtonText}>
-            {editMode
-              ? strings('address_book.edit')
-              : strings('address_book.cancel')}
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <View />
-      ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getEditableOptions(title, navigation) {
+	function navigationPop() {
+		navigation.pop();
+	}
+	const rightAction = navigation.getParam('dispatch', () => {
+		'';
+	});
+	const editMode = navigation.getParam('editMode', '') === 'edit';
+	const addMode = navigation.getParam('mode', '') === 'add';
+	return {
+		title,
+		headerTitleStyle: {
+			fontSize: 20,
+			color: colors.fontPrimary,
+			...fontStyles.normal
+		},
+		headerTintColor: colors.blue,
+		headerLeft: (
+			<TouchableOpacity onPress={navigationPop} style={styles.backButton} testID={'edit-contact-back-button'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerRight: !addMode ? (
+			<TouchableOpacity onPress={rightAction} style={styles.backButton}>
+				<Text style={styles.closeButtonText}>
+					{editMode ? strings('address_book.edit') : strings('address_book.cancel')}
+				</Text>
+			</TouchableOpacity>
+		) : (
+			<View />
+		)
+	};
 }
 
 /**
@@ -298,65 +263,35 @@ export function getEditableOptions(title, navigation, route, themeColors) {
  * @param {Object} navigation - Navigation object required to push new views
  * @returns {Object} - Corresponding navbar options containing title, headerLeft and headerRight
  */
-export function getPaymentRequestOptionsTitle(
-  title,
-  navigation,
-  route,
-  themeColors,
-) {
-  const goBack = route.params?.dispatch;
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      ...fontStyles.normal,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-
-  return {
-    title,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerLeft: () =>
-      goBack ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={goBack}
-          style={styles.backButton}
-          testID={'request-search-asset-back-button'}
-        >
-          <IonicIcon
-            name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
-            size={Device.isAndroid() ? 24 : 28}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        <View />
-      ),
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => navigation.pop()}
-        style={styles.closeButton}
-      >
-        <IonicIcon
-          name={'ios-close'}
-          size={38}
-          style={[innerStyles.headerIcon, styles.backIconIOS]}
-        />
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getPaymentRequestOptionsTitle(title, navigation) {
+	const goBack = navigation.getParam('dispatch', undefined);
+	return {
+		title,
+		headerTitleStyle: {
+			fontSize: 20,
+			color: colors.fontPrimary,
+			...fontStyles.normal
+		},
+		headerTintColor: colors.blue,
+		headerLeft: goBack ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={goBack} style={styles.backButton} testID={'request-search-asset-back-button'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		) : (
+			<View />
+		),
+		headerRight: (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.closeButton}>
+				<IonicIcon name={'ios-close'} size={38} style={[styles.backIcon, styles.backIconIOS]} />
+			</TouchableOpacity>
+		)
+	};
 }
 
 /**
@@ -365,38 +300,27 @@ export function getPaymentRequestOptionsTitle(
  *
  * @returns {Object} - Corresponding navbar options containing title, and headerRight
  */
-export function getPaymentRequestSuccessOptionsTitle(navigation, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
-
-  return {
-    headerStyle: innerStyles.headerStyle,
-    title: null,
-    headerLeft: () => <View />,
-    headerRight: () => (
-      <TouchableOpacity
-        // eslint-disable-next-line react/jsx-no-bind
-        onPress={() => navigation.pop()}
-        style={styles.closeButton}
-        testID={'send-link-close-button'}
-      >
-        <IonicIcon
-          name="ios-close"
-          size={38}
-          style={[innerStyles.headerIcon, styles.backIconIOS]}
-        />
-      </TouchableOpacity>
-    ),
-    headerTintColor: themeColors.primary.default,
-  };
+export function getPaymentRequestSuccessOptionsTitle(navigation) {
+	return {
+		headerStyle: {
+			shadowColor: colors.transparent,
+			elevation: 0,
+			backgroundColor: colors.white,
+			borderBottomWidth: 0
+		},
+		headerTintColor: colors.blue,
+		headerLeft: <View />,
+		headerRight: (
+			<TouchableOpacity
+				// eslint-disable-next-line react/jsx-no-bind
+				onPress={() => navigation.pop()}
+				style={styles.closeButton}
+				testID={'send-link-close-button'}
+			>
+				<IonicIcon name="ios-close" size={38} style={[styles.backIcon, styles.backIconIOS]} />
+			</TouchableOpacity>
+		)
+	};
 }
 
 /**
@@ -406,86 +330,63 @@ export function getPaymentRequestSuccessOptionsTitle(navigation, themeColors) {
  * @param {string} title - Title in string format
  * @returns {Object} - Corresponding navbar options containing title and headerTitleStyle
  */
-export function getTransactionOptionsTitle(
-  _title,
-  navigation,
-  route,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-  });
-  const transactionMode = route.params?.mode ?? '';
-  const { name } = route;
-  const leftText =
-    transactionMode === 'edit'
-      ? strings('transaction.cancel')
-      : strings('transaction.edit');
-  const disableModeChange = route.params?.disableModeChange;
-  const modeChange = route.params?.dispatch;
-  const leftAction = () => modeChange('edit');
-  const rightAction = () => navigation.pop();
-  const rightText = strings('transaction.cancel');
-  const title = transactionMode === 'edit' ? 'transaction.edit' : _title;
-
-  return {
-    headerTitle: () => <NavbarTitle title={title} disableNetwork />,
-    headerLeft: () =>
-      transactionMode !== 'edit' ? (
-        <TouchableOpacity
-          disabled={disableModeChange}
-          // eslint-disable-next-line react/jsx-no-bind
-          onPress={leftAction}
-          style={styles.closeButton}
-          testID={'confirm-txn-edit-button'}
-        >
-          <Text
-            style={
-              disableModeChange
-                ? [innerStyles.headerButtonText, styles.disabled]
-                : innerStyles.headerButtonText
-            }
-          >
-            {leftText}
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <View />
-      ),
-    headerRight: () =>
-      name === 'Send' ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={rightAction}
-          style={styles.closeButton}
-          testID={'send-back-button'}
-        >
-          <Text style={innerStyles.headerButtonText}>{rightText}</Text>
-        </TouchableOpacity>
-      ) : (
-        <View />
-      ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getTransactionOptionsTitle(_title, navigation) {
+	const transactionMode = navigation.getParam('mode', '');
+	const { routeName } = navigation.state;
+	const leftText = transactionMode === 'edit' ? strings('transaction.cancel') : strings('transaction.edit');
+	const disableModeChange = navigation.getParam('disableModeChange');
+	const modeChange = navigation.getParam('dispatch', () => {
+		'';
+	});
+	const leftAction = () => modeChange('edit');
+	const rightAction = () => navigation.pop();
+	const rightText = strings('transaction.cancel');
+	const title = transactionMode === 'edit' && routeName !== 'PaymentChannelDeposit' ? 'transaction.edit' : _title;
+	return {
+		headerTitle: <NavbarTitle title={title} disableNetwork />,
+		headerLeft:
+			transactionMode !== 'edit' ? (
+				<TouchableOpacity
+					disabled={disableModeChange}
+					// eslint-disable-next-line react/jsx-no-bind
+					onPress={leftAction}
+					style={styles.closeButton}
+					testID={'confirm-txn-edit-button'}
+				>
+					<Text
+						style={disableModeChange ? [styles.closeButtonText, styles.disabled] : [styles.closeButtonText]}
+					>
+						{leftText}
+					</Text>
+				</TouchableOpacity>
+			) : (
+				<View />
+			),
+		headerRight:
+			routeName === 'Send' || routeName === 'PaymentChannelDeposit' ? (
+				// eslint-disable-next-line react/jsx-no-bind
+				<TouchableOpacity onPress={rightAction} style={styles.closeButton} testID={'send-back-button'}>
+					<Text style={styles.closeButtonText}>{rightText}</Text>
+				</TouchableOpacity>
+			) : (
+				<View />
+			)
+	};
 }
 
 export function getApproveNavbar(title) {
-  return {
-    headerTitle: () => <NavbarTitle title={title} disableNetwork />,
-    headerLeft: () => <View />,
-    headerRight: () => <View />,
-  };
+	return {
+		headerTitle: <NavbarTitle title={title} disableNetwork />,
+		headerLeft: <View />,
+		headerRight: <View />
+	};
 }
+
+const sendTitleToPaymentChannelTitleMap = {
+	'send.send_to': 'payment_channel.insta_pay_send_to',
+	'send.amount': 'payment_channel.insta_pay_amount',
+	'send.confirm': 'payment_channel.insta_pay_confirm'
+};
 
 /**
  * Function that returns the navigation options
@@ -494,63 +395,65 @@ export function getApproveNavbar(title) {
  * @param {string} title - Title in string format
  * @returns {Object} - Corresponding navbar options containing title and headerTitleStyle
  */
-export function getSendFlowTitle(title, navigation, route, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  const rightAction = () => {
-    const providerType = route?.params?.providerType ?? '';
-    trackEventWithParameters(ANALYTICS_EVENT_OPTS.SEND_FLOW_CANCEL, {
-      view: title.split('.')[1],
-      network: providerType,
-    });
-    navigation.dangerouslyGetParent()?.pop();
-  };
-  const leftAction = () => navigation.pop();
+export function getSendFlowTitle(title, navigation, screenProps) {
+	const rightAction = () => {
+		const providerType = navigation.getParam('providerType', '');
+		trackEventWithParameters(ANALYTICS_EVENT_OPTS.SEND_FLOW_CANCEL, {
+			view: title.split('.')[1],
+			network: providerType
+		});
+		navigation.dismiss();
+	};
+	const { routeName } = navigation.state;
+	const leftAction =
+		screenProps.isPaymentChannelTransaction && routeName === 'Confirm'
+			? () => navigation.navigate('Amount')
+			: () => navigation.pop();
+	const canGoBack = title !== 'send.send_to' && !screenProps.isPaymentRequest;
 
-  const canGoBack =
-    title !== 'send.send_to' && !route?.params?.isPaymentRequest;
+	const titleToRender = screenProps.isPaymentChannelTransaction ? sendTitleToPaymentChannelTitleMap[title] : title;
 
-  const titleToRender = title;
-
-  return {
-    headerTitle: () => <NavbarTitle title={titleToRender} disableNetwork />,
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={rightAction}
-        style={styles.closeButton}
-        testID={'send-cancel-button'}
-      >
-        <Text style={innerStyles.headerButtonText}>
-          {strings('transaction.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerLeft: () =>
-      canGoBack ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity onPress={leftAction} style={styles.closeButton}>
-          <Text style={innerStyles.headerButtonText}>
-            {strings('transaction.back')}
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <View />
-      ),
-    headerStyle: innerStyles.headerStyle,
-  };
+	return {
+		headerTitle: <NavbarTitle title={titleToRender} disableNetwork />,
+		headerRight: (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={rightAction} style={styles.closeButton} testID={'send-cancel-button'}>
+				<Text style={styles.closeButtonText}>{strings('transaction.cancel')}</Text>
+			</TouchableOpacity>
+		),
+		headerLeft: canGoBack ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={leftAction} style={styles.closeButton}>
+				<Text style={styles.closeButtonText}>{strings('transaction.back')}</Text>
+			</TouchableOpacity>
+		) : (
+			<View />
+		)
+	};
 }
 
+/**
+ * Function that returns the navigation options for InstaPay screend
+ *
+ * @param {string} title - Title name to use with strings
+ * @returns {Object} - Corresponding navbar options containing title and headerTitleStyle
+ */
+export function getInstaPayNavigations(title, navigation) {
+	return {
+		headerTitle: <NavbarTitle title={title} disableNetwork />,
+		headerLeft: (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerRight: <View />
+	};
+}
 /**
  * Function that returns the navigation options
  * This is used by views that will show our custom navbar
@@ -559,88 +462,53 @@ export function getSendFlowTitle(title, navigation, route, themeColors) {
  * @param {Object} navigation - Navigation object required to push new views
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerLeft and headerRight
  */
-export function getBrowserViewNavbarOptions(
-  navigation,
-  route,
-  drawerRef,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
+export function getBrowserViewNavbarOptions(navigation) {
+	const url = navigation.getParam('url', '');
+	let hostname = null;
+	let isHttps = false;
 
-  const url = route.params?.url ?? '';
-  let host = null;
-  let isHttps = false;
+	const isHomepage = url => getHost(url) === getHost(HOMEPAGE_URL);
+	const error = navigation.getParam('error', '');
 
-  const isHomepage = (url) => getHost(url) === getHost(HOMEPAGE_URL);
-  const error = route.params?.error ?? '';
-  const icon = route.params?.icon;
+	if (url && !isHomepage(url)) {
+		isHttps = url && url.toLowerCase().substr(0, 6) === 'https:';
+		const urlObj = new URL(url);
+		hostname = urlObj.hostname.toLowerCase().replace(/^www./, '');
+		if (isGatewayUrl(urlObj) && url.search(`${AppConstants.IPFS_OVERRIDE_PARAM}=false`) === -1) {
+			const ensUrl = navigation.getParam('currentEnsName', '');
+			if (ensUrl) {
+				hostname = ensUrl.toLowerCase().replace(/^www./, '');
+			}
+		}
+	} else {
+		hostname = strings('browser.title');
+	}
 
-  if (url && !isHomepage(url)) {
-    isHttps = url && url.toLowerCase().substr(0, 6) === 'https:';
-    const urlObj = new URL(url);
-    //Using host so the port number will be displayed on the address bar
-    host = urlObj.host.toLowerCase().replace(/^www\./, '');
-    if (
-      isGatewayUrl(urlObj) &&
-      url.search(`${AppConstants.IPFS_OVERRIDE_PARAM}=false`) === -1
-    ) {
-      const ensUrl = route.params?.currentEnsName ?? '';
-      if (ensUrl) {
-        host = ensUrl.toLowerCase().replace(/^www\./, '');
-      }
-    }
-  } else {
-    host = strings('browser.title');
-  }
+	function onPress() {
+		Keyboard.dismiss();
+		navigation.openDrawer();
+		trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
+	}
 
-  function onPress() {
-    Keyboard.dismiss();
-    drawerRef.current?.showDrawer?.();
-    trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
-  }
-
-  return {
-    gestureEnabled: false,
-    headerLeft: () => (
-      <TouchableOpacity
-        onPress={onPress}
-        style={styles.hamburgerButton}
-        testID={'hamburger-menu-button-browser'}
-      >
-        <IonicIcon
-          name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
-          size={Device.isAndroid() ? 24 : 28}
-          style={innerStyles.headerIcon}
-        />
-      </TouchableOpacity>
-    ),
-    headerTitle: () => (
-      <NavbarBrowserTitle
-        error={!!error}
-        icon={url && !isHomepage(url) ? icon : null}
-        navigation={navigation}
-        route={route}
-        url={url}
-        hostname={host}
-        https={isHttps}
-      />
-    ),
-    headerRight: () => (
-      <View style={styles.browserRightButton}>
-        <AccountRightButton />
-      </View>
-    ),
-    headerStyle: innerStyles.headerStyle,
-  };
+	return {
+		headerLeft: (
+			<TouchableOpacity onPress={onPress} style={styles.hamburgerButton} testID={'hamburger-menu-button-browser'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerTitle: (
+			<NavbarBrowserTitle error={!!error} navigation={navigation} url={url} hostname={hostname} https={isHttps} />
+		),
+		headerRight: (
+			<View style={styles.browserRightButton}>
+				<AccountRightButton />
+			</View>
+		)
+	};
 }
 
 /**
@@ -651,9 +519,9 @@ export function getBrowserViewNavbarOptions(
  * @returns {Object} - Corresponding navbar options containing headerTitle
  */
 export function getModalNavbarOptions(title) {
-  return {
-    headerTitle: () => <ModalNavbarTitle title={title} />,
-  };
+	return {
+		headerTitle: <ModalNavbarTitle title={title} />
+	};
 }
 
 /**
@@ -663,41 +531,25 @@ export function getModalNavbarOptions(title) {
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerTitle and headerTitle
  */
-export function getOnboardingNavbarOptions(
-  route,
-  { headerLeft } = {},
-  themeColors,
-) {
-  const headerLeftHide = headerLeft || route.params?.headerLeft;
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    metamaskName: {
-      width: 122,
-      height: 15,
-      tintColor: themeColors.text.default,
-    },
-  });
+export function getOnboardingNavbarOptions(navigation, { headerLeft } = {}) {
+	const headerLeftHide = headerLeft || navigation.getParam('headerLeft');
 
-  return {
-    headerStyle: innerStyles.headerStyle,
-    headerTitle: () => (
-      <View style={styles.metamaskNameTransparentWrapper}>
-        <Image
-          source={metamask_name}
-          style={innerStyles.metamaskName}
-          resizeMethod={'auto'}
-        />
-      </View>
-    ),
-    headerBackTitle: strings('navigation.back'),
-    headerRight: () => <View />,
-    headerLeft: headerLeftHide,
-    headerTintColor: themeColors.primary.default,
-  };
+	return {
+		headerStyle: {
+			shadowColor: colors.transparent,
+			elevation: 0,
+			backgroundColor: colors.white,
+			borderBottomWidth: 0
+		},
+		headerTitle: (
+			<View style={styles.metamaskNameTransparentWrapper}>
+				<Image source={metamask_name} style={styles.metamaskName} resizeMethod={'auto'} />
+			</View>
+		),
+		headerBackTitle: strings('navigation.back'),
+		headerRight: <View />,
+		headerLeft: headerLeftHide
+	};
 }
 
 /**
@@ -705,33 +557,17 @@ export function getOnboardingNavbarOptions(
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle
  */
-export function getTransparentOnboardingNavbarOptions(themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    metamaskName: {
-      width: 122,
-      height: 15,
-      tintColor: themeColors.text.default,
-    },
-  });
-  return {
-    headerTitle: () => (
-      <View style={styles.metamaskNameTransparentWrapper}>
-        <Image
-          source={metamask_name}
-          style={innerStyles.metamaskName}
-          resizeMethod={'auto'}
-        />
-      </View>
-    ),
-    headerLeft: () => <View />,
-    headerRight: () => <View />,
-    headerStyle: innerStyles.headerStyle,
-  };
+export function getTransparentOnboardingNavbarOptions() {
+	return {
+		headerTransparent: true,
+		headerTitle: (
+			<View style={styles.metamaskNameTransparentWrapper}>
+				<Image source={metamask_name} style={styles.metamaskName} resizeMethod={'auto'} />
+			</View>
+		),
+		headerLeft: <View />,
+		headerRight: <View />
+	};
 }
 
 /**
@@ -739,34 +575,17 @@ export function getTransparentOnboardingNavbarOptions(themeColors) {
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle and a back button
  */
-export function getTransparentBackOnboardingNavbarOptions(themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    metamaskName: {
-      width: 122,
-      height: 15,
-      tintColor: themeColors.text.default,
-    },
-  });
-  return {
-    headerTitle: () => (
-      <View style={styles.metamaskNameTransparentWrapper}>
-        <Image
-          source={metamask_name}
-          style={innerStyles.metamaskName}
-          resizeMethod={'auto'}
-        />
-      </View>
-    ),
-    headerBackTitle: strings('navigation.back'),
-    headerRight: () => <View />,
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getTransparentBackOnboardingNavbarOptions() {
+	return {
+		headerTransparent: true,
+		headerTitle: (
+			<View style={styles.metamaskNameTransparentWrapper}>
+				<Image source={metamask_name} style={styles.metamaskName} resizeMethod={'auto'} />
+			</View>
+		),
+		headerBackTitle: strings('navigation.back'),
+		headerRight: <View />
+	};
 }
 
 /**
@@ -775,44 +594,26 @@ export function getTransparentBackOnboardingNavbarOptions(themeColors) {
  *
  * @returns {Object} - Corresponding navbar options containing headerLeft
  */
-export function getOptinMetricsNavbarOptions(themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-      height: 100,
-    },
-    metamaskName: {
-      width: 122,
-      height: 15,
-      tintColor: themeColors.text.default,
-    },
-  });
-
-  return {
-    headerStyle: innerStyles.headerStyle,
-    title: null,
-    headerLeft: () => (
-      <View style={styles.optinHeaderLeft}>
-        <View style={styles.metamaskNameWrapper}>
-          <Image
-            source={metamask_fox}
-            style={styles.metamaskFox}
-            resizeMethod={'auto'}
-          />
-        </View>
-        <View style={styles.metamaskNameWrapper}>
-          <Image
-            source={metamask_name}
-            style={innerStyles.metamaskName}
-            resizeMethod={'auto'}
-          />
-        </View>
-      </View>
-    ),
-    headerTintColor: themeColors.primary.default,
-  };
+export function getOptinMetricsNavbarOptions() {
+	return {
+		headerStyle: {
+			shadowColor: colors.transparent,
+			elevation: 0,
+			backgroundColor: colors.white,
+			borderBottomWidth: 0,
+			height: 100
+		},
+		headerLeft: (
+			<View style={styles.optinHeaderLeft}>
+				<View style={styles.metamaskNameWrapper}>
+					<Image source={metamask_fox} style={styles.metamaskFox} resizeMethod={'auto'} />
+				</View>
+				<View style={styles.metamaskNameWrapper}>
+					<Image source={metamask_name} style={styles.metamaskName} resizeMethod={'auto'} />
+				</View>
+			</View>
+		)
+	};
 }
 /**
  * Function that returns the navigation options
@@ -820,63 +621,26 @@ export function getOptinMetricsNavbarOptions(themeColors) {
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerTitle and headerTitle
  */
-export function getClosableNavigationOptions(
-  title,
-  backButtonText,
-  navigation,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerTitleStyle: {
-      fontSize: 20,
-      ...fontStyles.normal,
-      color: themeColors.text.default,
-    },
-  });
-  function navigationPop() {
-    navigation.pop();
-  }
-  return {
-    title,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerLeft: () =>
-      Device.isIos() ? (
-        <TouchableOpacity
-          onPress={navigationPop}
-          style={styles.closeButton}
-          testID={'nav-ios-back'}
-        >
-          <Text style={innerStyles.headerButtonText}>{backButtonText}</Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          onPress={navigationPop}
-          style={styles.backButton}
-          testID={'nav-android-back'}
-        >
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+export function getClosableNavigationOptions(title, backButtonText, navigation) {
+	function navigationPop() {
+		navigation.pop();
+	}
+	return {
+		title,
+		headerTitleStyle: {
+			fontSize: 20,
+			...fontStyles.normal
+		},
+		headerLeft: Device.isIos() ? (
+			<TouchableOpacity onPress={navigationPop} style={styles.closeButton}>
+				<Text style={styles.closeButtonText}>{backButtonText}</Text>
+			</TouchableOpacity>
+		) : (
+			<TouchableOpacity onPress={navigationPop} style={styles.backButton}>
+				<IonicIcon name={'md-arrow-back'} size={24} style={styles.backIcon} />
+			</TouchableOpacity>
+		)
+	};
 }
 
 /**
@@ -885,10 +649,27 @@ export function getClosableNavigationOptions(
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerTitle and headerTitle
  */
-export function getOfflineModalNavbar() {
-  return {
-    headerShown: false,
-  };
+export function getOfflineModalNavbar(navigation) {
+	return {
+		headerStyle: {
+			shadowColor: colors.transparent,
+			elevation: 0,
+			backgroundColor: colors.white,
+			borderBottomWidth: 0
+		},
+		headerLeft: Device.isAndroid() ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+				<IonicIcon name={'md-arrow-back'} size={24} style={styles.backIcon} />
+			</TouchableOpacity>
+		) : null,
+		headerRight: Device.isIos() ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+				<IonicIcon name="ios-close" size={38} style={[styles.backIcon, styles.backIconIOS]} />
+			</TouchableOpacity>
+		) : null
+	};
 }
 
 /**
@@ -897,106 +678,87 @@ export function getOfflineModalNavbar() {
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle, headerTitle and headerTitle
  */
-export function getWalletNavbarOptions(
-  title,
-  navigation,
-  drawerRef,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
+export function getWalletNavbarOptions(title, navigation) {
+	const onScanSuccess = data => {
+		if (data.target_address) {
+			navigation.navigate('SendView', { txMeta: data });
+		} else if (data.private_key) {
+			Alert.alert(
+				strings('wallet.private_key_detected'),
+				strings('wallet.do_you_want_to_import_this_account'),
+				[
+					{
+						text: strings('wallet.cancel'),
+						onPress: () => false,
+						style: 'cancel'
+					},
+					{
+						text: strings('wallet.yes'),
+						onPress: async () => {
+							try {
+								await importAccountFromPrivateKey(data.private_key);
+								navigation.navigate('ImportPrivateKeySuccess');
+							} catch (e) {
+								Alert.alert(
+									strings('import_private_key.error_title'),
+									strings('import_private_key.error_message')
+								);
+							}
+						}
+					}
+				],
+				{ cancelable: false }
+			);
+		} else if (data.walletConnectURI) {
+			setTimeout(() => {
+				DeeplinkManager.parse(data.walletConnectURI);
+			}, 500);
+		} else if (data.seed) {
+			Alert.alert(strings('wallet.error'), strings('wallet.logout_to_import_seed'));
+		} else if (data && data.indexOf(AppConstants.MM_UNIVERSAL_LINK_HOST) !== -1) {
+			setTimeout(() => {
+				DeeplinkManager.parse(data);
+			}, 500);
+		} else if ((data && data.indexOf('https://') !== -1) || data.indexOf('http://')) {
+			setTimeout(() => {
+				DeeplinkManager.parse(data);
+			}, 500);
+		}
+	};
 
-  const onScanSuccess = (data, content) => {
-    if (data.private_key) {
-      Alert.alert(
-        strings('wallet.private_key_detected'),
-        strings('wallet.do_you_want_to_import_this_account'),
-        [
-          {
-            text: strings('wallet.cancel'),
-            onPress: () => false,
-            style: 'cancel',
-          },
-          {
-            text: strings('wallet.yes'),
-            onPress: async () => {
-              try {
-                await importAccountFromPrivateKey(data.private_key);
-                navigation.navigate('ImportPrivateKeyView', {
-                  screen: 'ImportPrivateKeySuccess',
-                });
-              } catch (e) {
-                Alert.alert(
-                  strings('import_private_key.error_title'),
-                  strings('import_private_key.error_message'),
-                );
-              }
-            },
-          },
-        ],
-        { cancelable: false },
-      );
-    } else if (data.seed) {
-      Alert.alert(
-        strings('wallet.error'),
-        strings('wallet.logout_to_import_seed'),
-      );
-    } else {
-      setTimeout(() => {
-        DeeplinkManager.parse(content, {
-          origin: AppConstants.DEEPLINKS.ORIGIN_QR_CODE,
-        });
-      }, 500);
-    }
-  };
+	function openDrawer() {
+		navigation.openDrawer();
+		trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
+	}
 
-  function openDrawer() {
-    drawerRef.current?.showDrawer?.();
-    trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
-  }
+	function openQRScanner() {
+		navigation.navigate('QRScanner', {
+			onScanSuccess
+		});
+		trackEvent(ANALYTICS_EVENT_OPTS.WALLET_QR_SCANNER);
+	}
 
-  function openQRScanner() {
-    navigation.navigate('QRScanner', {
-      onScanSuccess,
-    });
-    trackEvent(ANALYTICS_EVENT_OPTS.WALLET_QR_SCANNER);
-  }
-
-  return {
-    headerTitle: () => <NavbarTitle title={title} />,
-    headerLeft: () => (
-      <TouchableOpacity
-        onPress={openDrawer}
-        style={styles.backButton}
-        testID={'hamburger-menu-button-wallet'}
-      >
-        <IonicIcon
-          name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
-          size={Device.isAndroid() ? 24 : 28}
-          style={innerStyles.headerIcon}
-        />
-      </TouchableOpacity>
-    ),
-    headerRight: () => (
-      <TouchableOpacity
-        style={styles.infoButton}
-        // eslint-disable-next-line
-        onPress={openQRScanner}
-      >
-        <AntIcon name="scan1" size={28} style={innerStyles.headerIcon} />
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
+	return {
+		headerTitle: <NavbarTitle title={title} />,
+		headerLeft: (
+			<TouchableOpacity onPress={openDrawer} style={styles.backButton} testID={'hamburger-menu-button-wallet'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerRight: (
+			<TouchableOpacity
+				style={styles.infoButton}
+				// eslint-disable-next-line
+				onPress={openQRScanner}
+			>
+				<AntIcon name="scan1" size={28} style={styles.infoIcon} />
+			</TouchableOpacity>
+		)
+	};
 }
 
 /**
@@ -1007,41 +769,21 @@ export function getWalletNavbarOptions(
  * @param {Object} navigation - Navigation object required to push new views
  * @returns {Object} - Corresponding navbar options containing headerTitle and headerTitle
  */
-export function getNetworkNavbarOptions(
-  title,
-  translate,
-  navigation,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
-  return {
-    headerTitle: () => <NavbarTitle title={title} translate={translate} />,
-    headerLeft: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => navigation.pop()}
-        style={styles.backButton}
-        testID={'asset-back-button'}
-      >
-        <IonicIcon
-          name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
-          size={Device.isAndroid() ? 24 : 28}
-          style={innerStyles.headerIcon}
-        />
-      </TouchableOpacity>
-    ),
-    headerRight: () => <View />,
-    headerStyle: innerStyles.headerStyle,
-  };
+export function getNetworkNavbarOptions(title, translate, navigation) {
+	return {
+		headerTitle: <NavbarTitle title={title} translate={translate} />,
+		headerLeft: (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton} testID={'asset-back-button'}>
+				<IonicIcon
+					name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
+					size={Device.isAndroid() ? 24 : 28}
+					style={styles.backIcon}
+				/>
+			</TouchableOpacity>
+		),
+		headerRight: <View />
+	};
 }
 
 /**
@@ -1049,435 +791,34 @@ export function getNetworkNavbarOptions(
  *
  * @returns {Object} - Corresponding navbar options containing headerTitle and headerTitle
  */
-export function getWebviewNavbar(navigation, route, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      textAlign: 'center',
-      ...fontStyles.normal,
-      alignItems: 'center',
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
-
-  const title = route.params?.title ?? '';
-  const share = route.params?.dispatch;
-  return {
-    headerTitle: () => (
-      <Text style={innerStyles.headerTitleStyle}>{title}</Text>
-    ),
-    headerLeft: () =>
-      Device.isAndroid() ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => navigation.pop()}
-          style={styles.backButton}
-        >
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => navigation.pop()}
-          style={styles.backButton}
-        >
-          <IonicIcon
-            name="ios-close"
-            size={38}
-            style={[innerStyles.headerIcon, styles.backIconIOS]}
-          />
-        </TouchableOpacity>
-      ),
-    headerRight: () =>
-      Device.isAndroid() ? (
-        <TouchableOpacity onPress={share} style={styles.backButton}>
-          <MaterialCommunityIcon
-            name="share-variant"
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity onPress={share} style={styles.backButton}>
-          <EvilIcons
-            name="share-apple"
-            size={32}
-            style={[innerStyles.headerIcon, styles.shareIconIOS]}
-          />
-        </TouchableOpacity>
-      ),
-    headerStyle: innerStyles.headerStyle,
-  };
-}
-
-export function getPaymentSelectorMethodNavbar(navigation, onPop, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-    },
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      textAlign: 'center',
-      ...fontStyles.normal,
-      alignItems: 'center',
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  return {
-    headerTitle: () => (
-      <Text style={innerStyles.headerTitleStyle}>
-        {strings('fiat_on_ramp.purchase_method')}
-      </Text>
-    ),
-    headerLeft: () => <View />,
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => {
-          navigation.dangerouslyGetParent()?.pop();
-          onPop?.();
-        }}
-        style={styles.closeButton}
-      >
-        <Text style={innerStyles.headerButtonText}>
-          {strings('navigation.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-  };
-}
-
-export function getPaymentMethodApplePayNavbar(
-  navigation,
-  onPop,
-  onExit,
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerButtonText: {
-      color: themeColors.primary.default,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
-  return {
-    title: strings('fiat_on_ramp.amount_to_buy'),
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => {
-          navigation.dangerouslyGetParent()?.pop();
-          onExit?.();
-        }}
-        style={styles.closeButton}
-      >
-        <Text style={innerStyles.headerButtonText}>
-          {strings('navigation.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerLeft: () =>
-      Device.isAndroid() ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => {
-            navigation.pop();
-            onPop?.();
-          }}
-          style={styles.backButton}
-        >
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => {
-            navigation.pop();
-            onPop?.();
-          }}
-          style={styles.closeButton}
-        >
-          <Text style={innerStyles.headerButtonText}>
-            {strings('navigation.back')}
-          </Text>
-        </TouchableOpacity>
-      ),
-    headerStyle: innerStyles.headerStyle,
-  };
-}
-
-export function getTransakWebviewNavbar(navigation, route, onPop, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerTitleStyle: {
-      fontSize: 20,
-      color: themeColors.text.default,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-  });
-
-  const title = route.params?.title ?? '';
-  return {
-    title,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-    headerLeft: () =>
-      Device.isAndroid() ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => {
-            navigation.pop();
-            onPop?.();
-          }}
-          style={styles.backButton}
-        >
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity
-          onPress={() => {
-            navigation.pop();
-            onPop?.();
-          }}
-          style={styles.backButton}
-        >
-          <IonicIcon
-            name="ios-close"
-            size={38}
-            style={[innerStyles.headerIcon, styles.backIconIOS]}
-          />
-        </TouchableOpacity>
-      ),
-    headerStyle: innerStyles.headerStyle,
-    headerTintColor: themeColors.primary.default,
-  };
-}
-
-export function getSwapsAmountNavbar(navigation, route, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  const title = route.params?.title ?? 'Swap';
-  return {
-    headerTitle: () => (
-      <NavbarTitle title={title} disableNetwork translate={false} />
-    ),
-    headerLeft: () => <View />,
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => navigation.dangerouslyGetParent()?.pop()}
-        style={styles.closeButton}
-      >
-        <Text style={innerStyles.headerButtonText}>
-          {strings('navigation.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-  };
-}
-export function getSwapsQuotesNavbar(navigation, route, themeColors) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerIcon: {
-      color: themeColors.primary.default,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-  });
-  const title = route.params?.title ?? 'Swap';
-  const leftActionText = route.params?.leftAction ?? strings('navigation.back');
-
-  const leftAction = () => {
-    const trade = route.params?.requestedTrade;
-    const selectedQuote = route.params?.selectedQuote;
-    const quoteBegin = route.params?.quoteBegin;
-    if (!selectedQuote) {
-      InteractionManager.runAfterInteractions(() => {
-        Analytics.trackEventWithParameters(
-          ANALYTICS_EVENT_OPTS.QUOTES_REQUEST_CANCELLED,
-          {
-            ...trade,
-            responseTime: new Date().getTime() - quoteBegin,
-          },
-        );
-      });
-    }
-    navigation.pop();
-  };
-
-  const rightAction = () => {
-    const trade = route.params?.requestedTrade;
-    const selectedQuote = route.params?.selectedQuote;
-    const quoteBegin = route.params?.quoteBegin;
-    if (!selectedQuote) {
-      InteractionManager.runAfterInteractions(() => {
-        Analytics.trackEventWithParameters(
-          ANALYTICS_EVENT_OPTS.QUOTES_REQUEST_CANCELLED,
-          {
-            ...trade,
-            responseTime: new Date().getTime() - quoteBegin,
-          },
-        );
-      });
-    }
-    navigation.dangerouslyGetParent()?.pop();
-  };
-
-  return {
-    headerTitle: () => (
-      <NavbarTitle title={title} disableNetwork translate={false} />
-    ),
-    headerLeft: () =>
-      Device.isAndroid() ? (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity onPress={leftAction} style={styles.backButton}>
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        // eslint-disable-next-line react/jsx-no-bind
-        <TouchableOpacity onPress={leftAction} style={styles.closeButton}>
-          <Text style={innerStyles.headerButtonText}>{leftActionText}</Text>
-        </TouchableOpacity>
-      ),
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity onPress={rightAction} style={styles.closeButton}>
-        <Text style={innerStyles.headerButtonText}>
-          {strings('navigation.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-  };
-}
-
-export function getFiatOnRampAggNavbar(
-  navigation,
-  { title, showBack = true } = {},
-  themeColors,
-) {
-  const innerStyles = StyleSheet.create({
-    headerButtonText: {
-      color: themeColors.primary.default,
-      fontSize: 14,
-      ...fontStyles.normal,
-    },
-    headerStyle: {
-      backgroundColor: themeColors.background.default,
-      shadowColor: importedColors.transparent,
-      elevation: 0,
-    },
-    headerTitleStyle: {
-      fontSize: 20,
-      ...fontStyles.normal,
-      color: themeColors.text.default,
-      ...(!showBack && { textAlign: 'center' }),
-    },
-  });
-  const headerTitle = title ?? 'No title';
-
-  const leftActionText = strings('navigation.back');
-
-  const leftAction = () => navigation.pop();
-
-  return {
-    headerTitle,
-    headerLeft: () => {
-      if (!showBack) return <View />;
-
-      return Device.isAndroid() ? (
-        <TouchableOpacity onPress={leftAction} style={styles.backButton}>
-          <IonicIcon
-            name={'md-arrow-back'}
-            size={24}
-            style={innerStyles.headerIcon}
-          />
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity onPress={leftAction} style={styles.closeButton}>
-          <Text style={innerStyles.headerButtonText}>{leftActionText}</Text>
-        </TouchableOpacity>
-      );
-    },
-    headerRight: () => (
-      // eslint-disable-next-line react/jsx-no-bind
-      <TouchableOpacity
-        onPress={() => navigation.dangerouslyGetParent()?.pop()}
-        style={styles.closeButton}
-      >
-        <Text style={innerStyles.headerButtonText}>
-          {strings('navigation.cancel')}
-        </Text>
-      </TouchableOpacity>
-    ),
-    headerStyle: innerStyles.headerStyle,
-    headerTitleStyle: innerStyles.headerTitleStyle,
-  };
+export function getWebviewNavbar(navigation) {
+	const title = navigation.getParam('title', '');
+	const share = navigation.getParam('dispatch', () => {
+		'';
+	});
+	return {
+		headerTitle: <Text style={styles.webviewTitle}>{title}</Text>,
+		headerLeft: Device.isAndroid() ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+				<IonicIcon name={'md-arrow-back'} size={24} style={styles.backIcon} />
+			</TouchableOpacity>
+		) : (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => navigation.pop()} style={styles.backButton}>
+				<IonicIcon name="ios-close" size={38} style={[styles.backIcon, styles.backIconIOS]} />
+			</TouchableOpacity>
+		),
+		headerRight: Device.isAndroid() ? (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => share()} style={styles.backButton}>
+				<MaterialCommunityIcon name="share-variant" size={24} style={styles.backIcon} />
+			</TouchableOpacity>
+		) : (
+			// eslint-disable-next-line react/jsx-no-bind
+			<TouchableOpacity onPress={() => share()} style={styles.backButton}>
+				<EvilIcons name="share-apple" size={32} style={[styles.backIcon, styles.shareIconIOS]} />
+			</TouchableOpacity>
+		)
+	};
 }
