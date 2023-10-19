@@ -20,30 +20,26 @@ import Networks, {
   getAllNetworks,
   getNetworkImageSource,
   isDefaultMainnet,
-  isLineaMainnet,
 } from '../../../../util/networks';
 import StyledButton from '../../../UI/StyledButton';
 import Engine from '../../../../core/Engine';
-import { LINEA_MAINNET, MAINNET, RPC } from '../../../../constants/network';
+import { MAINNET, NETWORKS_CHAIN_ID, RPC } from '../../../../constants/network';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { mockTheme, ThemeContext } from '../../../../util/theme';
 import ImageIcons from '../../../UI/ImageIcon';
 import {
   ADD_NETWORK_BUTTON,
   NETWORK_SCREEN_ID,
-  CUSTOM_NETWORK_NAME_NETWORK_LIST,
 } from '../../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
 import { compareSanitizedUrl } from '../../../../util/sanitizeUrl';
-import {
-  selectNetworkConfigurations,
-  selectProviderConfig,
-} from '../../../../selectors/networkController';
+import { selectProviderConfig } from '../../../../selectors/networkController';
 import {
   AvatarSize,
   AvatarVariants,
 } from '../../../../component-library/components/Avatars/Avatar';
 import AvatarNetwork from '../../../../component-library/components/Avatars/Avatar/variants/AvatarNetwork';
 import generateTestId from '../../../../../wdio/utils/generateTestId';
+import { LINEA_TESTNET_RPC_URL } from '../../../../constants/urls';
 import Routes from '../../../../constants/navigation/Routes';
 
 const createStyles = (colors) =>
@@ -71,7 +67,6 @@ const createStyles = (colors) =>
     networkWrapper: {
       flex: 0,
       flexDirection: 'row',
-      alignItems: 'center',
     },
     networkLabel: {
       fontSize: 16,
@@ -114,52 +109,6 @@ const createStyles = (colors) =>
       marginTop: 4,
     },
   });
-import { ThemeContext, mockTheme } from '../../../../util/theme';
-
-const createStyles = (colors) =>
-	StyleSheet.create({
-		wrapper: {
-			backgroundColor: colors.background.default,
-			flex: 1,
-			paddingVertical: 12,
-			paddingHorizontal: 24,
-			paddingBottom: 36,
-		},
-		networkIcon: {
-			width: 15,
-			height: 15,
-			borderRadius: 100,
-			marginTop: 2,
-			marginRight: 16,
-		},
-		otherNetworkIcon: {
-			width: 15,
-			height: 15,
-			borderRadius: 100,
-			marginTop: 2,
-			backgroundColor: colors.icon.muted,
-		},
-		network: {
-			flex: 1,
-			flexDirection: 'row',
-			paddingVertical: 12,
-		},
-		networkWrapper: {
-			flex: 0,
-			flexDirection: 'row',
-		},
-		networkLabel: {
-			fontSize: 16,
-			color: colors.text.default,
-			...fontStyles.normal,
-		},
-		sectionLabel: {
-			fontSize: 14,
-			paddingVertical: 12,
-			color: colors.text.default,
-			...fontStyles.bold,
-		},
-	});
 
 /**
  * Main view for app configurations
@@ -167,9 +116,9 @@ const createStyles = (colors) =>
 class NetworksSettings extends PureComponent {
   static propTypes = {
     /**
-     * Network configurations
+     * A list of custom RPCs to provide the user
      */
-    networkConfigurations: PropTypes.object,
+    frequentRpcList: PropTypes.array,
     /**
      * Object that represents the navigator
      */
@@ -213,11 +162,11 @@ class NetworksSettings extends PureComponent {
     this.updateNavBar();
   };
 
-  getOtherNetworks = () => getAllNetworks().slice(2);
+  getOtherNetworks = () => getAllNetworks().slice(1);
 
-  onNetworkPress = (networkTypeOrRpcUrl) => {
+  onNetworkPress = (network) => {
     const { navigation } = this.props;
-    navigation.navigate(Routes.ADD_NETWORK, { network: networkTypeOrRpcUrl });
+    navigation.navigate(Routes.ADD_NETWORK, { network });
   };
 
   onAddNetwork = () => {
@@ -225,21 +174,19 @@ class NetworksSettings extends PureComponent {
     navigation.navigate(Routes.ADD_NETWORK);
   };
 
-  showRemoveMenu = (networkTypeOrRpcUrl) => {
-    this.networkToRemove = networkTypeOrRpcUrl;
+  showRemoveMenu = (network) => {
+    this.networkToRemove = network;
     this.actionSheet.show();
   };
 
   switchToMainnet = () => {
-    const { NetworkController, CurrencyRateController, TransactionController } =
-      Engine.context;
-
+    const { NetworkController, CurrencyRateController } = Engine.context;
     CurrencyRateController.setNativeCurrency('ETH');
     NetworkController.setProviderType(MAINNET);
-
-    setTimeout(async () => {
-      await TransactionController.updateIncomingTransactions();
-    }, 1000);
+    this.props.thirdPartyApiMode &&
+      setTimeout(() => {
+        Engine.refreshTransactionHistory();
+      }, 1000);
   };
 
   removeNetwork = () => {
@@ -251,19 +198,8 @@ class NetworksSettings extends PureComponent {
     ) {
       this.switchToMainnet();
     }
-    const { networkConfigurations } = this.props;
-    const entry = Object.entries(networkConfigurations).find(
-      ([, networkConfiguration]) =>
-        networkConfiguration.rpcUrl === this.networkToRemove,
-    );
-    if (!entry) {
-      throw new Error(
-        `Unable to find network with RPC URL ${this.networkToRemove}`,
-      );
-    }
-    const [networkConfigurationId] = entry;
-    const { NetworkController } = Engine.context;
-    NetworkController.removeNetworkConfiguration(networkConfigurationId);
+    const { PreferencesController } = Engine.context;
+    PreferencesController.removeFromFrequentRpcList(this.networkToRemove);
     this.setState({ filteredNetworks: [] });
   };
 
@@ -273,24 +209,20 @@ class NetworksSettings extends PureComponent {
 
   onActionSheetPress = (index) => (index === 0 ? this.removeNetwork() : null);
 
-  networkElement(name, image, i, networkTypeOrRpcUrl, isCustomRPC, color) {
+  networkElement(name, image, i, network, isCustomRPC, color) {
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
     return (
-      <View key={`network-${networkTypeOrRpcUrl}`}>
+      <View key={`network-${network}`}>
         {
           // Do not change. This logic must check for 'mainnet' and is used for rendering the out of the box mainnet when searching.
-          isDefaultMainnet(networkTypeOrRpcUrl) ? (
+          isDefaultMainnet(network) ? (
             this.renderMainnet()
-          ) : isLineaMainnet(networkTypeOrRpcUrl) ? (
-            this.renderLineaMainnet()
           ) : (
             <TouchableOpacity
               key={`network-${i}`}
-              onPress={() => this.onNetworkPress(networkTypeOrRpcUrl)}
-              onLongPress={() =>
-                isCustomRPC && this.showRemoveMenu(networkTypeOrRpcUrl)
-              }
+              onPress={() => this.onNetworkPress(network)}
+              onLongPress={() => isCustomRPC && this.showRemoveMenu(network)}
               testID={'select-network'}
             >
               <View style={styles.network}>
@@ -306,7 +238,7 @@ class NetworksSettings extends PureComponent {
                 {!isCustomRPC &&
                   (image ? (
                     <ImageIcons
-                      image={networkTypeOrRpcUrl.toUpperCase()}
+                      image={network.toUpperCase()}
                       style={styles.networkIcon}
                     />
                   ) : (
@@ -317,7 +249,7 @@ class NetworksSettings extends PureComponent {
                     </View>
                   ))}
                 <Text style={styles.networkLabel}>{name}</Text>
-                {!isCustomRPC && (
+                {(network !== LINEA_TESTNET_RPC_URL || !isCustomRPC) && (
                   <FontAwesome
                     name="lock"
                     size={20}
@@ -334,44 +266,58 @@ class NetworksSettings extends PureComponent {
   }
 
   renderOtherNetworks() {
-    return this.getOtherNetworks().map((networkType, i) => {
-      const { name, imageSource, color } = Networks[networkType];
-      return this.networkElement(
-        name,
-        imageSource,
-        i,
-        networkType,
-        false,
-        color,
-      );
+    return this.getOtherNetworks().map((network, i) => {
+      const { name, imageSource, color } = Networks[network];
+      return this.networkElement(name, imageSource, i, network, false, color);
     });
   }
 
   renderRpcNetworks = () => {
-    const { networkConfigurations } = this.props;
-    return Object.values(networkConfigurations).map(
-      ({ rpcUrl, nickname, chainId }, i) => {
-        const name = nickname || rpcUrl;
+    const { frequentRpcList } = this.props;
+    return frequentRpcList
+      .filter(({ chainId }) => chainId !== NETWORKS_CHAIN_ID.LINEA_TESTNET)
+      .map(({ rpcUrl, nickname, chainId }, i) => {
+        const { name } = { name: nickname || rpcUrl };
         const image = getNetworkImageSource({ chainId });
         return this.networkElement(name, image, i, rpcUrl, true);
-      },
-    );
+      });
   };
 
   renderRpcNetworksView = () => {
-    const { networkConfigurations } = this.props;
+    const { frequentRpcList } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
 
-    if (Object.keys(networkConfigurations).length > 0) {
+    if (
+      frequentRpcList.filter(
+        ({ chainId }) => chainId !== NETWORKS_CHAIN_ID.LINEA_TESTNET,
+      ).length > 0
+    ) {
       return (
-        <View testID={CUSTOM_NETWORK_NAME_NETWORK_LIST}>
+        <View testID={'rpc-networks'}>
           <Text style={styles.sectionLabel}>
             {strings('app_settings.custom_network_name')}
           </Text>
           {this.renderRpcNetworks()}
         </View>
       );
+    }
+  };
+
+  renderNonInfuraNetworksView = () => {
+    const { frequentRpcList } = this.props;
+    if (
+      frequentRpcList.filter(
+        ({ chainId }) => chainId === NETWORKS_CHAIN_ID.LINEA_TESTNET,
+      ).length > 0
+    ) {
+      return frequentRpcList
+        .filter(({ chainId }) => chainId === NETWORKS_CHAIN_ID.LINEA_TESTNET)
+        .map(({ rpcUrl, nickname, chainId }, i) => {
+          const { name } = { name: nickname || rpcUrl };
+          const image = getNetworkImageSource({ chainId });
+          return this.networkElement(name, image, i, rpcUrl, true);
+        });
     }
   };
 
@@ -404,65 +350,21 @@ class NetworksSettings extends PureComponent {
     );
   }
 
-  renderLineaMainnet() {
-    const { name: lineaMainnetName } = Networks['linea-mainnet'];
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
-
-    return (
-      <View style={styles.mainnetHeader}>
-        <TouchableOpacity
-          style={styles.network}
-          key={`network-${LINEA_MAINNET}`}
-          onPress={() => this.onNetworkPress(LINEA_MAINNET)}
-        >
-          <View style={styles.networkWrapper}>
-            <ImageIcons image="LINEA-MAINNET" style={styles.networkIcon} />
-            <View style={styles.networkInfo}>
-              <Text style={styles.networkLabel}>{lineaMainnetName}</Text>
-            </View>
-          </View>
-          <FontAwesome
-            name="lock"
-            size={20}
-            color={colors.icon.default}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   handleSearchTextChange = (text) => {
     this.setState({ searchString: text });
-    const defaultNetwork = getAllNetworks().map((networkType, i) => {
-      const { color, name, chainId } = Networks[networkType];
-      return {
-        name,
-        color,
-        networkTypeOrRpcUrl: networkType,
-        isCustomRPC: false,
-        chainId,
-      };
+    const defaultNetwork = getAllNetworks().map((network, i) => {
+      const { color, name, chainId } = Networks[network];
+      return { name, color, network, isCustomRPC: false, chainId };
     });
-    const customRPC = Object.values(this.props.networkConfigurations).map(
-      (networkConfiguration, i) => {
-        const { color, name, url, chainId } = {
-          name: networkConfiguration.nickname || networkConfiguration.rpcUrl,
-          url: networkConfiguration.rpcUrl,
-          color: null,
-          chainId: networkConfiguration.chainId,
-        };
-        return {
-          name,
-          color,
-          i,
-          networkTypeOrRpcUrl: url,
-          isCustomRPC: true,
-          chainId,
-        };
-      },
-    );
+    const customRPC = this.props.frequentRpcList.map((network, i) => {
+      const { color, name, url, chainId } = {
+        name: network.nickname || network.rpcUrl,
+        url: network.rpcUrl,
+        color: null,
+        chainId: network.chainId,
+      };
+      return { name, color, i, network: url, isCustomRPC: true, chainId };
+    });
 
     const allActiveNetworks = defaultNetwork.concat(customRPC);
     const searchResult = allActiveNetworks.filter(({ name }) =>
@@ -479,18 +381,14 @@ class NetworksSettings extends PureComponent {
     const styles = createStyles(colors);
     if (this.state.filteredNetworks.length > 0) {
       return this.state.filteredNetworks.map((data, i) => {
-        const { networkTypeOrRpcUrl, chainId, name, color, isCustomRPC } = data;
+        const { network, chainId, name, color, isCustomRPC } = data;
         const image = getNetworkImageSource({ chainId });
-        return (
-          // TODO: remove this check when linea mainnet is ready
-          networkTypeOrRpcUrl !== LINEA_MAINNET &&
-          this.networkElement(
-            name,
-            image || color,
-            i,
-            networkTypeOrRpcUrl,
-            isCustomRPC,
-          )
+        return this.networkElement(
+          name,
+          image || color,
+          i,
+          network,
+          isCustomRPC,
         );
       });
     }
@@ -539,12 +437,12 @@ class NetworksSettings extends PureComponent {
                 {strings('app_settings.mainnet')}
               </Text>
               {this.renderMainnet()}
-              {this.renderLineaMainnet()}
               {this.renderRpcNetworksView()}
               <Text style={styles.sectionLabel}>
                 {strings('app_settings.test_network_name')}
               </Text>
               {this.renderOtherNetworks()}
+              {this.renderNonInfuraNetworksView()}
             </>
           )}
         </ScrollView>
@@ -571,204 +469,14 @@ class NetworksSettings extends PureComponent {
       </View>
     );
   }
-	static propTypes = {
-		/**
-		 * A list of custom RPCs to provide the user
-		 */
-		frequentRpcList: PropTypes.array,
-		/**
-		 * Object that represents the navigator
-		 */
-		navigation: PropTypes.object,
-		/**
-		 * NetworkController povider object
-		 */
-		provider: PropTypes.object,
-		/**
-		 * Indicates whether third party API mode is enabled
-		 */
-		thirdPartyApiMode: PropTypes.bool,
-	};
-
-	actionSheet = null;
-	networkToRemove = null;
-
-	state = {};
-
-	updateNavBar = () => {
-		const { navigation } = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		navigation.setOptions(
-			getNavigationOptionsTitle(strings('app_settings.networks_title'), navigation, false, colors)
-		);
-	};
-
-	componentDidMount = () => {
-		this.updateNavBar();
-	};
-
-	componentDidUpdate = () => {
-		this.updateNavBar();
-	};
-
-	getOtherNetworks = () => getAllNetworks().slice(1);
-
-	onPress = (network) => {
-		const { navigation } = this.props;
-		navigation.navigate('NetworkSettings', { network });
-	};
-
-	onAddNetwork = () => {
-		const { navigation } = this.props;
-		navigation.navigate('NetworkSettings');
-	};
-
-	showRemoveMenu = (network) => {
-		this.networkToRemove = network;
-		this.actionSheet.show();
-	};
-
-	switchToMainnet = () => {
-		const { NetworkController, CurrencyRateController } = Engine.context;
-		CurrencyRateController.setNativeCurrency('ETH');
-		NetworkController.setProviderType(MAINNET);
-		this.props.thirdPartyApiMode &&
-			setTimeout(() => {
-				Engine.refreshTransactionHistory();
-			}, 1000);
-	};
-
-	removeNetwork = () => {
-		// Check if it's the selected network and then switch to mainnet first
-		const { provider } = this.props;
-		if (provider.rpcTarget === this.networkToRemove && provider.type === RPC) {
-			this.switchToMainnet();
-		}
-		const { PreferencesController } = Engine.context;
-		PreferencesController.removeFromFrequentRpcList(this.networkToRemove);
-	};
-
-	createActionSheetRef = (ref) => {
-		this.actionSheet = ref;
-	};
-
-	onActionSheetPress = (index) => (index === 0 ? this.removeNetwork() : null);
-
-	networkElement(name, color, i, network, isCustomRPC) {
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		return (
-			<TouchableOpacity
-				key={`network-${i}`}
-				onPress={() => this.onPress(network)} // eslint-disable-line
-				onLongPress={() => isCustomRPC && this.showRemoveMenu(network)} // eslint-disable-line
-				testID={'select-network'}
-			>
-				<View style={styles.network}>
-					<View style={[styles.networkIcon, color ? { backgroundColor: color } : styles.otherNetworkIcon]} />
-					<View style={styles.networkInfo}>
-						<Text style={styles.networkLabel}>{name}</Text>
-					</View>
-				</View>
-			</TouchableOpacity>
-		);
-	}
-
-	renderOtherNetworks() {
-		return this.getOtherNetworks().map((network, i) => {
-			const { color, name } = Networks[network];
-			return this.networkElement(name, color, i, network, false);
-		});
-	}
-
-	renderRpcNetworks = () => {
-		const { frequentRpcList } = this.props;
-		return frequentRpcList.map(({ rpcUrl, nickname }, i) => {
-			const { color, name } = { name: nickname || rpcUrl, color: null };
-
-			return this.networkElement(name, color, i, rpcUrl, true);
-		});
-	};
-
-	renderRpcNetworksView = () => {
-		const { frequentRpcList } = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		if (frequentRpcList.length > 0) {
-			return (
-				<View testID={'rpc-networks'}>
-					<Text style={styles.sectionLabel}>{strings('app_settings.network_rpc_networks')}</Text>
-					{this.renderRpcNetworks()}
-				</View>
-			);
-		}
-	};
-
-	renderMainnet() {
-		const { color: mainnetColor, name: mainnetName } = Networks.mainnet;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		return (
-			<View style={styles.mainnetHeader}>
-				<TouchableOpacity
-					style={styles.network}
-					key={`network-${MAINNET}`}
-					onPress={() => this.onPress(MAINNET)} // eslint-disable-line
-				>
-					<View style={styles.networkWrapper}>
-						<View style={[styles.networkIcon, { backgroundColor: mainnetColor }]} />
-						<View style={styles.networkInfo}>
-							<Text style={styles.networkLabel}>{mainnetName}</Text>
-						</View>
-					</View>
-				</TouchableOpacity>
-			</View>
-		);
-	}
-
-	render() {
-		const colors = this.context.colors || mockTheme.colors;
-		const themeAppearance = this.context.themeAppearance;
-		const styles = createStyles(colors);
-
-		return (
-			<View style={styles.wrapper} testID={'networks-screen'}>
-				<ScrollView style={styles.networksWrapper}>
-					{this.renderMainnet()}
-					<Text style={styles.sectionLabel}>{strings('app_settings.network_other_networks')}</Text>
-					{this.renderOtherNetworks()}
-					{this.renderRpcNetworksView()}
-				</ScrollView>
-				<StyledButton
-					type="confirm"
-					onPress={this.onAddNetwork}
-					containerStyle={styles.syncConfirm}
-					testID={'add-network-button'}
-				>
-					{strings('app_settings.network_add_network')}
-				</StyledButton>
-				<ActionSheet
-					ref={this.createActionSheetRef}
-					title={strings('app_settings.remove_network_title')}
-					options={[strings('app_settings.remove_network'), strings('app_settings.cancel_remove_network')]}
-					cancelButtonIndex={1}
-					destructiveButtonIndex={0}
-					onPress={this.onActionSheetPress}
-					theme={themeAppearance}
-				/>
-			</View>
-		);
-	}
 }
 
 NetworksSettings.contextType = ThemeContext;
 
 const mapStateToProps = (state) => ({
   providerConfig: selectProviderConfig(state),
-  networkConfigurations: selectNetworkConfigurations(state),
+  frequentRpcList:
+    state.engine.backgroundState.PreferencesController.frequentRpcList,
   thirdPartyApiMode: state.privacy.thirdPartyApiMode,
 });
 

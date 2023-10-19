@@ -71,16 +71,9 @@ Then(/^select account component is displayed$/, async () => {
 
 When(/^I navigate to "([^"]*)"$/, async function (text) {
   await BrowserScreen.tapUrlBar();
-  switch (text) {
+  switch(text) {
     case 'test-dapp-erc20':
-      await AddressBarScreen.editUrlInput(
-        `${TEST_DAPP}?contract=${this.erc20}`,
-      );
-      break;
-    case 'test-dapp-erc721':
-      await AddressBarScreen.editUrlInput(
-        `${TEST_DAPP}?contract=${this.erc721}`,
-      );
+      await AddressBarScreen.editUrlInput(`${TEST_DAPP}?contract=${this.erc20}`);
       break;
     default:
       await AddressBarScreen.editUrlInput(text);
@@ -382,7 +375,6 @@ Then(
 
 When(/^I select "([^"]*)" network option$/, async (network) => {
   await NetworkListModal.waitForDisplayed();
-  await NetworkListModal.tapTestNetworkSwitch();
   await CommonScreen.tapOnText(network);
 });
 
@@ -412,36 +404,14 @@ When(/^I scroll to the ERC20 section$/, async () => {
   await Gestures.swipeUp(1);
 });
 
-When(/^I scroll to the ERC721 section$/, async () => {
-  await Gestures.swipeUp(1);
-  await Gestures.swipeUp(1);
-});
-
 When(/^I transfer ERC20 tokens$/, async () => {
   await ExternalWebsitesScreen.tapDappTransferTokens();
   await AccountApprovalModal.tapConfirmButtonByText();
   await AccountApprovalModal.waitForDisappear();
 });
 
-When(/^I transfer an ERC721 token$/, async () => {
-  await ExternalWebsitesScreen.tapDappTransferNft();
-  await AccountApprovalModal.tapConfirmButtonByText();
-  await AccountApprovalModal.waitForDisappear();
-});
-
-When(/^I approve default ERC20 token amount$/, async () => {
+When(/^I approve ERC20 tokens$/, async () => {
   await ExternalWebsitesScreen.tapDappApproveTokens();
-  await AccountApprovalModal.tapUseDefaultApproveByText();
-  await AccountApprovalModal.tapNextButtonByText();
-  await AccountApprovalModal.tapApproveButtonByText();
-  await AccountApprovalModal.waitForDisappear();
-});
-
-When(/^I approve the custom ERC20 token amount$/, async () => {
-  await ExternalWebsitesScreen.tapDappApproveTokens();
-  await AccountApprovalModal.setTokenAmount('1');
-  await AccountApprovalModal.tapNextButtonByText();
-  await AccountApprovalModal.tapNextButtonByText();
   await AccountApprovalModal.tapApproveButtonByText();
   await AccountApprovalModal.waitForDisappear();
 });
