@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 14,
 		textAlign: 'center',
-		...fontStyles.bold
+		...fontStyles.bolder,
+		fontWeight: 'bold'
 	},
 	blue: {
 		backgroundColor: colors.blue
@@ -19,11 +20,10 @@ const styles = StyleSheet.create({
 		color: colors.white
 	},
 	orange: {
-		borderColor: colors.orange,
-		borderWidth: 1
+		backgroundColor: colors.blue
 	},
 	orangeText: {
-		color: colors.orange
+		color: colors.white
 	},
 	infoText: {
 		color: colors.blue
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
 	},
 	viewText: {
 		fontSize: 18,
-		...fontStyles.bold,
+		...fontStyles.extraBold,
 		color: colors.white
 	},
 	view: {
