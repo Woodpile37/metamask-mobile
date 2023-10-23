@@ -21,6 +21,7 @@ import {
 	weiToFiat
 } from '../../../util/number';
 import { isMainNet, isMainnetByChainId } from '../../../util/networks';
+import { safeToChecksumAddress } from '../../../util/address';
 import { getErrorMessage, getFetchParams, getQuotesNavigationsParams, isSwapsNativeAsset } from './utils';
 import { colors } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
@@ -56,7 +57,7 @@ import { swapsTokensSelector } from '../../../reducers/swaps';
 import { decGWEIToHexWEI } from '../../../util/conversions';
 import FadeAnimationView from '../FadeAnimationView';
 
-const POLLING_INTERVAL = 30000;
+const POLLING_INTERVAL = AppConstants.SWAPS.POLLING_INTERVAL;
 const SLIPPAGE_BUCKETS = {
 	MEDIUM: AppConstants.GAS_OPTIONS.MEDIUM,
 	HIGH: AppConstants.GAS_OPTIONS.HIGH
@@ -226,14 +227,32 @@ async function resetAndStartPolling({ slippage, sourceToken, destinationToken, s
 	if (!sourceToken || !destinationToken) {
 		return;
 	}
-	const { SwapsController } = Engine.context;
+	const { SwapsController, TokenRatesController, AssetsController } = Engine.context;
+	const contractExchangeRates = TokenRatesController.state.contractExchangeRates;
+	// ff the token is not in the wallet, we'll add it
+	if (
+		!isSwapsNativeAsset(destinationToken) &&
+		!(safeToChecksumAddress(destinationToken.address) in contractExchangeRates)
+	) {
+		const { address, symbol, decimals } = destinationToken;
+		await AssetsController.addToken(address, symbol, decimals);
+		await new Promise(resolve =>
+			setTimeout(() => {
+				resolve();
+			}, 500)
+		);
+	}
+	const destinationTokenConversionRate =
+		TokenRatesController.state.contractExchangeRates[safeToChecksumAddress(destinationToken.address)] || 0;
 
+	// TODO: destinationToken could be the 0 address for ETH, also tokens that aren't on the wallet
 	const fetchParams = getFetchParams({
 		slippage,
 		sourceToken,
 		destinationToken,
 		sourceAmount,
-		walletAddress
+		walletAddress,
+		destinationTokenConversionRate
 	});
 	await SwapsController.stopPollingAndResetState();
 	await SwapsController.startFetchAndSetQuotes(fetchParams, fetchParams.metaData);
@@ -271,17 +290,6 @@ function getTransactionPropertiesFromGasEstimates(gasEstimateType, estimates) {
 	};
 }
 
-async function addTokenToAssetsController(newToken) {
-	const { TokensController } = Engine.context;
-	if (
-		!isSwapsNativeAsset(newToken) &&
-		!TokensController.state.tokens.includes(token => toLowerCaseEquals(token.address, newToken.address))
-	) {
-		const { address, symbol, decimals } = newToken;
-		await TokensController.addToken(address, symbol, decimals);
-	}
-}
-
 function SwapsQuotesView({
 	swapsTokens,
 	accounts,
@@ -310,17 +318,23 @@ function SwapsQuotesView({
 	const navigation = useNavigation();
 	const route = useRoute();
 	/* Get params from navigation */
-
-	const { sourceTokenAddress, destinationTokenAddress, sourceAmount, slippage, tokens } = useMemo(
+	const { sourceTokenAddress, destinationTokenAddress, sourceAmount, slippage } = useMemo(
 		() => getQuotesNavigationsParams(route),
 		[route]
 	);
 
 	/* Get tokens from the tokens list */
-	const sourceToken = [...swapsTokens, ...tokens].find(token => toLowerCaseEquals(token.address, sourceTokenAddress));
-	const destinationToken = [...swapsTokens, ...tokens].find(token =>
-		toLowerCaseEquals(token.address, destinationTokenAddress)
-	);
+	const sourceToken = swapsTokens?.find(token => toLowerCaseEquals(token.address, sourceTokenAddress));
+	const destinationToken = swapsTokens?.find(token => toLowerCaseEquals(token.address, destinationTokenAddress));
+
+	const hasConversionRate =
+		Boolean(destinationToken) &&
+		(isSwapsNativeAsset(destinationToken) ||
+			Boolean(
+				Engine.context.TokenRatesController.state.contractExchangeRates?.[
+					safeToChecksumAddress(destinationToken.address)
+				]
+			));
 
 	/* State */
 	const isMainnet = isMainnetByChainId(chainId);
@@ -350,14 +364,6 @@ function SwapsQuotesView({
 	// TODO: use this variable in the future when calculating savings
 	const [isSaving] = useState(false);
 	const [isInFetch, setIsInFetch] = useState(false);
-
-	const hasConversionRate = useMemo(
-		() =>
-			Boolean(destinationToken) &&
-			(isSwapsNativeAsset(destinationToken) ||
-				(Object.keys(quotes).length > 0 && (Object.values(quotes)[0]?.destinationTokenRate ?? null) !== null)),
-		[destinationToken, quotes]
-	);
 
 	/* Get quotes as an array sorted by overallValue */
 	const allQuotes = useMemo(() => {
@@ -485,7 +491,7 @@ function SwapsQuotesView({
 	const [isPriceImpactModalVisible, togglePriceImpactModal, , hidePriceImpactModal] = useModalHandler(false);
 
 	const [isEditingGas, , showEditingGas, hideEditingGas] = useModalHandler(false);
-	const [isGasTooltipVisible, , showGasTooltip, hideGasTooltip] = useModalHandler(false);
+	const [isGasTooltipVisible, showGasTooltip, hideGasTooltip] = useModalHandler(false);
 
 	const handleGasFeeUpdate = useCallback(
 		(changedGasEstimate, changedGasLimit) => {
@@ -645,6 +651,7 @@ function SwapsQuotesView({
 		});
 
 		const { TransactionController } = Engine.context;
+
 		const newSwapsTransactions = TransactionController.state.swapsTransactions || {};
 		let approvalTransactionMetaId;
 		if (approvalTransaction) {
@@ -680,8 +687,6 @@ function SwapsQuotesView({
 				WalletDevice.MM_MOBILE
 			);
 			updateSwapsTransactions(transactionMeta, approvalTransactionMetaId, newSwapsTransactions);
-			await addTokenToAssetsController(destinationToken);
-			await addTokenToAssetsController(sourceToken);
 		} catch (e) {
 			// send analytics
 		}
@@ -1137,7 +1142,6 @@ function SwapsQuotesView({
 					finish={shouldFinishFirstLoad}
 					onAnimationEnd={handleAnimationEnd}
 					aggregatorMetadata={aggregatorMetadata}
-					headPan={false}
 				/>
 			</ScreenView>
 		);
@@ -1359,13 +1363,11 @@ function SwapsQuotesView({
 							<QuotesSummary.HeaderText bold>
 								{isSaving ? strings('swaps.savings') : strings('swaps.using_best_quote')}
 							</QuotesSummary.HeaderText>
-							{allQuotes.length > 1 && (
-								<TouchableOpacity onPress={handleOpenQuotesModal} disabled={isInFetch}>
-									<QuotesSummary.HeaderText small>
-										{strings('swaps.view_details')} →
-									</QuotesSummary.HeaderText>
-								</TouchableOpacity>
-							)}
+							<TouchableOpacity onPress={handleOpenQuotesModal} disabled={isInFetch}>
+								<QuotesSummary.HeaderText small>
+									{strings('swaps.view_details')} →
+								</QuotesSummary.HeaderText>
+							</TouchableOpacity>
 						</QuotesSummary.Header>
 						<QuotesSummary.Body>
 							<View style={styles.quotesRow}>
@@ -1398,7 +1400,7 @@ function SwapsQuotesView({
 												toWei(selectedQuoteValue?.ethFee),
 												conversionRate,
 												currentCurrency
-											) || ''}`}
+											)}`}
 										</Text>
 									</View>
 								) : (
@@ -1475,7 +1477,7 @@ function SwapsQuotesView({
 													toWei(selectedQuoteValue?.maxEthFee),
 													conversionRate,
 													currentCurrency
-												) || ''}`}
+												)}`}
 											</Text>
 										</View>
 									</>
