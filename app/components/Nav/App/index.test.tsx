@@ -21,4 +21,17 @@ describe('App', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+	it('should render correctly when logged in', () => {
+		const initialState = {
+			user: {
+				loggedIn: true,
+			},
+		};
+
+		const wrapper = shallow(<App />, {
+			context: { store: mockStore(initialState) },
+		});
+		expect(wrapper).toMatchSnapshot();
+		expect(wrapper).toMatchSnapshot();
+	});
 });

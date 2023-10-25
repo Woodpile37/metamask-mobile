@@ -96,6 +96,62 @@ function RampOrdersList({ orders, ...props }) {
       />
     </View>
   );
+
+/**
+ * @typedef {import('../../../reducers/fiatOrders').FiatOrder} FiatOrder
+ */
+const createStyles = (colors) =>
+	StyleSheet.create({
+		wrapper: {
+			flex: 1,
+			backgroundColor: colors.background.default,
+		},
+		row: {
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.muted,
+		},
+	});
+function FiatOrdersView({ orders, ...props }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	const keyExtractor = (item) => item.id;
+
+	/* eslint-disable-next-line */
+	const renderItem = ({ item }) => (
+		<ModalHandler>
+			{({ isVisible, toggleModal }) => (
+				<>
+					<TouchableHighlight
+						style={styles.row}
+						onPress={toggleModal}
+						underlayColor={colors.background.alternative}
+						activeOpacity={1}
+					>
+						<OrderListItem order={item} />
+					</TouchableHighlight>
+
+					<Modal
+						isVisible={isVisible}
+						onBackdropPress={toggleModal}
+						onBackButtonPress={toggleModal}
+						onSwipeComplete={toggleModal}
+						swipeDirection="down"
+						backdropColor={colors.overlay.default}
+						backdropOpacity={1}
+					>
+						<OrderDetails order={item} closeModal={toggleModal} />
+					</Modal>
+				</>
+			)}
+		</ModalHandler>
+	);
+
+	return (
+		<View style={styles.wrapper}>
+			<FlatList data={orders} renderItem={renderItem} keyExtractor={keyExtractor} />
+		</View>
+	);
 }
 
 RampOrdersList.propTypes = {

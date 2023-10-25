@@ -19,6 +19,21 @@ const initialState = {
     backgroundState: initialBackgroundState,
   },
   user: { appTheme: AppThemeKey.light },
+	privacy: { approvedHosts: [], privacyMode: true },
+	browser: { history: [] },
+	settings: { lockTime: 1000, searchEngine: 'DuckDuckGo', useBlockieIcon: true },
+	engine: {
+		backgroundState: {
+			CurrencyRateController: { currentCurrency: 'USD' },
+			NetworkController: {
+				provider: {
+					type: 'mainnet',
+				},
+			},
+			PreferencesController: { selectedAddress: '0x0' },
+		},
+	},
+	user: { appTheme: AppThemeKey.light },
 };
 const store = mockStore(initialState);
 

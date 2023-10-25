@@ -118,6 +118,25 @@ export function fromTokenMinimalUnit(minimalInput, decimals) {
     value = '-' + value;
   }
   return value;
+	minimalInput = addHexPrefix(Number(minimalInput).toString(16));
+	let minimal = safeNumberToBN(minimalInput);
+	const negative = minimal.lt(new BN(0));
+	const base = toBN(Math.pow(10, decimals).toString());
+
+	if (negative) {
+		minimal = minimal.mul(negative);
+	}
+	let fraction = minimal.mod(base).toString(10);
+	while (fraction.length < decimals) {
+		fraction = '0' + fraction;
+	}
+	fraction = fraction.match(/^([0-9]*[1-9]|0)(0*)/)[1];
+	const whole = minimal.div(base).toString(10);
+	let value = '' + whole + (fraction === '0' ? '' : '.' + fraction);
+	if (negative) {
+		value = '-' + value;
+	}
+	return value;
 }
 
 /**
@@ -293,6 +312,14 @@ export function fiatNumberToTokenMinimalUnit(
   weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
   const weiBN = safeNumberToBN(weiNumber);
   return weiBN;
+export function fiatNumberToTokenMinimalUnit(fiat, conversionRate, exchangeRate, decimals) {
+	const floatFiatConverted = parseFloat(fiat) / (conversionRate * exchangeRate);
+	const base = Math.pow(10, decimals);
+	let weiNumber = floatFiatConverted * base;
+	// avoid decimals
+	weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
+	const weiBN = safeNumberToBN(weiNumber);
+	return weiBN;
 }
 
 /**
@@ -317,6 +344,19 @@ export function renderFromWei(value, decimalsToShow = 5) {
     }
   }
   return renderWei;
+	let renderWei = '0';
+	// avoid undefined
+	if (value) {
+		const wei = fromWei(value);
+		const weiNumber = parseFloat(wei);
+		if (weiNumber < 0.00001 && weiNumber > 0) {
+			renderWei = '< 0.00001';
+		} else {
+			const base = Math.pow(10, decimalsToShow);
+			renderWei = (Math.round(weiNumber * base) / base).toString();
+		}
+	}
+	return renderWei;
 }
 
 /**
@@ -599,6 +639,40 @@ export function safeNumberToBN(value) {
 export function fastSplit(value, divider = '.') {
   const [from, to] = [value.indexOf(divider), 0];
   return value.substring(from, to) || value;
+	const floatFiatConverted = parseFloat(fiat) / conversionRate;
+	if (!floatFiatConverted || isNaN(floatFiatConverted) || floatFiatConverted === Infinity) {
+		return '0x0';
+	}
+	const base = Math.pow(10, 18);
+	let weiNumber = Math.trunc(base * floatFiatConverted);
+	// avoid decimals
+	weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
+	const weiBN = safeNumberToBN(weiNumber);
+	return weiBN;
+}
+
+/**
+ * Wraps 'numberToBN' method to avoid potential undefined and decimal values
+ *
+ * @param {number|string} value -  number
+ * @returns {Object} - The converted value as BN instance
+ */
+export function safeNumberToBN(value) {
+	const safeValue = fastSplit(value?.toString()) || '0';
+	return numberToBN(safeValue);
+}
+
+/**
+ * Performs a fast string split and returns the first item of the string based on the divider provided
+ *
+ * @param {number|string} value -  number/string to be splitted
+ * @param {string} divider -  string value to use to split the string (default '.')
+ * @returns {string} - the selected splitted element
+ */
+
+export function fastSplit(value, divider = '.') {
+	const [from, to] = [value.indexOf(divider), 0];
+	return value.substring(from, to) || value;
 }
 
 /**

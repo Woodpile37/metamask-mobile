@@ -39,6 +39,35 @@ export default function ErrorMessage(props) {
       )}
     </Alert>
   );
+	button: {
+		marginTop: 27,
+		marginBottom: 12,
+	},
+	errorMessage: {
+		flex: 0,
+	},
+});
+
+export default function ErrorMessage(props) {
+	const { errorMessage, errorContinue, onContinue, isOnlyWarning } = props;
+	return (
+		<Alert type={isOnlyWarning ? AlertType.Info : AlertType.Error} testID={'error-message-warning'}>
+			{(textStyle) => (
+				<View>
+					<Text small style={[textStyle, styles.errorMessage]}>
+						{errorMessage}
+					</Text>
+					{errorContinue && (
+						<TouchableOpacity onPress={onContinue} style={styles.button}>
+							<Text small link centered>
+								{strings('transaction.continueError')}
+							</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+			)}
+		</Alert>
+	);
 }
 
 ErrorMessage.propTypes = {

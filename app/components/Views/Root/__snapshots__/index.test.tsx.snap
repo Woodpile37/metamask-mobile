@@ -14,8 +14,26 @@ exports[`Root should render correctly 1`] = `
 >
   <PersistGate
     loading={null}
+    persistor={
+      Object {
+        "@@observable": [Function],
+        "dispatch": [Function],
+        "flush": [Function],
+        "getState": [Function],
+        "pause": [Function],
+        "persist": [Function],
+        "purge": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      }
+    }
   >
-    <ConnectedRoot />
+    <ErrorBoundary
+      onError={[Function]}
+      view="Root"
+    >
+      <RootApp />
+    </ErrorBoundary>
   </PersistGate>
 </Provider>
 `;

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
@@ -80,6 +80,65 @@ const EmptyIcon = ({ medium, big, biggest, style, ...props }) => {
       {...props}
     />
   );
+	StyleSheet.create({
+		icon: {
+			width: REGULAR_SIZE,
+			height: REGULAR_SIZE,
+			borderRadius: REGULAR_RADIUS,
+		},
+		iconMedium: {
+			width: MEDIUM_SIZE,
+			height: MEDIUM_SIZE,
+			borderRadius: MEDIUM_RADIUS,
+		},
+		iconBig: {
+			width: BIG_SIZE,
+			height: BIG_SIZE,
+			borderRadius: BIG_RADIUS,
+		},
+		iconBiggest: {
+			width: BIGGEST_SIZE,
+			height: BIGGEST_SIZE,
+			borderRadius: BIGGEST_RADIUS,
+		},
+		emptyIcon: {
+			backgroundColor: colors.background.alternative,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		tokenSymbol: {
+			fontSize: 16,
+			textAlign: 'center',
+			textAlignVertical: 'center',
+			color: colors.text.default,
+		},
+		tokenSymbolMedium: {
+			fontSize: 22,
+			color: colors.text.default,
+		},
+		tokenSymbolBig: {
+			fontSize: 26,
+			color: colors.text.default,
+		},
+	});
+
+const EmptyIcon = ({ medium, big, biggest, style, ...props }) => {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<View
+			style={[
+				styles.icon,
+				medium && styles.iconMedium,
+				big && styles.iconBig,
+				biggest && styles.iconBiggest,
+				styles.emptyIcon,
+				style,
+			]}
+			{...props}
+		/>
+	);
 };
 
 EmptyIcon.propTypes = {
@@ -94,7 +153,7 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const getSource = useCallback(() => {
+  const source = useMemo(() => {
     if (symbol === 'ETH') {
       return ethLogo;
     }
@@ -109,13 +168,12 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
 
     return null;
   }, [symbol, icon]);
-  const source = getSource();
 
   if (source && !showFallback) {
     return (
       <RemoteImage
         fadeIn
-        source={getSource()}
+        source={source}
         onError={() => setShowFallback(true)}
         style={[
           styles.icon,
@@ -146,6 +204,61 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
   }
 
   return <EmptyIcon medium={medium} style={style} />;
+	const [showFallback, setShowFallback] = useState(false);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	const getSource = useCallback(() => {
+		if (symbol === 'ETH') {
+			return ethLogo;
+		}
+		if (symbol === 'BNB') {
+			return bnbLogo;
+		}
+
+		if (icon) {
+			return { uri: icon };
+		}
+
+		return null;
+	}, [symbol, icon]);
+	const source = getSource();
+
+	if (source && !showFallback) {
+		return (
+			<RemoteImage
+				fadeIn
+				source={getSource()}
+				onError={() => setShowFallback(true)}
+				style={[
+					styles.icon,
+					medium && styles.iconMedium,
+					big && styles.iconBig,
+					biggest && styles.iconBiggest,
+					style,
+				]}
+			/>
+		);
+	}
+
+	if (symbol) {
+		return (
+			<EmptyIcon medium={medium} big={big} biggest={biggest} style={style}>
+				<Text
+					style={[
+						styles.tokenSymbol,
+						medium && styles.tokenSymbolMedium,
+						(big || biggest) && styles.tokenSymbolBig,
+						biggest && styles.tokenSymbolBiggest,
+					]}
+				>
+					{symbol[0].toUpperCase()}
+				</Text>
+			</EmptyIcon>
+		);
+	}
+
+	return <EmptyIcon medium={medium} style={style} />;
 }
 
 TokenIcon.propTypes = {

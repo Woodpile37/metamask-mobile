@@ -3,12 +3,14 @@ import { shallow } from 'enzyme';
 import ReceiveRequest from './';
 import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import initialBackgroundState from '../../../util/test/initial-background-state.json';
 
 const mockStore = configureMockStore();
 const initialState = {
   engine: {
-    backgroundState: initialBackgroundState,
+    backgroundState: {
+      PreferencesController: { selectedAddress: '0x' },
+      NetworkController: { network: '1', provider: { ticker: 'ETH' } },
+    },
   },
   modals: {
     receiveAsset: {},
@@ -16,16 +18,18 @@ const initialState = {
   user: {
     seedphraseBackedUp: true,
   },
-  fiatOrders: {
-    networks: [
-      {
-        active: true,
-        chainId: 1,
-        chainName: 'Ethereum Mainnet',
-        nativeTokenSupported: true,
-      },
-    ],
-  },
+	engine: {
+		backgroundState: {
+			PreferencesController: { selectedAddress: '0x' },
+			NetworkController: { network: '1', provider: { ticker: 'ETH' } },
+		},
+	},
+	modals: {
+		receiveAsset: {},
+	},
+	user: {
+		seedphraseBackedUp: true,
+	},
 };
 const store = mockStore(initialState);
 
@@ -36,6 +40,6 @@ describe('ReceiveRequest', () => {
         <ReceiveRequest />
       </Provider>,
     );
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper.dive()).toMatchSnapshot();
   });
 });

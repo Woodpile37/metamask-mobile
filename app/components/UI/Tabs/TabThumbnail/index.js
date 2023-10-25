@@ -16,6 +16,7 @@ import {
   fontStyles,
   colors as importedColors,
 } from '../../../../styles/common';
+import { fontStyles, colors as importedColors } from '../../../../styles/common';
 import Device from '../../../../util/device';
 import AppConstants from '../../../../core/AppConstants';
 import { getHost } from '../../../../util/browser';
@@ -113,6 +114,85 @@ const createStyles = (colors) =>
       marginRight: -5,
     },
   });
+	StyleSheet.create({
+		tabFavicon: {
+			alignSelf: 'flex-start',
+			width: 22,
+			height: 22,
+			marginRight: 5,
+			marginLeft: 2,
+			marginTop: 1,
+		},
+		tabSiteName: {
+			color: colors.text.default,
+			...fontStyles.bold,
+			fontSize: 18,
+			marginRight: 40,
+			marginLeft: 5,
+			marginTop: 0,
+		},
+		tabHeader: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			justifyContent: 'flex-start',
+			backgroundColor: colors.background.default,
+			paddingVertical: 10,
+			paddingHorizontal: 10,
+		},
+		tabWrapper: {
+			marginBottom: 15,
+			borderRadius: 10,
+			elevation: 8,
+			justifyContent: 'space-evenly',
+			overflow: 'hidden',
+			borderColor: colors.border.default,
+			borderWidth: 1,
+			width,
+			height,
+		},
+		checkWrapper: {
+			backgroundColor: importedColors.transparent,
+			overflow: 'hidden',
+		},
+		tab: {
+			backgroundColor: colors.background.default,
+			flex: 1,
+			alignItems: 'flex-start',
+			justifyContent: 'flex-start',
+		},
+		tabImage: {
+			...StyleSheet.absoluteFillObject,
+			paddingTop,
+			width: null,
+			height: null,
+			resizeMode: 'cover',
+		},
+		activeTab: {
+			borderWidth: 5,
+			borderColor: colors.primary.default,
+		},
+		closeTabIcon: {
+			paddingHorizontal: 10,
+			paddingTop: 3,
+			fontSize: 32,
+			color: colors.text.default,
+			right: 0,
+			marginTop: -7,
+			position: 'absolute',
+		},
+		titleButton: {
+			backgroundColor: importedColors.transparent,
+			flex: 1,
+			flexDirection: 'row',
+			marginRight: 40,
+		},
+		closeTabButton: {
+			backgroundColor: importedColors.transparent,
+			width: Device.isIos() ? 30 : 35,
+			height: 24,
+			marginRight: -5,
+		},
+	});
 
 const { HOMEPAGE_URL } = AppConstants;
 const METAMASK_FOX = require('../../../../images/fox.png'); // eslint-disable-line import/no-commonjs
@@ -150,6 +230,13 @@ export default class TabThumbnail extends PureComponent {
     const Container = this.getContainer();
     const hostname = getHost(tab.url);
     const isHomepage = hostname === getHost(HOMEPAGE_URL);
+	render() {
+		const { isActiveTab, tab, onClose, onSwitch } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+		const Container = this.getContainer();
+		const hostname = getHost(tab.url);
+		const isHomepage = hostname === getHost(HOMEPAGE_URL);
 
     return (
       <Container style={styles.checkWrapper} elevation={8}>

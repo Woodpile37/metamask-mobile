@@ -55,6 +55,37 @@ const createStyles = (colors) =>
       borderWidth: 1,
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			alignItems: 'center',
+			flex: 1,
+		},
+		network: {
+			flexDirection: 'row',
+		},
+		networkName: {
+			fontSize: 11,
+			color: colors.text.alternative,
+			...fontStyles.normal,
+		},
+		networkIcon: {
+			width: 5,
+			height: 5,
+			borderRadius: 100,
+			marginRight: 5,
+			marginTop: Device.isIos() ? 4 : 5,
+		},
+		title: {
+			fontSize: 18,
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		otherNetworkIcon: {
+			backgroundColor: importedColors.transparent,
+			borderColor: colors.border.default,
+			borderWidth: 1,
+		},
+	});
 
 /**
  * UI PureComponent that renders inside the navbar
@@ -119,6 +150,12 @@ class NavbarTitle extends PureComponent {
       null;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+	render = () => {
+		const { network, title, translate } = this.props;
+		let name = null;
+		const color = (Networks[network.provider.type] && Networks[network.provider.type].color) || null;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
 
     if (providerConfig.nickname) {
       name = providerConfig.nickname;
@@ -160,6 +197,27 @@ class NavbarTitle extends PureComponent {
       </TouchableOpacity>
     );
   };
+		return (
+			<TouchableOpacity
+				onPress={this.openNetworkList}
+				style={styles.wrapper}
+				activeOpacity={this.props.disableNetwork ? 1 : 0.2}
+				testID={'open-networks-button'}
+			>
+				{title ? (
+					<Text numberOfLines={1} style={styles.title}>
+						{realTitle}
+					</Text>
+				) : null}
+				<View style={styles.network}>
+					<View style={[styles.networkIcon, color ? { backgroundColor: color } : styles.otherNetworkIcon]} />
+					<Text numberOfLines={1} style={styles.networkName} testID={'navbar-title-network'}>
+						{name}
+					</Text>
+				</View>
+			</TouchableOpacity>
+		);
+	};
 }
 
 NavbarTitle.contextType = ThemeContext;

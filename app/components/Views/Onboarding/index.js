@@ -1,513 +1,614 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ActivityIndicator,
-  BackHandler,
-  Text,
-  View,
-  ScrollView,
-  StyleSheet,
-  Image,
-  InteractionManager,
-  Platform,
-  Animated,
-  Easing,
-} from 'react-native';
-import AsyncStorage from '../../../store/async-storage-wrapper';
+import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Alert, Image, InteractionManager } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import StyledButton from '../../UI/StyledButton';
-import {
-  fontStyles,
-  baseStyles,
-  colors as importedColors,
-} from '../../../styles/common';
+import { colors, fontStyles, baseStyles } from '../../../styles/common';
 import OnboardingScreenWithBg from '../../UI/OnboardingScreenWithBg';
 import { strings } from '../../../../locales/i18n';
 import Button from 'react-native-button';
 import { connect } from 'react-redux';
+import SecureKeychain from '../../../core/SecureKeychain';
+import Engine from '../../../core/Engine';
 import FadeOutOverlay from '../../UI/FadeOutOverlay';
-import Analytics from '../../../core/Analytics/Analytics';
+import TermsAndConditions from '../TermsAndConditions';
+import Analytics from '../../../core/Analytics';
+import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
 import { saveOnboardingEvent } from '../../../actions/onboarding';
-import {
-  getTransparentBackOnboardingNavbarOptions,
-  getTransparentOnboardingNavbarOptions,
-} from '../../UI/Navbar';
-import Device from '../../../util/device';
-import BaseNotification from '../../UI/Notification/BaseNotification';
-import ElevatedView from 'react-native-elevated-view';
-import { loadingSet, loadingUnset } from '../../../actions/user';
-import PreventScreenshot from '../../../core/PreventScreenshot';
-import WarningExistingUserModal from '../../UI/WarningExistingUserModal';
-import { PREVIOUS_SCREEN, ONBOARDING } from '../../../constants/navigation';
-import { EXISTING_USER, METRICS_OPT_IN } from '../../../constants/storage';
-import { MetaMetricsEvents } from '../../../core/Analytics';
-import AnalyticsV2 from '../../../util/analyticsV2';
-
-import DefaultPreference from 'react-native-default-preference';
-import { Authentication } from '../../../core';
-import { ThemeContext, mockTheme } from '../../../util/theme';
+import { getTransparentBackOnboardingNavbarOptions } from '../../UI/Navbar';
+import PubNubWrapper from '../../../util/syncWithExtension';
+import ActionModal from '../../UI/ActionModal';
+import Logger from '../../../util/Logger';
+import Device from '../../../util/Device';
+import { passwordSet, seedphraseBackedUp } from '../../../actions/user';
+import { setLockTime } from '../../../actions/settings';
+import AppConstants from '../../../core/AppConstants';
 import AnimatedFox from 'react-native-animated-fox';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import {
-  WALLET_SETUP_SCREEN_TITLE_ID,
-  WALLET_SETUP_SCREEN_DESCRIPTION_ID,
-  WALLET_SETUP_SCREEN_IMPORT_FROM_SEED_BUTTON_ID,
-  WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID,
-} from '../../../../wdio/screen-objects/testIDs/Screens/WalletSetupScreen.testIds';
-import Routes from '../../../constants/navigation/Routes';
-import { selectAccounts } from '../../../selectors/accountTrackerController';
+import PreventScreenshot from '../../../core/PreventScreenshot';
 
-const createStyles = (colors) =>
-  StyleSheet.create({
-    scroll: {
-      flex: 1,
-    },
-    wrapper: {
-      flex: 1,
-      alignItems: 'center',
-      paddingVertical: 30,
-    },
-    foxWrapper: {
-      width: Device.isIos() ? 90 : 45,
-      height: Device.isIos() ? 90 : 45,
-      marginVertical: 20,
-    },
-    image: {
-      alignSelf: 'center',
-      width: Device.isIos() ? 90 : 45,
-      height: Device.isIos() ? 90 : 45,
-    },
-    title: {
-      fontSize: 24,
-      color: colors.text.default,
-      ...fontStyles.bold,
-      textAlign: 'center',
-    },
-    ctas: {
-      flex: 1,
-      position: 'relative',
-    },
-    footer: {
-      marginTop: -20,
-      marginBottom: 20,
-    },
-    login: {
-      fontSize: 18,
-      color: colors.primary.default,
-      ...fontStyles.normal,
-    },
-    buttonDescription: {
-      ...fontStyles.normal,
-      fontSize: 14,
-      textAlign: 'center',
-      marginBottom: 16,
-      color: colors.text.default,
-      lineHeight: 20,
-    },
-    importWrapper: {
-      marginVertical: 24,
-    },
-    createWrapper: {
-      flex: 1,
-      justifyContent: 'flex-end',
-      marginBottom: 24,
-    },
-    buttonWrapper: {
-      marginBottom: 16,
-    },
-    loader: {
-      marginTop: 180,
-      justifyContent: 'center',
-      textAlign: 'center',
-    },
-    loadingText: {
-      marginTop: 30,
-      fontSize: 14,
-      textAlign: 'center',
-      color: colors.text.default,
-      ...fontStyles.normal,
-    },
-    modalTypeView: {
-      position: 'absolute',
-      bottom: 0,
-      paddingBottom: Device.isIphoneX() ? 20 : 10,
-      left: 0,
-      right: 0,
-      backgroundColor: importedColors.transparent,
-    },
-    notificationContainer: {
-      flex: 0.1,
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-    },
-  });
+const PUB_KEY = process.env.MM_PUBNUB_PUB_KEY;
+
+const styles = StyleSheet.create({
+	scroll: {
+		flexGrow: 1
+	},
+	wrapper: {
+		paddingHorizontal: 40,
+		paddingVertical: 30,
+		flex: 1,
+		alignItems: 'center'
+	},
+	foxWrapper: {
+		width: Device.isIos() ? 90 : 45,
+		height: Device.isIos() ? 90 : 45,
+		marginVertical: 20
+	},
+	image: {
+		alignSelf: 'center',
+		width: Device.isIos() ? 90 : 45,
+		height: Device.isIos() ? 90 : 45
+	},
+	termsAndConditions: {
+		paddingVertical: 30
+	},
+	title: {
+		fontSize: 24,
+		color: colors.fontPrimary,
+		...fontStyles.bold,
+		textAlign: 'center'
+	},
+	ctas: {
+		flex: 1,
+		position: 'relative'
+	},
+	footer: {
+		marginTop: -20,
+		marginBottom: 20
+	},
+	login: {
+		fontSize: 18,
+		color: colors.blue,
+		...fontStyles.normal
+	},
+	buttonDescription: {
+		...fontStyles.normal,
+		fontSize: 14,
+		textAlign: 'center',
+		marginBottom: 16,
+		color: colors.fontPrimary,
+		lineHeight: 20
+	},
+	importWrapper: {
+		marginVertical: 24
+	},
+	createWrapper: {
+		position: 'absolute',
+		width: '100%',
+		bottom: 0
+	},
+	buttonWrapper: {
+		flexGrow: 1,
+		marginBottom: 16
+	},
+	scanTitle: {
+		fontSize: 18,
+		color: colors.fontPrimary,
+		fontWeight: 'bold'
+	},
+	steps: {
+		paddingVertical: 24
+	},
+	step: {
+		fontSize: 16,
+		color: colors.fontPrimary
+	},
+	loader: {
+		marginTop: 180,
+		justifyContent: 'center',
+		textAlign: 'center'
+	},
+	loadingText: {
+		marginTop: 30,
+		fontSize: 14,
+		textAlign: 'center',
+		color: colors.fontPrimary,
+		...fontStyles.normal
+	},
+	stepsWrapper: {
+		paddingHorizontal: 40,
+		paddingVertical: 30,
+		display: 'flex'
+	},
+	column: {
+		flexDirection: 'column'
+	},
+	row: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		flex: 1
+	},
+	bullet: {
+		width: 20
+	},
+	bulletText: {
+		flex: 1
+	}
+});
 
 /**
  * View that is displayed to first time (new) users
  */
 class Onboarding extends PureComponent {
-  static propTypes = {
-    /**
-     * The navigator object
-     */
-    navigation: PropTypes.object,
-    /**
-     * redux flag that indicates if the user set a password
-     */
-    passwordSet: PropTypes.bool,
-    /**
-     * Save onboarding event to state
-     */
-    saveOnboardingEvent: PropTypes.func,
-    /**
-     * loading status
-     */
-    loading: PropTypes.bool,
-    /**
-     * set loading status
-     */
-    setLoading: PropTypes.func,
-    /**
-     * unset loading status
-     */
-    unsetLoading: PropTypes.func,
-    /**
-     * loadings msg
-     */
-    loadingMsg: PropTypes.string,
-    /**
-     * Object that represents the current route info like params passed to it
-     */
-    route: PropTypes.object,
-  };
+	static navigationOptions = ({ navigation }) => getTransparentBackOnboardingNavbarOptions(navigation);
 
-  notificationAnimated = new Animated.Value(100);
-  detailsYAnimated = new Animated.Value(0);
-  actionXAnimated = new Animated.Value(0);
-  detailsAnimated = new Animated.Value(0);
+	static propTypes = {
+		/**
+		 * The navigator object
+		 */
+		navigation: PropTypes.object,
+		/**
+		 * redux flag that indicates if the user set a password
+		 */
+		passwordSet: PropTypes.bool,
+		/**
+		 * Save onboarding event to state
+		 */
+		saveOnboardingEvent: PropTypes.func,
+		/**
+		 * Selected address
+		 */
+		selectedAddress: PropTypes.string,
+		/**
+		 * The action to update the password set flag
+		 * in the redux store
+		 */
+		passwordHasBeenSet: PropTypes.func,
+		/**
+		 * The action to update set the locktime
+		 * in the redux store
+		 */
+		setLockTime: PropTypes.func,
+		/**
+		 * The action to update the seedphrase backed up flag
+		 * in the redux store
+		 */
+		seedphraseBackedUp: PropTypes.func
+	};
 
-  animatedTimingStart = (animatedRef, toValue) => {
-    Animated.timing(animatedRef, {
-      toValue,
-      duration: 500,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start();
-  };
+	state = {
+		loading: false,
+		existingUser: false,
+		qrCodeModalVisible: false,
+		currentStep: 1
+	};
+	seedwords = null;
+	importedAccounts = null;
+	channelName = null;
+	incomingDataStr = '';
+	dataToSync = null;
+	mounted = false;
 
-  state = {
-    warningModalVisible: false,
-    loading: false,
-    existingUser: false,
-  };
+	state = {
+		loading: false,
+		existingUser: false
+	};
 
-  seedwords = null;
-  importedAccounts = null;
-  channelName = null;
-  incomingDataStr = '';
-  dataToSync = null;
-  mounted = false;
+	async checkIfExistingUser() {
+		const existingUser = await AsyncStorage.getItem('@MetaMask:existingUser');
+		if (existingUser !== null) {
+			this.setState({ existingUser: true });
+		}
+	}
 
-  warningCallback = () => true;
+	componentDidMount() {
+		this.mounted = true;
+		this.checkIfExistingUser();
+		InteractionManager.runAfterInteractions(() => {
+			PreventScreenshot.forbid();
+		});
+	}
 
-  showNotification = () => {
-    // show notification
-    this.animatedTimingStart(this.notificationAnimated, 0);
-    // hide notification
-    setTimeout(() => {
-      this.animatedTimingStart(this.notificationAnimated, 200);
-    }, 4000);
-    this.disableBackPress();
-  };
+	componentWillUnmount() {
+		this.mounted = false;
+		this.pubnubWrapper && this.pubnubWrapper.disconnectWebsockets();
+		InteractionManager.runAfterInteractions(() => {
+			PreventScreenshot.allow();
+		});
+	}
 
-  disableBackPress = () => {
-    // Disable back press
-    const hardwareBackPress = () => true;
-    BackHandler.addEventListener('hardwareBackPress', hardwareBackPress);
-  };
+	safeSync = () => {
+		const { existingUser } = this.state;
+		const action = () => this.onPressSync();
+		if (existingUser) {
+			this.alertExistingUser(action);
+		} else {
+			action();
+		}
+	};
 
-  updateNavBar = () => {
-    const { route, navigation } = this.props;
-    const colors = this.context.colors || mockTheme.colors;
-    navigation.setOptions(
-      route.params?.delete
-        ? getTransparentOnboardingNavbarOptions(colors)
-        : getTransparentBackOnboardingNavbarOptions(colors),
-    );
-  };
+	onPressSync = () => {
+		if (!PUB_KEY) {
+			// Dev message
+			Alert.alert(
+				'This feature has been disabled',
+				`Because you did not set the .js.env file. Look at .js.env.example for more information`
+			);
+			return false;
+		}
+		this.track(ANALYTICS_EVENT_OPTS.ONBOARDING_SELECTED_SYNC_WITH_EXTENSION);
+		this.toggleQrCodeModal();
+	};
 
-  componentDidMount() {
-    this.updateNavBar();
-    this.mounted = true;
-    this.checkIfExistingUser();
+	toggleQrCodeModal = () => {
+		this.setState(state => ({ qrCodeModalVisible: !state.qrCodeModalVisible }));
+	};
 
-    InteractionManager.runAfterInteractions(() => {
-      PreventScreenshot.forbid();
-      if (this.props.route.params?.delete) {
-        this.props.setLoading(strings('onboarding.delete_current'));
-        setTimeout(() => {
-          this.showNotification();
-          this.props.unsetLoading();
-        }, 2000);
-      }
-    });
-  }
+	initWebsockets() {
+		this.loading = true;
+		this.mounted && this.setState({ loading: true });
 
-  componentWillUnmount() {
-    this.mounted = false;
-    this.props.unsetLoading();
-    InteractionManager.runAfterInteractions(PreventScreenshot.allow);
-  }
+		this.pubnubWrapper.addMessageListener(
+			() => {
+				Alert.alert(strings('sync_with_extension.error_title'), strings('sync_with_extension.error_message'));
+				this.loading = false;
+				this.setState({ loading: false });
+				return false;
+			},
+			data => {
+				this.incomingDataStr = null;
+				const { pwd, seed, importedAccounts } = data.udata;
+				this.password = pwd;
+				this.seedWords = seed;
+				this.importedAccounts = importedAccounts;
+				delete data.udata;
+				this.dataToSync = { ...data };
+				this.pubnubWrapper.endSync(() => this.disconnect());
+			}
+		);
 
-  componentDidUpdate = () => {
-    this.updateNavBar();
-  };
+		this.pubnubWrapper.subscribe();
+	}
 
-  async checkIfExistingUser() {
-    const existingUser = await AsyncStorage.getItem(EXISTING_USER);
-    if (existingUser !== null) {
-      this.setState({ existingUser: true });
-    }
-  }
+	startSync = async firstAttempt => {
+		try {
+			this.initWebsockets();
+			await this.pubnubWrapper.startSync();
+			return true;
+		} catch (e) {
+			if (!firstAttempt) {
+				this.props.navigation.goBack();
+				if (e.message === 'Sync::timeout') {
+					Alert.alert(
+						strings('sync_with_extension.outdated_qr_code'),
+						strings('sync_with_extension.outdated_qr_code_desc')
+					);
+				} else {
+					Alert.alert(
+						strings('sync_with_extension.something_wrong'),
+						strings('sync_with_extension.something_wrong_desc')
+					);
+				}
+			}
+			Logger.error(e, { message: 'Sync::startSync', firstAttempt });
+			return false;
+		}
+	};
 
-  onLogin = async () => {
-    const { passwordSet } = this.props;
-    if (!passwordSet) {
-      await Authentication.resetVault();
-      this.props.navigation.replace(Routes.ONBOARDING.HOME_NAV);
-    } else {
-      await Authentication.lockApp();
-      this.props.navigation.replace(Routes.ONBOARDING.LOGIN);
-    }
-  };
+	async disconnect() {
+		let password;
+		try {
+			// If there's a password set, let's keep it
+			if (this.props.passwordSet) {
+				// This could also come from the previous step if it's a first time user
+				const credentials = await SecureKeychain.getGenericPassword();
+				if (credentials) {
+					password = credentials.password;
+				} else {
+					password = this.password;
+				}
+				// Otherwise use the password from the extension
+			} else {
+				password = this.password;
+			}
+		} catch (e) {
+			password = this.password;
+		}
 
-  handleExistingUser = (action) => {
-    if (this.state.existingUser) {
-      this.alertExistingUser(action);
-    } else {
-      action();
-    }
-  };
+		if (password === this.password) {
+			const biometryType = await SecureKeychain.getSupportedBiometryType();
+			if (biometryType) {
+				this.setState({ biometryType, biometryChoice: true });
 
-  onPressCreate = () => {
-    const action = async () => {
-      const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
-      if (metricsOptIn) {
-        this.props.navigation.navigate('ChoosePassword', {
-          [PREVIOUS_SCREEN]: ONBOARDING,
-        });
-        this.track(MetaMetricsEvents.WALLET_SETUP_STARTED);
-      } else {
-        this.props.navigation.navigate('OptinMetrics', {
-          onContinue: () => {
-            this.props.navigation.replace('ChoosePassword', {
-              [PREVIOUS_SCREEN]: ONBOARDING,
-            });
-            this.track(MetaMetricsEvents.WALLET_SETUP_STARTED);
-          },
-        });
-      }
-    };
-    this.handleExistingUser(action);
-  };
+				Alert.alert(
+					strings('sync_with_extension.allow_biometrics_title', { biometrics: biometryType }),
+					strings('sync_with_extension.allow_biometrics_desc', { biometrics: biometryType }),
+					[
+						{
+							text: strings('sync_with_extension.warning_cancel_button'),
+							onPress: async () => {
+								await AsyncStorage.removeItem('@MetaMask:biometryChoice');
+								await AsyncStorage.setItem('@MetaMask:biometryChoiceDisabled', 'true');
+								this.finishSync({ biometrics: false, password });
+							},
+							style: 'cancel'
+						},
+						{
+							text: strings('sync_with_extension.warning_ok_button'),
+							onPress: async () => {
+								await AsyncStorage.setItem('@MetaMask:biometryChoice', biometryType);
+								await AsyncStorage.removeItem('@MetaMask:biometryChoiceDisabled');
+								this.finishSync({ biometrics: true, biometryType, password });
+							}
+						}
+					],
+					{ cancelable: false }
+				);
+			} else {
+				this.finishSync({ biometrics: false, password });
+			}
+		} else {
+			this.finishSync({ biometrics: false, password });
+		}
+	}
 
-  onPressImport = () => {
-    const action = async () => {
-      const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
-      if (metricsOptIn) {
-        this.props.navigation.push(
-          Routes.ONBOARDING.IMPORT_FROM_SECRET_RECOVERY_PHRASE,
-        );
-        this.track(MetaMetricsEvents.WALLET_IMPORT_STARTED);
-      } else {
-        this.props.navigation.navigate('OptinMetrics', {
-          onContinue: () => {
-            this.props.navigation.replace(
-              Routes.ONBOARDING.IMPORT_FROM_SECRET_RECOVERY_PHRASE,
-            );
-            this.track(MetaMetricsEvents.WALLET_IMPORT_STARTED);
-          },
-        });
-      }
-    };
-    this.handleExistingUser(action);
-  };
+	finishSync = async opts => {
+		if (opts.biometrics) {
+			const authOptions = {
+				accessControl: SecureKeychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET_OR_DEVICE_PASSCODE
+			};
+			await SecureKeychain.setGenericPassword('metamask-user', opts.password, authOptions);
 
-  track = (...eventArgs) => {
-    InteractionManager.runAfterInteractions(async () => {
-      if (Analytics.checkEnabled()) {
-        AnalyticsV2.trackEvent(...eventArgs);
-        return;
-      }
-      const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
-      if (!metricsOptIn) {
-        this.props.saveOnboardingEvent(eventArgs);
-      }
-    });
-  };
+			// If the user enables biometrics, we're trying to read the password
+			// immediately so we get the permission prompt
+			try {
+				if (Device.isIos()) {
+					await SecureKeychain.getGenericPassword();
+					await AsyncStorage.setItem('@MetaMask:biometryChoice', opts.biometryType);
+				}
+			} catch (e) {
+				Logger.error(e, 'User cancelled biometrics permission');
+				await AsyncStorage.removeItem('@MetaMask:biometryChoice');
+				await AsyncStorage.setItem('@MetaMask:biometryChoiceDisabled', 'true');
+				await AsyncStorage.setItem('@MetaMask:passcodeDisabled', 'true');
+			}
+		} else {
+			await AsyncStorage.removeItem('@MetaMask:biometryChoice');
+			await AsyncStorage.setItem('@MetaMask:biometryChoiceDisabled', 'true');
+			await AsyncStorage.setItem('@MetaMask:passcodeDisabled', 'true');
+		}
 
-  alertExistingUser = (callback) => {
-    this.warningCallback = () => {
-      callback();
-      this.toggleWarningModal();
-    };
-    this.toggleWarningModal();
-  };
+		try {
+			await AsyncStorage.removeItem('@MetaMask:nextMakerReminder');
+			await Engine.resetState();
+			await Engine.sync({
+				...this.dataToSync,
+				seed: this.seedWords,
+				importedAccounts: this.importedAccounts,
+				pass: opts.password
+			});
+			await AsyncStorage.setItem('@MetaMask:existingUser', 'true');
+			this.props.passwordHasBeenSet();
+			this.props.setLockTime(AppConstants.DEFAULT_LOCK_TIMEOUT);
+			this.props.seedphraseBackedUp();
+			this.done = true;
+			this.dataToSync = null;
+			this.props.navigation.push('SyncWithExtensionSuccess');
+		} catch (e) {
+			Logger.error(e, 'Sync::disconnect');
+			Alert.alert(strings('sync_with_extension.error_title'), strings('sync_with_extension.error_message'));
+			this.setState({ loading: false });
+			this.props.navigation.goBack();
+		}
+	};
 
-  toggleWarningModal = () => {
-    const warningModalVisible = this.state.warningModalVisible;
-    this.setState({ warningModalVisible: !warningModalVisible });
-  };
+	showQrCode = () => {
+		this.props.navigation.push('QRScanner', {
+			onStartScan: async data => {
+				if (data.content && data.content.search('metamask-sync:') !== -1) {
+					const [channelName, cipherKey] = data.content.replace('metamask-sync:', '').split('|@|');
+					this.pubnubWrapper = new PubNubWrapper(channelName, cipherKey);
+					await this.pubnubWrapper.establishConnection(this.props.selectedAddress);
+				} else {
+					Alert.alert(
+						strings('sync_with_extension.invalid_qr_code'),
+						strings('sync_with_extension.invalid_qr_code_desc')
+					);
+				}
+			},
+			onScanSuccess: async data => {
+				if (data.content && data.content.search('metamask-sync:') !== -1) {
+					(await this.startSync(true)) || (await this.startSync(false));
+				} else {
+					Alert.alert(
+						strings('sync_with_extension.invalid_qr_code'),
+						strings('sync_with_extension.invalid_qr_code_desc')
+					);
+				}
+			}
+		});
+	};
 
-  renderLoader = () => {
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
+	onLogin = async () => {
+		const { passwordSet } = this.props;
+		if (!passwordSet) {
+			const { KeyringController } = Engine.context;
+			// Restore vault with empty password
+			await KeyringController.submitPassword('');
+			await SecureKeychain.resetGenericPassword();
+			this.props.navigation.navigate('HomeNav');
+		} else {
+			this.props.navigation.navigate('Login');
+		}
+	};
 
-    return (
-      <View style={styles.wrapper}>
-        <View style={styles.loader}>
-          <ActivityIndicator size="small" />
-          <Text style={styles.loadingText}>{this.props.loadingMsg}</Text>
-        </View>
-      </View>
-    );
-  };
+	track = key => {
+		InteractionManager.runAfterInteractions(async () => {
+			if (Analytics.getEnabled()) {
+				Analytics.trackEvent(key);
+				return;
+			}
+			const metricsOptIn = await AsyncStorage.getItem('@MetaMask:metricsOptIn');
+			if (!metricsOptIn) {
+				this.props.saveOnboardingEvent(key);
+			}
+		});
+	};
 
-  renderContent() {
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
+	onPressCreate = () => {
+		this.props.navigation.navigate('ChoosePassword');
+		this.track(ANALYTICS_EVENT_OPTS.ONBOARDING_SELECTED_CREATE_NEW_PASSWORD);
+	};
 
-    return (
-      <View style={styles.ctas}>
-        <Text
-          style={styles.title}
-          {...generateTestId(Platform, WALLET_SETUP_SCREEN_TITLE_ID)}
-        >
-          {strings('onboarding.title')}
-        </Text>
-        <View style={styles.importWrapper}>
-          <Text
-            style={styles.buttonDescription}
-            {...generateTestId(Platform, WALLET_SETUP_SCREEN_DESCRIPTION_ID)}
-          >
-            {strings('onboarding.import')}
-          </Text>
-        </View>
-        <View style={styles.createWrapper}>
-          <View style={styles.buttonWrapper}>
-            <StyledButton
-              type={'normal'}
-              onPress={this.onPressImport}
-              testID={WALLET_SETUP_SCREEN_IMPORT_FROM_SEED_BUTTON_ID}
-            >
-              {strings('import_wallet.import_from_seed_button')}
-            </StyledButton>
-          </View>
-          <View style={styles.buttonWrapper}>
-            <StyledButton
-              type={'blue'}
-              onPress={this.onPressCreate}
-              testID={WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID}
-            >
-              {strings('onboarding.start_exploring_now')}
-            </StyledButton>
-          </View>
-        </View>
-      </View>
-    );
-  }
+	onPressImport = () => {
+		this.props.navigation.push('ImportFromSeed');
+		this.track(ANALYTICS_EVENT_OPTS.ONBOARDING_SELECTED_IMPORT_WALLET);
+	};
 
-  handleSimpleNotification = () => {
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
+	alertExistingUser = callback => {
+		Alert.alert(
+			strings('sync_with_extension.warning_title'),
+			strings('sync_with_extension.warning_message'),
+			[
+				{ text: strings('sync_with_extension.warning_cancel_button'), onPress: () => false, style: 'cancel' },
+				{ text: strings('sync_with_extension.warning_ok_button'), onPress: () => callback() }
+			],
+			{ cancelable: false }
+		);
+	};
 
-    if (!this.props.route.params?.delete) return;
-    return (
-      <Animated.View
-        style={[
-          styles.notificationContainer,
-          { transform: [{ translateY: this.notificationAnimated }] },
-        ]}
-      >
-        <ElevatedView style={styles.modalTypeView} elevation={100}>
-          <BaseNotification
-            closeButtonDisabled
-            status="success"
-            data={{
-              title: strings('onboarding.success'),
-              description: strings('onboarding.your_wallet'),
-            }}
-          />
-        </ElevatedView>
-      </Animated.View>
-    );
-  };
+	renderLoader() {
+		return (
+			<View style={styles.wrapper}>
+				<View style={styles.loader}>
+					<ActivityIndicator size="small" />
+					<Text style={styles.loadingText}>{strings('sync_with_extension.please_wait')}</Text>
+				</View>
+			</View>
+		);
+	}
 
-  render() {
-    const { loading } = this.props;
-    const { existingUser } = this.state;
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
+	renderContent() {
+		return (
+			<View style={styles.ctas}>
+				<Text style={styles.title} testID={'onboarding-screen-title'}>
+					{strings('onboarding.title')}
+				</Text>
+				<View style={styles.importWrapper}>
+					<Text style={styles.buttonDescription}>{strings('onboarding.import')}</Text>
+				</View>
+				<View style={styles.createWrapper}>
+					<View style={styles.buttonWrapper}>
+						<StyledButton
+							type={'normal'}
+							onPress={this.onPressImport}
+							testID={'import-wallet-import-from-seed-button'}
+						>
+							{strings('import_wallet.import_from_seed_button')}
+						</StyledButton>
+					</View>
+					<View style={styles.buttonWrapper}>
+						<StyledButton
+							style={styles.button}
+							type={'normal'}
+							onPress={this.safeSync}
+							testID={'onboarding-import-button'}
+						>
+							{strings('import_wallet.sync_from_browser_extension_button')}
+						</StyledButton>
+					</View>
+					<View style={styles.buttonWrapper}>
+						<StyledButton
+							style={styles.button}
+							type={'blue'}
+							onPress={this.onPressCreate}
+							testID={'start-exploring-button'}
+						>
+							{strings('onboarding.start_exploring_now')}
+						</StyledButton>
+					</View>
+				</View>
+			</View>
+		);
+	}
 
-    return (
-      <View style={baseStyles.flexGrow} testID={'onboarding-screen'}>
-        <OnboardingScreenWithBg screen={'c'}>
-          <ScrollView
-            style={baseStyles.flexGrow}
-            contentContainerStyle={styles.scroll}
-          >
-            <View style={styles.wrapper}>
-              {loading && (
-                <View style={styles.foxWrapper}>
-                  {Device.isAndroid() ? (
-                    <Image
-                      source={require('../../../images/fox.png')}
-                      style={styles.image}
-                      resizeMethod={'auto'}
-                    />
-                  ) : (
-                    <AnimatedFox bgColor={colors.background.default} />
-                  )}
-                </View>
-              )}
-              {loading ? this.renderLoader() : this.renderContent()}
-            </View>
-            {existingUser && !loading && (
-              <View style={styles.footer}>
-                <Button style={styles.login} onPress={this.onLogin}>
-                  {strings('onboarding.unlock')}
-                </Button>
-              </View>
-            )}
-          </ScrollView>
-        </OnboardingScreenWithBg>
-        <FadeOutOverlay />
+	render() {
+		const { qrCodeModalVisible, loading, existingUser } = this.state;
 
-        <View>{this.handleSimpleNotification()}</View>
-
-        <WarningExistingUserModal
-          warningModalVisible={this.state.warningModalVisible}
-          onCancelPress={this.warningCallback}
-          onRequestClose={this.toggleWarningModal}
-          onConfirmPress={this.toggleWarningModal}
-        />
-      </View>
-    );
-  }
+		return (
+			<View style={baseStyles.flexGrow} testID={'onboarding-screen'}>
+				<OnboardingScreenWithBg screen={'c'}>
+					<ScrollView style={baseStyles.flexGrow} contentContainerStyle={styles.scroll}>
+						<View style={styles.wrapper}>
+							{loading && (
+								<View style={styles.foxWrapper}>
+									{Device.isAndroid() ? (
+										<Image
+											source={require('../../../images/fox.png')}
+											style={styles.image}
+											resizeMethod={'auto'}
+										/>
+									) : (
+										<AnimatedFox />
+									)}
+								</View>
+							)}
+							{loading ? this.renderLoader() : this.renderContent()}
+						</View>
+						{existingUser && !loading && (
+							<View style={styles.footer}>
+								<Button style={styles.login} onPress={this.onLogin}>
+									{strings('onboarding.login')}
+								</Button>
+							</View>
+						)}
+					</ScrollView>
+					<View style={styles.termsAndConditions}>
+						<TermsAndConditions navigation={this.props.navigation} />
+					</View>
+				</OnboardingScreenWithBg>
+				<FadeOutOverlay />
+				<ActionModal
+					modalVisible={qrCodeModalVisible}
+					onConfirmPress={this.showQrCode}
+					onCancelPress={this.toggleQrCodeModal}
+					confirmText="Scan"
+					confirmButtonMode="confirm"
+				>
+					<View style={styles.stepsWrapper}>
+						<Text style={styles.scanTitle}>{strings('onboarding.scan_title')}</Text>
+						<View style={styles.column}>
+							{[1, 2, 3, 4].map((val, index) => (
+								<View key={index} style={[styles.row, styles.steps]}>
+									<View style={styles.bullet}>
+										<Text style={styles.step}>{val}.</Text>
+									</View>
+									<View style={styles.bulletText}>
+										<Text style={styles.step}>{strings(`onboarding.scan_step_${val}`)}</Text>
+									</View>
+								</View>
+							))}
+						</View>
+					</View>
+				</ActionModal>
+			</View>
+		);
+	}
 }
 
-Onboarding.contextType = ThemeContext;
-
-const mapStateToProps = (state) => ({
-  accounts: selectAccounts(state),
-  passwordSet: state.user.passwordSet,
-  loading: state.user.loadingSet,
-  loadingMsg: state.user.loadingMsg,
+const mapStateToProps = state => ({
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	accounts: state.engine.backgroundState.AccountTrackerController.accounts,
+	passwordSet: state.user.passwordSet
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setLoading: (msg) => dispatch(loadingSet(msg)),
-  unsetLoading: () => dispatch(loadingUnset()),
-  saveOnboardingEvent: (event) => dispatch(saveOnboardingEvent(event)),
+const mapDispatchToProps = dispatch => ({
+	passwordHasBeenSet: () => dispatch(passwordSet()),
+	setLockTime: time => dispatch(setLockTime(time)),
+	seedphraseBackedUp: () => dispatch(seedphraseBackedUp()),
+	saveOnboardingEvent: event => dispatch(saveOnboardingEvent(event))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Onboarding);

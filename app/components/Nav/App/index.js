@@ -8,6 +8,7 @@ import React, {
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { Animated, Linking } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from '../../Views/Login';
 import QRScanner from '../../Views/QRScanner';
 import Onboarding from '../../Views/Onboarding';
@@ -33,7 +34,7 @@ import Logger from '../../../util/Logger';
 import { trackErrorAsAnalytics } from '../../../util/analyticsV2';
 import { routingInstrumentation } from '../../../util/sentryUtils';
 import Analytics from '../../../core/Analytics/Analytics';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import {
   CURRENT_APP_VERSION,
   EXISTING_USER,
@@ -46,7 +47,6 @@ import {
 } from '../../../actions/navigation';
 import { findRouteNameFromNavigatorState } from '../../../util/general';
 import { Authentication } from '../../../core/';
-import { isBlockaidFeatureEnabled } from '../../../util/blockaid';
 import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
 import SDKConnect from '../../../core/SDKConnect/SDKConnect';
@@ -79,19 +79,9 @@ import WalletResetNeeded from '../../Views/RestoreWallet/WalletResetNeeded';
 import SDKLoadingModal from '../../Views/SDKLoadingModal/SDKLoadingModal';
 import SDKFeedbackModal from '../../Views/SDKFeedbackModal/SDKFeedbackModal';
 import AccountActions from '../../../components/Views/AccountActions';
-import EthSignFriction from '../../../components/Views/Settings/AdvancedSettings/EthSignFriction';
 import WalletActions from '../../Views/WalletActions';
 import NetworkSelector from '../../../components/Views/NetworkSelector';
 import EditAccountName from '../../Views/EditAccountName/EditAccountName';
-import WC2Manager, {
-  isWC2Enabled,
-} from '../../../../app/core/WalletConnect/WalletConnectV2';
-import { PPOMView } from '../../../lib/ppom/PPOMView';
-import NavigationService from '../../../core/NavigationService';
-import LockScreen from '../../Views/LockScreen';
-import AsyncStorage from '../../../store/async-storage-wrapper';
-import ShowIpfsGatewaySheet from '../../Views/ShowIpfsGatewaySheet/ShowIpfsGatewaySheet';
-import ShowDisplayNftMediaSheet from '../../Views/ShowDisplayMediaNFTSheet/ShowDisplayNFTMediaSheet';
 
 const clearStackNavigatorOptions = {
   headerShown: false,
@@ -231,14 +221,16 @@ const App = ({ userLoggedIn }) => {
   const { colors } = useTheme();
   const { toastRef } = useContext(ToastContext);
   const dispatch = useDispatch();
-  const sdkInit = useRef(false);
-  const [onboarded, setOnboarded] = useState(false);
   const triggerSetCurrentRoute = (route) => {
     dispatch(setCurrentRoute(route));
     if (route === 'Wallet' || route === 'BrowserView') {
       dispatch(setCurrentBottomNavRoute(route));
     }
   };
+  const frequentRpcList = useSelector(
+    (state) =>
+      state?.engine?.backgroundState?.PreferencesController?.frequentRpcList,
+  );
 
   useEffect(() => {
     if (prevNavigator.current || !navigator) return;
@@ -248,7 +240,7 @@ const App = ({ userLoggedIn }) => {
       const existingUser = await AsyncStorage.getItem(EXISTING_USER);
       try {
         if (existingUser && selectedAddress) {
-          await Authentication.appTriggeredAuth({ selectedAddress });
+          await Authentication.appTriggeredAuth(selectedAddress);
           // we need to reset the navigator here so that the user cannot go back to the login screen
           navigator.reset({ routes: [{ name: Routes.ONBOARDING.HOME_NAV }] });
         }
@@ -321,6 +313,7 @@ const App = ({ userLoggedIn }) => {
             navigator.dispatch?.(CommonActions.navigate(params));
           },
         },
+        frequentRpcList,
         dispatch,
       });
       if (!prevNavigator.current) {
@@ -341,7 +334,7 @@ const App = ({ userLoggedIn }) => {
       }
       prevNavigator.current = navigator;
     }
-  }, [dispatch, handleDeeplink, navigator]);
+  }, [dispatch, handleDeeplink, frequentRpcList, navigator]);
 
   useEffect(() => {
     const initAnalytics = async () => {
@@ -352,30 +345,26 @@ const App = ({ userLoggedIn }) => {
   }, []);
 
   useEffect(() => {
-    if (navigator?.getCurrentRoute && !sdkInit.current && onboarded) {
-      SDKConnect.getInstance()
-        .init({ navigation: navigator })
-        .then(() => {
-          sdkInit.current = true;
-        })
-        .catch((err) => {
-          console.error(`Cannot initialize SDKConnect`, err);
-        });
+    if (navigator) {
+      SDKConnect.getInstance().init({ navigation: navigator });
     }
-  }, [navigator, onboarded]);
+    return () => {
+      SDKConnect.getInstance().unmount();
+    };
+  }, [navigator]);
 
   useEffect(() => {
-    if (isWC2Enabled) {
-      WC2Manager.init().catch((err) => {
-        console.error('Cannot initialize WalletConnect Manager.', err);
-      });
+    if (navigator) {
+      SDKConnect.getInstance().init({ navigation: navigator });
     }
-  }, []);
+    return () => {
+      SDKConnect.getInstance().unmount();
+    };
+  }, [navigator]);
 
   useEffect(() => {
     async function checkExisting() {
       const existingUser = await AsyncStorage.getItem(EXISTING_USER);
-      setOnboarded(!!existingUser);
       const route = !existingUser
         ? Routes.ONBOARDING.ROOT_NAV
         : Routes.ONBOARDING.LOGIN;
@@ -419,7 +408,6 @@ const App = ({ userLoggedIn }) => {
   const setNavigatorRef = (ref) => {
     if (!prevNavigator.current) {
       setNavigator(ref);
-      NavigationService.setNavigationRef(ref);
     }
   };
 
@@ -528,18 +516,6 @@ const App = ({ userLoggedIn }) => {
         name={Routes.SHEET.ACCOUNT_ACTIONS}
         component={AccountActions}
       />
-      <Stack.Screen
-        name={Routes.SHEET.ETH_SIGN_FRICTION}
-        component={EthSignFriction}
-      />
-      <Stack.Screen
-        name={Routes.SHEET.SHOW_IPFS}
-        component={ShowIpfsGatewaySheet}
-      />
-      <Stack.Screen
-        name={Routes.SHEET.SHOW_NFT_DISPLAY_MEDIA}
-        component={ShowDisplayNftMediaSheet}
-      />
     </Stack.Navigator>
   );
 
@@ -596,7 +572,6 @@ const App = ({ userLoggedIn }) => {
     // do not render unless a route is defined
     (route && (
       <>
-        {isBlockaidFeatureEnabled() && <PPOMView />}
         <NavigationContainer
           // Prevents artifacts when navigating between screens
           theme={{
@@ -664,11 +639,6 @@ const App = ({ userLoggedIn }) => {
               name={Routes.ADD_NETWORK}
               component={AddNetworkFlow}
               options={{ animationEnabled: true }}
-            />
-            <Stack.Screen
-              name={Routes.LOCK_SCREEN}
-              component={LockScreen}
-              options={{ gestureEnabled: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>

@@ -18,6 +18,14 @@ import {
   weiToFiat,
   weiToFiatNumber,
   toTokenMinimalUnit,
+	balanceToFiatNumber,
+	BNToHex,
+	hexToBN,
+	renderFiatAddition,
+	renderFromTokenMinimalUnit,
+	renderFromWei,
+	weiToFiat,
+	weiToFiatNumber,
 } from '../number';
 import AppConstants from '../../core/AppConstants';
 import { isMainnetByChainId } from '../networks';
@@ -329,6 +337,17 @@ export async function isCollectibleAddress(address, tokenId) {
   const isCollectibleAddress = ownerOf && ownerOf !== '0x';
   CollectibleAddresses.cache[address] = isCollectibleAddress;
   return isCollectibleAddress;
+	const cache = CollectibleAddresses.cache[address];
+	if (cache) {
+		return Promise.resolve(cache);
+	}
+	const { AssetsContractController } = Engine.context;
+	// Hack to know if the address is a collectible smart contract
+	// for now this method is called from tx element so we have the respective 'tokenId'
+	const ownerOf = await AssetsContractController.getERC721OwnerOf(address, tokenId);
+	const isCollectibleAddress = ownerOf && ownerOf !== '0x';
+	CollectibleAddresses.cache[address] = isCollectibleAddress;
+	return isCollectibleAddress;
 }
 
 /**
@@ -410,6 +429,39 @@ export async function getActionKey(tx, selectedAddress, ticker, chainId) {
   }
 
   return actionKey;
+	const actionKey = await getTransactionActionKey(tx, chainId);
+	if (actionKey === SEND_ETHER_ACTION_KEY) {
+		let currencySymbol = ticker;
+
+		if (tx?.isTransfer) {
+			// Third party sending wrong token symbol
+			if (tx.transferInformation.contractAddress === SAI_ADDRESS.toLowerCase()) {
+				tx.transferInformation.symbol = 'SAI';
+			}
+			currencySymbol = tx.transferInformation.symbol;
+		}
+
+		const incoming = safeToChecksumAddress(tx.transaction.to) === selectedAddress;
+		const selfSent = incoming && safeToChecksumAddress(tx.transaction.from) === selectedAddress;
+		return incoming
+			? selfSent
+				? currencySymbol
+					? strings('transactions.self_sent_unit', { unit: currencySymbol })
+					: strings('transactions.self_sent_ether')
+				: currencySymbol
+				? strings('transactions.received_unit', { unit: currencySymbol })
+				: strings('transactions.received_ether')
+			: currencySymbol
+			? strings('transactions.sent_unit', { unit: currencySymbol })
+			: strings('transactions.sent_ether');
+	}
+	const transactionActionKey = actionKeys[actionKey];
+
+	if (transactionActionKey) {
+		return transactionActionKey;
+	}
+
+	return actionKey;
 }
 
 /**
@@ -1311,6 +1363,73 @@ export const parseTransactionLegacy = (
     suggestedGasLimitHex: gasLimitHex,
     totalHex,
   };
+	const gasLimit = new BN(selectedGasFee.suggestedGasLimit);
+	const gasLimitHex = BNToHex(new BN(selectedGasFee.suggestedGasLimit));
+
+	const weiTransactionFee = gasLimit && gasLimit.mul(hexToBN(decGWEIToHexWEI(selectedGasFee.suggestedGasPrice)));
+
+	const suggestedGasPriceHex = decGWEIToHexWEI(selectedGasFee.suggestedGasPrice);
+
+	const valueBN = value ? hexToBN(value) : hexToBN('0x0');
+	const transactionFeeFiat = weiToFiat(weiTransactionFee, conversionRate, currentCurrency);
+	const parsedTicker = getTicker(ticker);
+	const transactionFee = `${renderFromWei(weiTransactionFee)} ${parsedTicker}`;
+
+	const totalHex = valueBN.add(hexToBN(weiTransactionFee));
+
+	if (onlyGas) {
+		return {
+			transactionFeeFiat,
+			transactionFee,
+			suggestedGasPrice: selectedGasFee.suggestedGasPrice,
+			suggestedGasPriceHex,
+			suggestedGasLimit: selectedGasFee.suggestedGasLimit,
+			suggestedGasLimitHex: gasLimitHex,
+			totalHex,
+		};
+	}
+
+	let transactionTotalAmount, transactionTotalAmountFiat;
+
+	if (selectedAsset.isETH) {
+		const transactionTotalAmountBN = weiTransactionFee && weiTransactionFee.add(valueBN);
+		transactionTotalAmount = `${renderFromWei(transactionTotalAmountBN)} ${parsedTicker}`;
+		transactionTotalAmountFiat = weiToFiat(transactionTotalAmountBN, conversionRate, currentCurrency);
+	} else if (selectedAsset.tokenId) {
+		const transactionTotalAmountBN = weiTransactionFee && weiTransactionFee.add(valueBN);
+		transactionTotalAmount = `${renderFromWei(weiTransactionFee)} ${parsedTicker}`;
+
+		transactionTotalAmountFiat = weiToFiat(transactionTotalAmountBN, conversionRate, currentCurrency);
+	} else {
+		const { address, symbol = 'ERC20', decimals } = selectedAsset;
+
+		const [, , rawAmount] = decodeTransferData('transfer', data);
+		const rawAmountString = parseInt(rawAmount, 16).toLocaleString('fullwide', { useGrouping: false });
+		const transferValue = renderFromTokenMinimalUnit(rawAmountString, decimals);
+		const transactionValue = `${transferValue} ${symbol}`;
+		const exchangeRate = contractExchangeRates[address];
+		const transactionFeeFiatNumber = weiToFiatNumber(weiTransactionFee, conversionRate);
+
+		const transactionValueFiatNumber = balanceToFiatNumber(transferValue, conversionRate, exchangeRate);
+		transactionTotalAmount = `${transactionValue} + ${renderFromWei(weiTransactionFee)} ${parsedTicker}`;
+		transactionTotalAmountFiat = renderFiatAddition(
+			transactionValueFiatNumber,
+			transactionFeeFiatNumber,
+			currentCurrency
+		);
+	}
+
+	return {
+		transactionFeeFiat,
+		transactionFee,
+		transactionTotalAmount,
+		transactionTotalAmountFiat,
+		suggestedGasPrice: selectedGasFee.suggestedGasPrice,
+		suggestedGasPriceHex,
+		suggestedGasLimit: selectedGasFee.suggestedGasLimit,
+		suggestedGasLimitHex: gasLimitHex,
+		totalHex,
+	};
 };
 
 /**

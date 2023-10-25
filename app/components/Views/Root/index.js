@@ -93,4 +93,34 @@ const ConnectedRoot = () => {
       </ThemeContext.Provider>
     </SafeAreaProvider>
   );
+	constructor(props) {
+		super(props);
+		if (props.foxCode === '') {
+			Logger.error('WARN - foxCode is an empty string');
+		}
+		SecureKeychain.init(props.foxCode);
+		// Init EntryScriptWeb3 asynchronously on the background
+		EntryScriptWeb3.init();
+		SplashScreen.hide();
+	}
+
+	render = () => (
+		<Provider store={store}>
+			<PersistGate persistor={persistor}>
+				<ConnectedRoot />
+			</PersistGate>
+		</Provider>
+	);
+}
+
+const ConnectedRoot = () => {
+	const theme = useAppTheme();
+
+	return (
+		<ThemeContext.Provider value={theme}>
+			<ErrorBoundary onError={this.errorHandler} view="Root">
+				<App />
+			</ErrorBoundary>
+		</ThemeContext.Provider>
+	);
 };

@@ -10,6 +10,18 @@ const initialState = {
   engine: {
     backgroundState: initialBackgroundState,
   },
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: {
+					chainId: '1',
+				},
+			},
+			PreferencesController: {
+				useCollectibleDetection: true,
+			},
+		},
+	},
 };
 const store = mockStore(initialState);
 

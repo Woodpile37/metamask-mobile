@@ -53,6 +53,20 @@ export default class AddCustomTokenView {
   static async scrollDownOnImportCustomTokens() {
     await TestHelpers.swipe(TOKEN_ADDRESS_SYMBOL_ID, 'up', 'slow', 0.6);
   }
+	static async tapBackButton() {
+		if (device.getPlatform() === 'android') {
+			await device.pressBack();
+		} else {
+			await TestHelpers.tap(BACK_BUTTON_ID);
+		}
+	}
+	static async tapTokenSymbolInputBox() {
+		await TestHelpers.tap(TOKEN_ADDRESS_SYMBOL_ID);
+	}
+
+	static async tapTokenSymbolText() {
+		await TestHelpers.tapByText('Token Symbol');
+	}
 
   static async typeTokenAddress(address) {
     if (device.getPlatform() === 'android') {
@@ -113,4 +127,10 @@ export default class AddCustomTokenView {
   static async isTokenPrecisionWarningVisible() {
     await TestHelpers.checkIfVisible(TOKEN_PRECISION_WARNING_MESSAGE_ID);
   }
+	static async isTokenAddressWarningVisible() {
+		await TestHelpers.checkIfVisible(TOKEN_ADDRESS_WARNING_MESSAGE_ID);
+	}
+	static async isTokenPrecisionWarningVisible() {
+		await TestHelpers.checkIfVisible(TOKEN_PRECISION_WARNING_MESSAGE_ID);
+	}
 }

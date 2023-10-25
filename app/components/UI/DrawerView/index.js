@@ -73,19 +73,7 @@ import Routes from '../../../constants/navigation/Routes';
 import { scale } from 'react-native-size-matters';
 import generateTestId from '../../../../wdio/utils/generateTestId';
 import { DRAWER_VIEW_LOCK_TEXT_ID } from '../../../../wdio/screen-objects/testIDs/Screens/DrawerView.testIds';
-import {
-  selectNetworkConfigurations,
-  selectProviderConfig,
-  selectTicker,
-} from '../../../selectors/networkController';
-import { selectCurrentCurrency } from '../../../selectors/currencyRateController';
-import { selectTokens } from '../../../selectors/tokensController';
-import { selectAccounts } from '../../../selectors/accountTrackerController';
-import { selectContractBalances } from '../../../selectors/tokenBalancesController';
-import {
-  selectIdentities,
-  selectSelectedAddress,
-} from '../../../selectors/preferencesController';
+import { selectTicker } from '../../../selectors/networkController';
 
 import { createAccountSelectorNavDetails } from '../../Views/AccountSelector';
 import NetworkInfo from '../NetworkInfo';
@@ -339,9 +327,9 @@ class DrawerView extends PureComponent {
     */
     navigation: PropTypes.object,
     /**
-     * Object representing the configuration of the current selected network
+     * Object representing the selected the selected network
      */
-    providerConfig: PropTypes.object.isRequired,
+    network: PropTypes.object.isRequired,
     /**
      * Selected address as string
      */
@@ -399,9 +387,9 @@ class DrawerView extends PureComponent {
      */
     ticker: PropTypes.string,
     /**
-     * Network configurations
+     * Frequent RPC list from PreferencesController
      */
-    networkConfigurations: PropTypes.object,
+    frequentRpcList: PropTypes.array,
     /**
      * Array of ERC20 assets
      */
@@ -459,7 +447,7 @@ class DrawerView extends PureComponent {
       ens: undefined,
       name: undefined,
       address: undefined,
-      currentChainId: undefined,
+      currentNetwork: undefined,
     },
     networkType: undefined,
     showModal: false,
@@ -533,7 +521,7 @@ class DrawerView extends PureComponent {
           'ManualBackupStep2',
           'ManualBackupStep3',
           'Webview',
-          Routes.LOCK_SCREEN,
+          'LockScreen',
         ].includes(route)
       ) {
         this.state.showProtectWalletModal &&
@@ -581,7 +569,7 @@ class DrawerView extends PureComponent {
     if (
       pendingDeeplink &&
       KeyringController.isUnlocked() &&
-      route !== Routes.LOCK_SCREEN
+      route !== 'LockScreen'
     ) {
       DeeplinkManager.expireDeeplink();
       DeeplinkManager.parse(pendingDeeplink, {
@@ -592,23 +580,23 @@ class DrawerView extends PureComponent {
   }
 
   updateAccountInfo = async () => {
-    const { identities, providerConfig, selectedAddress } = this.props;
-    const { currentChainId, address, name } = this.state.account;
+    const { identities, network, selectedAddress } = this.props;
+    const { currentNetwork, address, name } = this.state.account;
     const accountName = identities[selectedAddress]?.name;
     if (
-      currentChainId !== providerConfig.chainId ||
+      currentNetwork !== network ||
       address !== selectedAddress ||
       name !== accountName
     ) {
       const ens = await doENSReverseLookup(
         selectedAddress,
-        providerConfig.chainId,
+        network.providerConfig.chainId,
       );
       this.setState((state) => ({
         account: {
           ens,
           name: accountName,
-          currentChainId: providerConfig.chainId,
+          currentNetwork: network,
           address: selectedAddress,
         },
       }));
@@ -644,10 +632,10 @@ class DrawerView extends PureComponent {
 
   // NOTE: do we need this event?
   trackOpenBrowserEvent = () => {
-    const { providerConfig } = this.props;
+    const { network } = this.props;
     AnalyticsV2.trackEvent(MetaMetricsEvents.BROWSER_OPENED, {
       source: 'In-app Navigation',
-      chain_id: providerConfig.chainId,
+      chain_id: network,
     });
   };
 
@@ -712,22 +700,27 @@ class DrawerView extends PureComponent {
   };
 
   viewInEtherscan = () => {
-    const { selectedAddress, providerConfig, networkConfigurations } =
-      this.props;
-    if (providerConfig.type === RPC) {
-      const blockExplorer = findBlockExplorerForRpc(
-        providerConfig.rpcTarget,
-        networkConfigurations,
-      );
+    const {
+      selectedAddress,
+      network,
+      network: {
+        providerConfig: { rpcTarget },
+      },
+      frequentRpcList,
+    } = this.props;
+    if (network.providerConfig.type === RPC) {
+      const blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       const url = `${blockExplorer}/address/${selectedAddress}`;
       const title = new URL(blockExplorer).hostname;
       this.goToBrowserUrl(url, title);
     } else {
-      const url = getEtherscanAddressUrl(providerConfig.type, selectedAddress);
-      const etherscan_url = getEtherscanBaseUrl(providerConfig.type).replace(
-        'https://',
-        '',
+      const url = getEtherscanAddressUrl(
+        network.providerConfig.type,
+        selectedAddress,
       );
+      const etherscan_url = getEtherscanBaseUrl(
+        network.providerConfig.type,
+      ).replace('https://', '');
       this.goToBrowserUrl(url, etherscan_url);
     }
     this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_VIEW_ETHERSCAN);
@@ -769,15 +762,14 @@ class DrawerView extends PureComponent {
   };
 
   hasBlockExplorer = (providerType) => {
-    const { networkConfigurations } = this.props;
+    const { frequentRpcList } = this.props;
     if (providerType === RPC) {
       const {
-        providerConfig: { rpcTarget },
+        network: {
+          providerConfig: { rpcTarget },
+        },
       } = this.props;
-      const blockExplorer = findBlockExplorerForRpc(
-        rpcTarget,
-        networkConfigurations,
-      );
+      const blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       if (blockExplorer) {
         return true;
       }
@@ -860,12 +852,14 @@ class DrawerView extends PureComponent {
 
   getSections = () => {
     const {
-      providerConfig: { type, rpcTarget },
-      networkConfigurations,
+      network: {
+        providerConfig: { type, rpcTarget },
+      },
+      frequentRpcList,
     } = this.props;
     let blockExplorer, blockExplorerName;
     if (type === RPC) {
-      blockExplorer = findBlockExplorerForRpc(rpcTarget, networkConfigurations);
+      blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       blockExplorerName = getBlockExplorerName(blockExplorer);
     }
     return [
@@ -934,6 +928,16 @@ class DrawerView extends PureComponent {
     this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_SHARE_PUBLIC_ADDRESS);
   };
 
+  closeInvalidCustomNetworkAlert = () => {
+    this.setState({ invalidCustomNetwork: null });
+  };
+
+  showInvalidCustomNetworkAlert = (network) => {
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({ invalidCustomNetwork: network });
+    });
+  };
+
   onSecureWalletModalAction = () => {
     this.setState({ showProtectWalletModal: false });
     this.props.navigation.navigate(
@@ -953,7 +957,7 @@ class DrawerView extends PureComponent {
 
   onInfoNetworksModalClose = () => {
     const {
-      providerConfig,
+      network: { providerConfig },
       onboardNetworkAction,
       networkSwitched,
       toggleInfoNetworkModal,
@@ -1009,7 +1013,7 @@ class DrawerView extends PureComponent {
 
   render() {
     const {
-      providerConfig,
+      network,
       accounts,
       identities,
       selectedAddress,
@@ -1151,7 +1155,7 @@ class DrawerView extends PureComponent {
                           name &&
                           name.toLowerCase().indexOf('etherscan') !== -1
                         ) {
-                          const type = providerConfig?.type;
+                          const type = network.providerConfig?.type;
                           return (
                             (type && this.hasBlockExplorer(type)) || undefined
                           );
@@ -1221,8 +1225,8 @@ class DrawerView extends PureComponent {
         >
           <NetworkInfo
             onClose={this.onInfoNetworksModalClose}
-            type={providerConfig.type}
-            ticker={providerConfig.ticker}
+            type={network.providerConfig.type}
+            ticker={network.providerConfig.ticker}
           />
         </Modal>
 
@@ -1250,12 +1254,15 @@ class DrawerView extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  providerConfig: selectProviderConfig(state),
-  accounts: selectAccounts(state),
-  selectedAddress: selectSelectedAddress(state),
-  identities: selectIdentities(state),
-  networkConfigurations: selectNetworkConfigurations(state),
-  currentCurrency: selectCurrentCurrency(state),
+  network: state.engine.backgroundState.NetworkController,
+  selectedAddress:
+    state.engine.backgroundState.PreferencesController.selectedAddress,
+  accounts: state.engine.backgroundState.AccountTrackerController.accounts,
+  identities: state.engine.backgroundState.PreferencesController.identities,
+  frequentRpcList:
+    state.engine.backgroundState.PreferencesController.frequentRpcList,
+  currentCurrency:
+    state.engine.backgroundState.CurrencyRateController.currentCurrency,
   keyrings: state.engine.backgroundState.KeyringController.keyrings,
   networkModalVisible: state.modals.networkModalVisible,
   receiveModalVisible: state.modals.receiveModalVisible,
@@ -1263,8 +1270,9 @@ const mapStateToProps = (state) => ({
   passwordSet: state.user.passwordSet,
   wizard: state.wizard,
   ticker: selectTicker(state),
-  tokens: selectTokens(state),
-  tokenBalances: selectContractBalances(state),
+  tokens: state.engine.backgroundState.TokensController.tokens,
+  tokenBalances:
+    state.engine.backgroundState.TokenBalancesController.contractBalances,
   collectibles: collectiblesSelector(state),
   seedphraseBackedUp: state.user.seedphraseBackedUp,
   currentRoute: getCurrentRoute(state),
@@ -1278,7 +1286,7 @@ const mapDispatchToProps = (dispatch) => ({
   newAssetTransaction: (selectedAsset) =>
     dispatch(newAssetTransaction(selectedAsset)),
   protectWalletModalVisible: () => dispatch(protectWalletModalVisible()),
-  onboardNetworkAction: (chainId) => dispatch(onboardNetworkAction(chainId)),
+  onboardNetworkAction: (network) => dispatch(onboardNetworkAction(network)),
   networkSwitched: ({ networkUrl, networkStatus }) =>
     dispatch(networkSwitched({ networkUrl, networkStatus })),
   toggleInfoNetworkModal: () => dispatch(toggleInfoNetworkModal(false)),

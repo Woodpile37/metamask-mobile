@@ -35,6 +35,28 @@ const createStyles = (colors: any) =>
       color: colors.icon.alternative,
     },
   });
+	StyleSheet.create({
+		searchSection: {
+			margin: 20,
+			marginBottom: 0,
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			borderWidth: 1,
+			borderRadius: 4,
+			borderColor: colors.border.default,
+			color: colors.text.default,
+		},
+		textInput: {
+			...fontStyles.normal,
+			color: colors.text.default,
+		} as StyleSheet.NamedStyles<any>,
+		icon: {
+			padding: 16,
+			color: colors.icon.default,
+		},
+	});
 
 const fuse = new Fuse<TokenListToken>([], {
   shouldSort: true,
@@ -80,6 +102,17 @@ const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
       setInputDimensions('86%');
     }, 100);
   }, []);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [inputDimensions, setInputDimensions] = useState('85%');
+	const tokenList = useSelector<any, TokenListToken[]>(getTokenListArray);
+	const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setInputDimensions('86%');
+		}, 100);
+	}, []);
 
   // Update fuse list
   useEffect(() => {
@@ -118,6 +151,22 @@ const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
       />
     </View>
   );
+	return (
+		<View style={styles.searchSection} testID={'add-searched-token-screen'}>
+			<Icon name="search" size={22} style={styles.icon} />
+			<TextInput
+				style={[styles.textInput, { height: inputDimensions, width: inputDimensions }]}
+				value={searchQuery}
+				onFocus={onFocus}
+				onBlur={onBlur}
+				placeholder={strings('token.search_tokens_placeholder')}
+				placeholderTextColor={colors.text.muted}
+				onChangeText={handleSearch}
+				testID={'input-search-asset'}
+				keyboardAppearance={themeAppearance}
+			/>
+		</View>
+	);
 });
 
 export default AssetSearch;

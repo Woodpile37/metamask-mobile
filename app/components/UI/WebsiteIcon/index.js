@@ -24,6 +24,23 @@ const createStyles = (colors) =>
       textTransform: 'uppercase',
     },
   });
+	StyleSheet.create({
+		fallback: {
+			alignContent: 'center',
+			backgroundColor: colors.background.default,
+			borderRadius: 27,
+			height: 54,
+			justifyContent: 'center',
+			width: 54,
+		},
+		fallbackText: {
+			...fontStyles.normal,
+			color: colors.text.default,
+			fontSize: 24,
+			textAlign: 'center',
+			textTransform: 'uppercase',
+		},
+	});
 
 /**
  * View that renders a website logo depending of the context
@@ -69,7 +86,7 @@ export default class WebsiteIcon extends PureComponent {
    * Get image url from favicon api
    */
   getIconUrl = (url) => {
-    const iconUrl = `https://api.faviconkit.com/${getHost(url)}/50`;
+    const iconUrl = `https://api.faviconkit.com/${getHost(url)}/64`;
     return iconUrl;
   };
 
@@ -86,14 +103,17 @@ export default class WebsiteIcon extends PureComponent {
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
     const apiLogoUrl = { uri: icon || this.getIconUrl(url) };
-    let title = this.props.title;
-
-    if (title !== undefined) {
-      title =
-        typeof this.props.title === 'string'
-          ? this.props.title.substr(0, 1)
-          : getHost(url).substr(0, 1);
-    }
+    const title =
+      typeof this.props.title === 'string'
+        ? this.props.title.substr(0, 1)
+        : getHost(url).substr(0, 1);
+	render = () => {
+		const { renderIconUrlError } = this.state;
+		const { viewStyle, style, textStyle, transparent, url, icon } = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+		const apiLogoUrl = { uri: icon || this.getIconUrl(url) };
+		const title = typeof this.props.title === 'string' ? this.props.title.substr(0, 1) : getHost(url).substr(0, 1);
 
     if (renderIconUrlError && title) {
       return (
@@ -123,6 +143,18 @@ export default class WebsiteIcon extends PureComponent {
       </View>
     );
   };
+		return (
+			<View style={viewStyle}>
+				<FadeIn
+					placeholderStyle={{
+						backgroundColor: transparent ? colors.transparent : colors.background.alternative,
+					}}
+				>
+					<Image source={apiLogoUrl} style={style} onError={this.onRenderIconUrlError} />
+				</FadeIn>
+			</View>
+		);
+	};
 }
 
 WebsiteIcon.contextType = ThemeContext;

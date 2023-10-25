@@ -16,6 +16,48 @@ const initialState = {
   settings: {
     primaryCurrency: 'USD',
   },
+	engine: {
+		backgroundState: {
+			PreferencesController: {
+				selectedAddress: '0x0',
+				identities: { '0xbar': { name: 'Account 1', address: '0x0', importTime: Date.now() } },
+			},
+			AccountTrackerController: {
+				accounts: {},
+			},
+			TokensController: {
+				tokens: [],
+			},
+			TokenRatesController: {
+				contractExchangeRates: {},
+			},
+			CollectiblesController: {
+				allCollectibleContracts: { '0x0': { 1: [] } },
+			},
+			CurrencyRateController: {
+				currentCurrency: 'USD',
+				conversionRate: 1,
+			},
+			NetworkController: {
+				provider: {
+					chainId: '1',
+				},
+			},
+			GasFeeController: {
+				gasFeeEstimates: {
+					high: {},
+					medium: {},
+					low: {},
+				},
+			},
+		},
+	},
+	privacy: {
+		thirdPartyApiMode: true,
+	},
+	settings: {
+		primaryCurrency: 'USD',
+	},
 };
 const store = mockStore(initialState);
 

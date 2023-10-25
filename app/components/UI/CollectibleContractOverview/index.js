@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import CollectibleMedia from '../CollectibleMedia';
-import AssetActionButton from '../AssetOverview/AssetActionButton';
+import AssetActionButton from '../AssetActionButton';
 import Device from '../../../util/device';
 import { toggleCollectibleContractModal } from '../../../actions/modals';
 import { connect } from 'react-redux';
@@ -13,7 +13,6 @@ import { newAssetTransaction } from '../../../actions/transaction';
 import { toLowerCaseEquals } from '../../../util/general';
 import { collectiblesSelector } from '../../../reducers/collectibles';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { SEND_BUTTON_ID } from '../../../../wdio/screen-objects/testIDs/Screens/WalletView.testIds';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -48,6 +47,38 @@ const createStyles = (colors) =>
       flexDirection: 'row',
     },
   });
+	StyleSheet.create({
+		wrapper: {
+			flex: 1,
+			paddingHorizontal: 20,
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderBottomColor: colors.border.muted,
+			alignContent: 'center',
+			alignItems: 'center',
+			paddingBottom: 30,
+		},
+		assetLogo: {
+			marginTop: 20,
+		},
+		information: {
+			flex: 1,
+			flexDirection: 'row',
+			marginTop: 10,
+			marginBottom: 20,
+		},
+		name: {
+			fontSize: 30,
+			textAlign: 'center',
+			color: colors.text.default,
+			...fontStyles.normal,
+		},
+		actions: {
+			width: Device.isSmallDevice() ? '65%' : '50%',
+			justifyContent: 'space-around',
+			alignItems: 'flex-start',
+			flexDirection: 'row',
+		},
+	});
 
 /**
  * View that displays a specific collectible contract
@@ -129,13 +160,32 @@ class CollectibleContractOverview extends PureComponent {
             {ownerOf} {name}
           </Text>
         </View>
+	render() {
+		const {
+			collectibleContract: { name, address },
+			ownerOf,
+		} = this.props;
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+		const lowerAddress = address.toLowerCase();
+		const leftActionButtonText =
+			lowerAddress in collectiblesTransferInformation
+				? collectiblesTransferInformation[lowerAddress].tradable && strings('asset_overview.send_button')
+				: strings('asset_overview.send_button');
+		return (
+			<View style={styles.wrapper} testID={'collectible-overview-screen'}>
+				<View style={styles.assetLogo}>{this.renderLogo()}</View>
+				<View style={styles.information}>
+					<Text style={styles.name} testID={'collectible-name'}>
+						{ownerOf} {name}
+					</Text>
+				</View>
 
         <View style={styles.actions}>
           <AssetActionButton
             icon="send"
             onPress={this.onSend}
             label={leftActionButtonText}
-            testID={SEND_BUTTON_ID}
           />
           <AssetActionButton
             icon="add"
@@ -156,6 +206,7 @@ class CollectibleContractOverview extends PureComponent {
 
 const mapStateToProps = (state) => ({
   collectibles: collectiblesSelector(state),
+	collectibles: collectiblesSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -171,3 +222,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(CollectibleContractOverview);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectibleContractOverview);

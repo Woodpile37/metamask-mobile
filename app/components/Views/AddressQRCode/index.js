@@ -7,7 +7,8 @@ import {
   View,
   Text,
 } from 'react-native';
-import { fontStyles, colors as importedColors } from '../../../styles/common';
+import { TouchableOpacity, Dimensions, StyleSheet, View, Text } from 'react-native';
+import { fontStyles } from '../../../styles/common';
 import { connect } from 'react-redux';
 import QRCode from 'react-native-qrcode-svg';
 import { strings } from '../../../../locales/i18n';
@@ -18,7 +19,6 @@ import GlobalAlert from '../../UI/GlobalAlert';
 import { protectWalletModalVisible } from '../../../actions/user';
 import ClipboardManager from '../../../core/ClipboardManager';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { selectSelectedAddress } from '../../../selectors/preferencesController';
 
 const WIDTH = Dimensions.get('window').width - 88;
 
@@ -34,17 +34,13 @@ const createStyles = (colors) =>
       flex: 1,
       alignItems: 'center',
     },
-    qrCodeContainer: {
+    qrCode: {
       marginBottom: 16,
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 28,
+      padding: 36,
       backgroundColor: colors.background.default,
       borderRadius: 8,
-    },
-    qrCode: {
-      padding: 8,
-      backgroundColor: importedColors.white,
     },
     addressWrapper: {
       alignItems: 'center',
@@ -75,6 +71,54 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+	StyleSheet.create({
+		root: {
+			flex: 1,
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginTop: Device.isSmallDevice() ? -30 : -50,
+		},
+		wrapper: {
+			flex: 1,
+			alignItems: 'center',
+		},
+		qrCode: {
+			marginBottom: 16,
+			alignItems: 'center',
+			justifyContent: 'center',
+			padding: 36,
+			backgroundColor: colors.background.default,
+			borderRadius: 8,
+		},
+		addressWrapper: {
+			alignItems: 'center',
+			justifyContent: 'center',
+			width: WIDTH,
+			borderRadius: 8,
+			backgroundColor: colors.background.default,
+			paddingVertical: 12,
+		},
+		closeIcon: {
+			width: WIDTH + 40,
+			paddingBottom: Device.isSmallDevice() ? 30 : 50,
+			flexDirection: 'row-reverse',
+		},
+		addressTitle: {
+			fontSize: 16,
+			paddingHorizontal: 28,
+			paddingVertical: 4,
+			...fontStyles.normal,
+			color: colors.text.default,
+		},
+		address: {
+			...fontStyles.normal,
+			paddingHorizontal: 28,
+			paddingVertical: 4,
+			fontSize: 16,
+			textAlign: 'center',
+			color: colors.text.default,
+		},
+	});
 
 /**
  * PureComponent that renders a public address view
@@ -151,13 +195,13 @@ class AddressQRCode extends PureComponent {
               color={colors.overlay.inverse}
             />
           </TouchableOpacity>
-          <View style={styles.qrCodeContainer}>
-            <View style={styles.qrCode}>
-              <QRCode
-                value={`ethereum:${this.props.selectedAddress}`}
-                size={Dimensions.get('window').width - 160}
-              />
-            </View>
+          <View style={styles.qrCode}>
+            <QRCode
+              value={`ethereum:${this.props.selectedAddress}`}
+              size={Dimensions.get('window').width - 160}
+              color={colors.text.default}
+              backgroundColor={colors.background.default}
+            />
           </View>
           <View style={styles.addressWrapper}>
             <Text style={styles.addressTitle}>
@@ -174,10 +218,42 @@ class AddressQRCode extends PureComponent {
       </View>
     );
   }
+	render() {
+		const colors = this.context.colors || mockTheme.colors;
+		const styles = createStyles(colors);
+
+		return (
+			<View style={styles.root}>
+				<View style={styles.wrapper}>
+					<TouchableOpacity style={styles.closeIcon} onPress={this.closeQrModal} testID={'close-qr-modal'}>
+						<IonicIcon name={'ios-close'} size={38} color={colors.overlay.inverse} />
+					</TouchableOpacity>
+					<View style={styles.qrCode}>
+						<QRCode
+							value={`ethereum:${this.props.selectedAddress}`}
+							size={Dimensions.get('window').width - 160}
+							color={colors.text.default}
+							backgroundColor={colors.background.default}
+						/>
+					</View>
+					<View style={styles.addressWrapper}>
+						<Text style={styles.addressTitle}>{strings('receive_request.public_address_qr_code')}</Text>
+						<TouchableOpacity onPress={this.copyAccountToClipboard}>
+							<Text style={styles.address} testID={'public-address-input'}>
+								{this.processAddress()}
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+				<GlobalAlert />
+			</View>
+		);
+	}
 }
 
 const mapStateToProps = (state) => ({
-  selectedAddress: selectSelectedAddress(state),
+  selectedAddress:
+    state.engine.backgroundState.PreferencesController.selectedAddress,
   seedphraseBackedUp: state.user.seedphraseBackedUp,
 });
 

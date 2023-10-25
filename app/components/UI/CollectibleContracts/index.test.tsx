@@ -13,6 +13,52 @@ const initialState = {
   engine: {
     backgroundState: initialBackgroundState,
   },
+	collectibles: {
+		favorites: {},
+	},
+	engine: {
+		backgroundState: {
+			NetworkController: {
+				provider: {
+					chainId: 1,
+				},
+			},
+			PreferencesController: {
+				selectedAddress: '0x1',
+			},
+			CollectiblesController: {
+				allCollectibleContracts: {
+					'0x1': {
+						1: [
+							{
+								name: 'name',
+								logo: 'logo',
+								address: '0x0',
+								symbol: 'NM',
+								description: 'description',
+								totalSupply: 10,
+							},
+						],
+					},
+				},
+				allCollectibles: {
+					'0x1': {
+						1: [
+							{
+								address: '0x0',
+								tokenId: 10,
+								name: 'name',
+								image: 'image',
+							},
+						],
+					},
+				},
+			},
+		},
+	},
+	user: {
+		nftDetectionDismissed: true,
+	},
 };
 const store = mockStore(initialState);
 

@@ -25,6 +25,25 @@ const createStyles = (colors) =>
       marginTop: 30,
     },
   });
+	StyleSheet.create({
+		modal: {
+			margin: 0,
+			width: '100%',
+		},
+		modalView: {
+			justifyContent: 'center',
+			alignItems: 'center',
+			alignSelf: 'center',
+			backgroundColor: colors.background.default,
+			width: '90%',
+			borderRadius: 6,
+			minHeight: 200,
+			padding: 15,
+		},
+		loader: {
+			marginTop: 30,
+		},
+	});
 
 /**
  * View that renders an action modal
@@ -54,6 +73,20 @@ export default function BlockingActionModal({
       </View>
     </Modal>
   );
+export default function BlockingActionModal({ children, modalVisible, isLoadingAction }) {
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	return (
+		<Modal backdropColor={colors.overlay.default} backdropOpacity={1} isVisible={modalVisible} style={styles.modal}>
+			<View style={styles.modalView}>
+				<View style={baseStyles.flexGrow}>
+					{children}
+					{isLoadingAction && <ActivityIndicator style={styles.loader} size={'small'} />}
+				</View>
+			</View>
+		</Modal>
+	);
 }
 
 BlockingActionModal.propTypes = {

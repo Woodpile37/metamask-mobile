@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import Modal from 'react-native-modal';
 import { strings } from '../../../../locales/i18n';
 import ActionContent from './ActionContent';
-import { useTheme } from '../../../util/theme';
+import { useAppThemeFromContext, mockTheme } from '../../../util/theme';
 
 const styles = StyleSheet.create({
   modal: {
@@ -40,7 +40,7 @@ export default function ActionModal({
   propagateSwipe,
   cancelButtonDisabled,
 }) {
-  const { colors } = useTheme();
+  const { colors } = useAppThemeFromContext() || mockTheme;
 
   return (
     <Modal
@@ -78,6 +78,44 @@ export default function ActionModal({
       </ActionContent>
     </Modal>
   );
+	const { colors } = useAppThemeFromContext() || mockTheme;
+
+	return (
+		<Modal
+			isVisible={modalVisible}
+			style={[styles.modal, modalStyle]}
+			onBackdropPress={onRequestClose}
+			onBackButtonPress={onRequestClose}
+			onSwipeComplete={onRequestClose}
+			swipeDirection={'down'}
+			propagateSwipe={propagateSwipe}
+			backdropColor={colors.overlay.default}
+			backdropOpacity={1}
+			avoidKeyboard
+		>
+			<ActionContent
+				cancelTestID={cancelTestID}
+				confirmTestID={confirmTestID}
+				cancelText={cancelText}
+				confirmText={confirmText}
+				confirmDisabled={confirmDisabled}
+				cancelButtonMode={cancelButtonMode}
+				cancelButtonDisabled={cancelButtonDisabled}
+				confirmButtonMode={confirmButtonMode}
+				displayCancelButton={displayCancelButton}
+				displayConfirmButton={displayConfirmButton}
+				onCancelPress={onCancelPress}
+				onConfirmPress={onConfirmPress}
+				viewWrapperStyle={viewWrapperStyle}
+				viewContainerStyle={viewContainerStyle}
+				actionContainerStyle={actionContainerStyle}
+				childrenContainerStyle={childrenContainerStyle}
+				verticalButtons={verticalButtons}
+			>
+				{children}
+			</ActionContent>
+		</Modal>
+	);
 }
 
 ActionModal.defaultProps = {

@@ -44,8 +44,24 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
               />
             </TouchableOpacity>
             <Text
+              bigger={false}
               black={true}
+              blue={false}
               bold={true}
+              centered={false}
+              disclaimer={false}
+              green={false}
+              link={false}
+              modal={false}
+              muted={false}
+              primary={false}
+              red={false}
+              reset={false}
+              right={false}
+              small={false}
+              strikethrough={false}
+              underline={false}
+              upper={false}
             >
               Edit gas fee
             </Text>
@@ -81,24 +97,57 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
                 }
               >
                 <Text
+                  bigger={false}
                   black={true}
+                  blue={false}
+                  bold={false}
+                  centered={false}
+                  disclaimer={false}
+                  green={false}
+                  link={false}
+                  modal={false}
+                  muted={false}
+                  primary={false}
+                  red={false}
+                  reset={false}
                   right={true}
+                  small={false}
+                  strikethrough={false}
                   style={
                     Object {
                       "fontSize": 48,
                     }
                   }
+                  underline={false}
+                  upper={false}
                 >
                   ~
                 </Text>
               </View>
               <Text
+                bigger={false}
                 black={true}
+                blue={false}
+                bold={false}
+                centered={false}
+                disclaimer={false}
+                green={false}
+                link={false}
+                modal={false}
+                muted={false}
+                primary={false}
+                red={false}
+                reset={false}
+                right={false}
+                small={false}
+                strikethrough={false}
                 style={
                   Object {
                     "fontSize": 48,
                   }
                 }
+                underline={false}
+                upper={false}
               />
               <View
                 style={
@@ -110,11 +159,44 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
             </View>
             <Text
               big={true}
+              bigger={false}
               black={true}
+              blue={false}
+              bold={false}
+              centered={false}
+              disclaimer={false}
+              green={false}
+              link={false}
+              modal={false}
+              muted={false}
+              primary={false}
+              red={false}
+              reset={false}
+              right={false}
+              small={false}
+              strikethrough={false}
+              underline={false}
+              upper={false}
             >
               <Text
+                bigger={false}
                 black={true}
+                blue={false}
                 bold={true}
+                centered={false}
+                disclaimer={false}
+                green={false}
+                link={false}
+                modal={false}
+                muted={false}
+                primary={false}
+                red={false}
+                reset={false}
+                right={false}
+                small={false}
+                strikethrough={false}
+                underline={false}
+                upper={false}
               />
             </Text>
           </View>
@@ -152,9 +234,25 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
                       }
                     >
                       <Text
+                        bigger={false}
                         black={true}
+                        blue={false}
                         bold={true}
+                        centered={false}
+                        disclaimer={false}
+                        green={false}
+                        link={false}
+                        modal={false}
+                        muted={false}
                         noMargin={true}
+                        primary={false}
+                        red={false}
+                        reset={false}
+                        right={false}
+                        small={false}
+                        strikethrough={false}
+                        underline={false}
+                        upper={false}
                       >
                         Gas limit
                          
@@ -208,9 +306,25 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
                       }
                     >
                       <Text
+                        bigger={false}
                         black={true}
+                        blue={false}
                         bold={true}
+                        centered={false}
+                        disclaimer={false}
+                        green={false}
+                        link={false}
+                        modal={false}
+                        muted={false}
                         noMargin={true}
+                        primary={false}
+                        red={false}
+                        reset={false}
+                        right={false}
+                        small={false}
+                        strikethrough={false}
+                        underline={false}
+                        upper={false}
                       >
                         Gas price
                          
@@ -271,8 +385,26 @@ exports[`EditGasFeeLegacy should render correctly 1`] = `
           body={
             <View>
               <Text
+                bigger={false}
+                black={false}
+                blue={false}
+                bold={false}
+                centered={false}
+                disclaimer={false}
+                green={false}
                 grey={true}
                 infoModal={true}
+                link={false}
+                modal={false}
+                muted={false}
+                primary={false}
+                red={false}
+                reset={false}
+                right={false}
+                small={false}
+                strikethrough={false}
+                underline={false}
+                upper={false}
               />
             </View>
           }

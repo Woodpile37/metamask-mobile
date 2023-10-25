@@ -56,6 +56,24 @@ exports[`AddCustomToken should render correctly 1`] = `
           token scams and security risks.
         </Text>
       </Alert>
+        warningMessage={
+          <React.Fragment>
+            Anyone can create a token, including creating fake versions of existing tokens. Learn more about 
+            <Text
+              onPress={[Function]}
+              style={
+                Object {
+                  "color": "#037DD6",
+                }
+              }
+              suppressHighlighting={true}
+              testID="add-asset-warning-message"
+            >
+              scams and security risks.
+            </Text>
+          </React.Fragment>
+        }
+      />
       <View
         style={
           Object {

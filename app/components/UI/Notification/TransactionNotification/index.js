@@ -11,6 +11,7 @@ import {
   fontStyles,
   colors as importedColors,
 } from '../../../../styles/common';
+import { fontStyles, colors as importedColors } from '../../../../styles/common';
 import decodeTransaction from '../../TransactionElement/utils';
 import TransactionActionContent from '../../TransactionActionModal/TransactionActionContent';
 import ActionContent from '../../ActionModal/ActionContent';
@@ -99,6 +100,64 @@ const createStyles = (colors) =>
       backgroundColor: importedColors.transparent,
     },
   });
+	StyleSheet.create({
+		absoluteFill: {
+			...StyleSheet.absoluteFillObject,
+		},
+		titleWrapper: {
+			borderBottomWidth: StyleSheet.hairlineWidth,
+			borderColor: colors.border.default,
+			flexDirection: 'row',
+		},
+		title: {
+			flex: 1,
+			textAlign: 'center',
+			fontSize: 18,
+			marginVertical: 12,
+			marginHorizontal: 24,
+			color: colors.text.default,
+			...fontStyles.bold,
+		},
+		notification: {
+			position: 'absolute',
+			bottom: 0,
+			paddingBottom: Device.isIphoneX() ? 20 : 10,
+			left: 0,
+			right: 0,
+			backgroundColor: importedColors.transparent,
+		},
+		modalTypeViewBrowser: {
+			bottom: Device.isIphoneX() ? 70 : 60,
+		},
+		closeIcon: {
+			paddingTop: 4,
+			position: 'absolute',
+			right: 16,
+			color: colors.icon.default,
+		},
+		modalsContainer: {
+			position: 'absolute',
+			left: 0,
+			top: 0,
+			bottom: 0,
+			width: '200%',
+			flexDirection: 'row',
+			backgroundColor: colors.overlay.default,
+		},
+		modalOverlay: {
+			justifyContent: 'center',
+			alignItems: 'center',
+			flex: 1,
+		},
+		modalContainer: {
+			width: '90%',
+			borderRadius: 10,
+			backgroundColor: colors.background.default,
+		},
+		elevatedView: {
+			backgroundColor: importedColors.transparent,
+		},
+	});
 
 function TransactionNotification(props) {
   const {
@@ -127,6 +186,13 @@ function TransactionNotification(props) {
 
   const { colors } = useTheme();
   const styles = createStyles(colors);
+	const { colors } = useAppThemeFromContext() || mockTheme;
+	const styles = createStyles(colors);
+
+	const detailsFadeIn = useCallback(async () => {
+		setTransactionDetailsIsVisible(true);
+		setTimeout(() => animatedTimingStart(detailsAnimated, 1), 500);
+	}, [setTransactionDetailsIsVisible, animatedTimingStart, detailsAnimated]);
 
   const detailsFadeIn = useCallback(async () => {
     setTransactionDetailsIsVisible(true);
@@ -213,6 +279,51 @@ function TransactionNotification(props) {
       Engine.context.TransactionController.stopTransaction(tx?.id),
     );
   }, [safelyExecute, tx]);
+	useEffect(() => {
+		async function getTransactionInfo() {
+			const tx = transactions.find(({ id }) => id === currentNotification.transaction.id);
+			if (!tx) return;
+			const {
+				selectedAddress,
+				ticker,
+				chainId,
+				conversionRate,
+				currentCurrency,
+				exchangeRate,
+				contractExchangeRates,
+				collectibleContracts,
+				tokens,
+				primaryCurrency,
+				swapsTransactions,
+				swapsTokens,
+			} = props;
+			const [transactionElement, transactionDetails] = await decodeTransaction({
+				...props,
+				tx,
+				selectedAddress,
+				ticker,
+				chainId,
+				conversionRate,
+				currentCurrency,
+				exchangeRate,
+				contractExchangeRates,
+				collectibleContracts,
+				tokens,
+				primaryCurrency,
+				swapsTransactions,
+				swapsTokens,
+			});
+			const existingGasPrice = new BigNumber(tx?.transaction?.gasPrice || '0x0');
+			const gasFeeValue = fastSplit(
+				existingGasPrice.times(transactionAction === ACTION_CANCEL ? CANCEL_RATE : SPEED_UP_RATE).toString()
+			); // strips decimals if any, coming from the 'times' operation
+			setGasFee(gasFeeValue);
+			setTx(tx);
+			setTransactionElement(transactionElement);
+			setTransactionDetails(transactionDetails);
+		}
+		getTransactionInfo();
+	}, [transactions, currentNotification.transaction.id, transactionAction, props]);
 
   useEffect(() => {
     async function getTransactionInfo() {
@@ -357,6 +468,92 @@ function TransactionNotification(props) {
       )}
     </>
   );
+	return (
+		<>
+			<Animated.View
+				style={[
+					styles.notification,
+					isInBrowserView && styles.modalTypeViewBrowser,
+					{
+						transform: [{ translateY: notificationAnimated }],
+					},
+				]}
+			>
+				<ElevatedView style={styles.elevatedView} elevation={100}>
+					<BaseNotification
+						status={currentNotification.status}
+						data={{
+							...tx?.transaction,
+							...currentNotification.transaction,
+							title: transactionElement?.notificationKey,
+						}}
+						onPress={detailsFadeIn}
+						onHide={onCloseNotification}
+					/>
+				</ElevatedView>
+			</Animated.View>
+			{transactionDetailsIsVisible && (
+				<View style={styles.modalsContainer}>
+					<Animated.View
+						style={[
+							styles.modalOverlay,
+							{ opacity: detailsAnimated },
+							{ transform: [{ translateX: detailsYAnimated }] },
+						]}
+					>
+						<View style={styles.modalContainer}>
+							<View style={styles.titleWrapper}>
+								<Text style={styles.title} onPress={onCloseDetails}>
+									{transactionElement?.actionKey}
+								</Text>
+								<Ionicons
+									onPress={onCloseDetails}
+									name={'ios-close'}
+									size={38}
+									style={styles.closeIcon}
+								/>
+							</View>
+							<TransactionDetails
+								transactionObject={tx}
+								transactionDetails={transactionDetails}
+								close={onCloseDetails}
+								showSpeedUpModal={onSpeedUpPress}
+								showCancelModal={onCancelPress}
+							/>
+						</View>
+					</Animated.View>
+					<Animated.View
+						style={[
+							styles.modalOverlay,
+							{ opacity: detailsAnimated },
+							{ transform: [{ translateX: actionXAnimated }] },
+						]}
+					>
+						<View style={styles.modalContainer}>
+							<ActionContent
+								onCancelPress={onActionFinish}
+								onConfirmPress={
+									transactionAction === ACTION_CANCEL ? stopTransaction : speedUpTransaction
+								}
+								confirmText={strings('transaction.lets_try')}
+								confirmButtonMode={'confirm'}
+								cancelText={strings('transaction.nevermind')}
+								confirmDisabled={transactionActionDisabled}
+							>
+								<TransactionActionContent
+									confirmDisabled={transactionActionDisabled}
+									feeText={`${renderFromWei(gasFee)} ${strings('unit.eth')}`}
+									titleText={strings(`transaction.${transactionAction}_tx_title`)}
+									gasTitleText={strings(`transaction.gas_${transactionAction}_fee`)}
+									descriptionText={strings(`transaction.${transactionAction}_tx_message`)}
+								/>
+							</ActionContent>
+						</View>
+					</Animated.View>
+				</View>
+			)}
+		</>
+	);
 }
 
 TransactionNotification.propTypes = {
@@ -434,6 +631,22 @@ const mapStateToProps = (state) => ({
   swapsTransactions:
     state.engine.backgroundState.TransactionController.swapsTransactions || {},
   swapsTokens: state.engine.backgroundState.SwapsController.tokens,
+	accounts: state.engine.backgroundState.AccountTrackerController.accounts,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
+	transactions: state.engine.backgroundState.TransactionController.transactions,
+	ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+	tokens: state.engine.backgroundState.TokensController.tokens.reduce((tokens, token) => {
+		tokens[token.address] = token;
+		return tokens;
+	}, {}),
+	collectibleContracts: collectibleContractsSelector(state),
+	contractExchangeRates: state.engine.backgroundState.TokenRatesController.contractExchangeRates,
+	conversionRate: state.engine.backgroundState.CurrencyRateController.conversionRate,
+	currentCurrency: state.engine.backgroundState.CurrencyRateController.currentCurrency,
+	primaryCurrency: state.settings.primaryCurrency,
+	swapsTransactions: state.engine.backgroundState.TransactionController.swapsTransactions || {},
+	swapsTokens: state.engine.backgroundState.SwapsController.tokens,
 });
 
 export default connect(mapStateToProps)(TransactionNotification);
