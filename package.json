@@ -128,7 +128,7 @@
 		"ethjs-unit": "0.1.6",
 		"events": "3.0.0",
 		"fuse.js": "3.4.4",
-		"https-browserify": "0.0.1",
+		"https-browserify": "1.0.0",
 		"humanize-duration": "^3.27.0",
 		"improved-yarn-audit": "^2.3.3",
 		"is-url": "^1.2.4",
