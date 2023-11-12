@@ -32,9 +32,8 @@ import {
   APPROVE_NETWORK_APPROVE_BUTTON,
   APPROVE_NETWORK_MODAL,
 } from '../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
-import { ThemeColors } from '@metamask/design-tokens/dist/js/themes/types';
 
-const createStyles = (colors: ThemeColors) =>
+const createStyles = (colors) =>
   StyleSheet.create({
     bottomModal: {
       justifyContent: 'flex-end',
@@ -109,10 +108,9 @@ const createStyles = (colors: ThemeColors) =>
 interface NetworkProps {
   isVisible: boolean;
   onClose: () => void;
-  networkConfiguration: any;
+  network: any;
   navigation: any;
   shouldNetworkSwitchPopToWallet: boolean;
-  onNetworkSwitch?: () => void;
 }
 
 const NetworkModals = (props: NetworkProps) => {
@@ -120,7 +118,7 @@ const NetworkModals = (props: NetworkProps) => {
     navigation,
     isVisible,
     onClose,
-    networkConfiguration: {
+    network: {
       chainId,
       nickname,
       ticker,
@@ -129,7 +127,6 @@ const NetworkModals = (props: NetworkProps) => {
       rpcPrefs: { blockExplorerUrl, imageUrl },
     },
     shouldNetworkSwitchPopToWallet,
-    onNetworkSwitch,
   } = props;
 
   const [showDetails, setShowDetails] = React.useState(false);
@@ -159,48 +156,36 @@ const NetworkModals = (props: NetworkProps) => {
   const goToLink = () => Linking.openURL(strings('networks.security_link'));
 
   const closeModal = () => {
-    const { NetworkController } = Engine.context;
+    const { PreferencesController } = Engine.context;
     const url = new URLPARSE(rpcUrl);
     const decimalChainId = getDecimalChainId(chainId);
     !isprivateConnection(url.hostname) && url.set('protocol', 'https:');
-    NetworkController.upsertNetworkConfiguration(
+    PreferencesController.addToFrequentRpcList(
+      url.href,
+      decimalChainId,
+      ticker,
+      nickname,
       {
-        rpcUrl: url.href,
-        chainId: decimalChainId,
-        ticker,
-        nickname,
-        rpcPrefs: { blockExplorerUrl },
-      },
-      {
-        // Metrics-related properties required, but the metric event is a no-op
-        // TODO: Use events for controller metric events
-        referrer: 'ignored',
-        source: 'ignored',
+        blockExplorerUrl,
       },
     );
     onClose();
   };
 
   const switchNetwork = () => {
-    const { NetworkController, CurrencyRateController } = Engine.context;
+    const { NetworkController, CurrencyRateController, PreferencesController } =
+      Engine.context;
     const url = new URLPARSE(rpcUrl);
     const decimalChainId = getDecimalChainId(chainId);
     CurrencyRateController.setNativeCurrency(ticker);
     !isprivateConnection(url.hostname) && url.set('protocol', 'https:');
-    NetworkController.upsertNetworkConfiguration(
+    PreferencesController.addToFrequentRpcList(
+      url.href,
+      decimalChainId,
+      ticker,
+      nickname,
       {
-        rpcUrl: url.href,
-        chainId: decimalChainId,
-        ticker,
-        nickname,
-        rpcPrefs: { blockExplorerUrl },
-      },
-      {
-        setActive: true,
-        // Metrics-related properties required, but the metric event is a no-op
-        // TODO: Use events for controller metric events
-        referrer: 'ignored',
-        source: 'ignored',
+        blockExplorerUrl,
       },
     );
 
@@ -212,14 +197,11 @@ const NetworkModals = (props: NetworkProps) => {
 
     AnalyticsV2.trackEvent(MetaMetricsEvents.NETWORK_ADDED, analyticsParamsAdd);
 
+    NetworkController.setRpcTarget(url.href, decimalChainId, ticker, nickname);
     closeModal();
-    if (onNetworkSwitch) {
-      onNetworkSwitch();
-    } else {
-      shouldNetworkSwitchPopToWallet
-        ? navigation.navigate('WalletView')
-        : navigation.goBack();
-    }
+    shouldNetworkSwitchPopToWallet
+      ? navigation.navigate('WalletView')
+      : navigation.goBack();
     dispatch(networkSwitched({ networkUrl: url.href, networkStatus: true }));
   };
 

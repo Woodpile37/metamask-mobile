@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
-		flex: 1
+		justifyContent: 'center'
 	},
 	errorContainer: {
 		marginTop: 8,
@@ -76,6 +75,7 @@ const styles = StyleSheet.create({
 		color: colors.red
 	},
 	conversionEstimation: {
+		paddingLeft: 2,
 		marginRight: 14,
 		flex: 1,
 		textAlign: 'center',
@@ -105,9 +105,15 @@ const RangeInput = ({
 	const changeValue = useCallback(
 		(newValue, dontEmptyError) => {
 			if (!dontEmptyError) setErrorState('');
-			onChangeValue?.(newValue);
+			const cleanValue = newValue?.replace?.(',', '.');
+			if (cleanValue && new BigNumber(cleanValue).isNaN()) {
+				setErrorState(`${name} must be a number`);
+				return;
+			}
+
+			onChangeValue?.(cleanValue);
 		},
-		[onChangeValue]
+		[name, onChangeValue]
 	);
 
 	const increaseNumber = useCallback(() => {

@@ -17,16 +17,19 @@ import HorizontalSelector from '../../Base/HorizontalSelector';
 import Device from '../../../util/Device';
 import { isMainnetByChainId } from '../../../util/networks';
 import FadeAnimationView from '../FadeAnimationView';
+import AnalyticsV2 from '../../../util/analyticsV2';
+import AppConstants from '../../../core/AppConstants';
 
 const GAS_LIMIT_INCREMENT = new BigNumber(1000);
 const GAS_PRICE_INCREMENT = new BigNumber(1);
 const GAS_LIMIT_MIN = new BigNumber(21000);
-const GAS_PRICE_MIN = new BigNumber(1);
+const GAS_PRICE_MIN = new BigNumber(0.000001);
 
 const styles = StyleSheet.create({
 	root: {
 		backgroundColor: colors.white,
-		borderRadius: 20,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
 		minHeight: 200,
 		maxHeight: '95%',
 		paddingTop: 24,
@@ -117,7 +120,9 @@ const EditGasFeeLegacy = ({
 	onUpdatingValuesStart,
 	onUpdatingValuesEnd,
 	animateOnChange,
-	isAnimating
+	isAnimating,
+	analyticsParams,
+	view
 }) => {
 	const onlyAdvanced = gasEstimateType !== GAS_ESTIMATE_TYPES.LEGACY;
 	const [showRangeInfoModal, setShowRangeInfoModal] = useState(false);
@@ -125,13 +130,32 @@ const EditGasFeeLegacy = ({
 	const [selectedOption, setSelectedOption] = useState(selected);
 	const [gasPriceError, setGasPriceError] = useState();
 
+	const getAnalyticsParams = useCallback(() => {
+		try {
+			return {
+				...analyticsParams,
+				chain_id: chainId,
+				function_type: view,
+				gas_mode: selectedOption ? 'Basic' : 'Advanced',
+				speed_set: selectedOption || undefined
+			};
+		} catch (error) {
+			return {};
+		}
+	}, [analyticsParams, chainId, selectedOption, view]);
+
 	const toggleAdvancedOptions = useCallback(() => {
+		if (!showAdvancedOptions) {
+			AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.GAS_ADVANCED_OPTIONS_CLICKED, getAnalyticsParams());
+		}
 		setShowAdvancedOptions(showAdvancedOptions => !showAdvancedOptions);
-	}, []);
+	}, [getAnalyticsParams, showAdvancedOptions]);
 
 	const save = useCallback(() => {
+		AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.GAS_FEE_CHANGED, getAnalyticsParams());
+
 		onSave(selectedOption);
-	}, [onSave, selectedOption]);
+	}, [getAnalyticsParams, onSave, selectedOption]);
 
 	const changeGas = useCallback(
 		(gas, selectedOption) => {
@@ -155,9 +179,9 @@ const EditGasFeeLegacy = ({
 			const valueBN = new BigNumber(value);
 
 			if (!lowerValue.isNaN() && valueBN.lt(lowerValue)) {
-				setGasPriceError('Gas price is low for current network conditions');
+				setGasPriceError(strings('edit_gas_fee_eip1559.gas_price_low'));
 			} else if (!higherValue.isNaN() && valueBN.gt(higherValue)) {
-				setGasPriceError('Gas price is higher than necessary');
+				setGasPriceError(strings('edit_gas_fee_eip1559.gas_price_high'));
 			} else {
 				setGasPriceError('');
 			}
@@ -191,9 +215,9 @@ const EditGasFeeLegacy = ({
 
 	const renderOptions = useMemo(() => {
 		const options = [
-			{ name: 'low', label: 'Low' },
-			{ name: 'medium', label: 'Medium' },
-			{ name: 'high', label: 'High' }
+			{ name: AppConstants.GAS_OPTIONS.LOW, label: strings('edit_gas_fee_eip1559.low') },
+			{ name: AppConstants.GAS_OPTIONS.MEDIUM, label: strings('edit_gas_fee_eip1559.medium') },
+			{ name: AppConstants.GAS_OPTIONS.HIGH, label: strings('edit_gas_fee_eip1559.high') }
 		];
 		return options
 			.filter(option => !shouldIgnore(option.name))
@@ -213,6 +237,52 @@ const EditGasFeeLegacy = ({
 			});
 	}, [recommended, shouldIgnore]);
 
+	const renderWarning = useMemo(() => {
+		if (!warning) return null;
+		if (typeof warning === 'string')
+			return (
+				<Alert
+					small
+					type="warning"
+					renderIcon={() => <MaterialCommunityIcon name="information" size={20} color={colors.yellow} />}
+					style={styles.warningContainer}
+				>
+					{() => (
+						<View style={styles.warningTextContainer}>
+							<Text black style={styles.warningText}>
+								{warning}
+							</Text>
+						</View>
+					)}
+				</Alert>
+			);
+
+		return warning;
+	}, [warning]);
+
+	const renderError = useMemo(() => {
+		if (!error) return null;
+		if (typeof error === 'string')
+			return (
+				<Alert
+					small
+					type="error"
+					renderIcon={() => <MaterialCommunityIcon name="information" size={20} color={colors.red} />}
+					style={styles.warningContainer}
+				>
+					{() => (
+						<View style={styles.warningTextContainer}>
+							<Text red style={styles.warningText}>
+								{error}
+							</Text>
+						</View>
+					)}
+				</Alert>
+			);
+
+		return error;
+	}, [error]);
+
 	const isMainnet = isMainnetByChainId(chainId);
 	const nativeCurrencySelected = primaryCurrency === 'ETH' || !isMainnet;
 	let gasFeePrimary, gasFeeSecondary;
@@ -223,6 +293,9 @@ const EditGasFeeLegacy = ({
 		gasFeePrimary = gasFeeConversion;
 		gasFeeSecondary = gasFeeNative;
 	}
+
+	const valueToWatch = gasFeeNative;
+
 	return (
 		<View style={styles.root}>
 			<ScrollView style={styles.wrapper}>
@@ -239,36 +312,10 @@ const EditGasFeeLegacy = ({
 								<Icon name={'ios-arrow-back'} size={24} color={colors.white} />
 							</View>
 						</View>
-						{Boolean(error) && (
-							<Alert
-								small
-								type="error"
-								renderIcon={() => (
-									<MaterialCommunityIcon name="information" size={20} color={colors.red} />
-								)}
-							>
-								<View style={styles.warningTextContainer}>
-									<Text red>{error}</Text>
-								</View>
-							</Alert>
-						)}
-						{Boolean(warning) && (
-							<Alert
-								small
-								type="warning"
-								renderIcon={() => (
-									<MaterialCommunityIcon name="information" size={20} color={colors.yellow} />
-								)}
-							>
-								<View style={styles.warningTextContainer}>
-									<Text black style={styles.warningText}>
-										{warning}
-									</Text>
-								</View>
-							</Alert>
-						)}
+						{renderWarning}
+						{renderError}
 						<FadeAnimationView
-							valueToWatch={gasFeePrimary}
+							valueToWatch={valueToWatch}
 							animateOnChange={animateOnChange}
 							onAnimationStart={onUpdatingValuesStart}
 							onAnimationEnd={onUpdatingValuesEnd}
@@ -339,7 +386,7 @@ const EditGasFeeLegacy = ({
 												value={gasFee.suggestedGasLimit}
 												onChangeValue={changedGasLimit}
 												min={GAS_LIMIT_MIN}
-												name={'Gas limit'}
+												name={strings('edit_gas_fee_eip1559.gas_limit')}
 												increment={GAS_LIMIT_INCREMENT}
 											/>
 										</View>
@@ -348,7 +395,7 @@ const EditGasFeeLegacy = ({
 												leftLabelComponent={
 													<View style={styles.labelTextContainer}>
 														<Text black bold noMargin>
-															Gas price{' '}
+															{strings('edit_gas_fee_eip1559.gas_price')}{' '}
 														</Text>
 
 														<TouchableOpacity
@@ -364,11 +411,11 @@ const EditGasFeeLegacy = ({
 													</View>
 												}
 												value={gasFee.suggestedGasPrice}
-												name={'Gas price'}
+												name={strings('edit_gas_fee_eip1559.gas_price')}
 												unit={'GWEI'}
 												increment={GAS_PRICE_INCREMENT}
 												min={GAS_PRICE_MIN}
-												inputInsideLabel={`≈ ${gasFeeConversion}`}
+												inputInsideLabel={gasFeeConversion && `≈ ${gasFeeConversion}`}
 												onChangeValue={changedGasPrice}
 												error={gasPriceError}
 											/>
@@ -386,9 +433,9 @@ const EditGasFeeLegacy = ({
 							isVisible={Boolean(showRangeInfoModal)}
 							title={
 								showRangeInfoModal === 'gas_limit'
-									? 'Gas limit'
+									? strings('edit_gas_fee_eip1559.gas_limit')
 									: showRangeInfoModal === 'gas_price'
-									? 'Gas price'
+									? strings('edit_gas_fee_eip1559.gas_price')
 									: null
 							}
 							toggleModal={() => setShowRangeInfoModal(null)}
@@ -396,9 +443,9 @@ const EditGasFeeLegacy = ({
 								<View>
 									<Text grey infoModal>
 										{showRangeInfoModal === 'gas_limit' &&
-											`Gas limit is the maximum units of gas you are willing to use. Units of gas are a multiplier to “Max priority fee” and “Max fee”.`}
+											strings('edit_gas_fee_eip1559.learn_more_gas_limit_legacy')}
 										{showRangeInfoModal === 'gas_price' &&
-											`This network requires a “Gas price” field when submitting a transaction. Gas price is the maximum amount you are willing to pay per unit of gas.`}
+											strings('edit_gas_fee_eip1559.learn_more_gas_price')}
 									</Text>
 								</View>
 							}
@@ -412,7 +459,7 @@ const EditGasFeeLegacy = ({
 
 EditGasFeeLegacy.defaultProps = {
 	ignoreOptions: [],
-	warningMinimumEstimateOption: 'low'
+	warningMinimumEstimateOption: AppConstants.GAS_OPTIONS.LOW
 };
 
 EditGasFeeLegacy.propTypes = {
@@ -463,11 +510,11 @@ EditGasFeeLegacy.propTypes = {
 	/**
 	 * Error message to show
 	 */
-	error: PropTypes.string,
+	error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.node]),
 	/**
 	 * Warning message to show
 	 */
-	warning: PropTypes.string,
+	warning: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.node]),
 	/**
 	 * Ignore option array
 	 */
@@ -495,7 +542,15 @@ EditGasFeeLegacy.propTypes = {
 	/**
 	 * Boolean to determine if the animation is happening
 	 */
-	isAnimating: PropTypes.bool
+	isAnimating: PropTypes.bool,
+	/**
+	 * Extra analytics params to be send with the gas analytics
+	 */
+	analyticsParams: PropTypes.object,
+	/**
+	 * (For analytics purposes) View (Approve, Transfer, Confirm) where this component is being used
+	 */
+	view: PropTypes.string.isRequired
 };
 
 export default EditGasFeeLegacy;

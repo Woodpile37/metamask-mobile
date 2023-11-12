@@ -1,0 +1,349 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@babel/core > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: '@babel/core > lodash'
+    - detox > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > lodash
+    - eslint > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint > lodash
+    - enzyme-to-json > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: enzyme-to-json > lodash
+    - lint-staged > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: lint-staged > lodash
+    - react-native-vector-icons > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-native-vector-icons > lodash
+    - '@sentry/react-native > @sentry/wizard > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: '@sentry/react-native > @sentry/wizard > lodash'
+    - babel-eslint > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: babel-eslint > @babel/traverse > lodash
+    - detox > @babel/core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > @babel/core > lodash
+    - metro > @babel/core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: metro > @babel/core > lodash
+    - web3-provider-engine > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: web3-provider-engine > async > lodash
+    - json-rpc-engine > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: json-rpc-engine > async > lodash
+    - metro > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: metro > async > lodash
+    - '@react-native-community/eslint-config > eslint-plugin-flowtype > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @react-native-community/eslint-config > eslint-plugin-flowtype >
+          lodash
+    - detox > shell-utils > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > shell-utils > lodash
+    - eslint > table > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint > table > lodash
+    - eslint-config-react-native > eslint > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint-config-react-native > eslint > lodash
+    - lint-staged > yup > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: lint-staged > yup > lodash
+    - metro-react-native-babel-preset > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro-react-native-babel-preset >
+          @babel/plugin-transform-block-scoping > lodash
+    - react-native > @react-native-community/cli-platform-ios > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-native > @react-native-community/cli-platform-ios > lodash
+    - enzyme > cheerio > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: enzyme > cheerio > lodash
+    - eslint > inquirer > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint > inquirer > lodash
+    - request-promise > request-promise-core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: request-promise > request-promise-core > lodash
+    - babel-eslint > @babel/traverse > @babel/generator > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: babel-eslint > @babel/traverse > @babel/generator > lodash
+    - detox > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: detox > @babel/core > @babel/helper-module-transforms > lodash
+    - metro > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: metro > @babel/core > @babel/helper-module-transforms > lodash
+    - metro-react-native-babel-preset > @babel/plugin-transform-sticky-regex > @babel/helper-regex > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro-react-native-babel-preset > @babel/plugin-transform-sticky-regex
+          > @babel/helper-regex > lodash
+    - '@react-native-community/eslint-config > babel-eslint > @babel/traverse > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @react-native-community/eslint-config > babel-eslint > @babel/traverse
+          > lodash
+    - web3-provider-engine > ethereumjs-block > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: web3-provider-engine > ethereumjs-block > async > lodash
+    - eth-json-rpc-middleware > ethereumjs-block > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eth-json-rpc-middleware > ethereumjs-block > async > lodash
+    - '@metamask/controllers > web3-provider-engine > async > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: '@metamask/controllers > web3-provider-engine > async > lodash'
+    - eslint-config-react-native > eslint > table > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint-config-react-native > eslint > table > lodash
+    - metro > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > babel-preset-fbjs > @babel/plugin-transform-block-scoping >
+          lodash
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > metro-react-native-babel-preset >
+          @babel/plugin-transform-block-scoping > lodash
+    - metro > metro-babel-register > @babel/register > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: metro > metro-babel-register > @babel/register > lodash
+    - react-native > @react-native-community/cli > inquirer > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-native > @react-native-community/cli > inquirer > lodash
+    - '@sentry/react-native > @sentry/wizard > inquirer > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: '@sentry/react-native > @sentry/wizard > inquirer > lodash'
+    - eslint-config-react-native > eslint > inquirer > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: eslint-config-react-native > eslint > inquirer > lodash
+    - '@react-native-community/eslint-config > babel-eslint > @babel/traverse > @babel/generator > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @react-native-community/eslint-config > babel-eslint > @babel/traverse
+          > @babel/generator > lodash
+    - metro > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-define-map > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > babel-preset-fbjs > @babel/plugin-transform-classes >
+          @babel/helper-define-map > lodash
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-sticky-regex > @babel/helper-regex > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > metro-react-native-babel-preset >
+          @babel/plugin-transform-sticky-regex > @babel/helper-regex > lodash
+    - eslint-config-react-native > eslint-config-esnext > babel-eslint > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          eslint-config-react-native > eslint-config-esnext > babel-eslint >
+          @babel/traverse > lodash
+    - react-native > @react-native-community/cli > metro > @babel/core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > @babel/core >
+          lodash
+    - '@metamask/controllers > web3-provider-engine > ethereumjs-block > async > lodash':
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          @metamask/controllers > web3-provider-engine > ethereumjs-block >
+          async > lodash
+    - eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-block > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          eth-json-rpc-filters > eth-json-rpc-middleware > ethereumjs-block >
+          async > lodash
+    - react-native > @react-native-community/cli > metro > async > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: react-native > @react-native-community/cli > metro > async > lodash
+    - react-native > @react-native-community/cli > @react-native-community/cli-server-api > @react-native-community/cli-tools > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli >
+          @react-native-community/cli-server-api >
+          @react-native-community/cli-tools > lodash
+    - eslint-config-react-native > eslint-config-esnext > babel-eslint > @babel/traverse > @babel/generator > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          eslint-config-react-native > eslint-config-esnext > babel-eslint >
+          @babel/traverse > @babel/generator > lodash
+    - react-native > @react-native-community/cli > metro > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > @babel/core >
+          @babel/helper-module-transforms > lodash
+    - metro-react-native-babel-preset > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro-react-native-babel-preset >
+          @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-replace-supers > @babel/traverse > lodash
+    - jest > @jest/core > @jest/reporters > @jest/transform > @babel/core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          jest > @jest/core > @jest/reporters > @jest/transform > @babel/core >
+          lodash
+    - react-native > @react-native-community/cli > metro > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > babel-preset-fbjs
+          > @babel/plugin-transform-block-scoping > lodash
+    - react-native > @react-native-community/cli > metro > metro-babel-register > @babel/register > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro >
+          metro-babel-register > @babel/register > lodash
+    - metro-react-native-babel-preset > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro-react-native-babel-preset >
+          @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-function-name > @babel/helper-get-function-arity >
+          @babel/types > lodash
+    - jest > @jest/core > @jest/reporters > @jest/transform > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          jest > @jest/core > @jest/reporters > @jest/transform > @babel/core >
+          @babel/helper-module-transforms > lodash
+    - react-native > @react-native-community/cli > metro > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-define-map > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > babel-preset-fbjs
+          > @babel/plugin-transform-classes > @babel/helper-define-map > lodash
+    - metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-replace-supers > @babel/traverse > lodash
+    - metro > metro-react-native-babel-preset > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > metro-react-native-babel-preset >
+          @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-replace-supers > @babel/traverse > lodash
+    - react-native > @react-native-community/cli > metro > metro-react-native-babel-preset > @babel/plugin-transform-sticky-regex > @babel/helper-regex > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro >
+          metro-react-native-babel-preset > @babel/plugin-transform-sticky-regex
+          > @babel/helper-regex > lodash
+    - metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-function-name > @babel/helper-get-function-arity >
+          @babel/types > lodash
+    - metro > metro-react-native-babel-preset > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          metro > metro-react-native-babel-preset >
+          @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-function-name > @babel/helper-get-function-arity >
+          @babel/types > lodash
+    - jest > @jest/core > jest-config > jest-environment-jsdom > jsdom > request-promise-native > request-promise-core > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          jest > @jest/core > jest-config > jest-environment-jsdom > jsdom >
+          request-promise-native > request-promise-core > lodash
+    - react-native > @react-native-community/cli > metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > babel-preset-fbjs
+          > @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-replace-supers > @babel/traverse > lodash
+    - react-native > @react-native-community/cli > metro > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: SNYK-JS-LODASH-567746
+        path: >-
+          react-native > @react-native-community/cli > metro > babel-preset-fbjs
+          > @babel/plugin-proposal-class-properties >
+          @babel/helper-create-class-features-plugin >
+          @babel/helper-function-name > @babel/helper-get-function-arity >
+          @babel/types > lodash
+  'npm:semver:20150403':
+    - react-native-level-fs > levelup > semver:
+        patched: '2023-10-18T00:48:19.821Z'
+        id: 'npm:semver:20150403'
+        path: react-native-level-fs > levelup > semver

@@ -20,7 +20,7 @@ const styleSheet = (params: {
   vars: ButtonBaseStyleSheetVars;
 }) => {
   const { vars, theme } = params;
-  const { style, size, width, isDisabled } = vars;
+  const { style, size, labelColor, width, isDisabled } = vars;
   const isAutoSize: boolean = size === ButtonSize.Auto;
   let widthObject;
   switch (width) {
@@ -56,7 +56,7 @@ const styleSheet = (params: {
       marginLeft: 8,
     },
     label: {
-      color: theme.colors.text.default,
+      color: labelColor || theme.colors.text.default,
     },
   });
 };

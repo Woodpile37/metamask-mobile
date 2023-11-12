@@ -64,7 +64,7 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
             onPress={[Function]}
             style={
               Object {
-                "paddingHorizontal": 2,
+                "paddingLeft": 2,
               }
             }
           >
@@ -75,7 +75,6 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
               style={
                 Object {
                   "color": "#bbc0c5",
-                  "marginTop": 5,
                 }
               }
             />
@@ -112,9 +111,7 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
     <View
       style={
         Object {
-          "alignItems": "center",
-          "flex": 1,
-          "flexDirection": "row",
+          "marginTop": 4,
         }
       }
     >
@@ -128,6 +125,7 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
           green={false}
           link={false}
           modal={false}
+          noMargin={true}
           primary={true}
           red={false}
           reset={false}
@@ -152,6 +150,33 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
   </View>
   <InfoModal
     body={
+      <Text
+        black={false}
+        blue={false}
+        bold={false}
+        centered={false}
+        disclaimer={false}
+        green={false}
+        infoModal={true}
+        link={false}
+        modal={false}
+        primary={false}
+        red={false}
+        reset={false}
+        right={false}
+        small={false}
+        strikethrough={false}
+        underline={false}
+        upper={false}
+      >
+        This gas fee suggestion is using legacy gas estimation which may be inaccurate.
+      </Text>
+    }
+    isVisible={false}
+    toggleModal={[Function]}
+  />
+  <InfoModal
+    body={
       <View>
         <Text
           black={false}
@@ -172,13 +197,52 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
           underline={false}
           upper={false}
         >
-          Estimated gas fee tooltip: Gas fees are paid to crypto miners who process transactions on the Ethereum network.
-
-          MetaMask does not profit from gas fees.
-
-
+          Gas fees are paid to crypto miners who process transactions on the
+           Ethereum
+           network.
+           
+          <Text
+            black={false}
+            blue={false}
+            bold={true}
+            centered={false}
+            disclaimer={false}
+            green={false}
+            link={false}
+            modal={false}
+            noMargin={true}
+            primary={false}
+            red={false}
+            reset={false}
+            right={false}
+            small={false}
+            strikethrough={false}
+            underline={false}
+            upper={false}
+          >
+            MetaMask does not profit from gas fees.
+          </Text>
+        </Text>
+        <Text
+          black={false}
+          blue={false}
+          bold={false}
+          centered={false}
+          disclaimer={false}
+          green={false}
+          infoModal={true}
+          link={false}
+          modal={false}
+          primary={false}
+          red={false}
+          reset={false}
+          right={false}
+          small={false}
+          strikethrough={false}
+          underline={false}
+          upper={false}
+        >
           Gas fees are set by the network and fluctuate based on network traffic and transaction complexity.
-
         </Text>
         <TouchableOpacity
           onPress={[Function]}
@@ -207,8 +271,12 @@ exports[`TransactionReviewEIP1559 should render correctly 1`] = `
       </View>
     }
     isVisible={false}
-    title="Estimated gas fee tooltip"
+    title="What are gas fees?"
     toggleModal={[Function]}
+  />
+  <TimeEstimateInfoModal
+    isVisible={false}
+    onHideModal={[Function]}
   />
 </Summary>
 `;

@@ -182,7 +182,11 @@ class TransactionReview extends PureComponent {
 		/**
 		 * Object that represents the navigator
 		 */
-		navigation: PropTypes.object
+		navigation: PropTypes.object,
+		/**
+		 * If it's a eip1559 network and dapp suggest legact gas then it should show a warning
+		 */
+		dappSuggestedGasWarning: PropTypes.bool
 	};
 
 	state = {
@@ -202,13 +206,14 @@ class TransactionReview extends PureComponent {
 			transaction,
 			transaction: { data, to },
 			tokens,
-			chainId
+			chainId,
+			ready
 		} = this.props;
 		let { showHexData } = this.props;
 		let assetAmount, conversionRate, fiatValue;
 		showHexData = showHexData || data;
 		const approveTransaction = data && data.substr(0, 10) === APPROVE_FUNCTION_SIGNATURE;
-		const error = validate && (await validate());
+		const error = ready && validate && (await validate());
 		const actionKey = await getTransactionReviewActionKey(transaction, chainId);
 		if (approveTransaction) {
 			let contract = contractMap[safeToChecksumAddress(to)];
@@ -225,6 +230,14 @@ class TransactionReview extends PureComponent {
 			Analytics.trackEvent(ANALYTICS_EVENT_OPTS.TRANSACTIONS_CONFIRM_STARTED);
 		});
 	};
+
+	async componentDidUpdate(prevProps) {
+		if (this.props.ready !== prevProps.ready) {
+			const error = this.props.validate && (await this.props.validate());
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState({ error });
+		}
+	}
 
 	getRenderValues = () => {
 		const {
@@ -325,7 +338,8 @@ class TransactionReview extends PureComponent {
 			animateOnChange,
 			isAnimating,
 			dappSuggestedGas,
-			navigation
+			navigation,
+			dappSuggestedGasWarning
 		} = this.props;
 		const { actionKey, error, assetAmount, conversionRate, fiatValue, approveTransaction } = this.state;
 		const currentPageInformation = { url: this.getUrlFromBrowser() };
@@ -367,6 +381,7 @@ class TransactionReview extends PureComponent {
 									gasEstimateType={gasEstimateType}
 									EIP1559GasData={EIP1559GasData}
 									origin={dappSuggestedGas ? currentPageInformation?.url : null}
+									originWarning={dappSuggestedGasWarning}
 									onUpdatingValuesStart={onUpdatingValuesStart}
 									onUpdatingValuesEnd={onUpdatingValuesEnd}
 									animateOnChange={animateOnChange}

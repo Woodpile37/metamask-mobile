@@ -16,7 +16,6 @@ import { Asset } from '../AssetOverview.types';
 import PriceChart from '../PriceChart/PriceChart';
 import { distributeDataPoints } from '../PriceChart/utils';
 import styleSheet from './Price.styles';
-import { TOKEN_PRICE } from '../../../../../wdio/screen-objects/testIDs/Screens/TokenOverviewScreen.testIds';
 
 interface PriceProps {
   asset: Asset;
@@ -80,7 +79,7 @@ const Price = ({
         <Text style={styles.symbol}>{asset.symbol}</Text>
         {asset.name && <Text style={styles.name}>{asset.name}</Text>}
         {!isNaN(price) && (
-          <Title style={styles.price} testID={TOKEN_PRICE}>
+          <Title style={styles.price}>
             {isLoading ? (
               <View style={styles.loadingPrice}>
                 <SkeletonPlaceholder>

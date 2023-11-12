@@ -68,8 +68,7 @@ import { setInfuraAvailabilityBlocked, setInfuraAvailabilityNotBlocked } from '.
 
 const styles = StyleSheet.create({
 	flex: {
-		flex: 1,
-		marginTop: Device.isIphone12() ? 20 : 0
+		flex: 1
 	},
 	loader: {
 		backgroundColor: colors.white,
@@ -320,7 +319,7 @@ const Main = props => {
 			// if destination address is metaswap contract
 			if (
 				to &&
-				(to === swapsUtils.getSwapsContractAddress(props.chainId) ||
+				(swapsUtils.isValidContractAddress(props.chainId, to) ||
 					(data &&
 						data.substr(0, 10) === APPROVE_FUNCTION_SIGNATURE &&
 						decodeApproveData(data).spenderAddress?.toLowerCase() ===
@@ -776,7 +775,7 @@ const mapStateToProps = state => ({
 	thirdPartyApiMode: state.privacy.thirdPartyApiMode,
 	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress,
 	chainId: state.engine.backgroundState.NetworkController.provider.chainId,
-	tokens: state.engine.backgroundState.AssetsController.tokens,
+	tokens: state.engine.backgroundState.TokensController.tokens,
 	dappTransactionModalVisible: state.modals.dappTransactionModalVisible,
 	approveModalVisible: state.modals.approveModalVisible,
 	swapsTransactions: state.engine.backgroundState.TransactionController.swapsTransactions || {},
