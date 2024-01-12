@@ -33,13 +33,12 @@ function Settings() {
         navigation,
         false,
         colors,
-        false,
       ),
     );
   }, [colors, navigation]);
 
   const handleResetRegion = useCallback(() => {
-    trackEvent('ONRAMP_REGION_RESET', {
+    trackEvent('RAMP_REGION_RESET', {
       location: 'Settings Screen',
     });
     setSelectedRegion(null);

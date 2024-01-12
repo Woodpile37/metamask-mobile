@@ -13,19 +13,6 @@ const initialState = {
   networkOnboarded: {
     networkOnboardedState: { '1': true },
   },
-  privacy: {
-    thirdPartyApiMode: true,
-  },
-	engine: {
-		backgroundState: {
-			PreferencesController: {
-				frequentRpcList: [],
-			},
-		},
-	},
-	networkOnboarded: {
-		networkOnboardedState: [{ network: 'mainnet', onboarded: true }],
-	},
 };
 const store = mockStore(initialState);
 

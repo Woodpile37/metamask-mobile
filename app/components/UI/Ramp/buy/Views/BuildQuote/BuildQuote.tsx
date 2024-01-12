@@ -62,16 +62,21 @@ import {
 import Routes from '../../../../../../constants/navigation/Routes';
 import { formatAmount } from '../../../common/utils';
 import { createQuotesNavDetails } from '../Quotes/Quotes';
-import { Region } from '../../../common/types';
+import { QuickAmount, Region, ScreenLocation } from '../../../common/types';
 import { useStyles } from '../../../../../../component-library/hooks';
 
 import styleSheet from './BuildQuote.styles';
-import { toTokenMinimalUnit } from '../../../../../../util/number';
+import {
+  toTokenMinimalUnit,
+  fromTokenMinimalUnitString,
+} from '../../../../../../util/number';
+import useGasPriceEstimation from '../../../common/hooks/useGasPriceEstimation';
 
 // TODO: Convert into typescript and correctly type
 const ListItem = BaseListItem as any;
 const SelectorButton = BaseSelectorButton as any;
 
+const TRANSFER_GAS_LIMIT = 21000;
 interface BuildQuoteParams {
   showBack?: boolean;
 }
@@ -131,9 +136,14 @@ const BuildQuote = () => {
     selectedChainId,
     selectedNetworkName,
     sdkError,
+    rampType,
     isBuy,
     isSell,
   } = useRampSDK();
+
+  const screenLocation: ScreenLocation = isBuy
+    ? 'Amount to Buy Screen'
+    : 'Amount to Sell Screen';
 
   const {
     data: regions,
@@ -170,6 +180,12 @@ const BuildQuote = () => {
   const { limits, isAmountBelowMinimum, isAmountAboveMaximum, isAmountValid } =
     useLimits();
 
+  const gasPriceEstimation = useGasPriceEstimation({
+    // 0 is set when buying since there's no transaction involved
+    gasLimit: isBuy ? 0 : TRANSFER_GAS_LIMIT,
+    estimateRange: 'high',
+  });
+
   const assetForBalance =
     selectedAsset && selectedAsset.address !== NATIVE_ADDRESS
       ? {
@@ -195,6 +211,11 @@ const BuildQuote = () => {
       : undefined,
   );
 
+  const maxSellAmount =
+    balanceBN && gasPriceEstimation
+      ? balanceBN?.sub(gasPriceEstimation.estimatedGasFee)
+      : null;
+
   const amountIsBelowMinimum = useMemo(
     () => isAmountBelowMinimum(amountNumber),
     [amountNumber, isAmountBelowMinimum],
@@ -210,9 +231,16 @@ const BuildQuote = () => {
     [amountNumber, isAmountValid],
   );
 
+  const amountIsOverGas = useMemo(() => {
+    if (isBuy || !maxSellAmount) {
+      return false;
+    }
+    return Boolean(amountBNMinimalUnit?.gt(maxSellAmount));
+  }, [amountBNMinimalUnit, isBuy, maxSellAmount]);
+
   const hasInsufficientBalance = useMemo(() => {
     if (!balanceBN || !amountBNMinimalUnit) {
-      return null;
+      return false;
     }
     return balanceBN.lt(amountBNMinimalUnit);
   }, [balanceBN, amountBNMinimalUnit]);
@@ -224,11 +252,18 @@ const BuildQuote = () => {
     isFetchingRegions;
 
   const handleCancelPress = useCallback(() => {
-    trackEvent('ONRAMP_CANCELED', {
-      location: 'Amount to Buy Screen',
-      chain_id_destination: selectedChainId,
-    });
-  }, [selectedChainId, trackEvent]);
+    if (isBuy) {
+      trackEvent('ONRAMP_CANCELED', {
+        location: screenLocation,
+        chain_id_destination: selectedChainId,
+      });
+    } else {
+      trackEvent('OFFRAMP_CANCELED', {
+        location: screenLocation,
+        chain_id_source: selectedChainId,
+      });
+    }
+  }, [screenLocation, isBuy, selectedChainId, trackEvent]);
 
   useEffect(() => {
     navigation.setOptions(
@@ -294,10 +329,48 @@ const BuildQuote = () => {
     [isSell, selectedAsset?.decimals],
   );
 
-  const handleQuickAmountPress = useCallback((value) => {
-    setAmount(`${value}`);
-    setAmountNumber(value);
-  }, []);
+  const handleQuickAmountPress = useCallback(
+    ({ value }: QuickAmount) => {
+      if (isBuy) {
+        setAmount(`${value}`);
+        setAmountNumber(value);
+      } else {
+        const percentage = value * 100;
+        const amountPercentage = balanceBN
+          ?.mul(new BN(percentage))
+          .div(new BN(100));
+
+        if (!amountPercentage) {
+          return;
+        }
+
+        let amountToSet = amountPercentage;
+
+        if (
+          selectedAsset?.address === NATIVE_ADDRESS &&
+          maxSellAmount &&
+          maxSellAmount.lt(amountPercentage)
+        ) {
+          amountToSet = maxSellAmount;
+        }
+
+        const newAmountString = fromTokenMinimalUnitString(
+          amountToSet.toString(10),
+          selectedAsset?.decimals ?? 18,
+        );
+        setAmountBNMinimalUnit(amountToSet);
+        setAmount(newAmountString);
+        setAmountNumber(Number(newAmountString));
+      }
+    },
+    [
+      balanceBN,
+      isBuy,
+      maxSellAmount,
+      selectedAsset?.address,
+      selectedAsset?.decimals,
+    ],
+  );
 
   const onKeypadLayout = useCallback((event) => {
     const { height } = event.nativeEvent.layout;
@@ -401,23 +474,40 @@ const BuildQuote = () => {
     if (selectedAsset && currentFiatCurrency) {
       navigation.navigate(
         ...createQuotesNavDetails({
-          amount: amountNumber,
+          amount: isBuy ? amountNumber : amount,
           asset: selectedAsset,
           fiatCurrency: currentFiatCurrency,
         }),
       );
-      trackEvent('ONRAMP_QUOTES_REQUESTED', {
-        currency_source: currentFiatCurrency.symbol,
-        currency_destination: selectedAsset.symbol,
+
+      const analyticsPayload = {
         payment_method_id: selectedPaymentMethodId as string,
-        chain_id_destination: selectedChainId,
         amount: amountNumber,
-        location: 'Amount to Buy Screen',
-      });
+        location: screenLocation,
+      };
+
+      if (isBuy) {
+        trackEvent('ONRAMP_QUOTES_REQUESTED', {
+          ...analyticsPayload,
+          currency_source: currentFiatCurrency.symbol,
+          currency_destination: selectedAsset.symbol,
+          chain_id_destination: selectedChainId,
+        });
+      } else {
+        trackEvent('OFFRAMP_QUOTES_REQUESTED', {
+          ...analyticsPayload,
+          currency_destination: currentFiatCurrency.symbol,
+          currency_source: selectedAsset.symbol,
+          chain_id_source: selectedChainId,
+        });
+      }
     }
   }, [
+    screenLocation,
+    amount,
     amountNumber,
     currentFiatCurrency,
+    isBuy,
     navigation,
     selectedAsset,
     selectedChainId,
@@ -472,10 +562,7 @@ const BuildQuote = () => {
     return (
       <ScreenLayout>
         <ScreenLayout.Body>
-          <ErrorViewWithReporting
-            error={sdkError}
-            location={'Amount to Buy Screen'}
-          />
+          <ErrorViewWithReporting error={sdkError} location={screenLocation} />
         </ScreenLayout.Body>
       </ScreenLayout>
     );
@@ -488,7 +575,7 @@ const BuildQuote = () => {
           <ErrorView
             description={error}
             ctaOnPress={retryMethod}
-            location={'Amount to Buy Screen'}
+            location={screenLocation}
           />
         </ScreenLayout.Body>
       </ScreenLayout>
@@ -540,7 +627,9 @@ const BuildQuote = () => {
             icon="info"
             title={strings('fiat_on_ramp_aggregator.no_tokens_available_title')}
             description={strings(
-              'fiat_on_ramp_aggregator.no_tokens_available',
+              isBuy
+                ? 'fiat_on_ramp_aggregator.no_tokens_available'
+                : 'fiat_on_ramp_aggregator.no_sell_tokens_available',
               {
                 network:
                   selectedNetworkName ||
@@ -548,21 +637,30 @@ const BuildQuote = () => {
                 region: selectedRegion?.name,
               },
             )}
-            ctaLabel={strings('fiat_on_ramp_aggregator.change_payment_method')}
+            ctaLabel={strings(
+              isBuy
+                ? 'fiat_on_ramp_aggregator.change_payment_method'
+                : 'fiat_on_ramp_aggregator.change_cash_destination',
+            )}
             ctaOnPress={showPaymentMethodsModal as () => void}
-            location={'Amount to Buy Screen'}
+            location={screenLocation}
           />
         </ScreenLayout.Body>
         <PaymentMethodModal
           isVisible={isPaymentMethodModalVisible}
           dismiss={hidePaymentMethodModal as () => void}
-          title={strings('fiat_on_ramp_aggregator.select_payment_method')}
+          title={strings(
+            isBuy
+              ? 'fiat_on_ramp_aggregator.select_payment_method'
+              : 'fiat_on_ramp_aggregator.select_cash_destination',
+          )}
           paymentMethods={paymentMethods}
           selectedPaymentMethodId={selectedPaymentMethodId}
           selectedPaymentMethodType={currentPaymentMethod?.paymentType}
           onItemPress={handleChangePaymentMethod}
           selectedRegion={selectedRegion}
-          location={'Amount to Buy Screen'}
+          location={screenLocation}
+          rampType={rampType}
         />
       </ScreenLayout>
     );
@@ -573,6 +671,27 @@ const BuildQuote = () => {
     displayAmount = amountFocused ? amount : formatAmount(amountNumber);
   } else {
     displayAmount = `${amount} ${selectedAsset?.symbol}`;
+  }
+
+  let quickAmounts: QuickAmount[] = [];
+
+  if (isBuy) {
+    quickAmounts =
+      limits?.quickAmounts?.map((quickAmount) => ({
+        value: quickAmount,
+        label: currentFiatCurrency?.denomSymbol + quickAmount.toString(),
+      })) ?? [];
+  } else if (balanceBN && !balanceBN.isZero() && maxSellAmount?.gt(new BN(0))) {
+    quickAmounts = [
+      { value: 0.25, label: '25%' },
+      { value: 0.5, label: '50%' },
+      { value: 0.75, label: '75%' },
+      {
+        value: 1,
+        label: strings('fiat_on_ramp_aggregator.max'),
+        isNative: selectedAsset?.address === NATIVE_ADDRESS,
+      },
+    ];
   }
 
   return (
@@ -645,11 +764,23 @@ const BuildQuote = () => {
                 isBuy ? currentFiatCurrency?.denomSymbol : undefined
               }
               amount={displayAmount}
-              highlightedError={!amountIsValid}
+              highlightedError={
+                amountNumber > 0 && (!amountIsValid || amountIsOverGas)
+              }
               currencyCode={isBuy ? currentFiatCurrency?.symbol : undefined}
               onPress={onAmountInputPress}
               onCurrencyPress={isBuy ? handleFiatSelectorPress : undefined}
             />
+            {amountNumber > 0 &&
+              amountIsValid &&
+              !hasInsufficientBalance &&
+              amountIsOverGas && (
+                <Row>
+                  <Text red small>
+                    {strings('fiat_on_ramp_aggregator.enter_lower_gas_fees')}
+                  </Text>
+                </Row>
+              )}
             {hasInsufficientBalance && (
               <Row>
                 <Text red small>
@@ -739,13 +870,9 @@ const BuildQuote = () => {
         onLayout={onKeypadLayout}
       >
         <QuickAmounts
+          isBuy={isBuy}
           onAmountPress={handleQuickAmountPress}
-          amounts={
-            limits?.quickAmounts?.map((limit) => ({
-              value: limit,
-              label: currentFiatCurrency?.denomSymbol + limit.toString(),
-            })) || []
-          }
+          amounts={quickAmounts}
         />
         <Keypad
           value={amount}
@@ -795,22 +922,33 @@ const BuildQuote = () => {
       <PaymentMethodModal
         isVisible={isPaymentMethodModalVisible}
         dismiss={hidePaymentMethodModal as () => void}
-        title={strings('fiat_on_ramp_aggregator.select_payment_method')}
+        title={strings(
+          isBuy
+            ? 'fiat_on_ramp_aggregator.select_payment_method'
+            : 'fiat_on_ramp_aggregator.select_cash_destination',
+        )}
         paymentMethods={paymentMethods}
         selectedPaymentMethodId={selectedPaymentMethodId}
         selectedPaymentMethodType={currentPaymentMethod?.paymentType}
         onItemPress={handleChangePaymentMethod}
         selectedRegion={selectedRegion}
-        location={'Amount to Buy Screen'}
+        location={screenLocation}
+        rampType={rampType}
       />
       <RegionModal
         isVisible={isRegionModalVisible}
         title={strings('fiat_on_ramp_aggregator.region.title')}
-        description={strings('fiat_on_ramp_aggregator.region.description')}
+        description={strings(
+          isBuy
+            ? 'fiat_on_ramp_aggregator.region.description'
+            : 'fiat_on_ramp_aggregator.region.sell_description',
+        )}
         data={regions}
         dismiss={hideRegionModal as () => void}
         onRegionPress={handleRegionPress}
-        location={'Amount to Buy Screen'}
+        location={screenLocation}
+        selectedRegion={selectedRegion}
+        rampType={rampType}
       />
     </ScreenLayout>
   );

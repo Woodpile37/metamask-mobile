@@ -54,8 +54,5 @@ const navigationReducer = (state = initialState, action: any = {}) => {
 /**
  * Selectors
  */
-export const getCurrentRoute = (state: any) => state.navigation.currentRoute;
-export const getCurrentBottomNavRoute = (state: any) =>
-  state.navigation.currentBottomNavRoute;
 
 export default navigationReducer;

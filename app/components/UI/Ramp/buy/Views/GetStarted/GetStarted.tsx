@@ -20,7 +20,8 @@ const getStartedIcon = require('../../../common/components/images/WalletInfo.png
 
 const GetStarted: React.FC = () => {
   const navigation = useNavigation();
-  const { getStarted, setGetStarted, sdkError, selectedChainId } = useRampSDK();
+  const { getStarted, setGetStarted, sdkError, selectedChainId, isBuy } =
+    useRampSDK();
   const { selectedRegion } = useRegions();
   const [isNetworkRampSupported] = useRampNetwork();
   const trackEvent = useAnalytics();
@@ -28,11 +29,18 @@ const GetStarted: React.FC = () => {
   const { colors } = useTheme();
 
   const handleCancelPress = useCallback(() => {
-    trackEvent('ONRAMP_CANCELED', {
-      location: 'Get Started Screen',
-      chain_id_destination: selectedChainId,
-    });
-  }, [selectedChainId, trackEvent]);
+    if (isBuy) {
+      trackEvent('ONRAMP_CANCELED', {
+        location: 'Get Started Screen',
+        chain_id_destination: selectedChainId,
+      });
+    } else {
+      trackEvent('OFFRAMP_CANCELED', {
+        location: 'Get Started Screen',
+        chain_id_source: selectedChainId,
+      });
+    }
+  }, [isBuy, selectedChainId, trackEvent]);
 
   useEffect(() => {
     navigation.setOptions(
@@ -49,8 +57,15 @@ const GetStarted: React.FC = () => {
   }, [navigation, colors, handleCancelPress]);
 
   const handleOnPress = useCallback(() => {
+    trackEvent(
+      isBuy ? 'ONRAMP_GET_STARTED_CLICKED' : 'OFFRAMP_GET_STARTED_CLICKED',
+      {
+        text: 'Get Started',
+        location: 'Get Started Screen',
+      },
+    );
     setGetStarted(true);
-  }, [setGetStarted]);
+  }, [isBuy, setGetStarted, trackEvent]);
 
   useEffect(() => {
     if (getStarted) {
@@ -109,12 +124,20 @@ const GetStarted: React.FC = () => {
           </ScreenLayout.Content>
           <ScreenLayout.Content>
             <Text centered bold>
-              {strings('fiat_on_ramp_aggregator.onboarding.quotes')}
+              {strings(
+                isBuy
+                  ? 'fiat_on_ramp_aggregator.onboarding.quotes'
+                  : 'fiat_on_ramp_aggregator.onboarding.quotes_sell',
+              )}
             </Text>
           </ScreenLayout.Content>
           <ScreenLayout.Content>
             <Text centered bold>
-              {strings('fiat_on_ramp_aggregator.onboarding.benefits')}
+              {strings(
+                isBuy
+                  ? 'fiat_on_ramp_aggregator.onboarding.benefits'
+                  : 'fiat_on_ramp_aggregator.onboarding.benefits_sell',
+              )}
             </Text>
           </ScreenLayout.Content>
         </ScrollView>

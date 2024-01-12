@@ -19,6 +19,7 @@ import { MetaMetricsEvents } from '../../../core/Analytics';
 import AnalyticsV2 from '../../../util/analyticsV2';
 
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { ProtectWalletModalSelectorsIDs } from '../../../../e2e/selectors/Modals/ProtectWalletModal.selectors';
 
 const protectWalletImage = require('../../../images/explain-backup-seedphrase.png'); // eslint-disable-line
 
@@ -202,7 +203,10 @@ class ProtectYourWalletModal extends PureComponent {
         confirmButtonMode={'transparent-blue'}
         verticalButtons
       >
-        <View style={styles.wrapper} testID={'protect-wallet-modal'}>
+        <View
+          style={styles.wrapper}
+          testID={ProtectWalletModalSelectorsIDs.CONTAINER}
+        >
           <View style={styles.titleWrapper}>
             <View style={styles.auxCenter} />
             <Text style={styles.title}>

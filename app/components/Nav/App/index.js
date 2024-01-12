@@ -8,7 +8,6 @@ import React, {
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { Animated, Linking } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from '../../Views/Login';
 import QRScanner from '../../Views/QRScanner';
 import Onboarding from '../../Views/Onboarding';
@@ -26,15 +25,15 @@ import Main from '../Main';
 import OptinMetrics from '../../UI/OptinMetrics';
 import MetaMaskAnimation from '../../UI/MetaMaskAnimation';
 import SimpleWebview from '../../Views/SimpleWebview';
-import SharedDeeplinkManager from '../../../core/DeeplinkManager';
+import SharedDeeplinkManager from '../../../core/DeeplinkManager/SharedDeeplinkManager';
 import Engine from '../../../core/Engine';
 import branch from 'react-native-branch';
 import AppConstants from '../../../core/AppConstants';
 import Logger from '../../../util/Logger';
 import { trackErrorAsAnalytics } from '../../../util/analyticsV2';
-import { routingInstrumentation } from '../../../util/sentryUtils';
+import { routingInstrumentation } from '../../../util/sentry/utils';
 import Analytics from '../../../core/Analytics/Analytics';
-import { connect, useSelector, useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import {
   CURRENT_APP_VERSION,
   EXISTING_USER,
@@ -47,6 +46,7 @@ import {
 } from '../../../actions/navigation';
 import { findRouteNameFromNavigatorState } from '../../../util/general';
 import { Authentication } from '../../../core/';
+import { isBlockaidFeatureEnabled } from '../../../util/blockaid';
 import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
 import SDKConnect from '../../../core/SDKConnect/SDKConnect';
@@ -68,6 +68,9 @@ import AssetOptions from '../../Views/AssetOptions';
 import ImportPrivateKey from '../../Views/ImportPrivateKey';
 import ImportPrivateKeySuccess from '../../Views/ImportPrivateKeySuccess';
 import ConnectQRHardware from '../../Views/ConnectQRHardware';
+import SelectHardwareWallet from '../../Views/ConnectHardware/SelectHardware';
+import LedgerAccountInfo from '../../Views/LedgerAccountInfo';
+import LedgerConnect from '../../Views/LedgerConnect';
 import { AUTHENTICATION_APP_TRIGGERED_AUTH_NO_CREDENTIALS } from '../../../constants/error';
 import { UpdateNeeded } from '../../../components/UI/UpdateNeeded';
 import { EnableAutomaticSecurityChecksModal } from '../../../components/UI/EnableAutomaticSecurityChecksModal';
@@ -78,10 +81,25 @@ import WalletRestored from '../../Views/RestoreWallet/WalletRestored';
 import WalletResetNeeded from '../../Views/RestoreWallet/WalletResetNeeded';
 import SDKLoadingModal from '../../Views/SDKLoadingModal/SDKLoadingModal';
 import SDKFeedbackModal from '../../Views/SDKFeedbackModal/SDKFeedbackModal';
+import LedgerMessageSignModal from '../../UI/LedgerModals/LedgerMessageSignModal';
+import LedgerTransactionModal from '../../UI/LedgerModals/LedgerTransactionModal';
 import AccountActions from '../../../components/Views/AccountActions';
+import EthSignFriction from '../../../components/Views/Settings/AdvancedSettings/EthSignFriction';
 import WalletActions from '../../Views/WalletActions';
 import NetworkSelector from '../../../components/Views/NetworkSelector';
+import ReturnToAppModal from '../../Views/ReturnToAppModal';
+import BlockaidIndicator from '../../Views/Settings/ExperimentalSettings/BlockaidIndicator';
 import EditAccountName from '../../Views/EditAccountName/EditAccountName';
+import WC2Manager, {
+  isWC2Enabled,
+} from '../../../../app/core/WalletConnect/WalletConnectV2';
+import { PPOMView } from '../../../lib/ppom/PPOMView';
+import NavigationService from '../../../core/NavigationService';
+import LockScreen from '../../Views/LockScreen';
+import AsyncStorage from '../../../store/async-storage-wrapper';
+import ShowIpfsGatewaySheet from '../../Views/ShowIpfsGatewaySheet/ShowIpfsGatewaySheet';
+import ShowDisplayNftMediaSheet from '../../Views/ShowDisplayMediaNFTSheet/ShowDisplayNFTMediaSheet';
+import AmbiguousAddressSheet from '../../../../app/components/Views/Settings/Contacts/AmbiguousAddressSheet/AmbiguousAddressSheet';
 
 const clearStackNavigatorOptions = {
   headerShown: false,
@@ -99,7 +117,7 @@ const clearStackNavigatorOptions = {
 const Stack = createStackNavigator();
 /**
  * Stack navigator responsible for the onboarding process
- * Create Wallet, Import from Seed and Sync
+ * Create Wallet and Import from Secret Recovery Phrase
  */
 const OnboardingNav = () => (
   <Stack.Navigator initialRouteName="OnboardingCarousel">
@@ -221,16 +239,17 @@ const App = ({ userLoggedIn }) => {
   const { colors } = useTheme();
   const { toastRef } = useContext(ToastContext);
   const dispatch = useDispatch();
+  const sdkInit = useRef(false);
+  const sdkPostInit = useRef(false);
+  const [postInitReady, setPostInitReady] = useState(false);
+  const [onboarded, setOnboarded] = useState(false);
   const triggerSetCurrentRoute = (route) => {
     dispatch(setCurrentRoute(route));
     if (route === 'Wallet' || route === 'BrowserView') {
+      setOnboarded(true);
       dispatch(setCurrentBottomNavRoute(route));
     }
   };
-  const frequentRpcList = useSelector(
-    (state) =>
-      state?.engine?.backgroundState?.PreferencesController?.frequentRpcList,
-  );
 
   useEffect(() => {
     if (prevNavigator.current || !navigator) return;
@@ -240,7 +259,7 @@ const App = ({ userLoggedIn }) => {
       const existingUser = await AsyncStorage.getItem(EXISTING_USER);
       try {
         if (existingUser && selectedAddress) {
-          await Authentication.appTriggeredAuth(selectedAddress);
+          await Authentication.appTriggeredAuth({ selectedAddress });
           // we need to reset the navigator here so that the user cannot go back to the login screen
           navigator.reset({ routes: [{ name: Routes.ONBOARDING.HOME_NAV }] });
         }
@@ -266,7 +285,9 @@ const App = ({ userLoggedIn }) => {
         animationNameRef?.current?.play();
       }
     };
-    appTriggeredAuth();
+    appTriggeredAuth().catch((error) => {
+      Logger.error(error, 'App: Error in appTriggeredAuth');
+    });
   }, [navigator]);
 
   const handleDeeplink = useCallback(({ error, params, uri }) => {
@@ -276,13 +297,9 @@ const App = ({ userLoggedIn }) => {
     const deeplink = params?.['+non_branch_link'] || uri || null;
     try {
       if (deeplink) {
-        const { KeyringController } = Engine.context;
-        const isUnlocked = KeyringController.isUnlocked();
-        isUnlocked
-          ? SharedDeeplinkManager.parse(deeplink, {
-              origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
-            })
-          : SharedDeeplinkManager.setDeeplink(deeplink);
+        SharedDeeplinkManager.parse(deeplink, {
+          origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
+        });
       }
     } catch (e) {
       Logger.error(e, `Deeplink: Error parsing deeplink`);
@@ -313,7 +330,6 @@ const App = ({ userLoggedIn }) => {
             navigator.dispatch?.(CommonActions.navigate(params));
           },
         },
-        frequentRpcList,
         dispatch,
       });
       if (!prevNavigator.current) {
@@ -325,8 +341,8 @@ const App = ({ userLoggedIn }) => {
           const { error } = opts;
 
           if (error) {
+            // Log error for analytics and continue handling deeplink
             Logger.error('Error from Branch: ' + error);
-            return;
           }
 
           handleDeeplink(opts);
@@ -334,44 +350,80 @@ const App = ({ userLoggedIn }) => {
       }
       prevNavigator.current = navigator;
     }
-  }, [dispatch, handleDeeplink, frequentRpcList, navigator]);
+  }, [dispatch, handleDeeplink, navigator]);
 
   useEffect(() => {
     const initAnalytics = async () => {
       await Analytics.init();
     };
 
-    initAnalytics();
+    initAnalytics().catch((err) => {
+      Logger.error(err, 'Error initializing analytics');
+    });
   }, []);
 
   useEffect(() => {
-    if (navigator) {
-      SDKConnect.getInstance().init({ navigation: navigator });
+    // Init SDKConnect only if the navigator is ready, user is onboarded, and SDK is not initialized.
+    async function initSDKConnect() {
+      if (navigator?.getCurrentRoute && onboarded && !sdkInit.current) {
+        try {
+          const sdkConnect = SDKConnect.getInstance();
+          await sdkConnect.init({ navigation: navigator, context: 'Nav/App' });
+          setPostInitReady(true);
+          sdkInit.current = true;
+        } catch (err) {
+          console.error(`Cannot initialize SDKConnect`, err);
+        }
+      }
     }
-    return () => {
-      SDKConnect.getInstance().unmount();
-    };
-  }, [navigator]);
+    initSDKConnect().catch((err) => {
+      Logger.error(err, 'Error initializing SDKConnect');
+    });
+  }, [navigator, onboarded]);
 
   useEffect(() => {
-    if (navigator) {
-      SDKConnect.getInstance().init({ navigation: navigator });
+    // Handle post-init process separately.
+    async function handlePostInit() {
+      if (
+        sdkInit.current &&
+        !sdkPostInit.current &&
+        postInitReady &&
+        userLoggedIn
+      ) {
+        try {
+          await SDKConnect.getInstance().postInit();
+          sdkPostInit.current = true;
+        } catch (err) {
+          console.error(`Cannot postInit SDKConnect`, err);
+        }
+      }
     }
-    return () => {
-      SDKConnect.getInstance().unmount();
-    };
-  }, [navigator]);
+    handlePostInit().catch((err) => {
+      Logger.error(err, 'Error postInit SDKConnect');
+    });
+  }, [userLoggedIn, postInitReady]);
+
+  useEffect(() => {
+    if (isWC2Enabled) {
+      WC2Manager.init().catch((err) => {
+        console.error('Cannot initialize WalletConnect Manager.', err);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     async function checkExisting() {
       const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      setOnboarded(!!existingUser);
       const route = !existingUser
         ? Routes.ONBOARDING.ROOT_NAV
         : Routes.ONBOARDING.LOGIN;
       setRoute(route);
     }
 
-    checkExisting();
+    checkExisting().catch((error) => {
+      Logger.error(error, 'Error checking existing user');
+    });
     /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
 
@@ -402,12 +454,15 @@ const App = ({ userLoggedIn }) => {
       }
     }
 
-    startApp();
+    startApp().catch((error) => {
+      Logger.error(error, 'Error starting app');
+    });
   }, []);
 
   const setNavigatorRef = (ref) => {
     if (!prevNavigator.current) {
       setNavigator(ref);
+      NavigationService.setNavigationRef(ref);
     }
   };
 
@@ -494,6 +549,18 @@ const App = ({ userLoggedIn }) => {
         component={NetworkSelector}
       />
       <Stack.Screen
+        name={Routes.SHEET.RETURN_TO_DAPP_MODAL}
+        component={ReturnToAppModal}
+      />
+      <Stack.Screen
+        name={Routes.SHEET.BLOCKAID_INDICATOR}
+        component={BlockaidIndicator}
+      />
+      <Stack.Screen
+        name={Routes.SHEET.AMBIGUOUS_ADDRESS}
+        component={AmbiguousAddressSheet}
+      />
+      <Stack.Screen
         name={Routes.MODAL.TURN_OFF_REMEMBER_ME}
         component={TurnOffRememberMeModal}
       />
@@ -515,6 +582,18 @@ const App = ({ userLoggedIn }) => {
       <Stack.Screen
         name={Routes.SHEET.ACCOUNT_ACTIONS}
         component={AccountActions}
+      />
+      <Stack.Screen
+        name={Routes.SHEET.ETH_SIGN_FRICTION}
+        component={EthSignFriction}
+      />
+      <Stack.Screen
+        name={Routes.SHEET.SHOW_IPFS}
+        component={ShowIpfsGatewaySheet}
+      />
+      <Stack.Screen
+        name={Routes.SHEET.SHOW_NFT_DISPLAY_MEDIA}
+        component={ShowDisplayNftMediaSheet}
       />
     </Stack.Navigator>
   );
@@ -550,6 +629,23 @@ const App = ({ userLoggedIn }) => {
     </Stack.Navigator>
   );
 
+  const LedgerConnectFlow = () => (
+    <Stack.Navigator initialRouteName={Routes.HW.LEDGER_CONNECT}>
+      <Stack.Screen name={Routes.HW.LEDGER_CONNECT} component={LedgerConnect} />
+    </Stack.Navigator>
+  );
+
+  const ConnectHardwareWalletFlow = () => (
+    <Stack.Navigator name="ConnectHardwareWallet">
+      <Stack.Screen
+        name={Routes.HW.SELECT_DEVICE}
+        component={SelectHardwareWallet}
+        options={SelectHardwareWallet.navigationOptions}
+      />
+      <Stack.Screen name="LedgerAccountInfo" component={LedgerAccountInfo} />
+    </Stack.Navigator>
+  );
+
   const EditAccountNameFlow = () => (
     <Stack.Navigator>
       <Stack.Screen name="EditAccountName" component={EditAccountName} />
@@ -572,6 +668,7 @@ const App = ({ userLoggedIn }) => {
     // do not render unless a route is defined
     (route && (
       <>
+        {isBlockaidFeatureEnabled() && <PPOMView />}
         <NavigationContainer
           // Prevents artifacts when navigating between screens
           theme={{
@@ -631,6 +728,40 @@ const App = ({ userLoggedIn }) => {
               options={{ animationEnabled: true }}
             />
             <Stack.Screen
+              name={Routes.HW.CONNECT_LEDGER}
+              component={LedgerConnectFlow}
+            />
+            <Stack.Screen
+              name={Routes.HW.CONNECT}
+              component={ConnectHardwareWalletFlow}
+            />
+            <Stack.Screen
+              options={{
+                //Refer to - https://reactnavigation.org/docs/stack-navigator/#animations
+                cardStyle: { backgroundColor: importedColors.transparent },
+                cardStyleInterpolator: () => ({
+                  overlayStyle: {
+                    opacity: 0,
+                  },
+                }),
+              }}
+              name={Routes.LEDGER_TRANSACTION_MODAL}
+              component={LedgerTransactionModal}
+            />
+            <Stack.Screen
+              options={{
+                //Refer to - https://reactnavigation.org/docs/stack-navigator/#animations
+                cardStyle: { backgroundColor: importedColors.transparent },
+                cardStyleInterpolator: () => ({
+                  overlayStyle: {
+                    opacity: 0,
+                  },
+                }),
+              }}
+              name={Routes.LEDGER_MESSAGE_SIGN_MODAL}
+              component={LedgerMessageSignModal}
+            />
+            <Stack.Screen
               name="EditAccountName"
               component={EditAccountNameFlow}
               options={{ animationEnabled: true }}
@@ -639,6 +770,11 @@ const App = ({ userLoggedIn }) => {
               name={Routes.ADD_NETWORK}
               component={AddNetworkFlow}
               options={{ animationEnabled: true }}
+            />
+            <Stack.Screen
+              name={Routes.LOCK_SCREEN}
+              component={LockScreen}
+              options={{ gestureEnabled: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>

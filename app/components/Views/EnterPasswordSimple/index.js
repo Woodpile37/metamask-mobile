@@ -170,7 +170,7 @@ export default class EnterPasswordSimple extends PureComponent {
 
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <View style={styles.wrapper} testID={'enter-password-screen'}>
+        <View style={styles.wrapper}>
           <KeyboardAwareScrollView
             style={styles.wrapper}
             resetScrollToCoords={{ x: 0, y: 0 }}
@@ -194,7 +194,6 @@ export default class EnterPasswordSimple extends PureComponent {
                 <StyledButton
                   type={'blue'}
                   onPress={this.onPressConfirm}
-                  testID={'submit-button'}
                   disabled={
                     !(
                       this.state.password !== '' ||

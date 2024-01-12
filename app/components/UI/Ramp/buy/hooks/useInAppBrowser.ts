@@ -69,17 +69,27 @@ export default function useInAppBrowser() {
             trackEvent('ONRAMP_PURCHASE_CANCELLED', {
               amount: amount as number,
               chain_id_destination: selectedChainId,
-              currency_destination: selectedAsset?.symbol as string,
-              currency_source: fiatSymbol as string,
+              currency_destination: isBuy
+                ? (selectedAsset?.symbol as string)
+                : (fiatSymbol as string),
+              currency_source: isBuy
+                ? (fiatSymbol as string)
+                : (selectedAsset?.symbol as string),
               payment_method_id: selectedPaymentMethodId as string,
               provider_onramp: provider.name,
+              order_type: isBuy
+                ? OrderOrderTypeEnum.Buy
+                : OrderOrderTypeEnum.Sell,
             });
 
             return;
           }
 
           const orders = await SDK.orders();
-          const order = await orders.getOrderFromCallback(
+          const getOrderFromCallbackMethod = isBuy
+            ? 'getOrderFromCallback'
+            : 'getSellOrderFromCallback';
+          const order = await orders[getOrderFromCallbackMethod](
             provider.id,
             result.url,
             selectedAddress,

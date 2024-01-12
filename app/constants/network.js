@@ -21,6 +21,7 @@ export const NETWORKS_CHAIN_ID = {
   BSC: '56',
   POLYGON: '137',
   FANTOM: '250',
+  BASE: '8453',
   ARBITRUM: '42161',
   AVAXCCHAIN: '43114',
   CELO: '42220',
@@ -29,4 +30,5 @@ export const NETWORKS_CHAIN_ID = {
   LINEA_GOERLI: '59140',
   GOERLI: '5',
   LINEA_MAINNET: '59144',
+  ZKSYNC_ERA: '324',
 };

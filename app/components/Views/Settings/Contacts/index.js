@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Platform, SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../../locales/i18n';
 import { getNavigationOptionsTitle } from '../../../UI/Navbar';
@@ -10,12 +10,9 @@ import Engine from '../../../../core/Engine';
 import ActionSheet from 'react-native-actionsheet';
 import { mockTheme, ThemeContext } from '../../../../util/theme';
 import { selectChainId } from '../../../../selectors/networkController';
+import Routes from '../../../../../app/constants/navigation/Routes';
 
-import generateTestId from '../../../../../wdio/utils/generateTestId';
-import {
-  CONTACT_ADD_BUTTON,
-  CONTACTS_CONTAINER_ID,
-} from '../../../../../wdio/screen-objects/testIDs/Screens/Contacts.testids';
+import { ContactsViewSelectorIDs } from '../../../../../e2e/selectors/Settings/Contacts/ContacsView.selectors';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -134,6 +131,13 @@ class Contacts extends PureComponent {
     this.actionSheet = ref;
   };
 
+  onIconPress = () => {
+    const { navigation } = this.props;
+    navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
+      screen: Routes.SHEET.AMBIGUOUS_ADDRESS,
+    });
+  };
+
   render = () => {
     const { reloadAddressList } = this.state;
     const colors = this.context.colors || mockTheme.colors;
@@ -143,19 +147,20 @@ class Contacts extends PureComponent {
     return (
       <SafeAreaView
         style={styles.wrapper}
-        {...generateTestId(Platform, CONTACTS_CONTAINER_ID)}
+        testID={ContactsViewSelectorIDs.CONTAINER}
       >
         <AddressList
           onlyRenderAddressBook
           reloadAddressList={reloadAddressList}
           onAccountPress={this.onAddressPress}
+          onIconPress={this.onIconPress}
           onAccountLongPress={this.onAddressLongPress}
         />
         <StyledButton
           type={'confirm'}
           containerStyle={styles.addContact}
           onPress={this.goToAddContact}
-          testID={CONTACT_ADD_BUTTON}
+          testID={ContactsViewSelectorIDs.ADD_BUTTON}
         >
           {strings('address_book.add_contact')}
         </StyledButton>

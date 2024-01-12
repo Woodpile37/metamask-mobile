@@ -176,7 +176,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
           "opacity": 0.6,
         }
       }
-      testID="connect-cancel-button"
+      testID="cancel-button"
       type="cancel"
     >
       Cancel
@@ -203,7 +203,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
           "opacity": 0.6,
         }
       }
-      testID="connect-approve-button"
+      testID="connect-button"
       type="confirm"
     >
       Switch Network

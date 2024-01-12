@@ -151,7 +151,7 @@ class Collectible extends PureComponent {
           }
           style={styles.wrapper}
         >
-          <View testID={'collectible'}>
+          <View>
             <View style={styles.assetOverviewWrapper}>
               <CollectibleContractOverview
                 navigation={navigation}

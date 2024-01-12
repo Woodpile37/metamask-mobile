@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Image, StyleSheet, Keyboard, Platform } from 'react-native';
+import PropTypes from 'prop-types';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -26,7 +27,6 @@ import { RevealPrivateCredential } from '../../Views/RevealPrivateCredential';
 import WalletConnectSessions from '../../Views/WalletConnectSessions';
 import OfflineMode from '../../Views/OfflineMode';
 import QrScanner from '../../Views/QRScanner';
-import LockScreen from '../../Views/LockScreen';
 import EnterPasswordSimple from '../../Views/EnterPasswordSimple';
 import ChoosePassword from '../../Views/ChoosePassword';
 import ResetPassword from '../../Views/ResetPassword';
@@ -46,19 +46,27 @@ import SwapsQuotesView from '../../UI/Swaps/QuotesView';
 import CollectiblesDetails from '../../UI/CollectibleModal';
 import OptinMetrics from '../../UI/OptinMetrics';
 import Drawer from '../../UI/Drawer';
-import { FiatOnRampSDKProvider } from '../../UI/FiatOnRampAggregator/sdk';
-import GetStarted from '../../../components/UI/FiatOnRampAggregator/Views/GetStarted';
-import PaymentMethods from '../../UI/FiatOnRampAggregator/Views/PaymentMethods/PaymentMethods';
-import AmountToBuy from '../../../components/UI/FiatOnRampAggregator/Views/AmountToBuy';
-import GetQuotes from '../../../components/UI/FiatOnRampAggregator/Views/GetQuotes';
-import CheckoutWebView from '../../UI/FiatOnRampAggregator/Views/Checkout';
-import OnRampSettings from '../../UI/FiatOnRampAggregator/Views/Settings';
-import OnrampAddActivationKey from '../../UI/FiatOnRampAggregator/Views/Settings/AddActivationKey';
-import Regions from '../../UI/FiatOnRampAggregator/Views/Regions';
+
+import { RampSDKProvider } from '../../UI/Ramp/common/sdk';
+import { RampType } from '../../UI/Ramp/common/types';
+import GetStarted from '../../UI/Ramp/buy/Views/GetStarted';
+import PaymentMethods from '../../UI/Ramp/buy/Views/PaymentMethods/PaymentMethods';
+import BuildQuote from '../../UI/Ramp/buy/Views/BuildQuote/BuildQuote';
+import Quotes from '../../UI/Ramp/buy/Views/Quotes';
+import CheckoutWebView from '../../UI/Ramp/buy/Views/Checkout';
+import RampSettings from '../../UI/Ramp/common/Views/Settings';
+import NetworkSwitcher from '../../UI/Ramp/common/Views/NetworkSwitcher';
+import RampAddActivationKey from '../../UI/Ramp/common/Views/Settings/AddActivationKey';
+import Regions from '../../UI/Ramp/buy/Views/Regions';
 import { colors as importedColors } from '../../../styles/common';
-import OrderDetails from '../../UI/FiatOnRampAggregator/Views/OrderDetails';
+import OrderDetails from '../../UI/Ramp/common/Views/OrderDetails';
+import SendTransaction from '../../UI/Ramp/common/Views/SendTransaction';
 import TabBar from '../../../component-library/components/Navigation/TabBar';
 import BrowserUrlModal from '../../Views/BrowserUrlModal';
+///: BEGIN:ONLY_INCLUDE_IF(snaps)
+import { SnapsSettingsList } from '../../Views/Snaps/SnapsSettingsList';
+import { SnapSettings } from '../../Views/Snaps/SnapSettings';
+///: END:ONLY_INCLUDE_IF
 import Routes from '../../../constants/navigation/Routes';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { MetaMetricsEvents } from '../../../core/Analytics';
@@ -67,6 +75,7 @@ import { getPermittedAccountsByHostname } from '../../../core/Permissions';
 import { TabBarIconKey } from '../../../component-library/components/Navigation/TabBar/TabBar.types';
 import { isEqual } from 'lodash';
 import { selectProviderConfig } from '../../../selectors/networkController';
+import { selectAccountsLength } from '../../../selectors/accountTrackerController';
 import isUrl from 'is-url';
 import SDKSessionsManager from '../../Views/SDKSessionsManager/SDKSessionsManager';
 import URL from 'url-parse';
@@ -172,9 +181,10 @@ const WalletTabModalFlow = () => (
 const TransactionsHome = () => (
   <Stack.Navigator>
     <Stack.Screen name={Routes.TRANSACTIONS_VIEW} component={ActivityView} />
+    <Stack.Screen name={Routes.RAMP.ORDER_DETAILS} component={OrderDetails} />
     <Stack.Screen
-      name={Routes.FIAT_ON_RAMP_AGGREGATOR.ORDER_DETAILS}
-      component={OrderDetails}
+      name={Routes.RAMP.SEND_TRANSACTION}
+      component={SendTransaction}
     />
   </Stack.Navigator>
 );
@@ -197,6 +207,23 @@ const BrowserFlow = () => (
 );
 
 export const DrawerContext = React.createContext({ drawerRef: null });
+
+///: BEGIN:ONLY_INCLUDE_IF(snaps)
+const SnapsSettingsStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name={Routes.SNAPS.SNAPS_SETTINGS_LIST}
+      component={SnapsSettingsList}
+      options={SnapsSettingsList.navigationOptions}
+    />
+    <Stack.Screen
+      name={Routes.SNAPS.SNAP_SETTINGS}
+      component={SnapSettings}
+      options={SnapSettings.navigationOptions}
+    />
+  </Stack.Navigator>
+);
+///: END:ONLY_INCLUDE_IF
 
 const SettingsFlow = () => (
   <Stack.Navigator initialRouteName={'Settings'}>
@@ -221,13 +248,10 @@ const SettingsFlow = () => (
       component={SecuritySettings}
       options={SecuritySettings.navigationOptions}
     />
+    <Stack.Screen name={Routes.RAMP.SETTINGS} component={RampSettings} />
     <Stack.Screen
-      name={Routes.FIAT_ON_RAMP_AGGREGATOR.SETTINGS}
-      component={OnRampSettings}
-    />
-    <Stack.Screen
-      name={Routes.FIAT_ON_RAMP_AGGREGATOR.ADD_ACTIVATION_KEY}
-      component={OnrampAddActivationKey}
+      name={Routes.RAMP.ADD_ACTIVATION_KEY}
+      component={RampAddActivationKey}
     />
     <Stack.Screen
       name="ExperimentalSettings"
@@ -293,6 +317,17 @@ const SettingsFlow = () => (
       component={EnterPasswordSimple}
       options={EnterPasswordSimple.navigationOptions}
     />
+    {
+      ///: BEGIN:ONLY_INCLUDE_IF(snaps)
+    }
+    <Stack.Screen
+      name={Routes.SNAPS.SNAPS_SETTINGS_LIST}
+      component={SnapsSettingsStack}
+      options={{ headerShown: false }}
+    />
+    {
+      ///: END:ONLY_INCLUDE_IF
+    }
   </Stack.Navigator>
 );
 
@@ -300,16 +335,11 @@ const HomeTabs = () => {
   const drawerRef = useRef(null);
   const [isKeyboardHidden, setIsKeyboardHidden] = useState(true);
 
-  const accountsLength = useSelector(
-    (state) =>
-      Object.keys(
-        state.engine.backgroundState.AccountTrackerController.accounts || {},
-      ).length,
-  );
+  const accountsLength = useSelector(selectAccountsLength);
 
   const chainId = useSelector((state) => {
-    const provider = selectProviderConfig(state);
-    return NetworksChainId[provider.type];
+    const providerConfig = selectProviderConfig(state);
+    return NetworksChainId[providerConfig.type];
   });
 
   const amountOfBrowserOpenTabs = useSelector(
@@ -380,6 +410,7 @@ const HomeTabs = () => {
         AnalyticsV2.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_SETTINGS);
       },
       rootScreenName: Routes.SETTINGS_VIEW,
+      unmountOnBlur: true,
     },
   };
 
@@ -524,48 +555,40 @@ const PaymentRequestView = () => (
   </Stack.Navigator>
 );
 
-const FiatOnRampAggregator = () => (
-  <FiatOnRampSDKProvider>
-    <Stack.Navigator
-      initialRouteName={Routes.FIAT_ON_RAMP_AGGREGATOR.GET_STARTED}
-    >
+const Ramps = ({ rampType }) => (
+  <RampSDKProvider rampType={rampType}>
+    <Stack.Navigator initialRouteName={Routes.RAMP.GET_STARTED}>
+      <Stack.Screen name={Routes.RAMP.GET_STARTED} component={GetStarted} />
       <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.GET_STARTED}
-        component={GetStarted}
-      />
-      <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.PAYMENT_METHOD}
-        component={PaymentMethods}
-      />
-      <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.PAYMENT_METHOD_HAS_STARTED}
-        component={PaymentMethods}
+        name={Routes.RAMP.NETWORK_SWITCHER}
+        component={NetworkSwitcher}
         options={{ animationEnabled: false }}
       />
       <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.AMOUNT_TO_BUY}
-        component={AmountToBuy}
+        name={Routes.RAMP.PAYMENT_METHOD}
+        component={PaymentMethods}
       />
       <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.GET_QUOTES}
-        component={GetQuotes}
+        name={Routes.RAMP.PAYMENT_METHOD_HAS_STARTED}
+        component={PaymentMethods}
+        options={{ animationEnabled: false }}
       />
+      <Stack.Screen name={Routes.RAMP.BUILD_QUOTE} component={BuildQuote} />
+      <Stack.Screen name={Routes.RAMP.QUOTES} component={Quotes} />
+      <Stack.Screen name={Routes.RAMP.CHECKOUT} component={CheckoutWebView} />
+      <Stack.Screen name={Routes.RAMP.REGION} component={Regions} />
       <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.CHECKOUT}
-        component={CheckoutWebView}
-      />
-      <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.REGION}
-        component={Regions}
-      />
-      <Stack.Screen
-        name={Routes.FIAT_ON_RAMP_AGGREGATOR.REGION_HAS_STARTED}
+        name={Routes.RAMP.REGION_HAS_STARTED}
         component={Regions}
         options={{ animationEnabled: false }}
       />
     </Stack.Navigator>
-  </FiatOnRampSDKProvider>
+  </RampSDKProvider>
 );
+
+Ramps.propTypes = {
+  rampType: PropTypes.string,
+};
 
 const Swaps = () => (
   <Stack.Navigator>
@@ -647,16 +670,22 @@ const MainNavigator = () => (
     <Stack.Screen name="Asset" component={AssetModalFlow} />
     <Stack.Screen name="Webview" component={Webview} />
     <Stack.Screen name="SendView" component={SendView} />
-    <Stack.Screen name="SendFlowView" component={SendFlowView} />
+    <Stack.Screen
+      name="SendFlowView"
+      component={SendFlowView}
+      //Disabling swipe down on IOS
+      options={{ gestureEnabled: false }}
+    />
     <Stack.Screen name="AddBookmarkView" component={AddBookmarkView} />
     <Stack.Screen name="OfflineModeView" component={OfflineModeView} />
     <Stack.Screen name={Routes.QR_SCANNER} component={QrScanner} />
-    <Stack.Screen name="LockScreen" component={LockScreen} />
     <Stack.Screen name="PaymentRequestView" component={PaymentRequestView} />
-    <Stack.Screen
-      name={Routes.FIAT_ON_RAMP_AGGREGATOR.ID}
-      component={FiatOnRampAggregator}
-    />
+    <Stack.Screen name={Routes.RAMP.BUY}>
+      {() => <Ramps rampType={RampType.BUY} />}
+    </Stack.Screen>
+    <Stack.Screen name={Routes.RAMP.SELL}>
+      {() => <Ramps rampType={RampType.SELL} />}
+    </Stack.Screen>
     <Stack.Screen name="Swaps" component={Swaps} />
     <Stack.Screen
       name="SetPasswordFlow"
