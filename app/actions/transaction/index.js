@@ -1,16 +1,16 @@
 import TransactionTypes from '../../core/TransactionTypes';
 
 const {
-	ASSET: { ETH, ERC20, ERC721 }
+  ASSET: { ETH, ERC20, ERC721 },
 } = TransactionTypes;
 
 /**
  * Clears transaction object completely
  */
 export function resetTransaction() {
-	return {
-		type: 'RESET_TRANSACTION'
-	};
+  return {
+    type: 'RESET_TRANSACTION',
+  };
 }
 
 /**
@@ -19,11 +19,15 @@ export function resetTransaction() {
  * @param {object} selectedAsset - Asset to start the transaction with
  */
 export function newAssetTransaction(selectedAsset) {
-	return {
-		type: 'NEW_ASSET_TRANSACTION',
-		selectedAsset,
-		assetType: selectedAsset.isETH ? ETH : selectedAsset.tokenId ? ERC721 : ERC20
-	};
+  return {
+    type: 'NEW_ASSET_TRANSACTION',
+    selectedAsset,
+    assetType: selectedAsset.isETH
+      ? ETH
+      : selectedAsset.tokenId
+      ? ERC721
+      : ERC20,
+  };
 }
 
 /**
@@ -35,15 +39,21 @@ export function newAssetTransaction(selectedAsset) {
  * @param {string} transactionToName - Resolved address book name for to address
  * @param {string} transactionFromName - Resolved address book name for from address
  */
-export function setRecipient(from, to, ensRecipient, transactionToName, transactionFromName) {
-	return {
-		type: 'SET_RECIPIENT',
-		from,
-		to,
-		ensRecipient,
-		transactionToName,
-		transactionFromName
-	};
+export function setRecipient(
+  from,
+  to,
+  ensRecipient,
+  transactionToName,
+  transactionFromName,
+) {
+  return {
+    type: 'SET_RECIPIENT',
+    from,
+    to,
+    ensRecipient,
+    transactionToName,
+    transactionFromName,
+  };
 }
 
 /**
@@ -52,11 +62,15 @@ export function setRecipient(from, to, ensRecipient, transactionToName, transact
  * @param {object} selectedAsset - Asset to start the transaction with
  */
 export function setSelectedAsset(selectedAsset) {
-	return {
-		type: 'SET_SELECTED_ASSET',
-		selectedAsset,
-		assetType: selectedAsset.isETH ? ETH : selectedAsset.tokenId ? ERC721 : ERC20
-	};
+  return {
+    type: 'SET_SELECTED_ASSET',
+    selectedAsset,
+    assetType: selectedAsset.isETH
+      ? ETH
+      : selectedAsset.tokenId
+      ? ERC721
+      : ERC20,
+  };
 }
 
 /**
@@ -65,52 +79,21 @@ export function setSelectedAsset(selectedAsset) {
  * @param {object} transaction - Transaction object with from, to, data, gas, gasPrice, value
  */
 export function prepareTransaction(transaction) {
-	return {
-		type: 'PREPARE_TRANSACTION',
-		transaction
-	};
+  return {
+    type: 'PREPARE_TRANSACTION',
+    transaction,
+  };
 }
 
-/**
- * Sets transaction object to be sent. All properties can be updated
- *
- * @param {object} config
- * @param {object} config.transaction - Transaction object with from, to, data, gas, gasPrice, value
- * @param {string} config.ensRecipient - Resolved ens name to send the transaction to
- * @param {string} config.transactionToName - Resolved address book name for to address
- * @param {string} config.transactionFromName - Resolved address book name for from address
- * @param {object} config.selectedAsset - Asset to start the transaction with
- * @param {string} config.assetType - The selectedAsset's type
- */
-export function prepareFullTransaction({
-	transaction,
-	ensRecipient,
-	transactionToName,
-	transactionFromName,
-	selectedAsset,
-	assetType
-}) {
-	return {
-		type: 'PREPARE_FULL_TRANSACTION',
-		transaction,
-		ensRecipient,
-		transactionToName,
-		transactionFromName,
-		selectedAsset,
-		assetType
-	};
-}
-
-/**
- * Sets any attribute in transaction object
- *
- * @param {object} transaction - New transaction object
- */
-export function setPaymentChannelTransaction(asset) {
-	return {
-		type: 'SET_PAYMENT_CHANNEL_TRANSACTION',
-		asset
-	};
+export function setTransactionSecurityAlertResponse(
+  transactionId,
+  securityAlertResponse,
+) {
+  return {
+    type: 'SET_TRANSACTION_SECURITY_ALERT_RESPONSE',
+    transactionId,
+    securityAlertResponse,
+  };
 }
 
 /**
@@ -119,10 +102,10 @@ export function setPaymentChannelTransaction(asset) {
  * @param {object} transaction - New transaction object
  */
 export function setTransactionObject(transaction) {
-	return {
-		type: 'SET_TRANSACTION_OBJECT',
-		transaction
-	};
+  return {
+    type: 'SET_TRANSACTION_OBJECT',
+    transaction,
+  };
 }
 
 /**
@@ -131,10 +114,10 @@ export function setTransactionObject(transaction) {
  * @param {object} asset - Asset to start the transaction with
  */
 export function setTokensTransaction(asset) {
-	return {
-		type: 'SET_TOKENS_TRANSACTION',
-		asset
-	};
+  return {
+    type: 'SET_TOKENS_TRANSACTION',
+    asset,
+  };
 }
 
 /**
@@ -143,10 +126,10 @@ export function setTokensTransaction(asset) {
  * @param {object} transaction - Transaction additional object
  */
 export function setEtherTransaction(transaction) {
-	return {
-		type: 'SET_ETHER_TRANSACTION',
-		transaction
-	};
+  return {
+    type: 'SET_ETHER_TRANSACTION',
+    transaction,
+  };
 }
 
 /**
@@ -155,10 +138,10 @@ export function setEtherTransaction(transaction) {
  * @param {object} token - Token object to be sent
  */
 export function setIndividualTokenTransaction(token) {
-	return {
-		type: 'SET_INDIVIDUAL_TOKEN_TRANSACTION',
-		token
-	};
+  return {
+    type: 'SET_INDIVIDUAL_TOKEN_TRANSACTION',
+    token,
+  };
 }
 
 /**
@@ -167,10 +150,10 @@ export function setIndividualTokenTransaction(token) {
  * @param {object} collectible - Collectible object to be sent
  */
 export function setIndividualCollectibleTransaction(collectible) {
-	return {
-		type: 'SET_INDIVIDUAL_COLLECTIBLE_TRANSACTION',
-		collectible
-	};
+  return {
+    type: 'SET_INDIVIDUAL_COLLECTIBLE_TRANSACTION',
+    collectible,
+  };
 }
 
 /**
@@ -179,8 +162,22 @@ export function setIndividualCollectibleTransaction(collectible) {
  * @param {object} collectible - Collectible of the type contract collectible that the user wants to send
  */
 export function setCollectibleContractTransaction(collectible) {
-	return {
-		type: 'SET_COLLECTIBLE_CONTRACT_TRANSACTION',
-		collectible
-	};
+  return {
+    type: 'SET_COLLECTIBLE_CONTRACT_TRANSACTION',
+    collectible,
+  };
+}
+
+export function setNonce(nonce) {
+  return {
+    type: 'SET_NONCE',
+    nonce,
+  };
+}
+
+export function setProposedNonce(proposedNonce) {
+  return {
+    type: 'SET_PROPOSED_NONCE',
+    proposedNonce,
+  };
 }
