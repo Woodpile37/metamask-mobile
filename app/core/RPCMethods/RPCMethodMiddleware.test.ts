@@ -1154,8 +1154,45 @@ describe('getRpcMethodMiddleware', () => {
       expect(spy).toBeCalledTimes(1);
     });
   });
-  describe('wallet_swap', () => {
+  describe('wallet_swapAsset', () => {
     it('should throw error if chainId is not consistent between from and to', async () => {
+      const mockState = {
+        swaps: { '1': { isLive: true }, hasOnboarded: false, isLive: true },
+        fiatOrders: {
+          networks: [
+            {
+              active: true,
+              chainId: 1,
+              chainName: 'Ethereum Mainnet',
+              nativeTokenSupported: true,
+            },
+          ],
+        },
+        engine: {
+          backgroundState: {
+            ...initialBackgroundState,
+            PreferencesController: {
+              selectedAddress: '0x0',
+              identities: {
+                '0x0': {
+                  address: '0x0',
+                  name: 'Account 1',
+                },
+              },
+            },
+            NetworkController: {
+              providerConfig: {
+                type: 'mainnet',
+                chainId: '1',
+                ticker: 'eth',
+              },
+            },
+          },
+        },
+      };
+      jest
+        .spyOn(store as Store<Partial<any>, any>, 'getState')
+        .mockImplementation(() => mockState);
       const middleware = getRpcMethodMiddleware({
         ...getMinimalOptions(),
         hostname: 'example.metamask.io',
@@ -1163,30 +1200,71 @@ describe('getRpcMethodMiddleware', () => {
       const request = {
         jsonrpc,
         id: 1,
-        method: 'wallet_swap',
+        method: 'wallet_swapAsset',
         params: [
           {
-            from: {
-              chainId: '0x2',
-              // DAI address
-              token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-              amount: '0x10',
-            },
+            from: [
+              {
+                chainId: '0x2',
+                // DAI address
+                token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                amount: '0xDE0B6B3A7640000',
+              },
+            ],
             to: {
               chainId: '0x1',
               // ETH address
               token_address: '0x0000000000000000000000000000000000000000',
             },
+            user_address: '0x0',
           },
         ],
       };
       const response = await callMiddleware({ middleware, request });
+      //@ts-expect-error now the response can have an error property
       await expect(response?.error?.message).toStrictEqual(
         'ChainId value is not consistent between from and to',
       );
     });
 
     it('should throw error if chainId, from property does not have chainId property', async () => {
+      const mockState = {
+        swaps: { '1': { isLive: true }, hasOnboarded: false, isLive: true },
+        fiatOrders: {
+          networks: [
+            {
+              active: true,
+              chainId: 1,
+              chainName: 'Ethereum Mainnet',
+              nativeTokenSupported: true,
+            },
+          ],
+        },
+        engine: {
+          backgroundState: {
+            ...initialBackgroundState,
+            PreferencesController: {
+              selectedAddress: '0x0',
+              identities: {
+                '0x0': {
+                  address: '0x0',
+                  name: 'Account 1',
+                },
+              },
+            },
+            NetworkController: {
+              providerConfig: {
+                type: 'mainnet',
+                chainId: '1',
+                ticker: 'eth',
+              },
+            },
+          },
+        },
+      };
+      jest
+        .spyOn(store as Store<Partial<any>, any>, 'getState')
+        .mockImplementation(() => mockState);
       const middleware = getRpcMethodMiddleware({
         ...getMinimalOptions(),
         hostname: 'example.metamask.io',
@@ -1194,24 +1272,28 @@ describe('getRpcMethodMiddleware', () => {
       const request = {
         jsonrpc,
         id: 1,
-        method: 'wallet_swap',
+        method: 'wallet_swapAsset',
         params: [
           {
-            from: {
-              // DAI address
-              token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-              amount: '0x10',
-            },
+            from: [
+              {
+                // DAI address
+                token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                amount: '0xDE0B6B3A7640000',
+              },
+            ],
             to: {
               chainId: '0x1',
               // ETH address
               token_address: '0x0000000000000000000000000000000000000000',
             },
+            user_address: '0x0',
           },
         ],
       };
 
       const response = await callMiddleware({ middleware, request });
+      //@ts-expect-error now the response can have an error property
       await expect(response?.error?.message).toStrictEqual(
         'chainId property of from is not defined',
       );
@@ -1233,23 +1315,28 @@ describe('getRpcMethodMiddleware', () => {
         engine: {
           backgroundState: {
             ...initialBackgroundState,
+            PreferencesController: {
+              selectedAddress: '0x0',
+              identities: {
+                '0x0': {
+                  address: '0x0',
+                  name: 'Account 1',
+                },
+              },
+            },
             NetworkController: {
               providerConfig: {
                 type: 'mainnet',
-                chainId: '0',
+                chainId: '1',
                 ticker: 'eth',
               },
             },
           },
         },
       };
-
-      jest.mock('react-redux', () => ({
-        ...jest.requireActual('react-redux'),
-        useSelector: jest
-          .fn()
-          .mockImplementation((callback) => callback(mockState)),
-      }));
+      jest
+        .spyOn(store as Store<Partial<any>, any>, 'getState')
+        .mockImplementation(() => mockState);
       const middleware = getRpcMethodMiddleware({
         ...getMinimalOptions(),
         hostname: 'example.metamask.io',
@@ -1257,20 +1344,23 @@ describe('getRpcMethodMiddleware', () => {
       const request = {
         jsonrpc,
         id: 1,
-        method: 'wallet_swap',
+        method: 'wallet_swapAsset',
         params: [
           {
-            from: {
-              chainId: '0x1',
-              // DAI address
-              token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-              amount: '0x10',
-            },
+            from: [
+              {
+                chainId: '0x1',
+                // DAI address
+                token_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+                amount: '0xDE0B6B3A7640000',
+              },
+            ],
             to: {
               chainId: '0x1',
               // ETH address
               token_address: '0x0000000000000000000000000000000000000000',
             },
+            user_address: '0x0',
           },
         ],
       };
@@ -1281,7 +1371,7 @@ describe('getRpcMethodMiddleware', () => {
         params: {
           sourceToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
           destinationToken: '0x0000000000000000000000000000000000000000',
-          amount: '0x10',
+          amount: '1',
         },
       });
     });
