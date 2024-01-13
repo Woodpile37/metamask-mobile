@@ -50,6 +50,7 @@ class CreatePasswordView {
   async tapCreatePasswordButton() {
     await Gestures.waitAndTap(this.submitButton);
   }
+<<<<<<< Updated upstream
 	static async toggleRememberMe() {
 		await TestHelpers.tap(REMEMBER_ME_ID);
 	}
@@ -84,6 +85,8 @@ class CreatePasswordView {
 	static async isNotVisible() {
 		await TestHelpers.checkIfNotVisible(CREATE_PASSWORD_CONTAINER_ID);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 export default new CreatePasswordView();

@@ -57,6 +57,7 @@ const createStyles = (colors) =>
       borderTopColor: colors.border.muted,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		header: {
 			paddingVertical: 10,
@@ -106,6 +107,8 @@ const createStyles = (colors) =>
 			borderTopColor: colors.border.muted,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const QuotesSummary = (props) => <View {...props} />;
 
@@ -142,6 +145,7 @@ const Separator = ({ style }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return <View style={[styles.separator, style]} />;
+<<<<<<< Updated upstream
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
 	return (
@@ -171,6 +175,8 @@ const Separator = ({ style }) => {
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
 	return <View style={[styles.separator, style]} />;
+=======
+>>>>>>> Stashed changes
 };
 
 QuotesSummary.Body = Body;

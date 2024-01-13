@@ -18,6 +18,7 @@ import {
   weiToFiat,
   weiToFiatNumber,
   toTokenMinimalUnit,
+<<<<<<< Updated upstream
 	balanceToFiatNumber,
 	BNToHex,
 	hexToBN,
@@ -26,6 +27,8 @@ import {
 	renderFromWei,
 	weiToFiat,
 	weiToFiatNumber,
+=======
+>>>>>>> Stashed changes
 } from '../number';
 import AppConstants from '../../core/AppConstants';
 import { isMainnetByChainId } from '../networks';
@@ -337,6 +340,7 @@ export async function isCollectibleAddress(address, tokenId) {
   const isCollectibleAddress = ownerOf && ownerOf !== '0x';
   CollectibleAddresses.cache[address] = isCollectibleAddress;
   return isCollectibleAddress;
+<<<<<<< Updated upstream
 	const cache = CollectibleAddresses.cache[address];
 	if (cache) {
 		return Promise.resolve(cache);
@@ -348,6 +352,8 @@ export async function isCollectibleAddress(address, tokenId) {
 	const isCollectibleAddress = ownerOf && ownerOf !== '0x';
 	CollectibleAddresses.cache[address] = isCollectibleAddress;
 	return isCollectibleAddress;
+=======
+>>>>>>> Stashed changes
 }
 
 /**
@@ -429,6 +435,7 @@ export async function getActionKey(tx, selectedAddress, ticker, chainId) {
   }
 
   return actionKey;
+<<<<<<< Updated upstream
 	const actionKey = await getTransactionActionKey(tx, chainId);
 	if (actionKey === SEND_ETHER_ACTION_KEY) {
 		let currencySymbol = ticker;
@@ -462,6 +469,8 @@ export async function getActionKey(tx, selectedAddress, ticker, chainId) {
 	}
 
 	return actionKey;
+=======
+>>>>>>> Stashed changes
 }
 
 /**
@@ -1363,6 +1372,7 @@ export const parseTransactionLegacy = (
     suggestedGasLimitHex: gasLimitHex,
     totalHex,
   };
+<<<<<<< Updated upstream
 	const gasLimit = new BN(selectedGasFee.suggestedGasLimit);
 	const gasLimitHex = BNToHex(new BN(selectedGasFee.suggestedGasLimit));
 
@@ -1430,6 +1440,8 @@ export const parseTransactionLegacy = (
 		suggestedGasLimitHex: gasLimitHex,
 		totalHex,
 	};
+=======
+>>>>>>> Stashed changes
 };
 
 /**

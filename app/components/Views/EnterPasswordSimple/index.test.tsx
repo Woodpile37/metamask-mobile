@@ -12,6 +12,7 @@ describe('EnterPasswordSimple', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(
 			<NavigationContainer>
@@ -20,4 +21,6 @@ describe('EnterPasswordSimple', () => {
 		);
 		expect(wrapper).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

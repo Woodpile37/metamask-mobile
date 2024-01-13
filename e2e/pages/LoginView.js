@@ -14,6 +14,7 @@ export default class LoginView {
   static async tapResetWalletButton() {
     await TestHelpers.tap(LoginViewSelectors.RESET_WALLET);
   }
+<<<<<<< Updated upstream
 	PASSWORD_INPUT_BOX_ID,
 	RESET_WALLET_ID,
 	LOGIN_CONTAINER_ID,
@@ -26,6 +27,8 @@ export default class LoginView {
 	static async tapResetWalletButton() {
 		await TestHelpers.tap(RESET_WALLET_ID);
 	}
+=======
+>>>>>>> Stashed changes
 
   static async toggleRememberMe() {
     await TestHelpers.tap(LOGIN_WITH_REMEMBER_ME_SWITCH);

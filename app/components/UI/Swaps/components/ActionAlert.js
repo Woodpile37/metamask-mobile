@@ -97,6 +97,7 @@ function Button({ type, onPress, children }) {
       </Text>
     </TouchableOpacity>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		content: {
 			flex: 1,
@@ -177,6 +178,8 @@ function Button({ type, onPress, children }) {
 			</Text>
 		</TouchableOpacity>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 Button.propTypes = {
@@ -224,6 +227,7 @@ function ActionAlert({ type, style, action, onInfoPress, onPress, children }) {
       )}
     </Alert>
   );
+<<<<<<< Updated upstream
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
 
@@ -254,6 +258,8 @@ function ActionAlert({ type, style, action, onInfoPress, onPress, children }) {
 			)}
 		</Alert>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 ActionAlert.propTypes = {

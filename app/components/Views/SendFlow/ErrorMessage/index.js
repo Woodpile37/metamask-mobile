@@ -40,6 +40,7 @@ export default function ErrorMessage(props) {
       )}
     </Alert>
   );
+<<<<<<< Updated upstream
 	button: {
 		marginTop: 27,
 		marginBottom: 12,
@@ -69,6 +70,8 @@ export default function ErrorMessage(props) {
 			)}
 		</Alert>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 ErrorMessage.propTypes = {

@@ -105,6 +105,7 @@ const ThemeSettings = () => {
       </View>
     </ReusableModal>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		screen: { justifyContent: 'flex-end' },
 		sheet: {
@@ -192,6 +193,8 @@ const ThemeSettings = () => {
 			</View>
 		</ReusableModal>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 export default ThemeSettings;

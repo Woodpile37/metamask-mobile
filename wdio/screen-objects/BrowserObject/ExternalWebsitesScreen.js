@@ -85,6 +85,13 @@ class ExternalWebsitesScreen {
     return Selectors.getXpathElementByText('APPROVE TOKENS');
   }
 
+<<<<<<< Updated upstream
+=======
+  get testDappTransferNft() {
+    return Selectors.getXpathElementByText('TRANSFER FROM');
+  }
+
+>>>>>>> Stashed changes
   async tapHomeFavoritesButton() {
     const element = await this.homeFavoriteButton;
     await element.waitForEnabled();
@@ -140,6 +147,15 @@ class ExternalWebsitesScreen {
     await Gestures.waitAndTap(this.testDappTransferTokens);
   }
 
+<<<<<<< Updated upstream
+=======
+  async tapDappTransferNft() {
+    const element = await this.testDappTransferNft;
+    await element.waitForEnabled();
+    await Gestures.waitAndTap(this.testDappTransferNft);
+  }
+
+>>>>>>> Stashed changes
   async tapDappApproveTokens() {
     const element = await this.testDappApproveTokens;
     await element.waitForEnabled();

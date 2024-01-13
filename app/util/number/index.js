@@ -118,6 +118,7 @@ export function fromTokenMinimalUnit(minimalInput, decimals) {
     value = '-' + value;
   }
   return value;
+<<<<<<< Updated upstream
 	minimalInput = addHexPrefix(Number(minimalInput).toString(16));
 	let minimal = safeNumberToBN(minimalInput);
 	const negative = minimal.lt(new BN(0));
@@ -137,6 +138,8 @@ export function fromTokenMinimalUnit(minimalInput, decimals) {
 		value = '-' + value;
 	}
 	return value;
+=======
+>>>>>>> Stashed changes
 }
 
 /**
@@ -312,6 +315,7 @@ export function fiatNumberToTokenMinimalUnit(
   weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
   const weiBN = safeNumberToBN(weiNumber);
   return weiBN;
+<<<<<<< Updated upstream
 export function fiatNumberToTokenMinimalUnit(fiat, conversionRate, exchangeRate, decimals) {
 	const floatFiatConverted = parseFloat(fiat) / (conversionRate * exchangeRate);
 	const base = Math.pow(10, decimals);
@@ -320,6 +324,8 @@ export function fiatNumberToTokenMinimalUnit(fiat, conversionRate, exchangeRate,
 	weiNumber = weiNumber.toLocaleString('fullwide', { useGrouping: false });
 	const weiBN = safeNumberToBN(weiNumber);
 	return weiBN;
+=======
+>>>>>>> Stashed changes
 }
 
 /**
@@ -344,6 +350,7 @@ export function renderFromWei(value, decimalsToShow = 5) {
     }
   }
   return renderWei;
+<<<<<<< Updated upstream
 	let renderWei = '0';
 	// avoid undefined
 	if (value) {
@@ -357,6 +364,8 @@ export function renderFromWei(value, decimalsToShow = 5) {
 		}
 	}
 	return renderWei;
+=======
+>>>>>>> Stashed changes
 }
 
 /**
@@ -639,6 +648,7 @@ export function safeNumberToBN(value) {
 export function fastSplit(value, divider = '.') {
   const [from, to] = [value.indexOf(divider), 0];
   return value.substring(from, to) || value;
+<<<<<<< Updated upstream
 	const floatFiatConverted = parseFloat(fiat) / conversionRate;
 	if (!floatFiatConverted || isNaN(floatFiatConverted) || floatFiatConverted === Infinity) {
 		return '0x0';
@@ -673,6 +683,8 @@ export function safeNumberToBN(value) {
 export function fastSplit(value, divider = '.') {
 	const [from, to] = [value.indexOf(divider), 0];
 	return value.substring(from, to) || value;
+=======
+>>>>>>> Stashed changes
 }
 
 /**

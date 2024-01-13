@@ -4,8 +4,13 @@ import NetworksScreen from '../screen-objects/NetworksScreen';
 import NetworkApprovalModal from '../screen-objects/Modals/NetworkApprovalModal';
 import NetworkEducationModal from '../screen-objects/Modals/NetworkEducationModal';
 import NetworkListModal from '../screen-objects/Modals/NetworkListModal';
+<<<<<<< Updated upstream
 import TabBarModal from "../screen-objects/Modals/TabBarModal";
 import Gestures from "../helpers/Gestures";
+=======
+import TabBarModal from '../screen-objects/Modals/TabBarModal';
+import Gestures from '../helpers/Gestures';
+>>>>>>> Stashed changes
 
 When(/^I tap on the Add a Network button/, async () => {
   await NetworkListModal.tapAddNetworkButton();
@@ -71,10 +76,13 @@ When(
   },
 );
 
+<<<<<<< Updated upstream
 Then(/^I tap on the burger menu/, async () => {
   await WalletMainScreen.tapBurgerButton();
 });
 
+=======
+>>>>>>> Stashed changes
 Then(/^In settings I tap on "([^"]*)?"/, async (option) => {
   await NetworksScreen.tapOptionInSettings(option); // Can be moved later on to more common page object folder
   const setTimeout = 2000;
@@ -238,7 +246,10 @@ Given(/^the network screen is displayed$/, async () => {
 });
 
 Given(/^Ganache network is selected$/, async () => {
+<<<<<<< Updated upstream
   await WalletMainScreen.tapBurgerButton();
+=======
+>>>>>>> Stashed changes
   await TabBarModal.tapSettingButton();
   await NetworksScreen.tapOptionInSettings('Networks');
   await NetworksScreen.tapAddNetworkButton();
@@ -253,6 +264,10 @@ Given(/^Ganache network is selected$/, async () => {
   await NetworksScreen.tapCustomAddButton();
   await NetworksScreen.tapCustomAddButton();
   await NetworkEducationModal.tapGotItButton();
+<<<<<<< Updated upstream
+=======
+  await WalletMainScreen.waitForNetworkModaltoDisappear();
+>>>>>>> Stashed changes
 });
 
 Then(

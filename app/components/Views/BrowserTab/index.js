@@ -699,6 +699,801 @@ export const BrowserTab = (props) => {
 				} catch (e) {
 					//Nothing to do
 				}
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+			})
+		);
+
+		Analytics.trackEvent(ANALYTICS_EVENT_OPTS.DAPP_ADD_TO_FAVORITE);
+	};
+
+	share = () => {
+		this.toggleOptionsIfNeeded();
+		Share.open({
+			url: this.state.inputValue
+		}).catch(err => {
+			Logger.log('Error while trying to share address', err);
+		});
+	};
+
+	switchNetwork = () => {
+		this.toggleOptionsIfNeeded();
+		setTimeout(() => {
+			this.props.toggleNetworkModal();
+		}, 300);
+	};
+
+	onNewTabPress = () => {
+		this.openNewTab();
+	};
+	openNewTab = url => {
+		this.toggleOptionsIfNeeded();
+		setTimeout(() => {
+			this.props.newTab(url);
+		}, 300);
+	};
+
+	openInBrowser = () => {
+		this.toggleOptionsIfNeeded();
+		Linking.openURL(this.state.inputValue).catch(error =>
+			Logger.log('Error while trying to open external link: ${url}', error)
+		);
+		Analytics.trackEvent(ANALYTICS_EVENT_OPTS.DAPP_OPEN_IN_BROWSER);
+	};
+
+	dismissTextSelectionIfNeeded() {
+		if (this.isTabActive() && Device.isAndroid()) {
+			const { current } = this.webview;
+			if (current) {
+				setTimeout(() => {
+					current.injectJavaScript(JS_DESELECT_TEXT);
+				}, 50);
+			}
+		}
+	}
+
+	toggleOptionsIfNeeded() {
+		if (this.state.showOptions) {
+			this.toggleOptions();
+		}
+	}
+
+	toggleOptions = () => {
+		this.dismissTextSelectionIfNeeded();
+
+		this.setState({ showOptions: !this.state.showOptions }, () => {
+			if (this.state.showOptions) {
+				InteractionManager.runAfterInteractions(() => {
+					Analytics.trackEvent(ANALYTICS_EVENT_OPTS.DAPP_BROWSER_OPTIONS);
+				});
+			}
+		});
+	};
+
+	onMessage = ({ nativeEvent: { data } }) => {
+		try {
+			data = typeof data === 'string' ? JSON.parse(data) : data;
+			if (!data || (!data.type && !data.name)) {
+				return;
+			}
+			if (data.name) {
+				this.backgroundBridges.forEach(bridge => {
+					if (bridge.isMainFrame) {
+						const { origin } = data && data.origin && new URL(data.origin);
+						bridge.url === origin && bridge.onMessage(data);
+					} else {
+						bridge.url === data.origin && bridge.onMessage(data);
+					}
+				});
+				return;
+			}
+
+			switch (data.type) {
+				case 'FRAME_READY': {
+					const { url } = data.payload;
+					this.onFrameLoadStarted(url);
+					break;
+				}
+
+				case 'NAV_CHANGE': {
+					// This event is not necessary since it is handled by the onLoadEnd now
+					break;
+				}
+
+				case 'GET_TITLE_FOR_BOOKMARK':
+					if (data.payload.title) {
+						this.setState({
+							currentPageTitle: data.payload.title,
+							currentPageUrl: data.payload.url,
+							currentPageIcon: data.payload.icon
+						});
+					}
+					break;
+
+				case 'GET_WEBVIEW_URL':
+					this.webviewUrlPostMessagePromiseResolve(data.payload.url);
+			}
+		} catch (e) {
+			Logger.error(e, `Browser::onMessage on ${this.state.inputValue}`);
+		}
+	};
+
+	onShouldStartLoadWithRequest = ({ url, navigationType }) => {
+		if (Device.isIos()) {
+			return true;
+		}
+		if (this.isENSUrl(url) && navigationType === 'other') {
+			this.go(url.replace('http://', 'https://'));
+			return false;
+		}
+		return true;
+	};
+
+	onPageChange = url => {
+		if (this.isHomepage(url)) {
+			this.refreshHomeScripts();
+		}
+		if (url === this.state.url && !this.isHomepage(url)) return;
+		const { ipfsGateway } = this.props;
+		const data = {};
+		const urlObj = new URL(url);
+		if (urlObj.protocol.indexOf('http') === -1) {
+			return;
+		}
+
+		if (this.resolvingENSUrl) {
+			return;
+		}
+
+		if (!this.isHomepage(url)) {
+			this.setState({ lastUrlBeforeHome: null });
+		}
+
+		if (!this.state.showPhishingModal && !this.isAllowedUrl(urlObj.hostname)) {
+			this.handleNotAllowedUrl(url);
+		}
+
+		if (this.isENSUrl(url)) {
+			this.go(url.replace('http://', 'https://'));
+			const { current } = this.webview;
+			current && current.stopLoading();
+			return;
+		} else if (url.search(`${AppConstants.IPFS_OVERRIDE_PARAM}=false`) === -1) {
+			if (this.state.contentType === 'ipfs-ns') {
+				data.inputValue = url.replace(
+					`${ipfsGateway}${this.state.contentId}/`,
+					`https://${this.state.currentEnsName}/`
+				);
+			} else {
+				data.inputValue = url.replace(
+					`${AppConstants.SWARM_GATEWAY_URL}${this.state.contentId}/`,
+					`https://${this.state.currentEnsName}/`
+				);
+			}
+		} else {
+			data.inputValue = url;
+			data.hostname = this.formatHostname(urlObj.hostname);
+		}
+
+		this.setState({ newPageData: data });
+	};
+
+	formatHostname(hostname) {
+		return hostname.toLowerCase().replace(/^www./, '');
+	}
+
+	onURLChange = inputValue => {
+		this.setState({ autocompleteInputValue: inputValue });
+	};
+
+	onLoadProgress = ({ nativeEvent: { progress, ...args } }) => {
+		this.setState({ progress });
+	};
+
+	webviewUrlPostMessagePromiseResolve = null;
+
+	onLoadEnd = ({ nativeEvent }) => {
+		if (nativeEvent.loading) return;
+
+		// Wait for the title, then store the visit
+		setTimeout(() => {
+			this.props.addToBrowserHistory({
+				name: this.state.currentPageTitle,
+				url: this.state.inputValue
+			});
+		}, 500);
+
+		// Let's wait for potential redirects that might break things
+		if (!this.initialUrl || this.isHomepage(this.initialUrl)) {
+			setTimeout(() => {
+				this.initialUrl = this.state.inputValue;
+			}, 1000);
+		}
+
+		const { current } = this.webview;
+		// Inject favorites on the homepage
+		if (this.isHomepage(nativeEvent.url) && current) {
+			const js = this.state.homepageScripts;
+			current.injectJavaScript(js);
+		}
+
+		// Onloadstart does not fire when a website url has changes, e.g. example.com/ex#user1 to example.com/ex#user2. So this is needed for those cases.
+		const { url, title } = nativeEvent;
+		const urlObj = new URL(url);
+		if (urlObj.hostname === this.state.fullHostname && nativeEvent.url !== this.state.inputValue) {
+			this.setState({
+				url,
+				inputValue: url,
+				autocompletInputValue: url,
+				currentPageTitle: title,
+				forwardEnabled: false
+			});
+			this.setState({ lastUrlBeforeHome: null });
+			this.props.navigation.setParams({ url: nativeEvent.url, silent: true, showUrlModal: false });
+			this.updateTabInfo(nativeEvent.url);
+		} else {
+			current && current.injectJavaScript(JS_WEBVIEW_URL);
+
+			const promiseResolver = resolve => {
+				this.webviewUrlPostMessagePromiseResolve = resolve;
+			};
+			const promise = current ? new Promise(promiseResolver) : Promise.resolve(url);
+
+			promise.then(webviewUrl => {
+				const fullHostname = urlObj.hostname;
+				if (webviewUrl === url) {
+					const { inputValue, hostname } = this.state.newPageData;
+					if (
+						fullHostname !== this.state.fullHostname ||
+						url.search(`${AppConstants.IPFS_OVERRIDE_PARAM}=false`) !== -1
+					) {
+						if (this.isTabActive()) {
+							this.props.navigation.setParams({
+								url,
+								silent: true,
+								showUrlModal: false
+							});
+						}
+					}
+
+					this.updateTabInfo(inputValue);
+					this.setState({
+						fullHostname,
+						inputValue,
+						autocompleteInputValue: inputValue,
+						hostname,
+						forwardEnabled: false
+					});
+				}
+			});
+		}
+	};
+
+	onError = ({ nativeEvent: errorInfo }) => {
+		Logger.log(errorInfo);
+		this.props.navigation.setParams({
+			error: true
+		});
+		this.setState({ lastError: errorInfo });
+	};
+
+	renderLoader = () => (
+		<View style={styles.loader}>
+			<ActivityIndicator size="small" />
+		</View>
+	);
+
+	renderOptions = () => {
+		const { showOptions } = this.state;
+		if (showOptions) {
+			return (
+				<TouchableWithoutFeedback onPress={this.toggleOptions}>
+					<View style={styles.optionsOverlay}>
+						<View
+							style={[
+								styles.optionsWrapper,
+								Device.isAndroid() ? styles.optionsWrapperAndroid : styles.optionsWrapperIos
+							]}
+						>
+							<Button onPress={this.onNewTabPress} style={styles.option}>
+								<View style={styles.optionIconWrapper}>
+									<MaterialCommunityIcon name="plus" size={18} style={styles.optionIcon} />
+								</View>
+								<Text style={styles.optionText} numberOfLines={1}>
+									{strings('browser.new_tab')}
+								</Text>
+							</Button>
+							{this.renderNonHomeOptions()}
+							<Button onPress={this.switchNetwork} style={styles.option}>
+								<View style={styles.optionIconWrapper}>
+									<MaterialCommunityIcon name="earth" size={18} style={styles.optionIcon} />
+								</View>
+								<Text style={styles.optionText} numberOfLines={1}>
+									{strings('browser.switch_network')}
+								</Text>
+							</Button>
+						</View>
+					</View>
+				</TouchableWithoutFeedback>
+			);
+		}
+	};
+
+	renderNonHomeOptions = () => {
+		if (this.isHomepage()) return null;
+
+		return (
+			<React.Fragment>
+				<Button onPress={this.reload} style={styles.option}>
+					<View style={styles.optionIconWrapper}>
+						<Icon name="refresh" size={15} style={styles.optionIcon} />
+					</View>
+					<Text style={styles.optionText} numberOfLines={1}>
+						{strings('browser.reload')}
+					</Text>
+				</Button>
+				{!this.isBookmark() && (
+					<Button onPress={this.addBookmark} style={styles.option}>
+						<View style={styles.optionIconWrapper}>
+							<Icon name="star" size={16} style={styles.optionIcon} />
+						</View>
+						<Text style={styles.optionText} numberOfLines={1}>
+							{strings('browser.add_to_favorites')}
+						</Text>
+					</Button>
+				)}
+				<Button onPress={this.share} style={styles.option}>
+					<View style={styles.optionIconWrapper}>
+						<Icon name="share" size={15} style={styles.optionIcon} />
+					</View>
+					<Text style={styles.optionText} numberOfLines={1}>
+						{strings('browser.share')}
+					</Text>
+				</Button>
+				<Button onPress={this.openInBrowser} style={styles.option}>
+					<View style={styles.optionIconWrapper}>
+						<Icon name="expand" size={16} style={styles.optionIcon} />
+					</View>
+					<Text style={styles.optionText} numberOfLines={1}>
+						{strings('browser.open_in_browser')}
+					</Text>
+				</Button>
+			</React.Fragment>
+		);
+	};
+
+	showTabs = () => {
+		this.props.showTabs();
+	};
+
+	renderBottomBar = () => {
+		const canGoBack = this.canGoBack();
+		const canGoForward = this.canGoForward();
+		return (
+			<BrowserBottomBar
+				canGoBack={canGoBack}
+				canGoForward={canGoForward}
+				goForward={this.goForward}
+				goBack={this.goBack}
+				showTabs={this.showTabs}
+				showUrlModal={this.showUrlModal}
+				toggleOptions={this.toggleOptions}
+				goHome={this.goBackToHomepage}
+			/>
+		);
+	};
+
+	isHttps() {
+		return this.state.inputValue.toLowerCase().substr(0, 6) === 'https:';
+	}
+
+	showUrlModal = (home = false) => {
+		if (!this.isTabActive()) return false;
+		const params = {
+			...this.props.navigation.state.params,
+			showUrlModal: true
+		};
+
+		if (!home) {
+			params.url = this.state.inputValue;
+			this.setState({ autocompleteInputValue: this.state.inputValue });
+		}
+		this.props.navigation.setParams(params);
+	};
+
+	hideUrlModal = url => {
+		const urlParam = typeof url === 'string' && url ? url : this.props.navigation.state.params.url;
+		this.props.navigation.setParams({
+			...this.props.navigation.state.params,
+			url: urlParam,
+			showUrlModal: false
+		});
+
+		if (this.isHomepage()) {
+			const { current } = this.webview;
+			const blur = `document.getElementsByClassName('autocomplete-input')[0].blur();`;
+			current && current.injectJavaScript(blur);
+		}
+	};
+
+	clearInputText = () => {
+		const { current } = this.inputRef;
+		current && current.clear();
+	};
+
+	onAutocomplete = link => {
+		this.setState({ inputValue: link, autocompleteInputValue: link }, () => {
+			this.onUrlInputSubmit(link);
+			this.updateTabInfo(link);
+		});
+	};
+
+	renderProgressBar = () => (
+		<View style={styles.progressBarWrapper}>
+			<WebviewProgressBar progress={this.state.progress} />
+		</View>
+	);
+
+	renderUrlModal = () => {
+		const showUrlModal = (this.props.navigation && this.props.navigation.getParam('showUrlModal', false)) || false;
+
+		if (showUrlModal && this.inputRef) {
+			setTimeout(() => {
+				const { current } = this.inputRef;
+				if (current && !current.isFocused()) {
+					current.focus();
+				}
+			}, 300);
+		}
+
+		return (
+			<Modal
+				isVisible={showUrlModal}
+				style={styles.urlModal}
+				onBackdropPress={this.hideUrlModal}
+				onBackButtonPress={this.hideUrlModal}
+				animationIn="slideInDown"
+				animationOut="slideOutUp"
+				backdropOpacity={0.7}
+				animationInTiming={300}
+				animationOutTiming={300}
+				useNativeDriver
+			>
+				<View style={styles.urlModalContent} testID={'url-modal'}>
+					<TextInput
+						keyboardType="web-search"
+						ref={this.inputRef}
+						autoCapitalize="none"
+						autoCorrect={false}
+						clearButtonMode="while-editing"
+						testID={'url-input'}
+						onChangeText={this.onURLChange}
+						onSubmitEditing={this.onUrlInputSubmit}
+						placeholder={strings('autocomplete.placeholder')}
+						placeholderTextColor={colors.grey400}
+						returnKeyType="go"
+						style={styles.urlInput}
+						value={this.state.autocompleteInputValue}
+						selectTextOnFocus
+					/>
+
+					{Device.isAndroid() ? (
+						<TouchableOpacity onPress={this.clearInputText} style={styles.iconCloseButton}>
+							<MaterialIcon name="close" size={20} style={[styles.icon, styles.iconClose]} />
+						</TouchableOpacity>
+					) : (
+						<TouchableOpacity
+							style={styles.cancelButton}
+							testID={'cancel-url-button'}
+							onPress={this.hideUrlModal}
+						>
+							<Text style={styles.cancelButtonText}>{strings('browser.cancel')}</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+				<UrlAutocomplete
+					onSubmit={this.onAutocomplete}
+					input={this.state.autocompleteInputValue}
+					onDismiss={this.hideUrlModal}
+				/>
+			</Modal>
+		);
+	};
+
+	onCancelWatchAsset = () => {
+		this.setState({ watchAsset: false });
+	};
+
+	renderWatchAssetModal = () => {
+		const { watchAsset, suggestedAssetMeta } = this.state;
+		return (
+			<Modal
+				isVisible={watchAsset}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={styles.bottomModal}
+				backdropOpacity={0.7}
+				animationInTiming={600}
+				animationOutTiming={600}
+				onBackdropPress={this.onCancelWatchAsset}
+				onSwipeComplete={this.onCancelWatchAsset}
+				swipeDirection={'down'}
+				propagateSwipe
+			>
+				<WatchAssetRequest
+					onCancel={this.onCancelWatchAsset}
+					onConfirm={this.onCancelWatchAsset}
+					suggestedAssetMeta={suggestedAssetMeta}
+				/>
+			</Modal>
+		);
+	};
+
+	onAccountsConfirm = () => {
+		const { approveHost, selectedAddress } = this.props;
+		this.setState({ showApprovalDialog: false, showApprovalDialogHostname: undefined });
+		approveHost(this.state.fullHostname);
+		this.approvalRequest && this.approvalRequest.resolve && this.approvalRequest.resolve([selectedAddress]);
+	};
+
+	onAccountsReject = () => {
+		this.setState({ showApprovalDialog: false, showApprovalDialogHostname: undefined });
+		this.approvalRequest &&
+			this.approvalRequest.reject &&
+			this.approvalRequest.reject(new Error('User rejected account access'));
+	};
+
+	renderApprovalModal = () => {
+		const {
+			showApprovalDialogHostname,
+			currentPageTitle,
+			currentPageUrl,
+			currentPageIcon,
+			inputValue
+		} = this.state;
+		const url =
+			currentPageUrl && currentPageUrl.length && currentPageUrl !== 'localhost' ? currentPageUrl : inputValue;
+		const showApprovalDialog =
+			this.state.showApprovalDialog && showApprovalDialogHostname === new URL(url).hostname;
+		return (
+			<Modal
+				isVisible={showApprovalDialog}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={styles.bottomModal}
+				backdropOpacity={0.7}
+				animationInTiming={300}
+				animationOutTiming={300}
+				onSwipeComplete={this.onAccountsReject}
+				onBackdropPress={this.onAccountsReject}
+				swipeDirection={'down'}
+			>
+				<AccountApproval
+					onCancel={this.onAccountsReject}
+					onConfirm={this.onAccountsConfirm}
+					currentPageInformation={{ title: currentPageTitle, url, icon: currentPageIcon }}
+				/>
+			</Modal>
+		);
+	};
+
+	goToETHPhishingDetector = () => {
+		this.setState({ showPhishingModal: false });
+		this.go(`https://github.com/metamask/eth-phishing-detect`);
+	};
+
+	continueToPhishingSite = () => {
+		const urlObj = new URL(this.blockedUrl);
+		this.props.addToWhitelist(urlObj.hostname);
+		this.setState({ showPhishingModal: false });
+		this.blockedUrl !== this.state.inputValue &&
+			setTimeout(() => {
+				this.go(this.blockedUrl);
+				this.blockedUrl = undefined;
+			}, 1000);
+	};
+
+	goToEtherscam = () => {
+		this.setState({ showPhishingModal: false });
+		this.go(`https://etherscamdb.info/domain/meta-mask.com`);
+	};
+
+	goToFilePhishingIssue = () => {
+		this.setState({ showPhishingModal: false });
+		this.go(`https://github.com/metamask/eth-phishing-detect/issues/new`);
+	};
+
+	goBackToSafety = () => {
+		this.blockedUrl === this.state.inputValue && this.goBack();
+		setTimeout(() => {
+			this.mounted && this.setState({ showPhishingModal: false });
+			this.blockedUrl = undefined;
+		}, 500);
+	};
+
+	renderPhishingModal() {
+		const { showPhishingModal } = this.state;
+		return (
+			<Modal
+				isVisible={showPhishingModal}
+				animationIn="slideInUp"
+				animationOut="slideOutDown"
+				style={styles.fullScreenModal}
+				backdropOpacity={1}
+				backdropColor={colors.red}
+				animationInTiming={300}
+				animationOutTiming={300}
+				useNativeDriver
+			>
+				<PhishingModal
+					fullUrl={this.blockedUrl}
+					goToETHPhishingDetector={this.goToETHPhishingDetector}
+					continueToPhishingSite={this.continueToPhishingSite}
+					goToEtherscam={this.goToEtherscam}
+					goToFilePhishingIssue={this.goToFilePhishingIssue}
+					goBackToSafety={this.goBackToSafety}
+				/>
+			</Modal>
+		);
+	}
+
+	getENSHostnameForUrl = url => this.sessionENSNames[url];
+
+	setENSHostnameForUrl = (url, host) => {
+		this.sessionENSNames[url] = host;
+	};
+
+	onFrameLoadStarted = url => {
+		url && this.initializeBackgroundBridge(url, false);
+	};
+
+	webviewRefIsReady = () =>
+		this.webview &&
+		this.webview.current &&
+		this.webview.current.webViewRef &&
+		this.webview.current.webViewRef.current;
+
+	onLoadStart = async ({ nativeEvent }) => {
+		// Handle the scenario when going back
+		// from an ENS name
+		this.props.navigation.setParams({ error: false });
+		if (nativeEvent.navigationType === 'backforward' && nativeEvent.url === this.state.inputValue) {
+			setTimeout(() => this.goBack(), 500);
+		} else if (nativeEvent.url.indexOf(this.props.ipfsGateway) !== -1) {
+			const currentEnsName = this.getENSHostnameForUrl(nativeEvent.url);
+			if (currentEnsName) {
+				this.props.navigation.setParams({
+					...this.props.navigation.state.params,
+					currentEnsName
+				});
+			}
+		}
+
+		let i = 0;
+		while (!this.webviewRefIsReady() && i < 10) {
+			await new Promise(res =>
+				setTimeout(() => {
+					res();
+				}, 500)
+			);
+			i++;
+		}
+
+		if (this.webviewRefIsReady()) {
+			// Reset the previous bridges
+			this.backgroundBridges.length && this.backgroundBridges.forEach(bridge => bridge.onDisconnect());
+			this.backgroundBridges = [];
+			const origin = new URL(nativeEvent.url).origin;
+			this.initializeBackgroundBridge(origin, true);
+		}
+
+		this.onPageChange(nativeEvent.url);
+	};
+
+	canGoForward = () => this.state.forwardEnabled;
+
+	canGoBack = () => {
+		if (this.isHomepage()) {
+			return !!this.state.lastUrlBeforeHome && !this.isHomepage(this.state.lastUrlBeforeHome);
+		}
+
+		return true;
+	};
+
+	isTabActive = () => {
+		const { activeTab, id } = this.props;
+		return activeTab === id;
+	};
+
+	isBookmark = () => {
+		const { bookmarks, navigation } = this.props;
+		const currentUrl = navigation.getParam('url', null);
+		return bookmarks.some(({ url }) => url === currentUrl);
+	};
+
+	isHomepage = (url = null) => {
+		const currentPage = url || this.state.inputValue;
+		const { host: currentHost, pathname: currentPathname } = getUrlObj(currentPage);
+		return currentHost === HOMEPAGE_HOST && currentPathname === '/';
+	};
+
+	renderOnboardingWizard = () => {
+		const { wizardStep } = this.props;
+		if ([6].includes(wizardStep)) {
+			if (!this.wizardScrollAdjusted) {
+				setTimeout(() => {
+					this.forceReload();
+				}, 1);
+				this.wizardScrollAdjusted = true;
+			}
+			return <OnboardingWizard navigation={this.props.navigation} coachmarkRef={this.homepageRef} />;
+		}
+		return null;
+	};
+
+	render() {
+		const { entryScriptWeb3, url, forceReload, activated } = this.state;
+		const isHidden = !this.isTabActive();
+
+		return (
+			<View
+				style={[styles.wrapper, isHidden && styles.hide]}
+				{...(Device.isAndroid() ? { collapsable: false } : {})}
+			>
+				<View style={styles.webview}>
+					{activated && !forceReload && (
+						<WebView
+							// eslint-disable-next-line react/jsx-no-bind
+							renderError={() => (
+								<WebviewError error={this.state.lastError} onReload={this.forceReload} />
+							)}
+							injectedJavaScript={entryScriptWeb3}
+							onLoadProgress={this.onLoadProgress}
+							onLoadStart={this.onLoadStart}
+							onLoadEnd={this.onLoadEnd}
+							onError={this.onError}
+							onMessage={this.onMessage}
+							ref={this.webview}
+							source={{ uri: url }}
+							style={styles.webview}
+							userAgent={USER_AGENT}
+							sendCookies
+							javascriptEnabled
+							allowsInlineMediaPlayback
+							useWebkit
+							onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+							testID={'browser-webview'}
+						/>
+					)}
+				</View>
+				{this.renderProgressBar()}
+				{!isHidden && this.renderUrlModal()}
+				{!isHidden && this.renderApprovalModal()}
+				{!isHidden && this.renderPhishingModal()}
+				{!isHidden && this.renderWatchAssetModal()}
+				{!isHidden && this.renderOptions()}
+				{!isHidden && this.renderBottomBar()}
+				{!isHidden && this.renderOnboardingWizard()}
+			</View>
+		);
+	}
+}
+
+const mapStateToProps = state => ({
+	approvedHosts: state.privacy.approvedHosts,
+	bookmarks: state.bookmarks,
+	ipfsGateway: state.engine.backgroundState.PreferencesController.ipfsGateway,
+	networkType: state.engine.backgroundState.NetworkController.provider.type,
+	network: state.engine.backgroundState.NetworkController.network,
+	selectedAddress: state.engine.backgroundState.PreferencesController.selectedAddress.toLowerCase(),
+	privacyMode: state.privacy.privacyMode,
+	searchEngine: state.settings.searchEngine,
+	whitelist: state.browser.whitelist,
+	activeTab: state.browser.activeTab,
+	wizardStep: state.wizard.step
+=======
+>>>>>>> Stashed changes
 			})()
 		`;
 
@@ -1485,7 +2280,11 @@ export const BrowserTab = (props) => {
                   <WebviewError error={error} returnHome={returnHome} />
                 )}
                 source={{ uri: initialUrl }}
+<<<<<<< Updated upstream
                 injectedJavaScriptBeforeContentLoaded={`window.self.document.addEventListener("DOMContentLoaded", function() {${entryScriptWeb3}});`}
+=======
+                injectedJavaScriptBeforeContentLoaded={entryScriptWeb3}
+>>>>>>> Stashed changes
                 style={styles.webview}
                 onLoadStart={onLoadStart}
                 onLoad={onLoad}
@@ -1627,6 +2426,10 @@ const mapStateToProps = (state) => ({
   whitelist: state.browser.whitelist,
   wizardStep: state.wizard.step,
   chainId: selectChainId(state),
+<<<<<<< Updated upstream
+=======
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -8,7 +8,10 @@ import { AppThemeKey } from '../../../util/theme/models';
 const mockStore = configureMockStore();
 const initialState = {
   user: { appTheme: AppThemeKey.light },
+<<<<<<< Updated upstream
 	user: { appTheme: AppThemeKey.light },
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 
@@ -40,6 +43,7 @@ describe('ManualBackupStep1', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(
 			<Provider store={store}>
@@ -67,4 +71,6 @@ describe('ManualBackupStep1', () => {
 		);
 		expect(wrapper).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

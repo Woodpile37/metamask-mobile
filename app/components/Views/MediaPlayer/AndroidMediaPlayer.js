@@ -149,6 +149,7 @@ const createStyles = (colors) =>
       marginHorizontal: 8,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		playerContainer: {
 			flex: 0,
@@ -272,6 +273,8 @@ const createStyles = (colors) =>
 			marginHorizontal: 8,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 export default function VideoPlayer({
   controlsAnimationTiming,
@@ -752,6 +755,7 @@ export default function VideoPlayer({
       </View>
     </TouchableNativeFeedback>
   );
+<<<<<<< Updated upstream
 	const [paused, setPaused] = useState(false);
 	const [muted, setMuted] = useState(true);
 	const [seekerFillWidth, setSeekerFillWidth] = useState(0);
@@ -1165,6 +1169,8 @@ export default function VideoPlayer({
 			</View>
 		</TouchableNativeFeedback>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 VideoPlayer.propTypes = {

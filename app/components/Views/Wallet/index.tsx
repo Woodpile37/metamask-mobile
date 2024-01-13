@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, {
   useEffect,
   useRef,
@@ -5,6 +6,9 @@ import React, {
   useContext,
   useMemo,
 } from 'react';
+=======
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+>>>>>>> Stashed changes
 import {
   InteractionManager,
   ActivityIndicator,
@@ -28,23 +32,42 @@ import { MetaMetricsEvents } from '../../../core/Analytics';
 import { getTicker } from '../../../util/transactions';
 import OnboardingWizard from '../../UI/OnboardingWizard';
 import ErrorBoundary from '../ErrorBoundary';
+<<<<<<< Updated upstream
 import { DrawerContext } from '../../Nav/Main/MainNavigator';
+=======
+>>>>>>> Stashed changes
 import { useTheme } from '../../../util/theme';
 import { shouldShowWhatsNewModal } from '../../../util/onboarding';
 import Logger from '../../../util/Logger';
 import Routes from '../../../constants/navigation/Routes';
 import {
   getNetworkImageSource,
+<<<<<<< Updated upstream
   getNetworkNameFromProvider,
+=======
+  getNetworkNameFromProviderConfig,
+>>>>>>> Stashed changes
 } from '../../../util/networks';
 import generateTestId from '../../../../wdio/utils/generateTestId';
 import {
   selectProviderConfig,
   selectTicker,
 } from '../../../selectors/networkController';
+<<<<<<< Updated upstream
 import { useNavigation } from '@react-navigation/native';
 import { ProviderConfig } from '@metamask/network-controller';
 import { WalletAccount } from '../../../components/UI/WalletAccount';
+=======
+import { selectTokens } from '../../../selectors/tokensController';
+import { useNavigation } from '@react-navigation/native';
+import { WalletAccount } from '../../../components/UI/WalletAccount';
+import {
+  selectConversionRate,
+  selectCurrentCurrency,
+} from '../../../selectors/currencyRateController';
+import { selectAccounts } from '../../../selectors/accountTrackerController';
+import { selectSelectedAddress } from '../../../selectors/preferencesController';
+>>>>>>> Stashed changes
 
 const createStyles = ({ colors, typography }: Theme) =>
   StyleSheet.create({
@@ -85,7 +108,10 @@ const createStyles = ({ colors, typography }: Theme) =>
  */
 const Wallet = ({ navigation }: any) => {
   const { navigate } = useNavigation();
+<<<<<<< Updated upstream
   const { drawerRef } = useContext(DrawerContext);
+=======
+>>>>>>> Stashed changes
   const walletRef = useRef(null);
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -93,6 +119,7 @@ const Wallet = ({ navigation }: any) => {
   /**
    * Map of accounts to information objects including balances
    */
+<<<<<<< Updated upstream
   const accounts = useSelector(
     (state: any) =>
       state.engine.backgroundState.AccountTrackerController.accounts,
@@ -124,6 +151,25 @@ const Wallet = ({ navigation }: any) => {
   const tokens = useSelector(
     (state: any) => state.engine.backgroundState.TokensController.tokens,
   );
+=======
+  const accounts = useSelector(selectAccounts);
+  /**
+   * ETH to current currency conversion rate
+   */
+  const conversionRate = useSelector(selectConversionRate);
+  /**
+   * Currency code of the currently-active currency
+   */
+  const currentCurrency = useSelector(selectCurrentCurrency);
+  /**
+   * A string that represents the selected address
+   */
+  const selectedAddress = useSelector(selectSelectedAddress);
+  /**
+   * An array that represents the user tokens
+   */
+  const tokens = useSelector(selectTokens);
+>>>>>>> Stashed changes
   /**
    * Current provider ticker
    */
@@ -133,6 +179,7 @@ const Wallet = ({ navigation }: any) => {
    */
   const wizardStep = useSelector((state: any) => state.wizard.step);
   /**
+<<<<<<< Updated upstream
    * Current network
    */
   const networkProvider: ProviderConfig = useSelector(selectProviderConfig);
@@ -140,31 +187,58 @@ const Wallet = ({ navigation }: any) => {
   const networkName = useMemo(
     () => getNetworkNameFromProvider(networkProvider),
     [networkProvider],
+=======
+   * Provider configuration for the current selected network
+   */
+  const providerConfig = useSelector(selectProviderConfig);
+
+  const networkName = useMemo(
+    () => getNetworkNameFromProviderConfig(providerConfig),
+    [providerConfig],
+>>>>>>> Stashed changes
   );
 
   const networkImageSource = useMemo(
     () =>
       getNetworkImageSource({
+<<<<<<< Updated upstream
         networkType: networkProvider.type,
         chainId: networkProvider.chainId,
       }),
     [networkProvider],
+=======
+        networkType: providerConfig.type,
+        chainId: providerConfig.chainId,
+      }),
+    [providerConfig],
+>>>>>>> Stashed changes
   );
 
   /**
    * Callback to trigger when pressing the navigation title.
    */
+<<<<<<< Updated upstream
   const onTitlePress = () => {
+=======
+  const onTitlePress = useCallback(() => {
+>>>>>>> Stashed changes
     navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
       screen: Routes.SHEET.NETWORK_SELECTOR,
     });
     Analytics.trackEventWithParameters(
       MetaMetricsEvents.NETWORK_SELECTOR_PRESSED,
       {
+<<<<<<< Updated upstream
         chain_id: networkProvider.chainId,
       },
     );
   };
+=======
+        chain_id: providerConfig.chainId,
+      },
+    );
+  }, [navigate, providerConfig.chainId]);
+>>>>>>> Stashed changes
   const { colors: themeColors } = useTheme();
 
   /**
@@ -214,7 +288,10 @@ const Wallet = ({ navigation }: any) => {
         networkImageSource,
         onTitlePress,
         navigation,
+<<<<<<< Updated upstream
         drawerRef,
+=======
+>>>>>>> Stashed changes
         themeColors,
       ),
     );
@@ -258,6 +335,10 @@ const Wallet = ({ navigation }: any) => {
 
       assets = [
         {
+<<<<<<< Updated upstream
+=======
+          // TODO: Add name property to Token interface in controllers.
+>>>>>>> Stashed changes
           name: getTicker(ticker) === 'ETH' ? 'Ethereum' : ticker,
           symbol: getTicker(ticker),
           isETH: true,
@@ -268,7 +349,11 @@ const Wallet = ({ navigation }: any) => {
             currentCurrency,
           ),
           logo: '../images/eth-logo-new.png',
+<<<<<<< Updated upstream
         },
+=======
+        } as any,
+>>>>>>> Stashed changes
         ...(tokens || []),
       ];
     } else {
@@ -287,9 +372,21 @@ const Wallet = ({ navigation }: any) => {
             tabLabel={strings('wallet.tokens')}
             key={'tokens-tab'}
             navigation={navigation}
+<<<<<<< Updated upstream
             tokens={assets}
           />
           <CollectibleContracts
+=======
+            // TODO - Consolidate into the correct type.
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            tokens={assets}
+          />
+          <CollectibleContracts
+            // TODO - Extend component to support injected tabLabel prop.
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+>>>>>>> Stashed changes
             tabLabel={strings('wallet.collectibles')}
             key={'nfts-tab'}
             navigation={navigation}

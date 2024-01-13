@@ -53,6 +53,7 @@ const Default = () => {
       </Text>
     </View>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		warningModalView: {
 			margin: 24,
@@ -93,6 +94,8 @@ const Default = () => {
 			<Text style={styles.warningModalText}>{strings('onboarding.warning_text_4')}</Text>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 /**

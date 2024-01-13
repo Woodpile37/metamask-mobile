@@ -63,6 +63,7 @@ function Ratio({
       </Text>
     </TouchableOpacity>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		infoIcon: {
 			fontSize: 12,
@@ -102,6 +103,8 @@ function Ratio({ sourceAmount, sourceToken, destinationAmount, destinationToken,
 			</Text>
 		</TouchableOpacity>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 Ratio.propTypes = {

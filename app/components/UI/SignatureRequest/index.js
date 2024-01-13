@@ -114,6 +114,7 @@ const createStyles = (colors) =>
       marginBottom: 20,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			backgroundColor: colors.background.default,
@@ -198,6 +199,8 @@ const createStyles = (colors) =>
 			color: colors.icon.muted,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that renders scrollable content inside signature request user interface
@@ -257,6 +260,7 @@ class SignatureRequest extends PureComponent {
     testID: PropTypes.string,
     securityAlertResponse: PropTypes.object,
   };
+<<<<<<< Updated upstream
 
   /**
    * Calls trackCancelSignature and onReject callback
@@ -644,6 +648,239 @@ class SignatureRequest extends PureComponent {
 		const { isSigningQRObject } = this.props;
 		return isSigningQRObject ? this.renderQRDetails() : this.renderSignatureRequest();
 	}
+=======
+
+  /**
+   * Calls trackCancelSignature and onReject callback
+   */
+  onReject = () => {
+    this.props.onReject();
+    Analytics.trackEventWithParameters(
+      MetaMetricsEvents.TRANSACTIONS_CANCEL_SIGNATURE,
+      this.getTrackingParams(),
+    );
+  };
+
+  /**
+   * Calls trackConfirmSignature and onConfirm callback
+   */
+  onConfirm = () => {
+    this.props.onConfirm();
+    Analytics.trackEventWithParameters(
+      MetaMetricsEvents.TRANSACTIONS_CONFIRM_SIGNATURE,
+      this.getTrackingParams(),
+    );
+  };
+
+  /**
+   * Returns corresponding tracking params to send
+   *
+   * @return {object} - Object containing network and functionType
+   */
+  getTrackingParams = () => {
+    const { type, networkType } = this.props;
+    return {
+      network: networkType,
+      functionType: type,
+    };
+  };
+
+  goToWarning = () => {
+    this.props.onReject();
+    this.props.navigation.navigate('Webview', {
+      screen: 'SimpleWebview',
+      params: {
+        url: 'https://metamask.zendesk.com/hc/en-us/articles/360015488751',
+        title: 'metamask.zendesk.com',
+      },
+    });
+  };
+
+  getStyles = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    return createStyles(colors);
+  };
+
+  renderWarning = () => {
+    const styles = this.getStyles();
+
+    return (
+      <Text>
+        {strings('signature_request.eth_sign_warning')}
+        {` `}
+        <Text style={styles.warningLink}>
+          {strings('signature_request.learn_more')}
+        </Text>
+      </Text>
+    );
+  };
+
+  renderActionViewChildren = () => {
+    const {
+      children,
+      currentPageInformation,
+      truncateMessage,
+      toggleExpandedMessage,
+      fromAddress,
+    } = this.props;
+    const styles = this.getStyles();
+    const url = currentPageInformation.url;
+    const icon = currentPageInformation.icon;
+    const title = getHost(url);
+    const arrowIcon = truncateMessage ? this.renderArrowIcon() : null;
+    return (
+      <View style={styles.actionViewChild}>
+        <View style={styles.accountInfoCardWrapper}>
+          <AccountInfoCard
+            operation="signing"
+            fromAddress={fromAddress}
+            origin={title}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.children}
+          onPress={truncateMessage ? toggleExpandedMessage : null}
+        >
+          <WebsiteIcon
+            style={styles.domainLogo}
+            title={title}
+            url={url}
+            icon={icon}
+          />
+          <View style={styles.messageColumn}>
+            <Text style={styles.messageLabelText}>
+              {strings('signature_request.message')}:
+            </Text>
+            {children}
+            {truncateMessage ? (
+              <Text style={styles.readMore}>
+                {strings('signature_request.read_more')}
+              </Text>
+            ) : null}
+          </View>
+          <View style={styles.arrowIconWrapper}>{arrowIcon}</View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  renderArrowIcon = () => {
+    const styles = this.getStyles();
+
+    return (
+      <View style={styles.arrowIconWrapper}>
+        <Ionicons
+          name={'ios-arrow-forward'}
+          size={20}
+          style={styles.arrowIcon}
+        />
+      </View>
+    );
+  };
+
+  onContactUsClicked = () => {
+    const { fromAddress, type } = this.props;
+    const analyticsParams = {
+      ...getAnalyticsParams(
+        {
+          from: fromAddress,
+        },
+        type,
+      ),
+      external_link_clicked: 'security_alert_support_link',
+    };
+    AnalyticsV2.trackEvent(
+      MetaMetricsEvents.SIGNATURE_REQUESTED,
+      analyticsParams,
+    );
+  };
+
+  renderSignatureRequest() {
+    const { securityAlertResponse, showWarning, type, selectedAddress } =
+      this.props;
+    let expandedHeight;
+    const styles = this.getStyles();
+
+    const isLedgerAccount = isHardwareAccount(selectedAddress, [
+      ExtendedKeyringTypes.ledger,
+    ]);
+
+    if (Device.isMediumDevice()) {
+      expandedHeight = styles.expandedHeight2;
+      if (type === 'ethSign') {
+        expandedHeight = styles.expandedHeight1;
+      }
+    }
+    return (
+      <View testID={this.props.testID} style={[styles.root, expandedHeight]}>
+        <ActionView
+          cancelTestID={SigningModalSelectorsIDs.CANCEL_BUTTON}
+          confirmTestID={SigningModalSelectorsIDs.SIGN_BUTTON}
+          cancelText={strings('signature_request.cancel')}
+          confirmText={
+            isLedgerAccount
+              ? strings('ledger.sign_with_ledger')
+              : strings('signature_request.sign')
+          }
+          onCancelPress={this.onReject}
+          onConfirmPress={this.onConfirm}
+          confirmButtonMode="sign"
+        >
+          <View>
+            <View style={styles.signingInformation}>
+              <Text style={styles.signText}>
+                {strings('signature_request.signing')}
+              </Text>
+              {showWarning ? (
+                <TouchableOpacity
+                  style={styles.warningWrapper}
+                  onPress={this.goToWarning}
+                >
+                  <WarningMessage
+                    type={'error'}
+                    warningMessage={this.renderWarning()}
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+            {isBlockaidFeatureEnabled() && (
+              <BlockaidBanner
+                securityAlertResponse={securityAlertResponse}
+                style={styles.blockaidBanner}
+                onContactUsClicked={this.onContactUsClicked}
+              />
+            )}
+            {this.renderActionViewChildren()}
+          </View>
+        </ActionView>
+      </View>
+    );
+  }
+
+  renderQRDetails() {
+    const { QRState, fromAddress } = this.props;
+    const styles = this.getStyles();
+
+    return (
+      <View style={[styles.root]}>
+        <QRSigningDetails
+          QRState={QRState}
+          showCancelButton
+          showHint={false}
+          bypassAndroidCameraAccessCheck={false}
+          fromAddress={fromAddress}
+        />
+      </View>
+    );
+  }
+
+  render() {
+    const { isSigningQRObject } = this.props;
+    return isSigningQRObject
+      ? this.renderQRDetails()
+      : this.renderSignatureRequest();
+  }
+>>>>>>> Stashed changes
 }
 
 const mapStateToProps = (state) => ({
@@ -658,4 +895,7 @@ SignatureRequest.contextType = ThemeContext;
 export default connect(mapStateToProps)(
   withQRHardwareAwareness(SignatureRequest),
 );
+<<<<<<< Updated upstream
 export default connect(mapStateToProps)(withQRHardwareAwareness(SignatureRequest));
+=======
+>>>>>>> Stashed changes

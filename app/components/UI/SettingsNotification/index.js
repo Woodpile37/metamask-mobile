@@ -62,6 +62,7 @@ const CheckIcon = () => {
       name="check-circle"
     />
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		menuItemWarning: {
 			flex: 1,
@@ -105,6 +106,8 @@ const CheckIcon = () => {
 	const styles = createStyles(colors);
 
 	return <MaterialIcon style={[styles.icon, styles.check]} size={16} name="check-circle" />;
+=======
+>>>>>>> Stashed changes
 };
 
 const propTypes = {
@@ -145,6 +148,7 @@ const SettingsNotification = ({
       {children}
     </View>
   );
+<<<<<<< Updated upstream
 const SettingsNotification = ({ style, isWarning, isNotification, children }) => {
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
@@ -160,6 +164,8 @@ const SettingsNotification = ({ style, isWarning, isNotification, children }) =>
 			{children}
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 SettingsNotification.propTypes = propTypes;

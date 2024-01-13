@@ -10,6 +10,7 @@ export const initialState = {
     networkUrl: '',
     networkStatus: false,
   },
+<<<<<<< Updated upstream
 	networkOnboardedState: [],
 	networkState: {
 		showNetworkOnboarding: false,
@@ -21,6 +22,8 @@ export const initialState = {
 		networkUrl: '',
 		networkStatus: false,
 	},
+=======
+>>>>>>> Stashed changes
 };
 
 /**
@@ -85,6 +88,7 @@ function networkOnboardReducer(
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	state = initialState,
 	action: {
 		nativeToken: string;
@@ -137,6 +141,8 @@ function networkOnboardReducer(
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 export default networkOnboardReducer;

@@ -38,6 +38,7 @@ describe('parseSeedPhrase', () => {
       VALID_12,
     );
   });
+<<<<<<< Updated upstream
 	it('Should handle leading spaces', () => {
 		expect(parseSeedPhrase(`   ${VALID_12}`)).toEqual(VALID_12);
 	});
@@ -50,4 +51,6 @@ describe('parseSeedPhrase', () => {
 	it('Should handle uppercase', () => {
 		expect(parseSeedPhrase(`   ${String(VALID_12).toUpperCase()}`)).toEqual(VALID_12);
 	});
+=======
+>>>>>>> Stashed changes
 });

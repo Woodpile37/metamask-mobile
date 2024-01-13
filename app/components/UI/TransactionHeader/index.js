@@ -80,6 +80,7 @@ const createStyles = (colors) =>
       lineHeight: 56,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		transactionHeader: {
 			justifyContent: 'center',
@@ -141,6 +142,8 @@ const createStyles = (colors) =>
 			lineHeight: 56,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that renders the transaction header used for signing, granting permissions and sending
@@ -155,6 +158,7 @@ const TransactionHeader = (props) => {
   const originIsWalletConnect = props.currentPageInformation.origin?.startsWith(
     WALLET_CONNECT_ORIGIN,
   );
+<<<<<<< Updated upstream
 
   const originIsMMSDKRemoteConn =
     props.currentPageInformation.origin?.startsWith(
@@ -292,6 +296,94 @@ const TransactionHeader = (props) => {
       props.currentPageInformation;
     let title = '';
 
+=======
+
+  const originIsMMSDKRemoteConn =
+    props.currentPageInformation.origin?.startsWith(
+      AppConstants.MM_SDK.SDK_REMOTE_ORIGIN,
+    );
+
+  /**
+   * Returns a small circular indicator, red if the current selected network is offline, green if it's online.
+   *
+   * @return {element} - JSX view element
+   */
+  const renderNetworkStatusIndicator = () => {
+    const { networkType } = props;
+    const networkStatusIndicatorColor =
+      (networkList[networkType] && networkList[networkType].color) ||
+      colors.error.default;
+    const networkStatusIndicator = (
+      <View
+        style={[
+          styles.networkStatusIndicator,
+          { backgroundColor: networkStatusIndicatorColor },
+        ]}
+      />
+    );
+    return networkStatusIndicator;
+  };
+
+  /**
+   * Returns a secure icon next to the dApp URL. Lock for https protocol, warning sign otherwise.
+   *
+   * @return {element} - JSX image element
+   */
+  const renderSecureIcon = () => {
+    if (originIsDeeplink) return null;
+    const { url, origin } = props.currentPageInformation;
+    const name =
+      getUrlObj(
+        originIsWalletConnect
+          ? origin.split(WALLET_CONNECT_ORIGIN)[1]
+          : originIsMMSDKRemoteConn
+          ? origin.split(AppConstants.MM_SDK.SDK_REMOTE_ORIGIN)[1]
+          : url,
+      ).protocol === 'https:'
+        ? 'lock'
+        : 'warning';
+    return <FontAwesome name={name} size={15} style={styles.secureIcon} />;
+  };
+
+  const renderTopIcon = () => {
+    const { currentEnsName, icon, origin } = props.currentPageInformation;
+    let url = props.currentPageInformation.url;
+    if (originIsDeeplink && !icon) {
+      return (
+        <View style={styles.deeplinkIconContainer}>
+          <FontAwesome
+            style={styles.deeplinkIcon}
+            name={origin === ORIGIN_DEEPLINK ? 'link' : 'qrcode'}
+            size={32}
+            color={colors.text.default}
+          />
+        </View>
+      );
+    }
+    let iconTitle = getHost(currentEnsName || url);
+    if (originIsWalletConnect) {
+      url = origin.split(WALLET_CONNECT_ORIGIN)[1];
+      iconTitle = getHost(url);
+    } else if (originIsMMSDKRemoteConn) {
+      url = origin.split(AppConstants.MM_SDK.SDK_REMOTE_ORIGIN)[1];
+    }
+    return (
+      <WebsiteIcon
+        style={styles.domainLogo}
+        viewStyle={styles.assetLogo}
+        title={iconTitle}
+        url={currentEnsName || url}
+        icon={typeof icon === 'string' ? icon : icon?.uri}
+      />
+    );
+  };
+
+  const renderTitle = () => {
+    const { url, currentEnsName, spenderAddress, origin } =
+      props.currentPageInformation;
+    let title = '';
+
+>>>>>>> Stashed changes
     if (originIsDeeplink) title = renderShortAddress(spenderAddress);
     else if (originIsWalletConnect)
       title = getHost(origin.split(WALLET_CONNECT_ORIGIN)[1]);

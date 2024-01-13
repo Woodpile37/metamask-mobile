@@ -6,7 +6,10 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import Text from '../../Base/Text';
 import FA5Icon from 'react-native-vector-icons/FontAwesome5';
 import AntIcon from 'react-native-vector-icons/AntDesign';
@@ -66,6 +69,7 @@ function Loader({ error, onClose }) {
       </View>
     </View>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		container: {
 			flex: 1,
@@ -118,6 +122,8 @@ function Loader({ error, onClose }) {
 			</View>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 Loader.propTypes = {

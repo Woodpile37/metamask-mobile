@@ -1578,6 +1578,7 @@
     "language": "vi-vn",
     "uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-vi-vn.vtt?raw=true"
   }
+<<<<<<< Updated upstream
 	"date": {
 		"months": {
 			"0": "Tháng 1",
@@ -3198,4 +3199,6 @@
 		"language": "vi-vn",
 		"uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-vi-vn.vtt?raw=true"
 	}
+=======
+>>>>>>> Stashed changes
 }

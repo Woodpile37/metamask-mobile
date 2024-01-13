@@ -20,12 +20,15 @@ const createStyles = (colors) =>
       flex: 1,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			backgroundColor: colors.background.default,
 			flex: 1,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * View that displays a specific collectible
@@ -56,6 +59,7 @@ class Collectible extends PureComponent {
      */
     route: PropTypes.object,
   };
+<<<<<<< Updated upstream
 
   state = {
     refreshing: false,
@@ -270,6 +274,123 @@ const mapStateToProps = (state) => ({
 const mapStateToProps = (state) => ({
 	collectibles: collectiblesSelector(state),
 	collectibleContractModalVisible: state.modals.collectibleContractModalVisible,
+=======
+
+  state = {
+    refreshing: false,
+    collectibles: [],
+  };
+
+  updateNavBar = () => {
+    const { navigation, route } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    getNetworkNavbarOptions(
+      route.params?.name ?? '',
+      false,
+      navigation,
+      colors,
+    );
+  };
+
+  componentDidMount = () => {
+    this.updateNavBar();
+  };
+
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
+
+  onRefresh = async () => {
+    this.setState({ refreshing: true });
+    const { NftDetectionController } = Engine.context;
+    await NftDetectionController.detectNfts();
+    this.setState({ refreshing: false });
+  };
+
+  hideCollectibleContractModal = () => {
+    this.props.toggleCollectibleContractModal();
+  };
+
+  render = () => {
+    const {
+      route: { params },
+      navigation,
+      collectibleContractModalVisible,
+    } = this.props;
+    const collectibleContract = params;
+    const address = params.address;
+    const { collectibles } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+    const filteredCollectibles = collectibles.filter((collectible) =>
+      toLowerCaseEquals(collectible.address, address),
+    );
+    filteredCollectibles.map((collectible) => {
+      if (!collectible.name || collectible.name === '') {
+        collectible.name = collectibleContract.name;
+      }
+      if (!collectible.image && collectibleContract.logo) {
+        collectible.image = collectibleContract.logo;
+      }
+      return collectible;
+    });
+
+    const ownerOf = filteredCollectibles.length;
+
+    return (
+      <View style={styles.wrapper}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              colors={[colors.primary.default]}
+              tintColor={colors.icon.default}
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }
+          style={styles.wrapper}
+        >
+          <View>
+            <View style={styles.assetOverviewWrapper}>
+              <CollectibleContractOverview
+                navigation={navigation}
+                collectibleContract={collectibleContract}
+                ownerOf={ownerOf}
+              />
+            </View>
+            <View style={styles.wrapper}>
+              <Collectibles
+                navigation={navigation}
+                collectibles={filteredCollectibles}
+                collectibleContract={collectibleContract}
+              />
+            </View>
+          </View>
+        </ScrollView>
+        <Modal
+          isVisible={collectibleContractModalVisible}
+          onBackdropPress={this.hideCollectibleContractModal}
+          onBackButtonPress={this.hideCollectibleContractModal}
+          onSwipeComplete={this.hideCollectibleContractModal}
+          swipeDirection={'down'}
+          backdropColor={colors.overlay.default}
+          backdropOpacity={1}
+        >
+          <CollectibleContractInformation
+            navigation={navigation}
+            onClose={this.hideCollectibleContractModal}
+            collectibleContract={collectibleContract}
+          />
+        </Modal>
+      </View>
+    );
+  };
+}
+
+const mapStateToProps = (state) => ({
+  collectibles: collectiblesSelector(state),
+  collectibleContractModalVisible: state.modals.collectibleContractModalVisible,
+>>>>>>> Stashed changes
 });
 
 const mapDispatchToProps = (dispatch) => ({

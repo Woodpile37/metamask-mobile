@@ -45,6 +45,7 @@ export const supportedTranslations = {
 };
 
 export const I18nEvents = new EventEmitter();
+<<<<<<< Updated upstream
 import en from './languages/en.json';
 import es from './languages/es.json';
 import hi from './languages/hi-in.json';
@@ -56,6 +57,8 @@ import ru from './languages/ru-ru.json';
 import tl from './languages/tl.json';
 import vi from './languages/vi-vn.json';
 import zh from './languages/zh-cn.json';
+=======
+>>>>>>> Stashed changes
 
 // Should the app fallback to English if user locale doesn't exists
 I18n.fallbacks = true;
@@ -100,6 +103,7 @@ getUserPreferableLocale();
 //       return require(`intl/locale-data/jsonp/zh.js`);
 //     default:
 //   }
+<<<<<<< Updated upstream
 // 	switch (locale) {
 // 		case 'es':
 // 			return require(`intl/locale-data/jsonp/es.js`);
@@ -125,6 +129,8 @@ getUserPreferableLocale();
 // 			return require(`intl/locale-data/jsonp/zh.js`);
 // 		default:
 // 	}
+=======
+>>>>>>> Stashed changes
 // }
 
 // Is it a RTL language?
@@ -136,9 +142,12 @@ export async function setLocale(locale) {
   // Platform.OS === 'ios' && getLocaleData(locale);
   await AsyncStorage.setItem(LANGUAGE, locale);
   I18nEvents.emit('localeChanged', locale);
+<<<<<<< Updated upstream
 	I18n.locale = locale;
 	// Platform.OS === 'ios' && getLocaleData(locale);
 	await AsyncStorage.setItem(LANGUAGE, locale);
+=======
+>>>>>>> Stashed changes
 }
 
 // Get languages

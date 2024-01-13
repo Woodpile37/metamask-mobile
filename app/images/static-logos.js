@@ -2,7 +2,35 @@
 /* eslint-disable */
 
 export default {
+<<<<<<< Updated upstream
   'safe-white-token.svg': require('metamask/node_modules/@metamask/contract-metadata/images/safe-white-token.svg'),
+=======
+  'OFE.svg': require('metamask/node_modules/@metamask/contract-metadata/images/OFE.svg'),
+  'MOA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/MOA.svg'),
+  'PREMA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/PREMA.svg'),
+  'energi.svg': require('metamask/node_modules/@metamask/contract-metadata/images/energi.svg'),
+  'aventus.svg': require('metamask/node_modules/@metamask/contract-metadata/images/aventus.svg'),
+  'STAT.svg': require('metamask/node_modules/@metamask/contract-metadata/images/STAT.svg'),
+  'GPO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/GPO.svg'),
+  'NEAR.svg': require('metamask/node_modules/@metamask/contract-metadata/images/NEAR.svg'),
+  'sushi.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sushi.svg'),
+  '00.svg': require('metamask/node_modules/@metamask/contract-metadata/images/00.svg'),
+  'CULTURED.svg': require('metamask/node_modules/@metamask/contract-metadata/images/CULTURED.svg'),
+  'EHTAGA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/EHTAGA.svg'),
+  'FEVER.svg': require('metamask/node_modules/@metamask/contract-metadata/images/FEVER.svg'),
+  'IAM.svg': require('metamask/node_modules/@metamask/contract-metadata/images/IAM.svg'),
+  'ISH.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ISH.svg'),
+  'LITA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/LITA.svg'),
+  'MAHCOIN.svg': require('metamask/node_modules/@metamask/contract-metadata/images/MAHCOIN.svg'),
+  'NIKITA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/NIKITA.svg'),
+  'NYELA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/NYELA.svg'),
+  'RON.svg': require('metamask/node_modules/@metamask/contract-metadata/images/RON.svg'),
+  'STEELO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/STEELO.svg'),
+  'prvg.svg': require('metamask/node_modules/@metamask/contract-metadata/images/prvg.svg'),
+  'prvd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/prvd.svg'),
+  'XCHF.svg': require('metamask/node_modules/@metamask/contract-metadata/images/XCHF.svg'),
+  'safe-green-token.svg': require('metamask/node_modules/@metamask/contract-metadata/images/safe-green-token.svg'),
+>>>>>>> Stashed changes
   'nouns.svg': require('metamask/node_modules/@metamask/contract-metadata/images/nouns.svg'),
   'bayc.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bayc.svg'),
   'proof.svg': require('metamask/node_modules/@metamask/contract-metadata/images/proof.svg'),
@@ -26,10 +54,18 @@ export default {
   'sora-xstusd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sora-xstusd.svg'),
   'sora-pswap.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sora-pswap.svg'),
   'sora-xor.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sora-xor.svg'),
+<<<<<<< Updated upstream
+=======
+  'ZKP.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ZKP.svg'),
+>>>>>>> Stashed changes
   'sora-val.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sora-val.svg'),
   'PEOPLE.svg': require('metamask/node_modules/@metamask/contract-metadata/images/PEOPLE.svg'),
   'BTBS.svg': require('metamask/node_modules/@metamask/contract-metadata/images/BTBS.svg'),
   'cryptokek.svg': require('metamask/node_modules/@metamask/contract-metadata/images/cryptokek.svg'),
+<<<<<<< Updated upstream
+=======
+  'Vodra.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Vodra.svg'),
+>>>>>>> Stashed changes
   'sfi.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sfi.svg'),
   'Manifold.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Manifold.svg'),
   'bax.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bax.svg'),
@@ -42,6 +78,11 @@ export default {
   'SLP.svg': require('metamask/node_modules/@metamask/contract-metadata/images/SLP.svg'),
   'dvision.svg': require('metamask/node_modules/@metamask/contract-metadata/images/dvision.svg'),
   'vEth2.svg': require('metamask/node_modules/@metamask/contract-metadata/images/vEth2.svg'),
+<<<<<<< Updated upstream
+=======
+  'ctx.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ctx.svg'),
+  'tcap.svg': require('metamask/node_modules/@metamask/contract-metadata/images/tcap.svg'),
+>>>>>>> Stashed changes
   'halodao-rnbw.svg': require('metamask/node_modules/@metamask/contract-metadata/images/halodao-rnbw.svg'),
   'halodao-xrnbw.svg': require('metamask/node_modules/@metamask/contract-metadata/images/halodao-xrnbw.svg'),
   'VAB.svg': require('metamask/node_modules/@metamask/contract-metadata/images/VAB.svg'),
@@ -107,6 +148,10 @@ export default {
   'dlpducktoken.svg': require('metamask/node_modules/@metamask/contract-metadata/images/dlpducktoken.svg'),
   'ddim.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ddim.svg'),
   'MAHA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/MAHA.svg'),
+<<<<<<< Updated upstream
+=======
+  'ARTH.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ARTH.svg'),
+>>>>>>> Stashed changes
   'EURe.svg': require('metamask/node_modules/@metamask/contract-metadata/images/EURe.svg'),
   'GBPe.svg': require('metamask/node_modules/@metamask/contract-metadata/images/GBPe.svg'),
   'USDe.svg': require('metamask/node_modules/@metamask/contract-metadata/images/USDe.svg'),
@@ -187,7 +232,11 @@ export default {
   'Eristica.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Eristica.svg'),
   'usdt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/usdt.svg'),
   'CHAI.svg': require('metamask/node_modules/@metamask/contract-metadata/images/CHAI.svg'),
+<<<<<<< Updated upstream
   'UMA.png': require('metamask/node_modules/@metamask/contract-metadata/images/UMA.png'),
+=======
+  'uma.svg': require('metamask/node_modules/@metamask/contract-metadata/images/uma.svg'),
+>>>>>>> Stashed changes
   'UPX.svg': require('metamask/node_modules/@metamask/contract-metadata/images/UPX.svg'),
   'ETHBNT.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ETHBNT.svg'),
   'enigma.svg': require('metamask/node_modules/@metamask/contract-metadata/images/enigma.svg'),
@@ -220,13 +269,18 @@ export default {
   'herc.png': require('metamask/node_modules/@metamask/contract-metadata/images/herc.png'),
   'FOAM.svg': require('metamask/node_modules/@metamask/contract-metadata/images/FOAM.svg'),
   'Menlo_One.png': require('metamask/node_modules/@metamask/contract-metadata/images/Menlo_One.png'),
+<<<<<<< Updated upstream
   'spnd.png': require('metamask/node_modules/@metamask/contract-metadata/images/spnd.png'),
   'AST.png': require('metamask/node_modules/@metamask/contract-metadata/images/AST.png'),
+=======
+  'AirSwapLogo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/AirSwapLogo.svg'),
+>>>>>>> Stashed changes
   'Rmesh.png': require('metamask/node_modules/@metamask/contract-metadata/images/Rmesh.png'),
   'JOY.png': require('metamask/node_modules/@metamask/contract-metadata/images/JOY.png'),
   'J8T.svg': require('metamask/node_modules/@metamask/contract-metadata/images/J8T.svg'),
   'quant-network.svg': require('metamask/node_modules/@metamask/contract-metadata/images/quant-network.svg'),
   'ink_protocol.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ink_protocol.svg'),
+<<<<<<< Updated upstream
   'Aion.png': require('metamask/node_modules/@metamask/contract-metadata/images/Aion.png'),
   'ely.png': require('metamask/node_modules/@metamask/contract-metadata/images/ely.png'),
   'polyswarm_nectar.svg': require('metamask/node_modules/@metamask/contract-metadata/images/polyswarm_nectar.svg'),
@@ -240,6 +294,17 @@ export default {
   'cln.png': require('metamask/node_modules/@metamask/contract-metadata/images/cln.png'),
   'storj.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/storj.jpg'),
   'ZORA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ZORA.svg'),
+=======
+  'ely.png': require('metamask/node_modules/@metamask/contract-metadata/images/ely.png'),
+  'polyswarm_nectar.svg': require('metamask/node_modules/@metamask/contract-metadata/images/polyswarm_nectar.svg'),
+  'box_token.png': require('metamask/node_modules/@metamask/contract-metadata/images/box_token.png'),
+  'DAOstack.png': require('metamask/node_modules/@metamask/contract-metadata/images/DAOstack.png'),
+  'dragonglass.svg': require('metamask/node_modules/@metamask/contract-metadata/images/dragonglass.svg'),
+  'omg.svg': require('metamask/node_modules/@metamask/contract-metadata/images/omg.svg'),
+  'qsp.svg': require('metamask/node_modules/@metamask/contract-metadata/images/qsp.svg'),
+  'storj.svg': require('metamask/node_modules/@metamask/contract-metadata/images/storj.svg'),
+  'zora.svg': require('metamask/node_modules/@metamask/contract-metadata/images/zora.svg'),
+>>>>>>> Stashed changes
   'VISR.svg': require('metamask/node_modules/@metamask/contract-metadata/images/VISR.svg'),
   'mana.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mana.svg'),
   'XSC_Logo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/XSC_Logo.svg'),
@@ -247,9 +312,14 @@ export default {
   'hydro.svg': require('metamask/node_modules/@metamask/contract-metadata/images/hydro.svg'),
   'playkey.svg': require('metamask/node_modules/@metamask/contract-metadata/images/playkey.svg'),
   'zrx.svg': require('metamask/node_modules/@metamask/contract-metadata/images/zrx.svg'),
+<<<<<<< Updated upstream
   'redcab.png': require('metamask/node_modules/@metamask/contract-metadata/images/redcab.png'),
   'modum.svg': require('metamask/node_modules/@metamask/contract-metadata/images/modum.svg'),
   'appcoins.png': require('metamask/node_modules/@metamask/contract-metadata/images/appcoins.png'),
+=======
+  'modum.svg': require('metamask/node_modules/@metamask/contract-metadata/images/modum.svg'),
+  'appc.svg': require('metamask/node_modules/@metamask/contract-metadata/images/appc.svg'),
+>>>>>>> Stashed changes
   'stasis-eurs.svg': require('metamask/node_modules/@metamask/contract-metadata/images/stasis-eurs.svg'),
   'amlt.png': require('metamask/node_modules/@metamask/contract-metadata/images/amlt.png'),
   'synthetix.svg': require('metamask/node_modules/@metamask/contract-metadata/images/synthetix.svg'),
@@ -259,6 +329,7 @@ export default {
   'iqeon.svg': require('metamask/node_modules/@metamask/contract-metadata/images/iqeon.svg'),
   'c10.svg': require('metamask/node_modules/@metamask/contract-metadata/images/c10.svg'),
   //'c20.svg': require('metamask/node_modules/@metamask/contract-metadata/images/c20.svg'),
+<<<<<<< Updated upstream
   'CryptoKitties-Kitty-13733.svg': require('metamask/node_modules/@metamask/contract-metadata/images/CryptoKitties-Kitty-13733.svg'),
   'herocoin_logo.png': require('metamask/node_modules/@metamask/contract-metadata/images/herocoin_logo.png'),
   'gee-icon.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gee-icon.svg'),
@@ -266,6 +337,14 @@ export default {
   'hgt.png': require('metamask/node_modules/@metamask/contract-metadata/images/hgt.png'),
   'hub.svg': require('metamask/node_modules/@metamask/contract-metadata/images/hub.svg'),
   'goldx.png': require('metamask/node_modules/@metamask/contract-metadata/images/goldx.png'),
+=======
+  'ck.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ck.svg'),
+  'herocoin_logo.png': require('metamask/node_modules/@metamask/contract-metadata/images/herocoin_logo.png'),
+  'gee-icon.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gee-icon.svg'),
+  'mln.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mln.svg'),
+  'hgt.png': require('metamask/node_modules/@metamask/contract-metadata/images/hgt.png'),
+  'hub.svg': require('metamask/node_modules/@metamask/contract-metadata/images/hub.svg'),
+>>>>>>> Stashed changes
   'JETCOIN28.png': require('metamask/node_modules/@metamask/contract-metadata/images/JETCOIN28.png'),
   'indorseLogo.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/indorseLogo.jpg'),
   'ndc.png': require('metamask/node_modules/@metamask/contract-metadata/images/ndc.png'),
@@ -275,12 +354,18 @@ export default {
   'CELR.svg': require('metamask/node_modules/@metamask/contract-metadata/images/CELR.svg'),
   'gladius.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gladius.svg'),
   'kyber.svg': require('metamask/node_modules/@metamask/contract-metadata/images/kyber.svg'),
+<<<<<<< Updated upstream
   'bancor.png': require('metamask/node_modules/@metamask/contract-metadata/images/bancor.png'),
   'lun.png': require('metamask/node_modules/@metamask/contract-metadata/images/lun.png'),
+=======
+  'bnt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bnt.svg'),
+  'lun.svg': require('metamask/node_modules/@metamask/contract-metadata/images/lun.svg'),
+>>>>>>> Stashed changes
   'edu.svg': require('metamask/node_modules/@metamask/contract-metadata/images/edu.svg'),
   'vslice.png': require('metamask/node_modules/@metamask/contract-metadata/images/vslice.png'),
   'bcap.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bcap.svg'),
   'chronobank.png': require('metamask/node_modules/@metamask/contract-metadata/images/chronobank.png'),
+<<<<<<< Updated upstream
   'taas-ico.png': require('metamask/node_modules/@metamask/contract-metadata/images/taas-ico.png'),
   'tkn.svg': require('metamask/node_modules/@metamask/contract-metadata/images/tkn.svg'),
   'edgeless.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/edgeless.jpg'),
@@ -288,6 +373,14 @@ export default {
   'xaurum_logo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/xaurum_logo.svg'),
   'swt.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/swt.jpg'),
   'trustcoin.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/trustcoin.jpg'),
+=======
+  'tkn.svg': require('metamask/node_modules/@metamask/contract-metadata/images/tkn.svg'),
+  'edg.svg': require('metamask/node_modules/@metamask/contract-metadata/images/edg.svg'),
+  'guppy.png': require('metamask/node_modules/@metamask/contract-metadata/images/guppy.png'),
+  'xaurum_logo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/xaurum_logo.svg'),
+  'swt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/swt.svg'),
+  'trst.svg': require('metamask/node_modules/@metamask/contract-metadata/images/trst.svg'),
+>>>>>>> Stashed changes
   'cig.svg': require('metamask/node_modules/@metamask/contract-metadata/images/cig.svg'),
   'antv1.svg': require('metamask/node_modules/@metamask/contract-metadata/images/antv1.svg'),
   'wings_logo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/wings_logo.svg'),
@@ -296,13 +389,20 @@ export default {
   'rlc.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rlc.svg'),
   'singulardtv.svg': require('metamask/node_modules/@metamask/contract-metadata/images/singulardtv.svg'),
   'iconomi.png': require('metamask/node_modules/@metamask/contract-metadata/images/iconomi.png'),
+<<<<<<< Updated upstream
   'DGD.png': require('metamask/node_modules/@metamask/contract-metadata/images/DGD.png'),
+=======
+>>>>>>> Stashed changes
   'mkr.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mkr.svg'),
   'sai.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sai.svg'),
   'dai.svg': require('metamask/node_modules/@metamask/contract-metadata/images/dai.svg'),
   'boson.svg': require('metamask/node_modules/@metamask/contract-metadata/images/boson.svg'),
   'ampl.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ampl.svg'),
+<<<<<<< Updated upstream
   'Mainframe.png': require('metamask/node_modules/@metamask/contract-metadata/images/Mainframe.png'),
+=======
+  'hifi.svg': require('metamask/node_modules/@metamask/contract-metadata/images/hifi.svg'),
+>>>>>>> Stashed changes
   'bat.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bat.svg'),
   'bee_token.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bee_token.svg'),
   'gnosis.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gnosis.svg'),
@@ -320,7 +420,11 @@ export default {
   'renFIL.svg': require('metamask/node_modules/@metamask/contract-metadata/images/renFIL.svg'),
   'golem.svg': require('metamask/node_modules/@metamask/contract-metadata/images/golem.svg'),
   'spectiv.svg': require('metamask/node_modules/@metamask/contract-metadata/images/spectiv.svg'),
+<<<<<<< Updated upstream
   'qtum_28.png': require('metamask/node_modules/@metamask/contract-metadata/images/qtum_28.png'),
+=======
+  'qtum.svg': require('metamask/node_modules/@metamask/contract-metadata/images/qtum.svg'),
+>>>>>>> Stashed changes
   'bitclave.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bitclave.svg'),
   'change.svg': require('metamask/node_modules/@metamask/contract-metadata/images/change.svg'),
   'CanYa.svg': require('metamask/node_modules/@metamask/contract-metadata/images/CanYa.svg'),
@@ -330,9 +434,14 @@ export default {
   'Maecenas.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/Maecenas.jpg'),
   'zilliqa.svg': require('metamask/node_modules/@metamask/contract-metadata/images/zilliqa.svg'),
   'bitmart.png': require('metamask/node_modules/@metamask/contract-metadata/images/bitmart.png'),
+<<<<<<< Updated upstream
   'StandardBounties.png': require('metamask/node_modules/@metamask/contract-metadata/images/StandardBounties.png'),
   'viewly.svg': require('metamask/node_modules/@metamask/contract-metadata/images/viewly.svg'),
   'weth.png': require('metamask/node_modules/@metamask/contract-metadata/images/weth.png'),
+=======
+  'viewly.svg': require('metamask/node_modules/@metamask/contract-metadata/images/viewly.svg'),
+  'weth.svg': require('metamask/node_modules/@metamask/contract-metadata/images/weth.svg'),
+>>>>>>> Stashed changes
   'rare.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rare.svg'),
   'ctoken-bat.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ctoken-bat.svg'),
   'ctoken-comp.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ctoken-comp.svg'),
@@ -348,7 +457,11 @@ export default {
   'nanjcoin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/nanjcoin.svg'),
   '0xbitcoin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/0xbitcoin.svg'),
   'snt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/snt.svg'),
+<<<<<<< Updated upstream
   'SPANK.png': require('metamask/node_modules/@metamask/contract-metadata/images/SPANK.png'),
+=======
+  'spank.svg': require('metamask/node_modules/@metamask/contract-metadata/images/spank.svg'),
+>>>>>>> Stashed changes
   'booty.png': require('metamask/node_modules/@metamask/contract-metadata/images/booty.png'),
   'Brickblock.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Brickblock.svg'),
   'lend.svg': require('metamask/node_modules/@metamask/contract-metadata/images/lend.svg'),
@@ -356,6 +469,7 @@ export default {
   'like.svg': require('metamask/node_modules/@metamask/contract-metadata/images/like.svg'),
   'bnb.png': require('metamask/node_modules/@metamask/contract-metadata/images/bnb.png'),
   'ven.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ven.svg'),
+<<<<<<< Updated upstream
   'icon-icx-logo.png': require('metamask/node_modules/@metamask/contract-metadata/images/icon-icx-logo.png'),
   'Aergo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Aergo.svg'),
   'aeternity.svg': require('metamask/node_modules/@metamask/contract-metadata/images/aeternity.svg'),
@@ -364,6 +478,15 @@ export default {
   'kucoin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/kucoin.svg'),
   'mithril-featured.png': require('metamask/node_modules/@metamask/contract-metadata/images/mithril-featured.png'),
   'waltonchain.png': require('metamask/node_modules/@metamask/contract-metadata/images/waltonchain.png'),
+=======
+  'Aergo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Aergo.svg'),
+  'aeternity.svg': require('metamask/node_modules/@metamask/contract-metadata/images/aeternity.svg'),
+  'ppt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ppt.svg'),
+  'iost.png': require('metamask/node_modules/@metamask/contract-metadata/images/iost.png'),
+  'kucoin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/kucoin.svg'),
+  'mith.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mith.svg'),
+  'wtc.svg': require('metamask/node_modules/@metamask/contract-metadata/images/wtc.svg'),
+>>>>>>> Stashed changes
   'nmr.png': require('metamask/node_modules/@metamask/contract-metadata/images/nmr.png'),
   'gusd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gusd.svg'),
   'usds.svg': require('metamask/node_modules/@metamask/contract-metadata/images/usds.svg'),
@@ -377,6 +500,13 @@ export default {
   'usdp.svg': require('metamask/node_modules/@metamask/contract-metadata/images/usdp.svg'),
   'paxg.svg': require('metamask/node_modules/@metamask/contract-metadata/images/paxg.svg'),
   'TUSD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TUSD.svg'),
+<<<<<<< Updated upstream
+=======
+  'TGBP.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TGBP.svg'),
+  'TAUD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TAUD.svg'),
+  'TCAD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TCAD.svg'),
+  'THKD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/THKD.svg'),
+>>>>>>> Stashed changes
   'busd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/busd.svg'),
   'MAS.png': require('metamask/node_modules/@metamask/contract-metadata/images/MAS.png'),
   'rock2.png': require('metamask/node_modules/@metamask/contract-metadata/images/rock2.png'),
@@ -384,11 +514,16 @@ export default {
   'LTO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/LTO.svg'),
   'LTO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/LTO.svg'),
   'VIDT.svg': require('metamask/node_modules/@metamask/contract-metadata/images/VIDT.svg'),
+<<<<<<< Updated upstream
+=======
+  'VIDT.svg': require('metamask/node_modules/@metamask/contract-metadata/images/VIDT.svg'),
+>>>>>>> Stashed changes
   'Cpollo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Cpollo.svg'),
   'neeo.png': require('metamask/node_modules/@metamask/contract-metadata/images/neeo.png'),
   'neu.svg': require('metamask/node_modules/@metamask/contract-metadata/images/neu.svg'),
   'streamr.svg': require('metamask/node_modules/@metamask/contract-metadata/images/streamr.svg'),
   'streamr_old.svg': require('metamask/node_modules/@metamask/contract-metadata/images/streamr_old.svg'),
+<<<<<<< Updated upstream
   'CRO.png': require('metamask/node_modules/@metamask/contract-metadata/images/CRO.png'),
   'starbase.png': require('metamask/node_modules/@metamask/contract-metadata/images/starbase.png'),
   'santiment.svg': require('metamask/node_modules/@metamask/contract-metadata/images/santiment.svg'),
@@ -404,13 +539,35 @@ export default {
   'knownorigin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/knownorigin.svg'),
   'originprotocol.png': require('metamask/node_modules/@metamask/contract-metadata/images/originprotocol.png'),
   'ousd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ousd.svg'),
+=======
+  'cro.svg': require('metamask/node_modules/@metamask/contract-metadata/images/cro.svg'),
+  'starbase.png': require('metamask/node_modules/@metamask/contract-metadata/images/starbase.png'),
+  'santiment.svg': require('metamask/node_modules/@metamask/contract-metadata/images/santiment.svg'),
+  'lpt.svg': require('metamask/node_modules/@metamask/contract-metadata/images/lpt.svg'),
+  'props.png': require('metamask/node_modules/@metamask/contract-metadata/images/props.png'),
+  'hot.svg': require('metamask/node_modules/@metamask/contract-metadata/images/hot.svg'),
+  'enj.svg': require('metamask/node_modules/@metamask/contract-metadata/images/enj.svg'),
+  'elf.svg': require('metamask/node_modules/@metamask/contract-metadata/images/elf.svg'),
+  'wax.svg': require('metamask/node_modules/@metamask/contract-metadata/images/wax.svg'),
+  'powr.svg': require('metamask/node_modules/@metamask/contract-metadata/images/powr.svg'),
+  'blitzpredict.svg': require('metamask/node_modules/@metamask/contract-metadata/images/blitzpredict.svg'),
+  'maple-finance.svg': require('metamask/node_modules/@metamask/contract-metadata/images/maple-finance.svg'),
+  'knownorigin.svg': require('metamask/node_modules/@metamask/contract-metadata/images/knownorigin.svg'),
+  'ogn.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ogn.svg'),
+  'ousd.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ousd.svg'),
+  'ogv.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ogv.svg'),
+  'veogv.svg': require('metamask/node_modules/@metamask/contract-metadata/images/veogv.svg'),
+>>>>>>> Stashed changes
   'request.svg': require('metamask/node_modules/@metamask/contract-metadata/images/request.svg'),
   'kudos.svg': require('metamask/node_modules/@metamask/contract-metadata/images/kudos.svg'),
   'bether.jpg': require('metamask/node_modules/@metamask/contract-metadata/images/bether.jpg'),
   'hunt.png': require('metamask/node_modules/@metamask/contract-metadata/images/hunt.png'),
   'metamorph.svg': require('metamask/node_modules/@metamask/contract-metadata/images/metamorph.svg'),
   'district0x.svg': require('metamask/node_modules/@metamask/contract-metadata/images/district0x.svg'),
+<<<<<<< Updated upstream
   'neutraldollar.png': require('metamask/node_modules/@metamask/contract-metadata/images/neutraldollar.png'),
+=======
+>>>>>>> Stashed changes
   'minds.svg': require('metamask/node_modules/@metamask/contract-metadata/images/minds.svg'),
   'SOUL.svg': require('metamask/node_modules/@metamask/contract-metadata/images/SOUL.svg'),
   'origo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/origo.svg'),
@@ -430,12 +587,20 @@ export default {
   'TOP.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TOP.svg'),
   'fetch.svg': require('metamask/node_modules/@metamask/contract-metadata/images/fetch.svg'),
   'mettalex.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mettalex.svg'),
+<<<<<<< Updated upstream
+=======
+  'rio.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rio.svg'),
+>>>>>>> Stashed changes
   'uni.svg': require('metamask/node_modules/@metamask/contract-metadata/images/uni.svg'),
   'YFDOT.svg': require('metamask/node_modules/@metamask/contract-metadata/images/YFDOT.svg'),
   'kton.svg': require('metamask/node_modules/@metamask/contract-metadata/images/kton.svg'),
   '2key.svg': require('metamask/node_modules/@metamask/contract-metadata/images/2key.svg'),
   'fuse.svg': require('metamask/node_modules/@metamask/contract-metadata/images/fuse.svg'),
+<<<<<<< Updated upstream
   'stake.png': require('metamask/node_modules/@metamask/contract-metadata/images/stake.png'),
+=======
+  'stake.svg': require('metamask/node_modules/@metamask/contract-metadata/images/stake.svg'),
+>>>>>>> Stashed changes
   'DKA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/DKA.svg'),
   'ring.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ring.svg'),
   'ROOBEE.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ROOBEE.svg'),
@@ -447,6 +612,10 @@ export default {
   'balancer.svg': require('metamask/node_modules/@metamask/contract-metadata/images/balancer.svg'),
   'get-logo.svg': require('metamask/node_modules/@metamask/contract-metadata/images/get-logo.svg'),
   'el.svg': require('metamask/node_modules/@metamask/contract-metadata/images/el.svg'),
+<<<<<<< Updated upstream
+=======
+  'elyfi.svg': require('metamask/node_modules/@metamask/contract-metadata/images/elyfi.svg'),
+>>>>>>> Stashed changes
   'auc.svg': require('metamask/node_modules/@metamask/contract-metadata/images/auc.svg'),
   'HUSD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/HUSD.svg'),
   'block-chain.svg': require('metamask/node_modules/@metamask/contract-metadata/images/block-chain.svg'),
@@ -492,7 +661,11 @@ export default {
   'WKDA.svg': require('metamask/node_modules/@metamask/contract-metadata/images/WKDA.svg'),
   'WXRP.svg': require('metamask/node_modules/@metamask/contract-metadata/images/WXRP.svg'),
   'INX.svg': require('metamask/node_modules/@metamask/contract-metadata/images/INX.svg'),
+<<<<<<< Updated upstream
   'Vesper-VSP-Token.svg': require('metamask/node_modules/@metamask/contract-metadata/images/Vesper-VSP-Token.svg'),
+=======
+  'vsp.svg': require('metamask/node_modules/@metamask/contract-metadata/images/vsp.svg'),
+>>>>>>> Stashed changes
   'INSUR.svg': require('metamask/node_modules/@metamask/contract-metadata/images/INSUR.svg'),
   'chainswap.svg': require('metamask/node_modules/@metamask/contract-metadata/images/chainswap.svg'),
   'keyTango.svg': require('metamask/node_modules/@metamask/contract-metadata/images/keyTango.svg'),
@@ -555,6 +728,7 @@ export default {
   'nexum.svg': require('metamask/node_modules/@metamask/contract-metadata/images/nexum.svg'),
   'mfg.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mfg.svg'),
   'rETH.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rETH.svg'),
+<<<<<<< Updated upstream
   'rpl.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rpl.svg'),
 	'ACH.svg': require('metamask/node_modules/@metamask/contract-metadata/images/ACH.svg'),
 	'aria20.svg': require('metamask/node_modules/@metamask/contract-metadata/images/aria20.svg'),
@@ -1088,4 +1262,28 @@ export default {
 	'DLB.svg': require('metamask/node_modules/@metamask/contract-metadata/images/DLB.svg'),
 	'APE.svg': require('metamask/node_modules/@metamask/contract-metadata/images/APE.svg'),
 	'torum.svg': require('metamask/node_modules/@metamask/contract-metadata/images/torum.svg'),
+=======
+  'USDD.svg': require('metamask/node_modules/@metamask/contract-metadata/images/USDD.svg'),
+  'rpl.svg': require('metamask/node_modules/@metamask/contract-metadata/images/rpl.svg'),
+  'QuidIka.svg': require('metamask/node_modules/@metamask/contract-metadata/images/QuidIka.svg'),
+  'xht.svg': require('metamask/node_modules/@metamask/contract-metadata/images/xht.svg'),
+  'gton.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gton.svg'),
+  'sgton.svg': require('metamask/node_modules/@metamask/contract-metadata/images/sgton.svg'),
+  'xcad.svg': require('metamask/node_modules/@metamask/contract-metadata/images/xcad.svg'),
+  'TRB.svg': require('metamask/node_modules/@metamask/contract-metadata/images/TRB.svg'),
+  'BZR.svg': require('metamask/node_modules/@metamask/contract-metadata/images/BZR.svg'),
+  'stMATIC.svg': require('metamask/node_modules/@metamask/contract-metadata/images/stMATIC.svg'),
+  'BendDAO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/BendDAO.svg'),
+  'BitDAO.svg': require('metamask/node_modules/@metamask/contract-metadata/images/BitDAO.svg'),
+  'home.svg': require('metamask/node_modules/@metamask/contract-metadata/images/home.svg'),
+  'bacon.svg': require('metamask/node_modules/@metamask/contract-metadata/images/bacon.svg'),
+  'VERSE.svg': require('metamask/node_modules/@metamask/contract-metadata/images/VERSE.svg'),
+  'tidex.svg': require('metamask/node_modules/@metamask/contract-metadata/images/tidex.svg'),
+  'shib.svg': require('metamask/node_modules/@metamask/contract-metadata/images/shib.svg'),
+  'chz.svg': require('metamask/node_modules/@metamask/contract-metadata/images/chz.svg'),
+  'gala.svg': require('metamask/node_modules/@metamask/contract-metadata/images/gala.svg'),
+  'mask.svg': require('metamask/node_modules/@metamask/contract-metadata/images/mask.svg'),
+  'crv.svg': require('metamask/node_modules/@metamask/contract-metadata/images/crv.svg'),
+  'dydx.svg': require('metamask/node_modules/@metamask/contract-metadata/images/dydx.svg'),
+>>>>>>> Stashed changes
 };

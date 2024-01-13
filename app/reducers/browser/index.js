@@ -71,6 +71,7 @@ const browserReducer = (state = initialState, action) => {
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	switch (action.type) {
 		case 'ADD_TO_BROWSER_HISTORY':
 			return {
@@ -122,5 +123,7 @@ const browserReducer = (state = initialState, action) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 export default browserReducer;

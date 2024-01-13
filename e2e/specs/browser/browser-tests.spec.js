@@ -110,6 +110,7 @@ describe(SmokeCore('Browser Tests'), () => {
     await TestHelpers.delay(1500);
     await Browser.isVisible();
   });
+<<<<<<< Updated upstream
 	beforeEach(() => {
 		jest.setTimeout(150000);
 	});
@@ -285,4 +286,6 @@ describe(SmokeCore('Browser Tests'), () => {
 		}
 		await Browser.isVisible();
 	});
+=======
+>>>>>>> Stashed changes
 });

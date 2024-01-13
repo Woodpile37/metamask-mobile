@@ -41,6 +41,7 @@ export default class ImportTokensView {
   static async isVisible() {
     await TestHelpers.checkIfVisible(CUSTOM_TOKEN_CONTAINER_ID);
   }
+<<<<<<< Updated upstream
 	static async typeInTokenName(tokenName) {
 		await TestHelpers.typeTextAndHideKeyboard(TOKEN_INPUT_BOX_ID, tokenName);
 	}
@@ -58,4 +59,6 @@ export default class ImportTokensView {
 	static async isVisible() {
 		await TestHelpers.checkIfVisible(CUSTOM_TOKEN_CONTAINER_ID);
 	}
+=======
+>>>>>>> Stashed changes
 }

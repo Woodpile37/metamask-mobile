@@ -26,6 +26,7 @@ const createStyles = (colors) =>
       marginBottom: 16,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			backgroundColor: colors.background.default,
@@ -36,6 +37,8 @@ const createStyles = (colors) =>
 			marginBottom: 16,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const EDIT = 'edit';
 const ADD = 'add';
@@ -62,6 +65,7 @@ class Contacts extends PureComponent {
   state = {
     reloadAddressList: false,
   };
+<<<<<<< Updated upstream
 
   actionSheet;
   contactAddressToRemove;
@@ -198,10 +202,26 @@ class Contacts extends PureComponent {
 	state = {
 		reloadAddressList: false,
 	};
+=======
 
-	actionSheet;
-	contactAddressToRemove;
+  actionSheet;
+  contactAddressToRemove;
+>>>>>>> Stashed changes
 
+  updateNavBar = () => {
+    const { navigation } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    navigation.setOptions(
+      getNavigationOptionsTitle(
+        strings('app_settings.contacts_title'),
+        navigation,
+        false,
+        colors,
+      ),
+    );
+  };
+
+<<<<<<< Updated upstream
 	updateNavBar = () => {
 		const { navigation } = this.props;
 		const colors = this.context.colors || mockTheme.colors;
@@ -224,27 +244,44 @@ class Contacts extends PureComponent {
 		)
 			this.updateAddressList();
 	};
+=======
+  componentDidMount = () => {
+    this.updateNavBar();
+  };
+>>>>>>> Stashed changes
 
-	updateAddressList = () => {
-		this.setState({ reloadAddressList: true });
-		setTimeout(() => {
-			this.setState({ reloadAddressList: false });
-		}, 100);
-	};
+  componentDidUpdate = (prevProps) => {
+    this.updateNavBar();
+    const { chainId } = this.props;
+    if (
+      prevProps.addressBook &&
+      this.props.addressBook &&
+      JSON.stringify(prevProps.addressBook[chainId]) !==
+        JSON.stringify(this.props.addressBook[chainId])
+    )
+      this.updateAddressList();
+  };
 
+<<<<<<< Updated upstream
 	onAddressLongPress = (address) => {
 		this.contactAddressToRemove = address;
 		this.actionSheet && this.actionSheet.show();
 	};
+=======
+  updateAddressList = () => {
+    this.setState({ reloadAddressList: true });
+    setTimeout(() => {
+      this.setState({ reloadAddressList: false });
+    }, 100);
+  };
+>>>>>>> Stashed changes
 
-	deleteContact = () => {
-		this.setState({ reloadAddressList: true });
-		const { AddressBookController } = Engine.context;
-		const { network } = this.props;
-		AddressBookController.delete(network, this.contactAddressToRemove);
-		this.setState({ reloadAddressList: false });
-	};
+  onAddressLongPress = (address) => {
+    this.contactAddressToRemove = address;
+    this.actionSheet && this.actionSheet.show();
+  };
 
+<<<<<<< Updated upstream
 	onAddressPress = (address) => {
 		this.props.navigation.navigate('ContactForm', {
 			mode: EDIT,
@@ -253,11 +290,25 @@ class Contacts extends PureComponent {
 			onDelete: () => this.updateAddressList(),
 		});
 	};
+=======
+  deleteContact = () => {
+    const { AddressBookController } = Engine.context;
+    const { chainId } = this.props;
+    AddressBookController.delete(chainId, this.contactAddressToRemove);
+    this.updateAddressList();
+  };
+>>>>>>> Stashed changes
 
-	goToAddContact = () => {
-		this.props.navigation.navigate('ContactForm', { mode: ADD });
-	};
+  onAddressPress = (address) => {
+    this.props.navigation.navigate('ContactForm', {
+      mode: EDIT,
+      editMode: EDIT,
+      address,
+      onDelete: () => this.updateAddressList(),
+    });
+  };
 
+<<<<<<< Updated upstream
 	createActionSheetRef = (ref) => {
 		this.actionSheet = ref;
 	};
@@ -297,6 +348,65 @@ class Contacts extends PureComponent {
 			</SafeAreaView>
 		);
 	};
+=======
+  goToAddContact = () => {
+    this.props.navigation.navigate('ContactForm', { mode: ADD });
+  };
+
+  createActionSheetRef = (ref) => {
+    this.actionSheet = ref;
+  };
+
+  onIconPress = () => {
+    const { navigation } = this.props;
+    navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
+      screen: Routes.SHEET.AMBIGUOUS_ADDRESS,
+    });
+  };
+
+  render = () => {
+    const { reloadAddressList } = this.state;
+    const colors = this.context.colors || mockTheme.colors;
+    const themeAppearance = this.context.themeAppearance;
+    const styles = createStyles(colors);
+
+    return (
+      <SafeAreaView
+        style={styles.wrapper}
+        testID={ContactsViewSelectorIDs.CONTAINER}
+      >
+        <AddressList
+          onlyRenderAddressBook
+          reloadAddressList={reloadAddressList}
+          onAccountPress={this.onAddressPress}
+          onIconPress={this.onIconPress}
+          onAccountLongPress={this.onAddressLongPress}
+        />
+        <StyledButton
+          type={'confirm'}
+          containerStyle={styles.addContact}
+          onPress={this.goToAddContact}
+          testID={ContactsViewSelectorIDs.ADD_BUTTON}
+        >
+          {strings('address_book.add_contact')}
+        </StyledButton>
+        <ActionSheet
+          ref={this.createActionSheetRef}
+          title={strings('address_book.delete_contact')}
+          options={[
+            strings('address_book.delete'),
+            strings('address_book.cancel'),
+          ]}
+          cancelButtonIndex={1}
+          destructiveButtonIndex={0}
+          // eslint-disable-next-line react/jsx-no-bind
+          onPress={(index) => (index === 0 ? this.deleteContact() : null)}
+          theme={themeAppearance}
+        />
+      </SafeAreaView>
+    );
+  };
+>>>>>>> Stashed changes
 }
 
 Contacts.contextType = ThemeContext;

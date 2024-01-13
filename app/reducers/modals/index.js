@@ -68,6 +68,7 @@ const modalsReducer = (state = initialState, action) => {
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	switch (action.type) {
 		case 'TOGGLE_NETWORK_MODAL':
 			return {
@@ -116,5 +117,7 @@ const modalsReducer = (state = initialState, action) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 export default modalsReducer;

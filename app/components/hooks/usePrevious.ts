@@ -8,6 +8,7 @@ export default function usePrevious<T>(state: T): T | undefined {
   });
 
   return ref.current;
+<<<<<<< Updated upstream
 	const ref = useRef<T>();
 
 	useEffect(() => {
@@ -15,4 +16,6 @@ export default function usePrevious<T>(state: T): T | undefined {
 	});
 
 	return ref.current;
+=======
+>>>>>>> Stashed changes
 }

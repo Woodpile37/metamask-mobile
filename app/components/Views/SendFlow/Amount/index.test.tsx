@@ -102,6 +102,7 @@ const initialState = {
   settings: {
     primaryCurrency: 'ETH',
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			NetworkController: {
@@ -163,6 +164,8 @@ const initialState = {
 	transaction: {
 		selectedAsset: {},
 	},
+=======
+>>>>>>> Stashed changes
 };
 
 const Stack = createStackNavigator();

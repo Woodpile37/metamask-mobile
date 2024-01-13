@@ -2,6 +2,10 @@
 
 exports[`StyledButton should render correctly on Android the button with type cancel 1`] = `
 <TouchableNativeFeedback
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   accessible={true}
 >
   <View
@@ -14,7 +18,11 @@ exports[`StyledButton should render correctly on Android the button with type ca
         },
         Object {
           "backgroundColor": "#FFFFFF",
+<<<<<<< Updated upstream
           "borderColor": "#848c96",
+=======
+          "borderColor": "#535A61",
+>>>>>>> Stashed changes
           "borderWidth": 1,
         },
         null,
@@ -27,6 +35,10 @@ exports[`StyledButton should render correctly on Android the button with type ca
 
 exports[`StyledButton should render correctly on Android the button with type confirm 1`] = `
 <TouchableNativeFeedback
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   accessible={true}
 >
   <View
@@ -38,7 +50,11 @@ exports[`StyledButton should render correctly on Android the button with type co
           "padding": 15,
         },
         Object {
+<<<<<<< Updated upstream
           "backgroundColor": "#037dd6",
+=======
+          "backgroundColor": "#0376C9",
+>>>>>>> Stashed changes
           "minHeight": 50,
         },
         null,
@@ -51,6 +67,10 @@ exports[`StyledButton should render correctly on Android the button with type co
 
 exports[`StyledButton should render correctly on Android the button with type normal 1`] = `
 <TouchableNativeFeedback
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   accessible={true}
 >
   <View
@@ -63,7 +83,11 @@ exports[`StyledButton should render correctly on Android the button with type no
         },
         Object {
           "backgroundColor": "#FFFFFF",
+<<<<<<< Updated upstream
           "borderColor": "#037dd6",
+=======
+          "borderColor": "#0376C9",
+>>>>>>> Stashed changes
           "borderWidth": 1,
         },
         null,
@@ -76,6 +100,10 @@ exports[`StyledButton should render correctly on Android the button with type no
 
 exports[`StyledButton should render correctly on Android the button with type orange 1`] = `
 <TouchableNativeFeedback
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   accessible={true}
 >
   <View
@@ -87,7 +115,11 @@ exports[`StyledButton should render correctly on Android the button with type or
           "padding": 15,
         },
         Object {
+<<<<<<< Updated upstream
           "borderColor": "#f66a0a",
+=======
+          "borderColor": "#F66A0A",
+>>>>>>> Stashed changes
           "borderWidth": 1,
         },
         null,
@@ -100,6 +132,10 @@ exports[`StyledButton should render correctly on Android the button with type or
 
 exports[`StyledButton should render correctly on iOS the button with type cancel 1`] = `
 <Button
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   containerStyle={
     Array [
       Object {
@@ -109,7 +145,11 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
       },
       Object {
         "backgroundColor": "#FFFFFF",
+<<<<<<< Updated upstream
         "borderColor": "#848c96",
+=======
+        "borderColor": "#535A61",
+>>>>>>> Stashed changes
         "borderWidth": 1,
       },
       undefined,
@@ -125,7 +165,11 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
         "textAlign": "center",
       },
       Object {
+<<<<<<< Updated upstream
         "color": "#848c96",
+=======
+        "color": "#535A61",
+>>>>>>> Stashed changes
       },
       undefined,
     ]
@@ -136,6 +180,10 @@ exports[`StyledButton should render correctly on iOS the button with type cancel
 
 exports[`StyledButton should render correctly on iOS the button with type confirm 1`] = `
 <Button
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   containerStyle={
     Array [
       Object {
@@ -144,7 +192,11 @@ exports[`StyledButton should render correctly on iOS the button with type confir
         "padding": 15,
       },
       Object {
+<<<<<<< Updated upstream
         "backgroundColor": "#037dd6",
+=======
+        "backgroundColor": "#0376C9",
+>>>>>>> Stashed changes
         "minHeight": 50,
       },
       undefined,
@@ -160,7 +212,11 @@ exports[`StyledButton should render correctly on iOS the button with type confir
         "textAlign": "center",
       },
       Object {
+<<<<<<< Updated upstream
         "color": "#FFFFFF",
+=======
+        "color": "#FCFCFC",
+>>>>>>> Stashed changes
       },
       undefined,
     ]
@@ -171,6 +227,10 @@ exports[`StyledButton should render correctly on iOS the button with type confir
 
 exports[`StyledButton should render correctly on iOS the button with type normal 1`] = `
 <Button
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   containerStyle={
     Array [
       Object {
@@ -180,7 +240,11 @@ exports[`StyledButton should render correctly on iOS the button with type normal
       },
       Object {
         "backgroundColor": "#FFFFFF",
+<<<<<<< Updated upstream
         "borderColor": "#037dd6",
+=======
+        "borderColor": "#0376C9",
+>>>>>>> Stashed changes
         "borderWidth": 1,
       },
       undefined,
@@ -196,7 +260,11 @@ exports[`StyledButton should render correctly on iOS the button with type normal
         "textAlign": "center",
       },
       Object {
+<<<<<<< Updated upstream
         "color": "#037dd6",
+=======
+        "color": "#0376C9",
+>>>>>>> Stashed changes
       },
       undefined,
     ]
@@ -207,6 +275,10 @@ exports[`StyledButton should render correctly on iOS the button with type normal
 
 exports[`StyledButton should render correctly on iOS the button with type orange 1`] = `
 <Button
+<<<<<<< Updated upstream
+=======
+  accessibilityRole="button"
+>>>>>>> Stashed changes
   containerStyle={
     Array [
       Object {
@@ -215,7 +287,11 @@ exports[`StyledButton should render correctly on iOS the button with type orange
         "padding": 15,
       },
       Object {
+<<<<<<< Updated upstream
         "borderColor": "#f66a0a",
+=======
+        "borderColor": "#F66A0A",
+>>>>>>> Stashed changes
         "borderWidth": 1,
       },
       undefined,
@@ -231,7 +307,11 @@ exports[`StyledButton should render correctly on iOS the button with type orange
         "textAlign": "center",
       },
       Object {
+<<<<<<< Updated upstream
         "color": "#f66a0a",
+=======
+        "color": "#F66A0A",
+>>>>>>> Stashed changes
       },
       undefined,
     ]

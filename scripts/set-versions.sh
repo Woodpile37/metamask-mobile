@@ -80,10 +80,13 @@ SEMVER_VERSION_NAT=$(semver_to_nat "$SEMVER_VERSION")
 #   echo "semver $SEMVER_VERSION is less than or equal to current: $CURRENT_SEMVER"
 #   exit 1
 # fi
+<<<<<<< Updated upstream
 if [[ "$SEMVER_VERSION_NAT" -le "$CURRENT_SEMVER_NAT" ]]; then
   echo "semver $SEMVER_VERSION is less than or equal to current: $CURRENT_SEMVER"
   exit 1
 fi
+=======
+>>>>>>> Stashed changes
 
 # ensure VERSION_NUMBER goes up
 if [[ "$VERSION_NUMBER" -le "$CURRENT_VERSION_NUMBER" ]]; then

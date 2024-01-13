@@ -119,6 +119,7 @@ describe(SmokeCore('Start Exploring'), () => {
     }
     await Browser.isVisible();
   });
+<<<<<<< Updated upstream
 	beforeEach(() => {
 		jest.setTimeout(150000);
 	});
@@ -230,4 +231,6 @@ describe(SmokeCore('Start Exploring'), () => {
 		// Check that we are on the Browser page
 		await Browser.isVisible();
 	});
+=======
+>>>>>>> Stashed changes
 });

@@ -47,6 +47,7 @@ storiesOf('Getting Started', module).add('Introduction', () => {
       </Text>
     </View>
   );
+<<<<<<< Updated upstream
 	wrapper: {
 		flex: 1,
 		padding: 24,
@@ -86,4 +87,6 @@ storiesOf('Getting Started', module).add('Introduction', () => {
 			</Text>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 });

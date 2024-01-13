@@ -1,13 +1,30 @@
 import React from 'react';
+<<<<<<< Updated upstream
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+=======
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+>>>>>>> Stashed changes
 import PropTypes from 'prop-types';
 import { fontStyles } from '../../../styles/common';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SettingsNotification from '../SettingsNotification';
 import { strings } from '../../../../locales/i18n';
+<<<<<<< Updated upstream
 import { useAppThemeFromContext, mockTheme } from '../../../util/theme';
 
 const createStyles = (colors) =>
+=======
+import { useTheme } from '../../../util/theme';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+
+const createStyles = (colors, titleColor) =>
+>>>>>>> Stashed changes
   StyleSheet.create({
     root: {
       backgroundColor: colors.background.default,
@@ -19,10 +36,18 @@ const createStyles = (colors) =>
     },
     content: {
       flex: 1,
+<<<<<<< Updated upstream
     },
     title: {
       ...fontStyles.normal,
       color: colors.text.default,
+=======
+      justifyContent: 'center',
+    },
+    title: {
+      ...fontStyles.normal,
+      color: titleColor || colors.text.default,
+>>>>>>> Stashed changes
       fontSize: 20,
       marginBottom: 8,
     },
@@ -36,6 +61,10 @@ const createStyles = (colors) =>
     action: {
       flex: 0,
       paddingHorizontal: 16,
+<<<<<<< Updated upstream
+=======
+      justifyContent: 'center',
+>>>>>>> Stashed changes
     },
     icon: {
       bottom: 8,
@@ -56,6 +85,7 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			backgroundColor: colors.background.default,
@@ -104,6 +134,8 @@ const createStyles = (colors) =>
 			...fontStyles.normal,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const propTypes = {
   title: PropTypes.string,
@@ -123,12 +155,28 @@ const propTypes = {
    * Display SettingsNotification
    */
   warning: PropTypes.bool,
+<<<<<<< Updated upstream
+=======
+  /**
+   * Display arrow right
+   */
+  renderArrowRight: PropTypes.bool,
+  /**
+   * Test id for testing purposes
+   */
+  testID: PropTypes.string,
+  /**
+   * Title color
+   */
+  titleColor: PropTypes.string,
+>>>>>>> Stashed changes
 };
 
 const defaultProps = {
   onPress: undefined,
 };
 
+<<<<<<< Updated upstream
 const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
@@ -139,6 +187,27 @@ const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
+=======
+const SettingsDrawer = ({
+  title,
+  description,
+  noBorder,
+  onPress,
+  warning,
+  renderArrowRight = true,
+  testID,
+  titleColor,
+}) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors, titleColor);
+
+  return (
+    <TouchableOpacity onPress={onPress} {...generateTestId(Platform, testID)}>
+      <View style={noBorder ? [styles.root, styles.noBorder] : styles.root}>
+        <View style={styles.content}>
+          <Text style={styles.title}>{title}</Text>
+          {description && <Text style={styles.description}>{description}</Text>}
+>>>>>>> Stashed changes
           <View>
             {warning ? (
               <SettingsNotification
@@ -153,6 +222,7 @@ const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
             ) : null}
           </View>
         </View>
+<<<<<<< Updated upstream
         <View style={styles.action}>
           <Icon name="angle-right" size={36} style={styles.icon} />
         </View>
@@ -182,6 +252,16 @@ const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
 			</View>
 		</TouchableOpacity>
 	);
+=======
+        {renderArrowRight && (
+          <View style={styles.action}>
+            <Icon name="angle-right" size={36} style={styles.icon} />
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+>>>>>>> Stashed changes
 };
 
 SettingsDrawer.propTypes = propTypes;

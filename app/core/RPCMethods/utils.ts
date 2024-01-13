@@ -1,5 +1,8 @@
 import { query } from '@metamask/controller-utils';
+<<<<<<< Updated upstream
 import { ethErrors } from 'eth-json-rpc-errors';
+=======
+>>>>>>> Stashed changes
 import Engine from '../Engine';
 
 export const polyfillGasPrice = async (method: string, params: any[] = []) => {
@@ -13,6 +16,7 @@ export const polyfillGasPrice = async (method: string, params: any[] = []) => {
   return data;
 };
 
+<<<<<<< Updated upstream
 export const validateParams = (
   obj: any,
   properties: string[],
@@ -44,4 +48,8 @@ export default {
 
 export default {
 	polyfillGasPrice,
+=======
+export default {
+  polyfillGasPrice,
+>>>>>>> Stashed changes
 };

@@ -58,6 +58,7 @@ const createStyles = (colors) =>
       flex: 1,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			paddingVertical: 15,
@@ -100,6 +101,8 @@ const createStyles = (colors) =>
 			flex: 1,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that renders an autocomplete
@@ -126,6 +129,7 @@ class UrlAutocomplete extends PureComponent {
      */
     browserHistory: PropTypes.array,
   };
+<<<<<<< Updated upstream
 
   state = {
     results: [],
@@ -299,19 +303,26 @@ class UrlAutocomplete extends PureComponent {
 	state = {
 		results: [],
 	};
+=======
 
-	componentDidMount() {
-		const allUrls = [...this.props.browserHistory, ...dappUrlList];
-		const singleUrlList = [];
-		const singleUrls = [];
-		for (let i = 0; i < allUrls.length; i++) {
-			const el = allUrls[i];
-			if (!singleUrlList.includes(el.url)) {
-				singleUrlList.push(el.url);
-				singleUrls.push(el);
-			}
-		}
+  state = {
+    results: [],
+  };
+>>>>>>> Stashed changes
 
+  componentDidMount() {
+    const allUrls = [...this.props.browserHistory, ...dappUrlList];
+    const singleUrlList = [];
+    const singleUrls = [];
+    for (let i = 0; i < allUrls.length; i++) {
+      const el = allUrls[i];
+      if (!singleUrlList.includes(el.url)) {
+        singleUrlList.push(el.url);
+        singleUrls.push(el);
+      }
+    }
+
+<<<<<<< Updated upstream
 		this.fuse = new Fuse(singleUrls, {
 			shouldSort: true,
 			threshold: 0.45,
@@ -324,38 +335,53 @@ class UrlAutocomplete extends PureComponent {
 				{ name: 'url', weight: 0.5 },
 			],
 		});
+=======
+    this.fuse = new Fuse(singleUrls, {
+      shouldSort: true,
+      threshold: 0.45,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys: [
+        { name: 'name', weight: 0.5 },
+        { name: 'url', weight: 0.5 },
+      ],
+    });
+>>>>>>> Stashed changes
 
-		this.timer = null;
-		this.mounted = true;
-	}
+    this.timer = null;
+    this.mounted = true;
+  }
 
-	componentDidUpdate(prevProps) {
-		if (prevProps.input !== this.props.input) {
-			if (this.timer) {
-				clearTimeout(this.timer);
-			}
+  componentDidUpdate(prevProps) {
+    if (prevProps.input !== this.props.input) {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
 
-			this.timer = setTimeout(() => {
-				const fuseSearchResult = this.fuse.search(this.props.input);
-				if (Array.isArray(fuseSearchResult)) {
-					this.updateResults([...fuseSearchResult]);
-				} else {
-					this.updateResults([]);
-				}
-			}, 500);
-		}
-	}
+      this.timer = setTimeout(() => {
+        const fuseSearchResult = this.fuse.search(this.props.input);
+        if (Array.isArray(fuseSearchResult)) {
+          this.updateResults([...fuseSearchResult]);
+        } else {
+          this.updateResults([]);
+        }
+      }, 500);
+    }
+  }
 
-	componentWillUnmount() {
-		this.mounted = false;
-	}
+  componentWillUnmount() {
+    this.mounted = false;
+  }
 
-	updateResults(results) {
-		this.mounted && this.setState({ results });
-	}
+  updateResults(results) {
+    this.mounted && this.setState({ results });
+  }
 
-	onSubmitInput = () => this.props.onSubmit(this.props.input);
+  onSubmitInput = () => this.props.onSubmit(this.props.input);
 
+<<<<<<< Updated upstream
 	renderUrlOption = (url, name, onPress) => {
 		const colors = this.context.colors || mockTheme.colors;
 		const styles = createStyles(colors);
@@ -428,6 +454,96 @@ class UrlAutocomplete extends PureComponent {
 			</View>
 		);
 	}
+=======
+  renderUrlOption = (url, name, onPress) => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    name = typeof name === 'string' ? name : getHost(url);
+    return (
+      <TouchableOpacity
+        containerStyle={styles.item}
+        onPress={onPress}
+        key={url}
+      >
+        <View style={styles.itemWrapper}>
+          <WebsiteIcon
+            style={styles.bookmarkIco}
+            url={url}
+            title={name}
+            textStyle={styles.fallbackTextStyle}
+          />
+          <View style={styles.textContent}>
+            <Text style={styles.name} numberOfLines={1}>
+              {name}
+            </Text>
+            <Text style={styles.url} numberOfLines={1}>
+              {url}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  render() {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    if (!this.props.input || this.props.input.length < 2)
+      return (
+        <View style={styles.wrapper}>
+          <TouchableWithoutFeedback
+            style={styles.bg}
+            onPress={this.props.onDismiss}
+          >
+            <View style={styles.bg} />
+          </TouchableWithoutFeedback>
+        </View>
+      );
+    if (this.state.results.length === 0) {
+      return (
+        <View style={styles.wrapper}>
+          <TouchableOpacity
+            containerStyle={styles.item}
+            onPress={this.onSubmitInput}
+          >
+            <View style={styles.itemWrapper}>
+              <View style={styles.textContent}>
+                <Text style={styles.name} numberOfLines={1}>
+                  {this.props.input}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableWithoutFeedback
+            style={styles.bg}
+            onPress={this.props.onDismiss}
+          >
+            <View style={styles.bg} />
+          </TouchableWithoutFeedback>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.wrapper}>
+        {this.state.results.slice(0, 3).map((r) => {
+          const { url, name } = r;
+          const onPress = () => {
+            this.props.onSubmit(url);
+          };
+          return this.renderUrlOption(url, name, onPress);
+        })}
+        <TouchableWithoutFeedback
+          style={styles.bg}
+          onPress={this.props.onDismiss}
+        >
+          <View style={styles.bg} />
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  }
+>>>>>>> Stashed changes
 }
 
 const mapStateToProps = (state) => ({

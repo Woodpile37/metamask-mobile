@@ -50,6 +50,7 @@ const getFavoritesCollectibles = (
   selectedAddress,
   chainId,
 ) => favoriteCollectibles[selectedAddress]?.[chainId] || [];
+<<<<<<< Updated upstream
 const addressSelector = (state) => state.engine.backgroundState.PreferencesController.selectedAddress;
 const chainIdSelector = (state) => state.engine.backgroundState.NetworkController.provider.chainId;
 const favoritesSelector = (state) => state.collectibles.favorites;
@@ -94,6 +95,8 @@ export const isCollectibleInFavoritesSelector = createSelector(
 
 const getFavoritesCollectibles = (favoriteCollectibles, selectedAddress, chainId) =>
 	favoriteCollectibles[selectedAddress]?.[chainId] || [];
+=======
+>>>>>>> Stashed changes
 
 export const ADD_FAVORITE_COLLECTIBLE = 'ADD_FAVORITE_COLLECTIBLE';
 export const REMOVE_FAVORITE_COLLECTIBLE = 'REMOVE_FAVORITE_COLLECTIBLE';
@@ -159,6 +162,7 @@ const collectiblesFavoritesReducer = (state = initialState, action) => {
       return state;
     }
   }
+<<<<<<< Updated upstream
 	switch (action.type) {
 		case ADD_FAVORITE_COLLECTIBLE: {
 			const { selectedAddress, chainId, collectible } = action;
@@ -201,6 +205,8 @@ const collectiblesFavoritesReducer = (state = initialState, action) => {
 			return state;
 		}
 	}
+=======
+>>>>>>> Stashed changes
 };
 
 export default collectiblesFavoritesReducer;

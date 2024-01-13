@@ -35,7 +35,11 @@
   
   // Uncomment this line to use the test key instead of the live one.
   // [RNBranch useTestInstance];
+<<<<<<< Updated upstream
   [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES]; // <-- add this
+=======
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
+>>>>>>> Stashed changes
   NSURL *jsCodeLocation;
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
@@ -46,7 +50,7 @@
 
 
 
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  rootView.backgroundColor = [UIColor colorNamed:@"ThemeColors"];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -81,11 +85,17 @@
   #endif
 }
 
+<<<<<<< Updated upstream
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
     if ([RNBranch application:app openURL:url options:options])  {
         // do other deep link routing for the specific SDK
     }
     return YES;
+=======
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RNBranch application:app openURL:url options:options];
+>>>>>>> Stashed changes
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
@@ -122,7 +132,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif

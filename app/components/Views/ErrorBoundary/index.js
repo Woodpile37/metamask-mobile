@@ -164,6 +164,7 @@ const Fallback = (props) => {
       </View>
     </ScrollView>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		container: {
 			flex: 1,
@@ -307,6 +308,8 @@ const Fallback = (props) => {
 			</ScrollView>
 		</SafeAreaView>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 Fallback.propTypes = {
@@ -397,6 +400,7 @@ class ErrorBoundary extends Component {
         )
       : this.props.children;
   }
+<<<<<<< Updated upstream
 	state = { error: null };
 
 	static propTypes = {
@@ -457,6 +461,8 @@ class ErrorBoundary extends Component {
 			this.props.children
 		);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 ErrorBoundary.contextType = ThemeContext;

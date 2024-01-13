@@ -72,6 +72,7 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		mainWrapper: {
 			backgroundColor: colors.background.default,
@@ -124,6 +125,8 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * View that's displayed the first time imports account
@@ -207,6 +210,7 @@ class ImportPrivateKeySuccess extends PureComponent {
       </View>
     );
   }
+<<<<<<< Updated upstream
 	render() {
 		const colors = this.context.colors || mockTheme.colors;
 		const styles = createStyles(colors);
@@ -244,6 +248,8 @@ class ImportPrivateKeySuccess extends PureComponent {
 			</View>
 		);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 ImportPrivateKeySuccess.contextType = ThemeContext;

@@ -4,6 +4,7 @@ exports[`TimeEstimateInfoModal should render correctly 1`] = `
 <InfoModal
   body={
     <View>
+<<<<<<< Updated upstream
       <Text
         bigger={false}
         black={false}
@@ -24,6 +25,9 @@ exports[`TimeEstimateInfoModal should render correctly 1`] = `
         underline={false}
         upper={false}
       />
+=======
+      <Text />
+>>>>>>> Stashed changes
     </View>
   }
   title={null}

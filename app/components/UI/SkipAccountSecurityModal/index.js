@@ -15,6 +15,16 @@ import PropTypes from 'prop-types';
 import { fontStyles } from '../../../styles/common';
 import { useTheme } from '../../../util/theme';
 import generateTestId from '../../../../wdio/utils/generateTestId';
+<<<<<<< Updated upstream
+=======
+import {
+  SKIP_BUTTON,
+  CANCEL_BUTTON,
+  SKIP_BACKUP_MODAL,
+  ANDROID_SKIP_BACKUP_BUTTON_ID,
+  iOS_SKIP_BACKUP_BUTTON_ID,
+} from '../../../../wdio/screen-objects/testIDs/Components/SkipAccountSecurityModalTestIds';
+>>>>>>> Stashed changes
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -78,8 +88,13 @@ const SkipAccountSecurityModal = ({
 
   return (
     <ActionModal
+<<<<<<< Updated upstream
       cancelTestID={'Cancel-Skip'}
       confirmTestID={'Skip-button'}
+=======
+      cancelTestID={CANCEL_BUTTON}
+      confirmTestID={SKIP_BUTTON}
+>>>>>>> Stashed changes
       confirmText={strings('account_backup_step_1.skip_button_confirm')}
       cancelText={strings('account_backup_step_1.skip_button_cancel')}
       confirmButtonMode={'confirm'}
@@ -112,7 +127,11 @@ const SkipAccountSecurityModal = ({
         </Text>
         <View
           style={styles.skipModalActionButtons}
+<<<<<<< Updated upstream
           {...generateTestId(Platform, 'skip-backup-modal')}
+=======
+          {...generateTestId(Platform, SKIP_BACKUP_MODAL)}
+>>>>>>> Stashed changes
         >
           <CheckBox
             style={styles.skipModalCheckbox}
@@ -123,12 +142,20 @@ const SkipAccountSecurityModal = ({
               true: colors.primary.default,
               false: colors.border.default,
             }}
+<<<<<<< Updated upstream
             testID={'skip-backup-check'}
+=======
+            testID={iOS_SKIP_BACKUP_BUTTON_ID}
+>>>>>>> Stashed changes
           />
           <Text
             onPress={toggleSkipCheckbox}
             style={styles.skipModalText}
+<<<<<<< Updated upstream
             {...generateTestId(Platform, 'skip-backup-text')}
+=======
+            {...generateTestId(Platform, ANDROID_SKIP_BACKUP_BUTTON_ID)}
+>>>>>>> Stashed changes
           >
             {strings('account_backup_step_1.skip_check')}
           </Text>

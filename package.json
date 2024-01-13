@@ -1,6 +1,10 @@
 {
   "name": "metamask",
+<<<<<<< Updated upstream
   "version": "7.15.0",
+=======
+  "version": "7.12.5",
+>>>>>>> Stashed changes
   "private": true,
   "scripts": {
     "audit:ci": "./scripts/yarn-audit.sh",
@@ -165,6 +169,20 @@
     "follow-redirects": "1.15.4"
   },
   "dependencies": {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    "@metamask/controllers": "2.0.2",
+    "@react-native-community/async-storage": "1.9.0",
+    "@react-native-community/blur": "^3.6.0",
+    "@react-native-community/checkbox": "^0.4.2",
+    "@react-native-community/clipboard": "^1.2.2",
+    "@react-native-community/netinfo": "4.1.5",
+    "@react-native-community/viewpager": "^3.3.0",
+    "@sentry/integrations": "5.13.0",
+    "@sentry/react-native": "1.3.3",
+=======
+>>>>>>> Stashed changes
     "@consensys/on-ramp-sdk": "1.25.6",
     "@eth-optimism/contracts": "0.0.0-2021919175625",
     "@ethereumjs/common": "^2.3.1",
@@ -224,6 +242,10 @@
     "@segment/sovran-react-native": "0.4.5",
     "@sentry/integrations": "6.3.1",
     "@sentry/react-native": "5.8.1",
+<<<<<<< Updated upstream
+=======
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
     "@tradle/react-native-http": "2.0.1",
     "@walletconnect/client": "^1.7.1",
     "@walletconnect/core": "^2.9.0",
@@ -296,8 +318,18 @@
     "react-native-background-timer": "2.1.1",
     "react-native-branch": "^5.6.2",
     "react-native-browser-polyfill": "0.1.2",
+<<<<<<< Updated upstream
     "react-native-button": "git+https://github.com/MetaMask/react-native-button.git#c685e7882034543ceea3f09f6e3d205d18fce46e",
     "react-native-camera": "^3.36.0",
+=======
+<<<<<<< HEAD
+    "react-native-button": "git+ssh://git@github.com/MetaMask/react-native-button.git#fd79f4d6c8ced4086ba6e3021b6ed6d4a3e19cf7",
+    "react-native-camera": "2.10.0",
+=======
+    "react-native-button": "git+https://github.com/MetaMask/react-native-button.git#c685e7882034543ceea3f09f6e3d205d18fce46e",
+    "react-native-camera": "^3.36.0",
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
     "react-native-confetti": "^0.1.0",
     "react-native-confetti-cannon": "^1.5.0",
     "react-native-crypto": "2.1.2",
@@ -317,9 +349,20 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keychain": "8.0.0",
     "react-native-level-fs": "3.0.1",
+<<<<<<< Updated upstream
     "react-native-linear-gradient": "2.5.6",
     "react-native-material-textfield": "0.16.1",
     "react-native-modal": "^12.1.0",
+=======
+<<<<<<< HEAD
+    "react-native-material-textfield": "0.16.1",
+    "react-native-modal": "^11.5.6",
+=======
+    "react-native-linear-gradient": "2.5.6",
+    "react-native-material-textfield": "0.16.1",
+    "react-native-modal": "^12.1.0",
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^3.7.2",
     "react-native-progress": "3.5.0",
@@ -333,6 +376,7 @@
     "react-native-scrollable-tab-view": "^1.0.0",
     "react-native-search-api": "ombori/react-native-search-api#8/head",
     "react-native-sensors": "5.3.0",
+<<<<<<< Updated upstream
     "react-native-share": "7.3.7",
     "react-native-size-matters": "0.4.0",
     "react-native-skeleton-placeholder": "^5.0.0",
@@ -340,6 +384,22 @@
     "react-native-step-indicator": "^1.0.3",
     "react-native-svg": "12.1.1",
     "react-native-svg-charts": "^5.4.0",
+=======
+<<<<<<< HEAD
+    "react-native-share": "^3.2.0",
+    "react-native-splash-screen": "git+ssh://git@github.com/MetaMask/react-native-splash-screen.git",
+    "react-native-step-indicator": "^1.0.3",
+    "react-native-svg": "9.13.3",
+=======
+    "react-native-share": "7.3.7",
+    "react-native-size-matters": "0.4.0",
+    "react-native-skeleton-placeholder": "^5.0.0",
+    "react-native-splash-screen": "git+https://github.com/MetaMask/react-native-splash-screen.git#1f45c08c0824cd94fdc6fb699529688a73614fee",
+    "react-native-step-indicator": "^1.0.3",
+    "react-native-svg": "12.1.1",
+    "react-native-svg-charts": "^5.4.0",
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
     "react-native-swipe-gestures": "1.0.3",
     "react-native-tcp": "aprock/react-native-tcp#11/head",
     "react-native-url-polyfill": "^1.3.0",
@@ -347,7 +407,11 @@
     "react-native-vector-icons": "6.4.2",
     "react-native-video": "5.2.1",
     "react-native-view-shot": "^3.1.2",
+<<<<<<< Updated upstream
     "react-native-webview": "https://github.com/MetaMask/react-native-webview-mm#9386bb762e8c740b676d31e2ef5c20e34421c36a",
+=======
+    "react-native-webview": "11.13.0",
+>>>>>>> Stashed changes
     "react-native-webview-invoke": "^0.6.2",
     "react-redux": "7.2.4",
     "readable-stream": "2.3.7",
@@ -369,8 +433,12 @@
     "uuid": "^8.3.2",
     "valid-url": "1.0.9",
     "vm-browserify": "1.1.2",
+<<<<<<< Updated upstream
     "zxcvbn": "4.4.2",
     "cockatiel": "^3.1.1"
+=======
+    "zxcvbn": "4.4.2"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "@actions/core": "^1.10.0",
@@ -448,7 +516,11 @@
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "babel-plugin-transform-remove-console": "6.9.4",
     "browserstack-local": "^1.5.1",
+<<<<<<< Updated upstream
     "chromedriver": "^119.0.1",
+=======
+    "chromedriver": "^99.0.0",
+>>>>>>> Stashed changes
     "depcheck": "^1.4.7",
     "detox": "^20.14.3",
     "dotenv": "^16.0.3",

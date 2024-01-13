@@ -1578,6 +1578,7 @@
     "language": "id-id",
     "uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-id-id.vtt?raw=true"
   }
+<<<<<<< Updated upstream
 	"date": {
 		"months": {
 			"0": "Jan",
@@ -3198,4 +3199,6 @@
 		"language": "id-id",
 		"uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-id-id.vtt?raw=true"
 	}
+=======
+>>>>>>> Stashed changes
 }

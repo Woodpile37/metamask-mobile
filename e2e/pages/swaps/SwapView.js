@@ -34,9 +34,15 @@ export default class SwapView {
   }
 
   static async waitForSwapToComplete(sourceTokenSymbol, destTokenSymbol) {
+<<<<<<< Updated upstream
     await TestHelpers.delay(5000);
     await TestHelpers.checkIfElementByTextIsVisible(
       `Swap complete (${sourceTokenSymbol} to ${destTokenSymbol})`,
+=======
+    await TestHelpers.checkIfElementByTextIsVisible(
+      `Swap complete (${sourceTokenSymbol} to ${destTokenSymbol})`,
+      60000,
+>>>>>>> Stashed changes
     );
     await device.enableSynchronization();
     await TestHelpers.delay(5000);

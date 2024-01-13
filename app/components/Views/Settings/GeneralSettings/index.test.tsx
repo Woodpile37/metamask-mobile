@@ -19,6 +19,7 @@ const initialState = {
     backgroundState: initialBackgroundState,
   },
   user: { appTheme: AppThemeKey.light },
+<<<<<<< Updated upstream
 	privacy: { approvedHosts: [], privacyMode: true },
 	browser: { history: [] },
 	settings: { lockTime: 1000, searchEngine: 'DuckDuckGo', useBlockieIcon: true },
@@ -34,6 +35,8 @@ const initialState = {
 		},
 	},
 	user: { appTheme: AppThemeKey.light },
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 

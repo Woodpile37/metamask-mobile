@@ -135,6 +135,7 @@ const createStyles = (colors) =>
       paddingRight: 8,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		modal: {
 			margin: 0,
@@ -208,6 +209,8 @@ const createStyles = (colors) =>
 			paddingRight: 8,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const MAX_TOKENS_RESULTS = 20;
 
@@ -238,6 +241,7 @@ function TokenSelectModal({
     useModalHandler(false);
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
+<<<<<<< Updated upstream
 	const navigation = useNavigation();
 	const searchInput = useRef(null);
 	const list = useRef();
@@ -246,6 +250,8 @@ function TokenSelectModal({
 	const [isTokenImportVisible, , showTokenImportModal, hideTokenImportModal] = useModalHandler(false);
 	const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
+=======
+>>>>>>> Stashed changes
 
   const excludedAddresses = useMemo(
     () =>
@@ -371,6 +377,7 @@ function TokenSelectModal({
       styles,
     ],
   );
+<<<<<<< Updated upstream
 			return (
 				<TouchableOpacity style={styles.resultRow} onPress={() => onItemPress(item)}>
 					<ListItem>
@@ -393,6 +400,8 @@ function TokenSelectModal({
 		},
 		[balances, accounts, selectedAddress, conversionRate, currentCurrency, tokenExchangeRates, onItemPress, styles]
 	);
+=======
+>>>>>>> Stashed changes
 
   const handleSearchPress = () => searchInput?.current?.focus();
 
@@ -476,6 +485,7 @@ function TokenSelectModal({
     ),
     [searchString, styles],
   );
+<<<<<<< Updated upstream
 	const renderFooter = useMemo(
 		() => (
 			<TouchableWithoutFeedback>
@@ -515,6 +525,8 @@ function TokenSelectModal({
 		),
 		[searchString, styles]
 	);
+=======
+>>>>>>> Stashed changes
 
   const handleSearchTextChange = useCallback((text) => {
     setSearchString(text);
@@ -659,6 +671,7 @@ function TokenSelectModal({
       </SafeAreaView>
     </Modal>
   );
+<<<<<<< Updated upstream
 	return (
 		<Modal
 			isVisible={isVisible}
@@ -776,6 +789,8 @@ function TokenSelectModal({
 			</SafeAreaView>
 		</Modal>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 TokenSelectModal.propTypes = {

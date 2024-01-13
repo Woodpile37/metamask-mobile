@@ -2784,6 +2784,7 @@
     "error_title": "Nabigo ang pag-install",
     "error_description": "Nabigo ang pag-install ng {{snap}}."
   }
+<<<<<<< Updated upstream
 	"date": {
 		"months": {
 			"0": "Ene",
@@ -4417,4 +4418,6 @@
 		"language": "tl",
 		"uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-tl.vtt?raw=true"
 	}
+=======
+>>>>>>> Stashed changes
 }

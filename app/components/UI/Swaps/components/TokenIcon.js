@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import React, { useMemo, useState } from 'react';
+=======
+import React, { useCallback, useState } from 'react';
+>>>>>>> Stashed changes
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
@@ -80,6 +84,7 @@ const EmptyIcon = ({ medium, big, biggest, style, ...props }) => {
       {...props}
     />
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		icon: {
 			width: REGULAR_SIZE,
@@ -139,6 +144,8 @@ const EmptyIcon = ({ medium, big, biggest, style, ...props }) => {
 			{...props}
 		/>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 EmptyIcon.propTypes = {
@@ -153,7 +160,11 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
+<<<<<<< Updated upstream
   const source = useMemo(() => {
+=======
+  const getSource = useCallback(() => {
+>>>>>>> Stashed changes
     if (symbol === 'ETH') {
       return ethLogo;
     }
@@ -168,12 +179,20 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
 
     return null;
   }, [symbol, icon]);
+<<<<<<< Updated upstream
+=======
+  const source = getSource();
+>>>>>>> Stashed changes
 
   if (source && !showFallback) {
     return (
       <RemoteImage
         fadeIn
+<<<<<<< Updated upstream
         source={source}
+=======
+        source={getSource()}
+>>>>>>> Stashed changes
         onError={() => setShowFallback(true)}
         style={[
           styles.icon,
@@ -204,6 +223,7 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
   }
 
   return <EmptyIcon medium={medium} style={style} />;
+<<<<<<< Updated upstream
 	const [showFallback, setShowFallback] = useState(false);
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
@@ -259,6 +279,8 @@ function TokenIcon({ symbol, icon, medium, big, biggest, style }) {
 	}
 
 	return <EmptyIcon medium={medium} style={style} />;
+=======
+>>>>>>> Stashed changes
 }
 
 TokenIcon.propTypes = {

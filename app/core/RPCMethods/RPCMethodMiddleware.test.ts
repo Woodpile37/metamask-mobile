@@ -95,10 +95,14 @@ function assertIsJsonRpcSuccess(
     throw new Error(`Response is missing 'result' property`);
   }
 }
+<<<<<<< Updated upstream
 // Mock the navigation object.
 const navigation = {
   navigate: jest.fn(),
 };
+=======
+
+>>>>>>> Stashed changes
 /**
  * Return a minimal set of options for `getRpcMethodMiddleware`. These options
  * are complete enough to test at least some method handlers, and they are type-
@@ -110,7 +114,11 @@ function getMinimalOptions() {
   return {
     hostname: '',
     getProviderState: jest.fn(),
+<<<<<<< Updated upstream
     navigation,
+=======
+    navigation: jest.fn(),
+>>>>>>> Stashed changes
     url: { current: '' },
     title: { current: '' },
     icon: { current: undefined },
@@ -1154,6 +1162,7 @@ describe('getRpcMethodMiddleware', () => {
       expect(spy).toBeCalledTimes(1);
     });
   });
+<<<<<<< Updated upstream
   describe('wallet_swapAsset', () => {
     it('should throw error if chainId is not consistent between from and to', async () => {
       const mockState = {
@@ -1376,4 +1385,6 @@ describe('getRpcMethodMiddleware', () => {
       });
     });
   });
+=======
+>>>>>>> Stashed changes
 });

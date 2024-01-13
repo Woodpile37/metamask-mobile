@@ -15,6 +15,7 @@ const createStyles = (colors) =>
       flex: 1,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			...baseStyles.flexGrow,
@@ -52,6 +53,8 @@ const createStyles = (colors) =>
 			marginRight: 6,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * Componets that allows to select clicking two options
@@ -119,6 +122,7 @@ export default class PickComponent extends PureComponent {
       </View>
     );
   };
+<<<<<<< Updated upstream
 	render = () => {
 		const { selectedValue, valueFirst, valueSecond, textFirst, textSecond } = this.props;
 		const colors = this.context.colors || mockTheme.colors;
@@ -141,6 +145,8 @@ export default class PickComponent extends PureComponent {
 			</View>
 		);
 	};
+=======
+>>>>>>> Stashed changes
 }
 
 PickComponent.contextType = ThemeContext;

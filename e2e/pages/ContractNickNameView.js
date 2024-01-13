@@ -41,6 +41,7 @@ export default class ContractNickNameView {
   static async isContractNickNameInInputBoxVisible(nickName) {
     await TestHelpers.checkIfElementWithTextIsVisible(nickName);
   }
+<<<<<<< Updated upstream
 	static async typeContractNickName(nickName) {
 		if (device.getPlatform() === 'android') {
 			await TestHelpers.replaceTextInField(CONTRACT_ADD_NICKNAME_INPUT_BOX_ID, nickName);
@@ -69,4 +70,6 @@ export default class ContractNickNameView {
 	static async isContractNickNameInInputBoxVisible(nickName) {
 		await TestHelpers.checkIfElementWithTextIsVisible(nickName);
 	}
+=======
+>>>>>>> Stashed changes
 }

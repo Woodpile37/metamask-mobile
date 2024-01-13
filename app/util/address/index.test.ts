@@ -98,6 +98,7 @@ describe('isValidHexAddress', () => {
   it('should return false if the address is an  empty string', () => {
     expect(isValidHexAddress('', { mixedCaseUseChecksum: true })).toBe(false);
   });
+<<<<<<< Updated upstream
 import { isENS, renderSlightlyLongAddress } from '.';
 
 describe('isENS', () => {
@@ -131,6 +132,8 @@ describe('renderSlightlyLongAddress', () => {
 		expect(renderSlightlyLongAddress(mockAddress, 5, 2).split('.')[0]).toBe('0xC4955');
 		expect(renderSlightlyLongAddress(mockAddress, 5, 0).split('.')[3]).toBe('4D272');
 	});
+=======
+>>>>>>> Stashed changes
 });
 
 describe('isValidAddressInputViaQRCode', () => {

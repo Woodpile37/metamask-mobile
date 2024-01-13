@@ -75,6 +75,7 @@ describe('Engine', () => {
 
     expect(backgroundState).toStrictEqual(initialState);
   });
+<<<<<<< Updated upstream
 	it('should expose an API', () => {
 		const engine = Engine.init({});
 		expect(engine.context).toHaveProperty('AccountTrackerController');
@@ -95,4 +96,6 @@ describe('Engine', () => {
 		expect(engine.context).toHaveProperty('TokensController');
 		expect(engine.context).toHaveProperty('TypedMessageManager');
 	});
+=======
+>>>>>>> Stashed changes
 });

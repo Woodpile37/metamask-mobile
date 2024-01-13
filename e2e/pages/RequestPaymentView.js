@@ -26,6 +26,7 @@ export default class RequestPaymentView {
       amount,
     );
   }
+<<<<<<< Updated upstream
 	static async searchForToken(token) {
 		if (device.getPlatform() === 'android') {
 			await TestHelpers.typeTextAndHideKeyboard(TOKEN_SEARCH_INPUT_BOX, token);
@@ -40,6 +41,8 @@ export default class RequestPaymentView {
 	static async typeInTokenAmount(amount) {
 		await TestHelpers.typeTextAndHideKeyboard(REQUEST_AMOUNT_INPUT_BOX_ID, amount);
 	}
+=======
+>>>>>>> Stashed changes
 
   static async isVisible() {
     await TestHelpers.checkIfVisible(

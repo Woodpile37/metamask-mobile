@@ -75,6 +75,7 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			backgroundColor: colors.background.default,
@@ -140,6 +141,8 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * Account access approval component
@@ -153,6 +156,7 @@ const SwitchCustomNetwork = ({
 }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+<<<<<<< Updated upstream
 const SwitchCustomNetwork = ({ customNetworkInformation, currentPageInformation, onCancel, onConfirm, type }) => {
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
@@ -163,6 +167,8 @@ const SwitchCustomNetwork = ({ customNetworkInformation, currentPageInformation,
 	const confirm = () => {
 		onConfirm && onConfirm();
 	};
+=======
+>>>>>>> Stashed changes
 
   /**
    * Calls onConfirm callback and analytics to track connect confirmed event
@@ -239,6 +245,7 @@ const SwitchCustomNetwork = ({ customNetworkInformation, currentPageInformation,
       </View>
     </View>
   );
+<<<<<<< Updated upstream
 	return (
 		<View style={styles.root}>
 			{type === 'switch' ? <TransactionHeader currentPageInformation={currentPageInformation} /> : null}
@@ -294,6 +301,8 @@ const SwitchCustomNetwork = ({ customNetworkInformation, currentPageInformation,
 			</View>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 SwitchCustomNetwork.propTypes = {

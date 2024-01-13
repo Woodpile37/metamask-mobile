@@ -232,7 +232,10 @@ type GlobalEvents =
   | SnapsGlobalEvents
   ///: END:ONLY_INCLUDE_IF
   | SignatureControllerEvents
+<<<<<<< Updated upstream
   | KeyringControllerEvents
+=======
+>>>>>>> Stashed changes
   | PPOMControllerEvents;
 
 type PermissionsByRpcMethod = ReturnType<typeof getPermissionSpecifications>;

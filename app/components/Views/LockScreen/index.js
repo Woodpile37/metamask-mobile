@@ -8,22 +8,32 @@ import {
   AppState,
   Appearance,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { StyleSheet, Dimensions, Animated, View, AppState, Appearance } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LottieView from 'lottie-react-native';
-import Engine from '../../../core/Engine';
-import SecureKeychain from '../../../core/SecureKeychain';
 import { baseStyles } from '../../../styles/common';
 import Logger from '../../../util/Logger';
 import { trackErrorAsAnalytics } from '../../../util/analyticsV2';
+<<<<<<< Updated upstream
 import { logOut } from '../../../actions/user';
+=======
+import { Authentication } from '../../../core';
+>>>>>>> Stashed changes
 import {
   getAssetFromTheme,
   mockTheme,
   ThemeContext,
 } from '../../../util/theme';
 import Routes from '../../../constants/navigation/Routes';
+<<<<<<< Updated upstream
+=======
+import { selectSelectedAddress } from '../../../selectors/preferencesController';
+import { CommonActions } from '@react-navigation/native';
+>>>>>>> Stashed changes
 
 const LOGO_SIZE = 175;
 const createStyles = (colors) =>
@@ -64,6 +74,7 @@ const createStyles = (colors) =>
       justifyContent: 'center',
     },
   });
+<<<<<<< Updated upstream
 import { getAssetFromTheme, mockTheme, ThemeContext } from '../../../util/theme';
 
 const LOGO_SIZE = 175;
@@ -105,6 +116,8 @@ const createStyles = (colors) =>
 			justifyContent: 'center',
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const wordmarkLight = require('../../../animations/wordmark-light.json');
 const wordmarkDark = require('../../../animations/wordmark-dark.json');
@@ -118,6 +131,7 @@ class LockScreen extends PureComponent {
      * The navigator object
      */
     navigation: PropTypes.object,
+<<<<<<< Updated upstream
     /**
      * Boolean flag that determines if password has been set
      */
@@ -321,23 +335,37 @@ const mapDispatchToProps = (dispatch) => ({
 	state = {
 		ready: false,
 	};
+=======
+    selectedAddress: PropTypes.string,
+    appTheme: PropTypes.string,
+    /**
+     * ID associated with each biometric session.
+     * This is used by the biometric sagas to handle actions with the matching ID.
+     */
+    bioStateMachineId: PropTypes.string,
+  };
 
-	appState = 'active';
-	locked = true;
-	timedOut = false;
-	firstAnimation = React.createRef();
-	secondAnimation = React.createRef();
-	animationName = React.createRef();
-	opacity = new Animated.Value(1);
-	unlockAttempts = 0;
+  state = {
+    ready: false,
+  };
+>>>>>>> Stashed changes
 
-	componentDidMount() {
-		// Check if is the app is launching or it went to background mode
-		this.appState = 'background';
-		AppState.addEventListener('change', this.handleAppStateChange);
-		this.mounted = true;
-	}
+  locked = true;
+  timedOut = false;
+  firstAnimation = React.createRef();
+  secondAnimation = React.createRef();
+  animationName = React.createRef();
+  opacity = new Animated.Value(1);
+  appStateListener;
 
+  componentDidMount() {
+    this.appStateListener = AppState.addEventListener(
+      'change',
+      this.handleAppStateChange,
+    );
+  }
+
+<<<<<<< Updated upstream
 	handleAppStateChange = async (nextAppState) => {
 		// Try to unlock when coming from the background
 		if (this.locked && this.appState !== 'active' && nextAppState === 'active') {
@@ -347,12 +375,35 @@ const mapDispatchToProps = (dispatch) => ({
 			this.unlockKeychain();
 		}
 	};
+=======
+  handleAppStateChange = async (nextAppState) => {
+    // Trigger biometrics
+    if (nextAppState === 'active') {
+      this.firstAnimation?.play();
+      this.unlockKeychain();
+      this.appStateListener?.remove();
+    }
+  };
 
-	componentWillUnmount() {
-		this.mounted = false;
-		AppState.removeEventListener('change', this.handleAppStateChange);
-	}
+  componentWillUnmount() {
+    this.appStateListener?.remove();
+  }
+>>>>>>> Stashed changes
 
+  lock = () => {
+    // TODO: Consolidate navigation action for locking app
+    // Reset action reverts the nav state back to original state prior to logging in.
+    // Reset is used intentionally. Do not use navigate.
+    const resetAction = CommonActions.reset({
+      index: 0,
+      routes: [{ name: Routes.ONBOARDING.LOGIN }],
+    });
+    this.props.navigation.dispatch(resetAction);
+    // Do not need to await since it's the last action.
+    Authentication.lockApp(false);
+  };
+
+<<<<<<< Updated upstream
 	logOut = () => {
 		this.props.navigation.navigate('Login');
 		this.props.logOut();
@@ -367,14 +418,50 @@ const mapDispatchToProps = (dispatch) => ({
 			credentials = await SecureKeychain.getGenericPassword();
 			if (credentials) {
 				Logger.log('Lockscreen::unlockKeychain - got credentials', !!credentials.password);
+=======
+  async unlockKeychain() {
+    const { bioStateMachineId } = this.props;
+    try {
+      // Retreive the credentials
+      Logger.log('Lockscreen::unlockKeychain - getting credentials');
+      await Authentication.appTriggeredAuth({
+        selectedAddress: this.props.selectedAddress,
+        bioStateMachineId,
+        disableAutoLogout: true,
+      });
+      this.setState({ ready: true });
+      Logger.log('Lockscreen::unlockKeychain - state: ready');
+    } catch (error) {
+      this.lock();
+      trackErrorAsAnalytics(
+        'Lockscreen: Authentication failed',
+        error?.message,
+      );
+    }
+  }
+>>>>>>> Stashed changes
 
-				// Restore vault with existing credentials
-				const { KeyringController } = Engine.context;
-				Logger.log('Lockscreen::unlockKeychain - submitting password');
+  onAnimationFinished = () => {
+    setTimeout(() => {
+      Animated.timing(this.opacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+        isInteraction: false,
+      }).start(() => {
+        this.props.navigation.navigate(Routes.ONBOARDING.HOME_NAV, {
+          screen: Routes.WALLET_VIEW,
+        });
+      });
+    }, 100);
+  };
 
-				await KeyringController.submitPassword(credentials.password);
-				Logger.log('Lockscreen::unlockKeychain - keyring unlocked');
+  getStyles = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    return createStyles(colors);
+  };
 
+<<<<<<< Updated upstream
 				this.locked = false;
 				await this.setState({ ready: true });
 				Logger.log('Lockscreen::unlockKeychain - state: ready');
@@ -490,3 +577,96 @@ const mapDispatchToProps = (dispatch) => ({
 LockScreen.contextType = ThemeContext;
 
 export default connect(mapStateToProps, mapDispatchToProps)(LockScreen);
+=======
+  renderAnimations() {
+    const { appTheme } = this.props;
+    const osColorScheme = Appearance.getColorScheme();
+    const wordmark = getAssetFromTheme(
+      appTheme,
+      osColorScheme,
+      wordmarkLight,
+      wordmarkDark,
+    );
+    const styles = this.getStyles();
+
+    if (!this.state.ready) {
+      return (
+        <LottieView
+          // eslint-disable-next-line react/jsx-no-bind
+          ref={(animation) => {
+            this.firstAnimation = animation;
+          }}
+          style={styles.animation}
+          source={require('../../../animations/bounce.json')}
+        />
+      );
+    }
+
+    return (
+      <View style={styles.foxAndName}>
+        <LottieView
+          // eslint-disable-next-line react/jsx-no-bind
+          ref={(animation) => {
+            this.secondAnimation = animation;
+          }}
+          style={styles.animation}
+          loop={false}
+          source={require('../../../animations/fox-in.json')}
+          onAnimationFinish={this.onAnimationFinished}
+        />
+        <LottieView
+          // eslint-disable-next-line react/jsx-no-bind
+          ref={(animation) => {
+            this.animationName = animation;
+          }}
+          style={styles.metamaskName}
+          loop={false}
+          source={wordmark}
+        />
+      </View>
+    );
+  }
+
+  render() {
+    const styles = this.getStyles();
+
+    return (
+      <View style={[baseStyles.flexGrow, styles.container]}>
+        <Animated.View style={[styles.logoWrapper, { opacity: this.opacity }]}>
+          <View style={styles.fox}>{this.renderAnimations()}</View>
+        </Animated.View>
+      </View>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  selectedAddress: selectSelectedAddress(state),
+  appTheme: state.user.appTheme,
+});
+
+LockScreen.contextType = ThemeContext;
+
+const ConnectedLockScreen = connect(mapStateToProps)(LockScreen);
+
+// Wrapper that forces LockScreen to re-render when bioStateMachineId changes.
+const LockScreenFCWrapper = (props) => {
+  const { bioStateMachineId } = props.route.params;
+  return (
+    <ConnectedLockScreen
+      key={bioStateMachineId}
+      bioStateMachineId={bioStateMachineId}
+      {...props}
+    />
+  );
+};
+
+LockScreenFCWrapper.propTypes = {
+  /**
+   * Navigation object that holds params including bioStateMachineId.
+   */
+  route: PropTypes.object,
+};
+
+export default LockScreenFCWrapper;
+>>>>>>> Stashed changes

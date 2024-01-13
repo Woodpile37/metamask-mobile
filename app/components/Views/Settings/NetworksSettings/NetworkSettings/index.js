@@ -1093,7 +1093,11 @@ class NetworkSettings extends PureComponent {
               }}
             >
               <View
+<<<<<<< Updated upstream
                 tabLabel={strings('app_settings.popular').toUpperCase()}
+=======
+                tabLabel={strings('app_settings.popular')}
+>>>>>>> Stashed changes
                 key={AppConstants.ADD_CUSTOM_NETWORK_POPULAR_TAB_ID}
                 style={styles.networksWrapper}
                 testID={POPULAR_NETWORKS_TAB_ID}

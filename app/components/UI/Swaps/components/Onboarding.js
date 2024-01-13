@@ -9,17 +9,25 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+<<<<<<< Updated upstream
+=======
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+>>>>>>> Stashed changes
 import { useNavigation } from '@react-navigation/native';
 import { strings } from '../../../../../locales/i18n';
 import Device from '../../../../util/device';
 import Text from '../../../Base/Text';
 import StyledButton from '../../StyledButton';
+<<<<<<< Updated upstream
 import {
   useAppThemeFromContext,
   mockTheme,
   useAssetFromTheme,
 } from '../../../../util/theme';
 import { useAppThemeFromContext, mockTheme, useAssetFromTheme } from '../../../../util/theme';
+=======
+import { useTheme, useAssetFromTheme } from '../../../../util/theme';
+>>>>>>> Stashed changes
 
 /* eslint-disable import/no-commonjs */
 const onboardingDeviceImage = require('../../../../images/swaps_onboard_device.png');
@@ -27,7 +35,11 @@ const swapsAggregatorsLight = require('../../../../images/swaps_aggs-light.png')
 const swapsAggregatorsDark = require('../../../../images/swaps_aggs-dark.png');
 /* eslint-enable import/no-commonjs */
 
+<<<<<<< Updated upstream
 const createStyles = (colors) =>
+=======
+const createStyles = (colors, bottomInset) =>
+>>>>>>> Stashed changes
   StyleSheet.create({
     screen: {
       flex: 1,
@@ -62,11 +74,16 @@ const createStyles = (colors) =>
     },
     actionButtonWrapper: {
       width: '100%',
+<<<<<<< Updated upstream
+=======
+      paddingBottom: bottomInset,
+>>>>>>> Stashed changes
     },
     actionButton: {
       marginVertical: 10,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		screen: {
 			flex: 1,
@@ -106,6 +123,8 @@ const createStyles = (colors) =>
 			marginVertical: 10,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 if (
   Platform.OS === 'android' &&
@@ -116,12 +135,19 @@ if (
 
 function Onboarding({ setHasOnboarded }) {
   const navigation = useNavigation();
+<<<<<<< Updated upstream
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+=======
+  const { colors } = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const styles = createStyles(colors, bottomInset);
+>>>>>>> Stashed changes
   const swapsAggregators = useAssetFromTheme(
     swapsAggregatorsLight,
     swapsAggregatorsDark,
   );
+<<<<<<< Updated upstream
 	const navigation = useNavigation();
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
@@ -131,6 +157,8 @@ function Onboarding({ setHasOnboarded }) {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		setHasOnboarded(true);
 	}, [setHasOnboarded]);
+=======
+>>>>>>> Stashed changes
 
   const handleStartSwapping = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

@@ -401,7 +401,11 @@ buildAndroidRelease(){
 buildAndroidFlaskRelease(){
 	# remap flask env variables to match what the app expects
 	remapFlaskEnvVariables
+<<<<<<< Updated upstream
 
+=======
+	
+>>>>>>> Stashed changes
 	if [ "$PRE_RELEASE" = false ] ; then
 		adb uninstall io.metamask.flask || true
 	fi
@@ -550,6 +554,7 @@ elif [ "$MODE" == "release" ] || [ "$MODE" == "flask" ]; then
 	export SENTRY_PROPERTIES="${REPO_ROOT_DIR}/sentry.release.properties"
 fi
 
+<<<<<<< Updated upstream
 # set some defaults
 if [ -z "$METAMASK_BUILD_TYPE" ]; then
   METAMASK_BUILD_TYPE='main'
@@ -569,6 +574,8 @@ if [ -z "$GIT_BRANCH" ]; then
   export GIT_BRANCH
 fi
 
+=======
+>>>>>>> Stashed changes
 if [ -z "$METAMASK_BUILD_TYPE" ]; then
 	printError "Missing METAMASK_BUILD_TYPE; set to 'main' for a standard release, or 'flask' for a canary flask release. The default value is 'main'."
 	exit 1

@@ -83,6 +83,7 @@ export default class TransactionConfirmationView {
   static async isNetworkNameVisible(text) {
     await TestHelpers.checkIfElementHasString(NAVBAR_TITLE_NETWORKS_TEXT, text);
   }
+<<<<<<< Updated upstream
 	static async tapCancelButton() {
 		await TestHelpers.tapByText('Cancel');
 	}
@@ -97,4 +98,6 @@ export default class TransactionConfirmationView {
 	static async isNetworkNameVisible(text) {
 		await TestHelpers.checkIfElementWithTextIsVisible(text);
 	}
+=======
+>>>>>>> Stashed changes
 }

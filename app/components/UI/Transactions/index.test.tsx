@@ -13,6 +13,7 @@ const initialState = {
   settings: {
     primaryCurrency: 'USD',
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			PreferencesController: {
@@ -55,6 +56,8 @@ const initialState = {
 	settings: {
 		primaryCurrency: 'USD',
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 

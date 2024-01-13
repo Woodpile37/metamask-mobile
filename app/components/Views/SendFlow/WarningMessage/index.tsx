@@ -42,6 +42,7 @@ const WarningMessage = ({ warningMessage, style, onDismiss }: Props) => {
   );
 };
 
+<<<<<<< Updated upstream
 	/**
 	 * Warning message to display (Plain text or JSX)
 	 */
@@ -72,4 +73,6 @@ const WarningMessage = ({ warningMessage, style }: Props) => {
 	);
 };
 
+=======
+>>>>>>> Stashed changes
 export default WarningMessage;

@@ -20,7 +20,13 @@ import { TransactionState } from '@metamask/transaction-controller';
 import { GasFeeController } from '@metamask/gas-fee-controller';
 import { PPOMState } from '@metamask/ppom-validator';
 import { ApprovalControllerState } from '@metamask/approval-controller';
+<<<<<<< Updated upstream
 
+=======
+///: BEGIN:ONLY_INCLUDE_IF(snaps)
+import { SnapController } from '@metamask/snaps-controllers';
+///: END:ONLY_INCLUDE_IF
+>>>>>>> Stashed changes
 export interface EngineState {
   engine: {
     backgroundState: {
@@ -39,6 +45,12 @@ export interface EngineState {
       TokenRatesController: TokenRatesState;
       TransactionController: TransactionState;
       SwapsController: SwapsController;
+<<<<<<< Updated upstream
+=======
+      ///: BEGIN:ONLY_INCLUDE_IF(snaps)
+      SnapController: SnapController;
+      ///: END:ONLY_INCLUDE_IF
+>>>>>>> Stashed changes
       GasFeeController: GasFeeController;
       TokensController: TokensState;
       TokenDetectionController: TokenDetectionController;

@@ -843,12 +843,16 @@ workflows:
             - content: |-
                 #!/usr/bin/env bash
                 node -v
+<<<<<<< Updated upstream
                 COMMIT_SHORT_HASH="${BITRISE_GIT_COMMIT:0:7}"
 
                 if [[ -z "$BITRISE_GIT_COMMIT" ]]; then
                   COMMIT_SHORT_HASH="$(git rev-parse --short HEAD)"
                 fi
                 GIT_BRANCH=$BITRISE_GIT_BRANCH GIT_COMMIT=$COMMIT_SHORT_HASH METAMASK_BUILD_TYPE='main' METAMASK_ENVIRONMENT='qa' yarn build:android:pre-release:bundle:qa
+=======
+                GIT_BRANCH=$BITRISE_GIT_BRANCH METAMASK_BUILD_TYPE='main' METAMASK_ENVIRONMENT='qa' yarn build:android:pre-release:bundle:qa
+>>>>>>> Stashed changes
           title: Build Android Pre-Release Bundle
           is_always_run: false
       - save-gradle-cache@1: {}
@@ -1231,6 +1235,7 @@ app:
       PROJECT_LOCATION_IOS: ios
     - opts:
         is_expand: false
+<<<<<<< Updated upstream
       VERSION_NAME: 7.15.0
     - opts:
         is_expand: false
@@ -1241,6 +1246,18 @@ app:
     - opts:
         is_expand: false
       FLASK_VERSION_NUMBER: 1238
+=======
+      VERSION_NAME: 7.12.5
+    - opts:
+        is_expand: false
+      VERSION_NUMBER: 1235
+    - opts:
+        is_expand: false
+      FLASK_VERSION_NAME: 0.0.4
+    - opts:
+        is_expand: false
+      FLASK_VERSION_NUMBER: 1197
+>>>>>>> Stashed changes
     - opts:
         is_expand: false
       ANDROID_APK_LINK: ''

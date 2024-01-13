@@ -2784,6 +2784,7 @@
     "error_title": "Instalación fallida",
     "error_description": "Instalación fallida de {{snap}}."
   }
+<<<<<<< Updated upstream
 	"date": {
 		"months": {
 			"0": "Ene",
@@ -4421,4 +4422,6 @@
 		"language": "es",
 		"uri": "https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/subtitles/secretPhrase/subtitles-es.vtt?raw=true"
 	}
+=======
+>>>>>>> Stashed changes
 }

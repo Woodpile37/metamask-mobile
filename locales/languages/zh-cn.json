@@ -1391,6 +1391,7 @@
   "whats_new": {
     "title": "了解新功能"
   }
+<<<<<<< Updated upstream
 	"date": {
 		"months": {
 			"0": "1 月",
@@ -2819,4 +2820,6 @@
 		"feature_security_settings_text": "您现在可以从“设置”>“安全和隐私”更改 MetaMask 应用密码并查看如何备份钱包助记词。",
 		"feature_security_settings_button": "在“设置”中查看"
 	}
+=======
+>>>>>>> Stashed changes
 }

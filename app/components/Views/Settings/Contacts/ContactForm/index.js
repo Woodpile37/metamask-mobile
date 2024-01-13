@@ -8,7 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { Platform, SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import { fontStyles } from '../../../../../styles/common';
 import PropTypes from 'prop-types';
 import { getEditableOptions } from '../../../../UI/Navbar';
@@ -108,6 +111,7 @@ const createStyles = (colors) =>
       marginVertical: 4,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			backgroundColor: colors.background.default,
@@ -179,6 +183,8 @@ const createStyles = (colors) =>
 			marginVertical: 4,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const ADD = 'add';
 const EDIT = 'edit';
@@ -222,6 +228,7 @@ class ContactForm extends PureComponent {
     editable: true,
     inputWidth: Platform.OS === 'android' ? '99%' : undefined,
   };
+<<<<<<< Updated upstream
 
   actionSheet = React.createRef();
   addressInput = React.createRef();
@@ -367,11 +374,83 @@ class ContactForm extends PureComponent {
     });
 
     this.setState({
+=======
+
+  actionSheet = React.createRef();
+  addressInput = React.createRef();
+  memoInput = React.createRef();
+
+  updateNavBar = () => {
+    const { navigation, route } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    navigation.setOptions(
+      getEditableOptions(
+        strings(`address_book.${route.params?.mode ?? ADD}_contact_title`),
+        navigation,
+        route,
+        colors,
+      ),
+    );
+  };
+
+  componentDidMount = () => {
+    const { mode } = this.state;
+    const { navigation } = this.props;
+    this.updateNavBar();
+    // Workaround https://github.com/facebook/react-native/issues/9958
+    this.state.inputWidth &&
+      setTimeout(() => {
+        this.setState({ inputWidth: '100%' });
+      }, 100);
+    if (mode === EDIT) {
+      const { addressBook, chainId, identities } = this.props;
+      const networkAddressBook = addressBook[chainId] || {};
+      const address = this.props.route.params?.address ?? '';
+      const contact = networkAddressBook[address] || identities[address];
+      this.setState({
+        address,
+        name: contact.name,
+        memo: contact.memo,
+        addressReady: true,
+        editable: false,
+      });
+      navigation && navigation.setParams({ dispatch: this.onEdit, mode: EDIT });
+    }
+  };
+
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
+
+  onEdit = () => {
+    const { navigation } = this.props;
+    const { editable } = this.state;
+    if (editable) navigation.setParams({ editMode: EDIT });
+    else navigation.setParams({ editMode: ADD });
+
+    this.setState({ editable: !editable });
+  };
+
+  onDelete = () => {
+    this.contactAddressToRemove = this.state.address;
+    this.actionSheet && this.actionSheet.show();
+  };
+
+  onChangeName = (name) => {
+    this.setState({ name });
+  };
+
+  validateAddressOrENSFromInput = async (address) => {
+    const { addressBook, identities, chainId } = this.props;
+
+    const {
+>>>>>>> Stashed changes
       addressError,
       toEnsName,
       addressReady,
       toEnsAddress,
       errorContinue,
+<<<<<<< Updated upstream
     });
   };
 
@@ -661,6 +740,223 @@ class ContactForm extends PureComponent {
             </View>
           </View>
 
+=======
+    } = await validateAddressOrENS({
+      toAccount: address,
+      addressBook,
+      identities,
+      chainId,
+    });
+
+    this.setState({
+      addressError,
+      toEnsName,
+      addressReady,
+      toEnsAddress,
+      errorContinue,
+    });
+  };
+
+  onChangeAddress = (address) => {
+    this.validateAddressOrENSFromInput(address);
+    this.setState({ address });
+  };
+
+  onChangeMemo = (memo) => {
+    this.setState({ memo });
+  };
+
+  jumpToAddressInput = () => {
+    const { current } = this.addressInput;
+    current && current.focus();
+  };
+
+  jumpToMemoInput = () => {
+    const { current } = this.memoInput;
+    current && current.focus();
+  };
+
+  saveContact = () => {
+    const { name, address, memo, toEnsAddress } = this.state;
+    const { chainId, navigation } = this.props;
+    const { AddressBookController } = Engine.context;
+    if (!name || !address) return;
+    AddressBookController.set(
+      toChecksumAddress(toEnsAddress || address),
+      name,
+      chainId,
+      memo,
+    );
+    navigation.pop();
+  };
+
+  deleteContact = () => {
+    const { AddressBookController } = Engine.context;
+    const { chainId, navigation, route } = this.props;
+    AddressBookController.delete(chainId, this.contactAddressToRemove);
+    route.params.onDelete();
+    navigation.pop();
+  };
+
+  onScan = () => {
+    this.props.navigation.navigate(
+      ...createQRScannerNavDetails({
+        onScanSuccess: (meta) => {
+          if (meta.target_address) {
+            this.onChangeAddress(meta.target_address);
+          }
+        },
+        origin: Routes.SETTINGS.CONTACT_FORM,
+      }),
+    );
+  };
+
+  createActionSheetRef = (ref) => {
+    this.actionSheet = ref;
+  };
+
+  renderErrorMessage = (addressError) => {
+    let errorMessage = addressError;
+
+    if (addressError === CONTACT_ALREADY_SAVED) {
+      errorMessage = strings('address_book.address_already_saved');
+    }
+    if (addressError === SYMBOL_ERROR) {
+      errorMessage = `${
+        strings('transaction.tokenContractAddressWarning_1') +
+        strings('transaction.tokenContractAddressWarning_2') +
+        strings('transaction.tokenContractAddressWarning_3')
+      }`;
+    }
+
+    return errorMessage;
+  };
+
+  onErrorContinue = () => {
+    this.setState({ addressError: null });
+  };
+
+  render = () => {
+    const {
+      address,
+      addressError,
+      toEnsName,
+      name,
+      mode,
+      addressReady,
+      memo,
+      editable,
+      inputWidth,
+      toEnsAddress,
+      errorContinue,
+    } = this.state;
+    const colors = this.context.colors || mockTheme.colors;
+    const themeAppearance = this.context.themeAppearance || 'light';
+    const styles = createStyles(colors);
+
+    return (
+      <SafeAreaView
+        style={styles.wrapper}
+        testID={AddContactViewSelectorsIDs.CONTAINER}
+      >
+        <KeyboardAwareScrollView style={styles.informationWrapper}>
+          <View style={styles.scrollWrapper}>
+            <Text style={styles.label}>{strings('address_book.name')}</Text>
+            <TextInput
+              editable={this.state.editable}
+              autoCapitalize={'none'}
+              autoCorrect={false}
+              onChangeText={this.onChangeName}
+              placeholder={strings('address_book.nickname')}
+              placeholderTextColor={colors.text.muted}
+              spellCheck={false}
+              numberOfLines={1}
+              style={[
+                styles.input,
+                inputWidth ? { width: inputWidth } : {},
+                editable ? {} : styles.textInputDisaled,
+              ]}
+              value={name}
+              onSubmitEditing={this.jumpToAddressInput}
+              testID={AddContactViewSelectorsIDs.NAME_INPUT}
+              keyboardAppearance={themeAppearance}
+            />
+
+            <Text style={styles.label}>{strings('address_book.address')}</Text>
+            <View
+              style={[styles.input, editable ? {} : styles.textInputDisaled]}
+            >
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  editable={editable}
+                  autoCapitalize={'none'}
+                  autoCorrect={false}
+                  onChangeText={this.onChangeAddress}
+                  placeholder={strings('address_book.add_input_placeholder')}
+                  placeholderTextColor={colors.text.muted}
+                  spellCheck={false}
+                  numberOfLines={1}
+                  style={[
+                    styles.textInput,
+                    inputWidth ? { width: inputWidth } : {},
+                  ]}
+                  value={toEnsName || address}
+                  ref={this.addressInput}
+                  onSubmitEditing={this.jumpToMemoInput}
+                  testID={AddContactViewSelectorsIDs.ADDRESS_INPUT}
+                  keyboardAppearance={themeAppearance}
+                />
+                {toEnsName && toEnsAddress && (
+                  <Text style={styles.resolvedInput}>
+                    {renderShortAddress(toEnsAddress)}
+                  </Text>
+                )}
+              </View>
+
+              {editable && (
+                <TouchableOpacity
+                  onPress={this.onScan}
+                  style={styles.iconWrapper}
+                >
+                  <AntIcon
+                    name="scan1"
+                    size={20}
+                    color={colors.primary.default}
+                    style={styles.scanIcon}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <Text style={styles.label}>{strings('address_book.memo')}</Text>
+            <View
+              style={[styles.input, editable ? {} : styles.textInputDisaled]}
+            >
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  multiline
+                  editable={editable}
+                  autoCapitalize={'none'}
+                  autoCorrect={false}
+                  onChangeText={this.onChangeMemo}
+                  placeholder={strings('address_book.memo')}
+                  placeholderTextColor={colors.text.muted}
+                  spellCheck={false}
+                  numberOfLines={1}
+                  style={[
+                    styles.textInput,
+                    inputWidth ? { width: inputWidth } : {},
+                  ]}
+                  value={memo}
+                  ref={this.memoInput}
+                  testID={AddContactViewSelectorsIDs.MEMO_INPUT}
+                  keyboardAppearance={themeAppearance}
+                />
+              </View>
+            </View>
+          </View>
+
+>>>>>>> Stashed changes
           {addressError && (
             <ErrorMessage
               errorMessage={this.renderErrorMessage(addressError)}
@@ -715,6 +1011,7 @@ class ContactForm extends PureComponent {
       </SafeAreaView>
     );
   };
+<<<<<<< Updated upstream
 					{!!editable && (
 						<View style={styles.buttonsWrapper}>
 							<View style={styles.buttonsContainer}>
@@ -757,6 +1054,8 @@ class ContactForm extends PureComponent {
 			</SafeAreaView>
 		);
 	};
+=======
+>>>>>>> Stashed changes
 }
 
 ContactForm.contextType = ThemeContext;

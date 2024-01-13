@@ -36,6 +36,7 @@ const createStyles = (colors: any) =>
       color: colors.error.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		modal: {
 			margin: 0,
@@ -63,6 +64,8 @@ const createStyles = (colors: any) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 interface Props {
   retryIsOpen: boolean;
@@ -106,6 +109,7 @@ const RetryModal = ({
       </View>
     </ActionModal>
   );
+<<<<<<< Updated upstream
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
 
@@ -125,6 +129,8 @@ const RetryModal = ({
 			</View>
 		</ActionModal>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 export default RetryModal;

@@ -98,6 +98,7 @@ class ReviewManager {
       // Failed to open store review
     }
   };
+<<<<<<< Updated upstream
 	navigationRef?: React.MutableRefObject<NavigationContainerRef>;
 
 	private addEventCount = async () => {
@@ -180,6 +181,8 @@ class ReviewManager {
 			// Failed to open store review
 		}
 	};
+=======
+>>>>>>> Stashed changes
 }
 
 export default new ReviewManager();

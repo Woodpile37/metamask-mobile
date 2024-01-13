@@ -18,11 +18,14 @@ export const CONNECTING_TO_A_DECEPTIVE_SITE =
 
 // Policies
 export const CONSENSYS_PRIVACY_POLICY = 'https://consensys.net/privacy-policy/';
+<<<<<<< Updated upstream
 	'https://metamask.zendesk.com/hc/en-us/articles/4404722782107-User-guide-Secret-Recovery-Phrase-password-and-private-keys';
 export const NON_CUSTODIAL_WALLET_URL =
 	'https://metamask.zendesk.com/hc/en-us/articles/360059952212-MetaMask-is-a-non-custodial-wallet';
 export const KEEP_SRP_SAFE_URL =
 	'https://metamask.zendesk.com/hc/en-us/articles/4407169552667-Scammers-and-Phishers-Rugpulls-and-airdrop-scams';
+=======
+>>>>>>> Stashed changes
 
 // Keystone
 export const KEYSTONE_SUPPORT = 'https://keyst.one/mmm';

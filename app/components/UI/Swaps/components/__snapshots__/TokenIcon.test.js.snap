@@ -8,7 +8,13 @@ exports[`TokenIcon component should Render correctly 2`] = `
   onError={[Function]}
   source={
     Object {
+<<<<<<< Updated upstream
       "testUri": "../../../app/images/eth-logo.png",
+=======
+      "default": Object {
+        "uri": "MockImage",
+      },
+>>>>>>> Stashed changes
     }
   }
   style={
@@ -30,6 +36,7 @@ exports[`TokenIcon component should Render correctly 2`] = `
 exports[`TokenIcon component should Render correctly 3`] = `
 <EmptyIcon>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -46,6 +53,8 @@ exports[`TokenIcon component should Render correctly 3`] = `
     right={false}
     small={false}
     strikethrough={false}
+=======
+>>>>>>> Stashed changes
     style={
       Array [
         Object {
@@ -59,8 +68,11 @@ exports[`TokenIcon component should Render correctly 3`] = `
         undefined,
       ]
     }
+<<<<<<< Updated upstream
     underline={false}
     upper={false}
+=======
+>>>>>>> Stashed changes
   >
     C
   </Text>
@@ -104,7 +116,13 @@ exports[`TokenIcon component should Render correctly 6`] = `
   onError={[Function]}
   source={
     Object {
+<<<<<<< Updated upstream
       "testUri": "../../../app/images/eth-logo.png",
+=======
+      "default": Object {
+        "uri": "MockImage",
+      },
+>>>>>>> Stashed changes
     }
   }
   style={
@@ -132,6 +150,7 @@ exports[`TokenIcon component should Render correctly 7`] = `
   medium={true}
 >
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -148,6 +167,8 @@ exports[`TokenIcon component should Render correctly 7`] = `
     right={false}
     small={false}
     strikethrough={false}
+=======
+>>>>>>> Stashed changes
     style={
       Array [
         Object {
@@ -164,8 +185,11 @@ exports[`TokenIcon component should Render correctly 7`] = `
         undefined,
       ]
     }
+<<<<<<< Updated upstream
     underline={false}
     upper={false}
+=======
+>>>>>>> Stashed changes
   >
     C
   </Text>

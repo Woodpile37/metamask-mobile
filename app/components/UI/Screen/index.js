@@ -13,6 +13,7 @@ export default class Screen extends PureComponent {
      */
     children: PropTypes.node,
   };
+<<<<<<< Updated upstream
 
   render() {
     return (
@@ -37,4 +38,16 @@ export default class Screen extends PureComponent {
 			</View>
 		);
 	}
+=======
+
+  render() {
+    return (
+      <View style={baseStyles.flexGrow}>
+        <SafeAreaView style={baseStyles.flexGrow}>
+          {this.props.children}
+        </SafeAreaView>
+      </View>
+    );
+  }
+>>>>>>> Stashed changes
 }

@@ -8,7 +8,10 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { Alert, ScrollView, SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { getNavigationOptionsTitle } from '../../UI/Navbar';
@@ -78,6 +81,7 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			backgroundColor: colors.background.default,
@@ -130,6 +134,8 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * View that displays all the active WalletConnect Sessions
@@ -141,6 +147,7 @@ export default class WalletConnectSessions extends PureComponent {
   };
 
   actionSheet = null;
+<<<<<<< Updated upstream
 
   sessionToRemove = null;
 
@@ -332,11 +339,25 @@ export default class WalletConnectSessions extends PureComponent {
 	state = {
 		sessions: [],
 	};
+=======
+>>>>>>> Stashed changes
 
-	actionSheet = null;
+  sessionToRemove = null;
 
-	sessionToRemove = null;
+  updateNavBar = () => {
+    const { navigation } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    navigation.setOptions(
+      getNavigationOptionsTitle(
+        strings('experimental_settings.wallet_connect_dapps'),
+        navigation,
+        false,
+        colors,
+      ),
+    );
+  };
 
+<<<<<<< Updated upstream
 	updateNavBar = () => {
 		const { navigation } = this.props;
 		const colors = this.context.colors || mockTheme.colors;
@@ -384,20 +405,40 @@ export default class WalletConnectSessions extends PureComponent {
 	};
 
 	onActionSheetPress = (index) => (index === 0 ? this.killSession() : null);
+=======
+  componentDidMount() {
+    this.updateNavBar();
+    this.loadSessions();
+  }
 
-	killSession = async () => {
-		try {
-			await WalletConnect.killSession(this.sessionToRemove.peerId);
-			Alert.alert(
-				strings('walletconnect_sessions.session_ended_title'),
-				strings('walletconnect_sessions.session_ended_desc')
-			);
-			this.loadSessions();
-		} catch (e) {
-			Logger.error(e, 'WC: Failed to kill session');
-		}
-	};
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
 
+  loadSessions = async () => {
+    let sessions = [];
+    let sessionsV2 = [];
+
+    const sessionData = await AsyncStorage.getItem(WALLETCONNECT_SESSIONS);
+    if (sessionData) {
+      sessions = JSON.parse(sessionData);
+    }
+
+    if (isWC2Enabled) {
+      // Add wallet connect v2 sessions to the list
+      sessionsV2 = (await WC2Manager.getInstance())?.getSessions() || [];
+    }
+
+    this.setState({ ready: true, sessions, sessionsV2 });
+  };
+>>>>>>> Stashed changes
+
+  renderDesc = (meta) => {
+    const { description } = meta;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+<<<<<<< Updated upstream
 	renderSessions = () => {
 		const { sessions } = this.state;
 		const colors = this.context.colors || mockTheme.colors;
@@ -456,6 +497,149 @@ export default class WalletConnectSessions extends PureComponent {
 			</SafeAreaView>
 		);
 	};
+=======
+    if (description) {
+      return <Text style={styles.desc}>{meta.description}</Text>;
+    }
+    return null;
+  };
+
+  onLongPress = (session) => {
+    this.sessionToRemove = session;
+    this.actionSheet.show();
+  };
+
+  createActionSheetRef = (ref) => {
+    this.actionSheet = ref;
+  };
+
+  onActionSheetPress = (index) => (index === 0 ? this.killSession() : null);
+
+  killSession = async () => {
+    const isV2 = this.sessionToRemove.peerId === undefined;
+    try {
+      if (isV2 && isWC2Enabled) {
+        await (
+          await WC2Manager.getInstance()
+        )?.removeSession(this.sessionToRemove);
+      } else {
+        await WalletConnect.killSession(this.sessionToRemove.peerId);
+      }
+
+      Alert.alert(
+        strings('walletconnect_sessions.session_ended_title'),
+        strings('walletconnect_sessions.session_ended_desc'),
+      );
+      this.loadSessions();
+    } catch (e) {
+      Logger.error(e, 'WC: Failed to kill session');
+    }
+  };
+
+  renderSessions = () => {
+    const { sessions, sessionsV2 } = this.state;
+
+    return (
+      <>
+        {sessions.map((session) => this.renderV1(session))}
+        {sessionsV2.map((session, index) => this.renderV2(session, index))}
+      </>
+    );
+  };
+
+  renderV1 = (session) => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+    return (
+      <TouchableOpacity
+        // eslint-disable-next-line react/jsx-no-bind
+        onLongPress={() => this.onLongPress(session)}
+        key={`session_${session.peerId}`}
+        style={styles.row}
+      >
+        <WebsiteIcon url={session.peerMeta.url} style={styles.websiteIcon} />
+        <View style={styles.info}>
+          <Text style={styles.name}>{session.peerMeta.name}</Text>
+          <Text style={styles.url}>{session.peerId}</Text>
+          <Text style={styles.url}>{session.peerMeta.url}</Text>
+          {this.renderDesc(session.peerMeta)}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  renderV2 = (session, index) => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+    return (
+      <TouchableOpacity
+        // eslint-disable-next-line react/jsx-no-bind
+        onLongPress={() => this.onLongPress(session)}
+        key={`session_${session.id}_${index}`}
+        style={styles.row}
+      >
+        <WebsiteIcon
+          url={session.peer.metadata.url}
+          style={styles.websiteIcon}
+        />
+        <View style={styles.info}>
+          <Text style={styles.name}>{session.peer.metadata.name}</Text>
+          <Text style={styles.url}>{session.topic}</Text>
+          <Text style={styles.url}>{session.peer.metadata.url}</Text>
+          {this.renderDesc(session.peer.metadata)}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  renderEmpty = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    return (
+      <View style={styles.emptyWrapper}>
+        <Text style={styles.emptyText}>
+          {strings('walletconnect_sessions.no_active_sessions')}
+        </Text>
+      </View>
+    );
+  };
+
+  render = () => {
+    const { ready, sessions, sessionsV2 } = this.state;
+    if (!ready) return null;
+    const colors = this.context.colors || mockTheme.colors;
+    const themeAppearance = this.context.themeAppearance;
+    const styles = createStyles(colors);
+
+    const sessionsLength = sessions.length + sessionsV2.length;
+    return (
+      <SafeAreaView
+        style={styles.wrapper}
+        testID={ExperimentalSelectorsIDs.CONTAINER}
+      >
+        <ScrollView
+          style={styles.wrapper}
+          contentContainerStyle={styles.scrollviewContent}
+        >
+          {sessionsLength > 0 ? this.renderSessions() : this.renderEmpty()}
+        </ScrollView>
+        <ActionSheet
+          ref={this.createActionSheetRef}
+          title={strings('walletconnect_sessions.end_session_title')}
+          options={[
+            strings('walletconnect_sessions.end'),
+            strings('walletconnect_sessions.cancel'),
+          ]}
+          cancelButtonIndex={1}
+          destructiveButtonIndex={0}
+          onPress={this.onActionSheetPress}
+          theme={themeAppearance}
+        />
+      </SafeAreaView>
+    );
+  };
+>>>>>>> Stashed changes
 }
 
 WalletConnectSessions.contextType = ThemeContext;
@@ -465,8 +649,11 @@ WalletConnectSessions.propTypes = {
    * Navigation object
    */
   navigation: PropTypes.object,
+<<<<<<< Updated upstream
 	/**
 	 * Navigation object
 	 */
 	navigation: PropTypes.object,
+=======
+>>>>>>> Stashed changes
 };

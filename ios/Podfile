@@ -83,6 +83,21 @@ def common_target_logic
   pod 'React-RCTPushNotification', :path => '../node_modules/react-native/Libraries/PushNotificationIOS'
   pod 'ReactNativePayments', :path => '../node_modules/@exodus/react-native-payments/lib/ios/'
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  add_flipper_pods!
+
+
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
+=======
+>>>>>>> Stashed changes
    # Comment the next line if you don't want to use dynamic frameworks
   # use_frameworks!
 	pod 'Permission-BluetoothPeripheral', :path => '../node_modules/react-native-permissions/ios/BluetoothPeripheral'
@@ -109,4 +124,8 @@ post_install do |installer|
     :mac_catalyst_enabled => false
   )
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
+<<<<<<< Updated upstream
+=======
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
 end

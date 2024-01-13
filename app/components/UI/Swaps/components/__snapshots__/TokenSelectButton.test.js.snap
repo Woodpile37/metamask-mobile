@@ -12,6 +12,7 @@ exports[`TokenSelectButton component should Render correctly 1`] = `
     <TokenIcon />
   </View>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -30,6 +31,9 @@ exports[`TokenSelectButton component should Render correctly 1`] = `
     strikethrough={false}
     underline={false}
     upper={false}
+=======
+    primary={true}
+>>>>>>> Stashed changes
   >
     Select a token
   </Text>
@@ -50,6 +54,7 @@ exports[`TokenSelectButton component should Render correctly 2`] = `
     />
   </View>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -68,6 +73,9 @@ exports[`TokenSelectButton component should Render correctly 2`] = `
     strikethrough={false}
     underline={false}
     upper={false}
+=======
+    primary={true}
+>>>>>>> Stashed changes
   >
     ETH
   </Text>
@@ -88,6 +96,7 @@ exports[`TokenSelectButton component should Render correctly 3`] = `
     />
   </View>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -106,6 +115,9 @@ exports[`TokenSelectButton component should Render correctly 3`] = `
     strikethrough={false}
     underline={false}
     upper={false}
+=======
+    primary={true}
+>>>>>>> Stashed changes
   >
     cDAI
   </Text>
@@ -127,6 +139,7 @@ exports[`TokenSelectButton component should Render correctly 4`] = `
     />
   </View>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -145,6 +158,9 @@ exports[`TokenSelectButton component should Render correctly 4`] = `
     strikethrough={false}
     underline={false}
     upper={false}
+=======
+    primary={true}
+>>>>>>> Stashed changes
   >
     DAI
   </Text>
@@ -168,6 +184,7 @@ exports[`TokenSelectButton component should Render correctly 5`] = `
     />
   </View>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -186,6 +203,9 @@ exports[`TokenSelectButton component should Render correctly 5`] = `
     strikethrough={false}
     underline={false}
     upper={false}
+=======
+    primary={true}
+>>>>>>> Stashed changes
   >
     DAI
   </Text>

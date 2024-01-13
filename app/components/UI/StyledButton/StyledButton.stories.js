@@ -40,6 +40,7 @@ storiesOf('Components / UI / StyledButton', module)
       </StyledButton>
     </View>
   ));
+<<<<<<< Updated upstream
 	.addDecorator((getStory) => getStory())
 	.add('Default', () => (
 		<View>
@@ -74,3 +75,5 @@ storiesOf('Components / UI / StyledButton', module)
 			</StyledButton>
 		</View>
 	));
+=======
+>>>>>>> Stashed changes

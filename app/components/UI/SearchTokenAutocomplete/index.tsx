@@ -6,7 +6,10 @@ import {
   Text,
   LayoutAnimation,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { View, StyleSheet, InteractionManager, Text, LayoutAnimation } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import { strings } from '../../../../locales/i18n';
 import ActionView from '../ActionView';
 import AssetSearch from '../AssetSearch';
@@ -42,6 +45,7 @@ const createStyles = (colors: any) =>
       paddingRight: 8,
     },
   });
+<<<<<<< Updated upstream
 import { MAINNET } from '../../../constants/network';
 import { useAppThemeFromContext, mockTheme } from '../../../util/theme';
 
@@ -59,6 +63,8 @@ const createStyles = (colors: any) =>
 			paddingRight: 8,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 interface Props {
   /**
@@ -237,6 +243,7 @@ const SearchTokenAutocomplete = ({ navigation }: Props) => {
       </ActionView>
     </View>
   );
+<<<<<<< Updated upstream
 	const [searchResults, setSearchResults] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedAsset, setSelectedAsset] = useState({});
@@ -380,6 +387,8 @@ const SearchTokenAutocomplete = ({ navigation }: Props) => {
 			</ActionView>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 export default SearchTokenAutocomplete;

@@ -18,8 +18,13 @@ import OnboardingScreenWithBg from '../../UI/OnboardingScreenWithBg';
 import Text from '../../Base/Text';
 import { connect } from 'react-redux';
 import Device from '../../../util/device';
+<<<<<<< Updated upstream
 import { useAppThemeFromContext, mockTheme } from '../../../util/theme';
 import { GAS_ESTIMATE_TYPES } from '@metamask/controllers';
+=======
+import { useTheme } from '../../../util/theme';
+import { GAS_ESTIMATE_TYPES } from '@metamask/gas-fee-controller';
+>>>>>>> Stashed changes
 import AppConstants from '../../../core/AppConstants';
 import { decGWEIToHexWEI } from '../../../util/conversions';
 import { BNToHex, hexToBN } from '../../../util/number';
@@ -27,11 +32,23 @@ import {
   calculateEIP1559GasFeeHexes,
   getTicker,
 } from '../../../util/transactions';
+<<<<<<< Updated upstream
 import { calculateEIP1559GasFeeHexes, getTicker } from '../../../util/transactions';
+=======
+>>>>>>> Stashed changes
 import Engine from '../../../core/Engine';
 import TransactionTypes from '../../../core/TransactionTypes';
 import { formatCurrency, getTransactionFee } from '../../../util/confirm-tx';
 import Logger from '../../../util/Logger';
+<<<<<<< Updated upstream
+=======
+import { selectTicker } from '../../../selectors/networkController';
+import {
+  selectConversionRate,
+  selectCurrentCurrency,
+  selectNativeCurrency,
+} from '../../../selectors/currencyRateController';
+>>>>>>> Stashed changes
 
 const IMAGE_3_RATIO = 281 / 354;
 const IMAGE_2_RATIO = 353 / 416;
@@ -124,6 +141,7 @@ const createStyles = (colors) =>
       margin: 32,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		scroll: {
 			flexGrow: 1,
@@ -207,6 +225,8 @@ const createStyles = (colors) =>
 			margin: 32,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const gas_education_carousel_1 = require('../../../images/gas-education-carousel-1.png'); // eslint-disable-line
 const gas_education_carousel_2 = require('../../../images/gas-education-carousel-2.png'); // eslint-disable-line
@@ -230,13 +250,18 @@ const GasEducationCarousel = ({
 }) => {
   const [currentTab, setCurrentTab] = useState(1);
   const [gasFiat, setGasFiat] = useState(null);
+<<<<<<< Updated upstream
   const { colors } = useAppThemeFromContext() || mockTheme;
+=======
+  const { colors } = useTheme();
+>>>>>>> Stashed changes
   const styles = createStyles(colors);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     navigation.setOptions(getTransparentOnboardingNavbarOptions(colors));
   }, [navigation, colors]);
+<<<<<<< Updated upstream
 const GasEducationCarousel = ({ navigation, route, conversionRate, currentCurrency, nativeCurrency, ticker }) => {
 	const [currentTab, setCurrentTab] = useState(1);
 	const [gasFiat, setGasFiat] = useState(null);
@@ -298,6 +323,8 @@ const GasEducationCarousel = ({ navigation, route, conversionRate, currentCurren
 		};
 		setGasEstimates();
 	}, [conversionRate, currentCurrency, nativeCurrency]);
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const setGasEstimates = async () => {
@@ -367,6 +394,7 @@ const GasEducationCarousel = ({ navigation, route, conversionRate, currentCurren
   };
 
   const renderTabBar = () => <View />;
+<<<<<<< Updated upstream
 	const renderText = (key) => {
 		if (key === 1) {
 			return (
@@ -482,6 +510,8 @@ const GasEducationCarousel = ({ navigation, route, conversionRate, currentCurren
 								);
 							})}
 						</ScrollableTabView>
+=======
+>>>>>>> Stashed changes
 
   const onChangeTab = (obj) => {
     setCurrentTab(obj.i + 1);
@@ -671,6 +701,7 @@ GasEducationCarousel.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+<<<<<<< Updated upstream
   conversionRate:
     state.engine.backgroundState.CurrencyRateController.conversionRate,
   currentCurrency:
@@ -710,6 +741,12 @@ const mapStateToProps = (state) => ({
 	currentCurrency: state.engine.backgroundState.CurrencyRateController.currentCurrency,
 	nativeCurrency: state.engine.backgroundState.CurrencyRateController.nativeCurrency,
 	ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+=======
+  conversionRate: selectConversionRate(state),
+  currentCurrency: selectCurrentCurrency(state),
+  nativeCurrency: selectNativeCurrency(state),
+  ticker: selectTicker(state),
+>>>>>>> Stashed changes
 });
 
 export default connect(mapStateToProps)(GasEducationCarousel);

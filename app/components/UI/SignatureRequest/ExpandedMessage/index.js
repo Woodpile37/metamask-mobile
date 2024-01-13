@@ -8,7 +8,10 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TouchableWithoutFeedback } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import { fontStyles, baseStyles } from '../../../../styles/common';
 import WebsiteIcon from '../../WebsiteIcon';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -69,6 +72,7 @@ const createStyles = (colors) =>
       ...baseStyles.flexGrow,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		expandedRoot: {
 			backgroundColor: colors.background.default,
@@ -120,6 +124,8 @@ const createStyles = (colors) =>
 			...baseStyles.flexGrow,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * Component that supports eth_signTypedData and eth_signTypedData_v3
@@ -184,6 +190,7 @@ export default class ExpandedMessage extends PureComponent {
       </View>
     );
   }
+<<<<<<< Updated upstream
 	render() {
 		const { currentPageInformation, renderMessage, toggleExpandedMessage } = this.props;
 		const url = currentPageInformation.url;
@@ -212,6 +219,8 @@ export default class ExpandedMessage extends PureComponent {
 			</View>
 		);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 ExpandedMessage.contextType = ThemeContext;

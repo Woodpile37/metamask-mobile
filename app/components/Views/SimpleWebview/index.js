@@ -25,6 +25,7 @@ export default class SimpleWebview extends PureComponent {
     const colors = this.context.colors || mockTheme.colors;
     navigation.setOptions(getWebviewNavbar(navigation, route, colors));
   };
+<<<<<<< Updated upstream
 
   componentDidMount = () => {
     const { navigation } = this.props;
@@ -73,6 +74,18 @@ export default class SimpleWebview extends PureComponent {
 			});
 		}
 	};
+=======
+
+  componentDidMount = () => {
+    const { navigation } = this.props;
+    this.updateNavBar();
+    navigation && navigation.setParams({ dispatch: this.share });
+  };
+
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
+>>>>>>> Stashed changes
 
   share = () => {
     const { route } = this.props;

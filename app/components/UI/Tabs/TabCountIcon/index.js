@@ -25,6 +25,7 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		tabIcon: {
 			borderWidth: 2,
@@ -42,6 +43,8 @@ const createStyles = (colors) =>
 			...fontStyles.normal,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that renders an icon showing
@@ -63,6 +66,7 @@ class TabCountIcon extends PureComponent {
     const { tabCount, style } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+<<<<<<< Updated upstream
 
     return (
       <View style={[styles.tabIcon, style]}>
@@ -86,6 +90,20 @@ class TabCountIcon extends PureComponent {
 			</View>
 		);
 	}
+=======
+
+    return (
+      <View style={[styles.tabIcon, style]}>
+        <Text
+          style={styles.tabCount}
+          {...generateTestId(Platform, TABS_NUMBER)}
+        >
+          {tabCount}
+        </Text>
+      </View>
+    );
+  }
+>>>>>>> Stashed changes
 }
 
 const mapStateToProps = (state) => ({

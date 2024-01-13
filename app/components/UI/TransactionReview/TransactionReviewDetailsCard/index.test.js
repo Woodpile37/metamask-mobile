@@ -10,6 +10,7 @@ const initialState = {
   engine: {
     backgroundState: initialBackgroundState,
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			NetworkController: {
@@ -22,6 +23,8 @@ const initialState = {
 			},
 		},
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 

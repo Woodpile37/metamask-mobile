@@ -33,6 +33,7 @@ describe('getConfusablesExplanations', () => {
       getConfusablesExplanations(collectConfusables('metamask.eth')),
     ).toHaveLength(1);
   });
+<<<<<<< Updated upstream
 import { hasZeroWidthPoints, collectConfusables, getConfusablesExplanations } from '.';
 
 describe('hasZeroWidthPoints', () => {
@@ -60,4 +61,6 @@ describe('getConfusablesExplanations', () => {
 		expect(getConfusablesExplanations(collectConfusables('ѕсоре.eth'))).toHaveLength(5);
 		expect(getConfusablesExplanations(collectConfusables('metamask.eth'))).toHaveLength(1);
 	});
+=======
+>>>>>>> Stashed changes
 });

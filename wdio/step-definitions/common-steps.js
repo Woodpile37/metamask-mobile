@@ -5,7 +5,11 @@ import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel';
 import OnboardingScreen from '../screen-objects/Onboarding/OnboardingScreen';
 import MetaMetricsScreen from '../screen-objects/Onboarding/MetaMetricsScreen';
 import ImportFromSeedScreen from '../screen-objects/Onboarding/ImportFromSeedScreen';
+<<<<<<< Updated upstream
 import TabBarModal from "../screen-objects/Modals/TabBarModal";
+=======
+import TabBarModal from '../screen-objects/Modals/TabBarModal';
+>>>>>>> Stashed changes
 import CreateNewWalletScreen from '../screen-objects/Onboarding/CreateNewWalletScreen.js';
 import WalletMainScreen from '../screen-objects/WalletMainScreen';
 import CommonScreen from '../screen-objects/CommonScreen';
@@ -15,12 +19,21 @@ import LoginScreen from '../screen-objects/LoginScreen';
 import TermOfUseScreen from '../screen-objects/Modals/TermOfUseScreen';
 import WhatsNewModal from '../screen-objects/Modals/WhatsNewModal';
 
+<<<<<<< Updated upstream
 Then(/^the Welcome Screen is displayed$/, async () => {
   await WelcomeScreen.waitForScreenToDisplay();
 });
 
 Given(/^the app displayed the splash animation$/, async () => {
   await WelcomeScreen.waitForSplashAnimationToDisplay();
+=======
+Then(/^the Welcome screen is displayed$/, async () => {
+  await WelcomeScreen.isScreenDisplayed();
+});
+
+Given(/^the app displayed the splash animation$/, async () => {
+  await WelcomeScreen.isScreenDisplayed();
+>>>>>>> Stashed changes
 });
 
 Given(/^the splash animation disappears$/, async () => {
@@ -55,7 +68,11 @@ Given(/^I have imported my wallet$/, async () => {
   await TermOfUseScreen.textIsDisplayed();
   await TermOfUseScreen.tapAgreeCheckBox();
   await TermOfUseScreen.tapScrollEndButton();
+<<<<<<< Updated upstream
   if (!await TermOfUseScreen.isCheckBoxChecked()){
+=======
+  if (!(await TermOfUseScreen.isCheckBoxChecked())) {
+>>>>>>> Stashed changes
     await TermOfUseScreen.tapAgreeCheckBox();
     await TermOfUseScreen.tapAcceptButton();
   } else {
@@ -133,6 +150,15 @@ Then(/^"([^"]*)?" is displayed on (.*) (.*) view/, async (text) => {
   await CommonScreen.isTextDisplayed(text);
 });
 
+<<<<<<< Updated upstream
+=======
+Then(/^"([^"]*)?" is displayed/, async (text) => {
+  const timeout = 1000;
+  await driver.pause(timeout);
+  await CommonScreen.isTextDisplayed(text);
+});
+
+>>>>>>> Stashed changes
 Then(/^"([^"]*)?" is not displayed/, async (text) => {
   const timeout = 1000;
   await driver.pause(timeout);
@@ -162,6 +188,7 @@ Then(
 
 When(/^I log into my wallet$/, async () => {
   await LoginScreen.tapUnlockButton();
+<<<<<<< Updated upstream
   await WalletMainScreen.isMainWalletViewVisible();
 });
 
@@ -171,6 +198,31 @@ When(/^I kill the app$/, async () => {
 
 When(/^I relaunch the app$/, async () => {
   await driver.startActivity('io.metamask.qa', 'io.metamask.MainActivity');
+=======
+  await WalletMainScreen.isVisible();
+});
+
+When(/^I kill the app$/, async () => {3
+  const platform = await driver.getPlatform();
+  if (platform === 'iOS') {
+    await driver.terminateApp('io.metamask.MetaMask-QA');
+  }
+
+  if (platform === 'Android') {
+    await driver.closeApp();
+  }
+});
+
+When(/^I relaunch the app$/, async () => {
+  const platform = await driver.getPlatform();
+  if (platform === 'iOS') {
+    await driver.activateApp('io.metamask.MetaMask-QA');
+  }
+
+  if (platform === 'Android') {
+    await driver.startActivity('io.metamask.qa', 'io.metamask.MainActivity');
+  }
+>>>>>>> Stashed changes
 });
 
 When(/^I fill my password in the Login screen$/, async () => {
@@ -237,6 +289,7 @@ Given(/^I close the Whats New modal$/, async () => {
   await WhatsNewModal.waitForDisappear();
 });
 
+<<<<<<< Updated upstream
 Given(/^Ganache server is started$/, async () => {
   await ganacheServer.start({ mnemonic: validAccount.seedPhrase });
 });
@@ -245,14 +298,21 @@ Then(/^Ganache server is stopped$/, async () => {
   await ganacheServer.quit();
 });
 
+=======
+>>>>>>> Stashed changes
 When(/^I tap on the Settings tab option$/, async () => {
   await TabBarModal.tapSettingButton();
 });
 
+<<<<<<< Updated upstream
 Given(/^Multisig contract is deployed$/, async () => {
   const ganacheSeeder = await new GanacheSeeder(ganacheServer.getProvider());
   await ganacheSeeder.deploySmartContract(SMART_CONTRACTS.MULTISIG);
   const contractRegistry = ganacheSeeder.getContractRegistry();
   const contractAddress = await contractRegistry.getContractAddress(SMART_CONTRACTS.MULTISIG);
   return contractAddress;
+=======
+When(/^I tap on the Activity tab option$/, async () => {
+  await TabBarModal.tapActivityButton();
+>>>>>>> Stashed changes
 });

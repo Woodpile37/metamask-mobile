@@ -63,6 +63,7 @@ const createStyles = (colors) =>
       marginTop: 30,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			...StyleSheet.absoluteFillObject,
@@ -111,6 +112,8 @@ const createStyles = (colors) =>
 			marginTop: 30,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * View that renders custom error page for the browser
@@ -126,6 +129,7 @@ export default class WebviewError extends PureComponent {
      */
     returnHome: PropTypes.func,
   };
+<<<<<<< Updated upstream
 	static propTypes = {
 		/**
 		 * error info
@@ -136,10 +140,13 @@ export default class WebviewError extends PureComponent {
 		 */
 		returnHome: PropTypes.func,
 	};
+=======
+>>>>>>> Stashed changes
 
   static defaultProps = {
     error: false,
   };
+<<<<<<< Updated upstream
 
   returnHome = () => {
     this.props.returnHome();
@@ -226,6 +233,59 @@ export default class WebviewError extends PureComponent {
 			</View>
 		) : null;
 	}
+=======
+
+  returnHome = () => {
+    this.props.returnHome();
+  };
+
+  render() {
+    const { error } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    return error ? (
+      <View style={styles.wrapper}>
+        <View style={styles.foxWrapper}>
+          {Device.isAndroid() ? (
+            <Image
+              source={require('../../../images/fox.png')}
+              style={styles.image}
+              resizeMethod={'auto'}
+            />
+          ) : (
+            <AnimatedFox bgColor={colors.background.default} />
+          )}
+        </View>
+        <View style={styles.textWrapper}>
+          <Text
+            style={styles.errorTitle}
+            {...generateTestId(Platform, ERROR_PAGE_TITLE)}
+          >
+            {strings('webview_error.title')}
+          </Text>
+          <Text
+            style={styles.errorMessage}
+            {...generateTestId(Platform, ERROR_PAGE_MESSAGE)}
+          >
+            {strings('webview_error.message')}
+          </Text>
+          {error.description ? (
+            <Text style={styles.errorInfo}>{error.description}</Text>
+          ) : null}
+        </View>
+        <View
+          style={styles.buttonWrapper}
+          {...generateTestId(Platform, ERROR_PAGE_RETURN_BUTTON)}
+        >
+          <StyledButton type={'confirm'} onPress={this.returnHome}>
+            {strings('webview_error.return_home')}
+          </StyledButton>
+        </View>
+      </View>
+    ) : null;
+  }
+>>>>>>> Stashed changes
 }
 
 WebviewError.contextType = ThemeContext;

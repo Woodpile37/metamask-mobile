@@ -117,6 +117,7 @@ export default class WalletView {
       nftName,
     );
   }
+<<<<<<< Updated upstream
 	static async tokenIsNotVisibleInWallet(tokenName) {
 		await TestHelpers.checkIfElementWithTextIsNotVisible(tokenName);
 	}
@@ -124,6 +125,8 @@ export default class WalletView {
 	static async isNFTNameVisible(nftName) {
 		await TestHelpers.checkIfElementHasString(NFT_CONTAINER_ID, nftName);
 	}
+=======
+>>>>>>> Stashed changes
 
   static async isNetworkNameVisible(networkName) {
     await TestHelpers.checkIfElementHasString(

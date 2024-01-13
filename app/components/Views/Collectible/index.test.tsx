@@ -13,6 +13,7 @@ const initialState = {
   modals: {
     collectibleContractModalVisible: false,
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			PreferencesController: {
@@ -34,6 +35,8 @@ const initialState = {
 	modals: {
 		collectibleContractModalVisible: false,
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 

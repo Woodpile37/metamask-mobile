@@ -20,7 +20,11 @@ import Networks, {
   getAllNetworks,
 } from '../../util/networks';
 import { isBlockaidFeatureEnabled } from '../../util/blockaid';
+<<<<<<< Updated upstream
 import { polyfillGasPrice, validateParams } from './utils';
+=======
+import { polyfillGasPrice } from './utils';
+>>>>>>> Stashed changes
 import ImportedEngine from '../Engine';
 import { strings } from '../../../locales/i18n';
 import { resemblesAddress, safeToChecksumAddress } from '../../util/address';
@@ -32,6 +36,7 @@ import { getPermittedAccounts } from '../Permissions';
 import AppConstants from '../AppConstants';
 import PPOMUtil from '../../lib/ppom/ppom-util';
 import {
+<<<<<<< Updated upstream
   selectChainId,
   selectProviderConfig,
   selectProviderType,
@@ -46,6 +51,14 @@ import { regex } from '../../../app/util/regex';
 import { swapsLivenessSelector } from '../../reducers/swaps/index.js';
 import { isSwapsAllowed } from '../../components/UI/Swaps/utils/index.js';
 import { fromWei } from '../../util/number/index.js';
+=======
+  selectProviderConfig,
+  selectProviderType,
+} from '../../selectors/networkController';
+import { setEventStageError, setEventStage } from '../../actions/rpcEvents';
+import { isWhitelistedRPC, RPCStageTypes } from '../../reducers/rpcEvents';
+import { regex } from '../../../app/util/regex';
+>>>>>>> Stashed changes
 import Logger from '../../../app/util/Logger';
 import DevLogger from '../SDKConnect/utils/DevLogger';
 
@@ -333,6 +346,7 @@ export const getRpcMethodMiddleware = ({
       permissionRpcMethods.handlers;
 
     const rpcMethods: any = {
+<<<<<<< Updated upstream
       wallet_swapAsset: async () => {
         const { from, to, user_address } = req.params[0];
         const identities = selectIdentities(store.getState());
@@ -416,6 +430,8 @@ export const getRpcMethodMiddleware = ({
           },
         });
       },
+=======
+>>>>>>> Stashed changes
       wallet_getPermissions: async () =>
         new Promise<any>((resolve) => {
           const handle = getPermissionsHandler.implementation(

@@ -9,10 +9,13 @@ export const isZero = (value: number | any): boolean => {
     return true;
   }
   return false;
+<<<<<<< Updated upstream
 	if (value?.toString && value?.toString?.() === '0') {
 		return true;
 	}
 	return false;
+=======
+>>>>>>> Stashed changes
 };
 
 /**
@@ -24,7 +27,10 @@ export const isZero = (value: number | any): boolean => {
  */
 export const lte = (value: number, other: number): boolean =>
   Number(value) <= Number(other);
+<<<<<<< Updated upstream
 export const lte = (value: number, other: number): boolean => Number(value) <= Number(other);
+=======
+>>>>>>> Stashed changes
 
 /**
  * Function that checks if value is greater than or equal to other
@@ -35,7 +41,10 @@ export const lte = (value: number, other: number): boolean => Number(value) <= N
  */
 export const gte = (value: number, other: number): boolean =>
   Number(value) >= Number(other);
+<<<<<<< Updated upstream
 export const gte = (value: number, other: number): boolean => Number(value) >= Number(other);
+=======
+>>>>>>> Stashed changes
 
 /**
  * Function that checks if value is less than other
@@ -46,7 +55,10 @@ export const gte = (value: number, other: number): boolean => Number(value) >= N
  */
 export const lt = (value: number, other: number): boolean =>
   Number(value) < Number(other);
+<<<<<<< Updated upstream
 export const lt = (value: number, other: number): boolean => Number(value) < Number(other);
+=======
+>>>>>>> Stashed changes
 
 /**
  * Function that checks if value is greater than other
@@ -57,4 +69,38 @@ export const lt = (value: number, other: number): boolean => Number(value) < Num
  */
 export const gt = (value: number, other: number): boolean =>
   Number(value) > Number(other);
+<<<<<<< Updated upstream
 export const gt = (value: number, other: number): boolean => Number(value) > Number(other);
+=======
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function getTag(value: any): string {
+  const objToString = Object.prototype.toString;
+  if (value === null) {
+    return value === undefined ? '[object Undefined]' : '[object Null]';
+  }
+  return objToString.call(value);
+}
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+ */
+export function isString(value: any): boolean {
+  const type = typeof value;
+  return (
+    type === 'string' ||
+    (type === 'object' &&
+      value !== null &&
+      !Array.isArray(value) &&
+      getTag(value) === '[object String]')
+  );
+}
+>>>>>>> Stashed changes

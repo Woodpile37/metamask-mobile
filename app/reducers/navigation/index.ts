@@ -32,6 +32,7 @@ const navigationReducer = (state = initialState, action: any = {}) => {
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	currentRoute: string;
 }
 
@@ -49,6 +50,8 @@ const navigationReducer = (state = initialState, action: any = {}) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 
 /**

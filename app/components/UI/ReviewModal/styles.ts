@@ -47,6 +47,7 @@ export const createStyles = (colors: any) =>
     },
     closeButton: { position: 'absolute', right: 16, top: 16 },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		screen: { justifyContent: 'center', paddingHorizontal: 24 },
 		modal: {
@@ -88,3 +89,5 @@ export const createStyles = (colors: any) =>
 		},
 		closeButton: { position: 'absolute', right: 16, top: 16 },
 	});
+=======
+>>>>>>> Stashed changes

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+<<<<<<< Updated upstream
 import {
   StyleSheet,
   Text,
@@ -7,6 +8,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
+=======
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+>>>>>>> Stashed changes
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import { fontStyles } from '../../../../styles/common';
@@ -14,6 +18,17 @@ import { strings } from '../../../../../locales/i18n';
 import { connect } from 'react-redux';
 import Device from '../../../../util/device';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
+<<<<<<< Updated upstream
+=======
+import ClipboardManager from '../../../../core/ClipboardManager';
+import { showAlert } from '../../../../actions/alert';
+import GlobalAlert from '../../../../components/UI/GlobalAlert';
+import {
+  selectConversionRate,
+  selectCurrentCurrency,
+} from '../../../../selectors/currencyRateController';
+import { selectContractExchangeRates } from '../../../../selectors/tokenRatesController';
+>>>>>>> Stashed changes
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -95,10 +110,35 @@ class TransactionReviewData extends PureComponent {
      * Height of custom gas and data modal
      */
     customGasHeight: PropTypes.number,
+<<<<<<< Updated upstream
+=======
+    /**
+     * Triggers global alert
+     */
+    showAlert: PropTypes.func,
+>>>>>>> Stashed changes
   };
 
   applyRootHeight = () => ({ height: this.props.customGasHeight });
 
+<<<<<<< Updated upstream
+=======
+  handleCopyHex = () => {
+    const {
+      transaction: {
+        transaction: { data },
+      },
+    } = this.props;
+    ClipboardManager.setString(data);
+    this.props.showAlert({
+      isVisible: true,
+      autodismiss: 1500,
+      content: 'clipboard-alert',
+      data: { msg: strings('transaction.hex_data_copied') },
+    });
+  };
+
+>>>>>>> Stashed changes
   render = () => {
     const {
       transaction: {
@@ -146,6 +186,7 @@ class TransactionReviewData extends PureComponent {
           </Text>
           <View style={styles.scrollView}>
             <KeyboardAwareScrollView style={styles.scrollView}>
+<<<<<<< Updated upstream
               <TouchableWithoutFeedback style={styles.scrollView}>
                 <Text selectable style={styles.hexData}>
                   {data}
@@ -154,12 +195,26 @@ class TransactionReviewData extends PureComponent {
             </KeyboardAwareScrollView>
           </View>
         </View>
+=======
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={this.handleCopyHex}
+                style={styles.scrollView}
+              >
+                <Text style={styles.hexData}>{data}</Text>
+              </TouchableOpacity>
+            </KeyboardAwareScrollView>
+          </View>
+        </View>
+        <GlobalAlert />
+>>>>>>> Stashed changes
       </View>
     );
   };
 }
 
 const mapStateToProps = (state) => ({
+<<<<<<< Updated upstream
   conversionRate:
     state.engine.backgroundState.CurrencyRateController.conversionRate,
   currentCurrency:
@@ -172,3 +227,21 @@ const mapStateToProps = (state) => ({
 TransactionReviewData.contextType = ThemeContext;
 
 export default connect(mapStateToProps)(TransactionReviewData);
+=======
+  conversionRate: selectConversionRate(state),
+  currentCurrency: selectCurrentCurrency(state),
+  contractExchangeRates: selectContractExchangeRates(state),
+  transaction: state.transaction,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  showAlert: (config) => dispatch(showAlert(config)),
+});
+
+TransactionReviewData.contextType = ThemeContext;
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TransactionReviewData);
+>>>>>>> Stashed changes
