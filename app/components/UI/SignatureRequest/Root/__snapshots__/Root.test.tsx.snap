@@ -37,8 +37,6 @@ exports[`Root should render correctly 1`] = `
   <ContextProvider
     value={
       Object {
-<<<<<<< Updated upstream
-=======
         "brandColors": Object {
           "black": Object {
             "000": "#000000",
@@ -47,7 +45,6 @@ exports[`Root should render correctly 1`] = `
             "000": "#FFFFFF",
           },
         },
->>>>>>> Stashed changes
         "colors": Object {
           "background": Object {
             "alternative": "#F2F4F6",

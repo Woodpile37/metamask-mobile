@@ -1,11 +1,3 @@
-<<<<<<< Updated upstream
-import React, { useContext } from 'react';
-import { useColorScheme, StatusBar, ColorSchemeName } from 'react-native';
-import { Colors, AppThemeKey, Theme } from './models';
-import { useSelector } from 'react-redux';
-import { colors as colorTheme } from '@metamask/design-tokens';
-import Device from '../device';
-=======
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   useColorScheme,
@@ -20,15 +12,11 @@ import { useSelector } from 'react-redux';
 import { lightTheme, darkTheme } from '@metamask/design-tokens';
 import Device from '../device';
 import brandColors from './temp-tokens/brandColors';
->>>>>>> Stashed changes
 
 /**
  * This is needed to make our unit tests pass since Enzyme doesn't support contextType
  * TODO: Convert classes into functional components and remove contextType
  */
-<<<<<<< Updated upstream
-export const mockTheme = { colors: colorTheme.light, themeAppearance: 'light' };
-=======
 export const mockTheme = {
   colors: lightTheme.colors,
   themeAppearance: 'light' as AppThemeKey.light,
@@ -36,7 +24,6 @@ export const mockTheme = {
   shadows: lightTheme.shadows,
   brandColors,
 };
->>>>>>> Stashed changes
 
 export const ThemeContext = React.createContext<any>(undefined);
 
@@ -72,10 +59,6 @@ export const getAssetFromTheme = (
   return asset;
 };
 
-<<<<<<< Updated upstream
-export const useAppTheme = (): Theme => {
-  const osThemeName = useColorScheme();
-=======
 /**
  * Custom useColorScheme hook that throttles updating the system theme color.
  * Replaces RN's useColorScheme hook, which has a bug where it resolves briefly to the wrong color.
@@ -116,7 +99,6 @@ const useColorSchemeCustom = (
 
 export const useAppTheme = (): Theme => {
   const osThemeName = useColorSchemeCustom();
->>>>>>> Stashed changes
   const appTheme: AppThemeKey = useSelector(
     (state: any) => state.user.appTheme,
   );
@@ -126,45 +108,26 @@ export const useAppTheme = (): Theme => {
     AppThemeKey.light,
     AppThemeKey.dark,
   );
-<<<<<<< Updated upstream
-  let colors: Colors;
-=======
   let colors: Theme['colors'];
   let typography: Theme['typography'];
   let shadows: Theme['shadows'];
->>>>>>> Stashed changes
 
   const setDarkStatusBar = () => {
     StatusBar.setBarStyle('light-content', true);
     Device.isAndroid() &&
-<<<<<<< Updated upstream
-      StatusBar.setBackgroundColor(colorTheme.dark.background.default);
-=======
       StatusBar.setBackgroundColor(darkTheme.colors.background.default);
->>>>>>> Stashed changes
   };
 
   const setLightStatusBar = () => {
     StatusBar.setBarStyle('dark-content', true);
     Device.isAndroid() &&
-<<<<<<< Updated upstream
-      StatusBar.setBackgroundColor(colorTheme.light.background.default);
-=======
       StatusBar.setBackgroundColor(lightTheme.colors.background.default);
->>>>>>> Stashed changes
   };
 
   switch (appTheme) {
     /* eslint-disable no-fallthrough */
     case AppThemeKey.os: {
       if (osThemeName === AppThemeKey.light) {
-<<<<<<< Updated upstream
-        colors = colorTheme.light;
-        setLightStatusBar();
-        break;
-      } else if (osThemeName === AppThemeKey.dark) {
-        colors = colorTheme.dark;
-=======
         colors = lightTheme.colors;
         typography = lightTheme.typography;
         shadows = lightTheme.shadows;
@@ -174,29 +137,17 @@ export const useAppTheme = (): Theme => {
         colors = darkTheme.colors;
         typography = darkTheme.typography;
         shadows = darkTheme.shadows;
->>>>>>> Stashed changes
         setDarkStatusBar();
         break;
       } else {
         // Cover cases where OS returns undefined
-<<<<<<< Updated upstream
-        colors = colorTheme.light;
-=======
         colors = lightTheme.colors;
         typography = lightTheme.typography;
         shadows = lightTheme.shadows;
->>>>>>> Stashed changes
         setLightStatusBar();
       }
     }
     case AppThemeKey.light:
-<<<<<<< Updated upstream
-      colors = colorTheme.light;
-      setLightStatusBar();
-      break;
-    case AppThemeKey.dark:
-      colors = colorTheme.dark;
-=======
       colors = lightTheme.colors;
       typography = lightTheme.typography;
       shadows = lightTheme.shadows;
@@ -206,18 +157,10 @@ export const useAppTheme = (): Theme => {
       colors = darkTheme.colors;
       typography = darkTheme.typography;
       shadows = darkTheme.shadows;
->>>>>>> Stashed changes
       setDarkStatusBar();
       break;
     default:
       // Default uses light theme
-<<<<<<< Updated upstream
-      colors = colorTheme.light;
-      setLightStatusBar();
-  }
-
-  return { colors, themeAppearance };
-=======
       colors = lightTheme.colors;
       typography = lightTheme.typography;
       shadows = lightTheme.shadows;
@@ -225,7 +168,6 @@ export const useAppTheme = (): Theme => {
   }
 
   return { colors, themeAppearance, typography, shadows, brandColors };
->>>>>>> Stashed changes
 };
 
 export const useAppThemeFromContext = (): Theme => {

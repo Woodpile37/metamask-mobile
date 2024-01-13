@@ -16,19 +16,11 @@ import Networks from '../../resources/networks.json';
 import TestHelpers from '../../helpers';
 import FixtureServer from '../../fixtures/fixture-server';
 import { getFixturesServerPort } from '../../fixtures/utils';
-<<<<<<< Updated upstream
-import { SmokeSwaps } from '../../tags';
-
-const fixtureServer = new FixtureServer();
-
-describe(SmokeSwaps('Swap from Token view'), () => {
-=======
 import { Regression } from '../../tags';
 
 const fixtureServer = new FixtureServer();
 
 describe(Regression('Swap from Token view'), () => {
->>>>>>> Stashed changes
   const swapOnboarded = true; // TODO: Set it to false once we show the onboarding page again.
   beforeAll(async () => {
     await TestHelpers.reverseServerPort();

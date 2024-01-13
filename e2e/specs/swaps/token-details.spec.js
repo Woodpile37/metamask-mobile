@@ -1,10 +1,6 @@
 'use strict';
 
-<<<<<<< Updated upstream
-import { Regression } from '../../tags';
-=======
 import { SmokeSwaps } from '../../tags';
->>>>>>> Stashed changes
 import WalletView from '../../pages/WalletView';
 import TokenOverview from '../../pages/TokenOverview';
 import {
@@ -13,11 +9,7 @@ import {
 } from '../../viewHelper';
 import Networks from '../../resources/networks.json';
 
-<<<<<<< Updated upstream
-describe(Regression('Token Chart Tests'), () => {
-=======
 describe(SmokeSwaps('Token Chart Tests'), () => {
->>>>>>> Stashed changes
   beforeAll(async () => {
     jest.setTimeout(150000);
     await device.launchApp();

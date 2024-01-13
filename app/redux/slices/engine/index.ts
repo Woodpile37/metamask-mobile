@@ -29,12 +29,9 @@ const controllerNames = [
   { name: 'TokenBalancesController', initialState: {} },
   { name: 'TokenRatesController', initialState: {} },
   { name: 'TransactionController', initialState: {} },
-<<<<<<< Updated upstream
-=======
   ///: BEGIN:ONLY_INCLUDE_IF(snaps)
   { name: 'SnapController', initialState: {} },
   ///: END:ONLY_INCLUDE_IF
->>>>>>> Stashed changes
   {
     name: 'SwapsController',
     initialState: {},
