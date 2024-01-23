@@ -1,8 +1,6 @@
-# Excluded and patched using this current patch patches/request+2.88.2.patch
-GHSA-p8p7-x288-28g6
+# improved-yarn-audit advisory exclusions
 
-# ReDoS vulnerability, no impact to this application, and fix not backported yet to the versions we use
-GHSA-c2qf-rxjj-qqgw
+# Temporarly ignored to build SDK Test release
 
-#exclude these for now. Revert & handle them before merge to main
-GHSA-jchw-25xp-jwwc
+GHSA-mrgp-mrhc-5jrq
+GHSA-2j79-8pqc-r7x6

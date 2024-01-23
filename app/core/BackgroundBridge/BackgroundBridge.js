@@ -1,7 +1,19 @@
 /* eslint-disable import/no-commonjs */
 import URL from 'url-parse';
-import { NetworksChainId } from '@metamask/controller-utils';
+import { NetworksChainId } from '@metamask/controllers';
 import { JsonRpcEngine } from 'json-rpc-engine';
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+import { JS_POST_MESSAGE_TO_PROVIDER, JS_IFRAME_POST_MESSAGE_TO_PROVIDER } from '../util/browserScripts';
+import MobilePortStream from './MobilePortStream';
+import { setupMultiplex } from '../util/streams';
+import { createOriginMiddleware, createLoggerMiddleware } from '../util/middlewares';
+import Engine from './Engine';
+import { getAllNetworks } from '../util/networks';
+import Logger from '../util/Logger';
+import AppConstants from './AppConstants';
+import { createEngineStream } from 'json-rpc-middleware-stream';
+import { createSwappableProxy, createEventEmitterProxy } from 'swappable-obj-proxy';
+========
 import MobilePortStream from '../MobilePortStream';
 import { setupMultiplex } from '../../util/streams';
 import {
@@ -9,25 +21,18 @@ import {
   createLoggerMiddleware,
 } from '../../util/middlewares';
 import Engine from '../Engine';
-import { createSanitizationMiddleware } from '../SanitizationMiddleware';
 import { getAllNetworks } from '../../util/networks';
 import Logger from '../../util/Logger';
 import AppConstants from '../AppConstants';
 import { createEngineStream } from 'json-rpc-middleware-stream';
+import {
+  createSwappableProxy,
+  createEventEmitterProxy,
+} from 'swappable-obj-proxy';
 import RemotePort from './RemotePort';
 import WalletConnectPort from './WalletConnectPort';
 import Port from './Port';
-import {
-  selectChainId,
-  selectNetworkId,
-  selectProviderConfig,
-  selectLegacyNetwork,
-} from '../../selectors/networkController';
-import { store } from '../../store';
-///: BEGIN:ONLY_INCLUDE_IF(snaps)
-import snapMethodMiddlewareBuilder from '../Snaps/SnapsMethodMiddleware';
-import { SubjectType } from '@metamask/permission-controller';
-///: END:ONLY_INCLUDE_IF
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
 const createFilterMiddleware = require('eth-json-rpc-filters');
 const createSubscriptionManager = require('eth-json-rpc-filters/subscriptionManager');
@@ -37,6 +42,82 @@ const pump = require('pump');
 const EventEmitter = require('events').EventEmitter;
 const { NOTIFICATION_NAMES } = AppConstants;
 
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+/**
+ * Module that listens for and responds to messages from an InpageBridge using postMessage
+ */
+
+class Port extends EventEmitter {
+	constructor(window, isMainFrame) {
+		super();
+		this._window = window;
+		this._isMainFrame = isMainFrame;
+	}
+
+	postMessage = (msg, origin = '*') => {
+		const js = this._isMainFrame
+			? JS_POST_MESSAGE_TO_PROVIDER(msg, origin)
+			: JS_IFRAME_POST_MESSAGE_TO_PROVIDER(msg, origin);
+		if (this._window.webViewRef && this._window.webViewRef.current) {
+			this._window && this._window.injectJavaScript(js);
+		}
+	};
+}
+
+class WalletConnectPort extends EventEmitter {
+	constructor(walletConnector) {
+		super();
+		this._walletConnector = walletConnector;
+	}
+
+	postMessage = (msg) => {
+		try {
+			if (msg?.data?.result || msg?.data?.error) {
+				if (msg.data.error) {
+					this._walletConnector.rejectRequest({
+						id: msg.data.id,
+						error: msg.data.error,
+					});
+				} else {
+					this._walletConnector.approveRequest({
+						id: msg.data.id,
+						result: msg.data.result,
+					});
+				}
+			} else if (msg?.data?.method === NOTIFICATION_NAMES.chainChanged) {
+				const { selectedAddress } = Engine.datamodel.flatState;
+				this._walletConnector.updateSession({
+					chainId: parseInt(msg.data.params.chainId, 16),
+					accounts: [selectedAddress],
+				});
+			} else if (msg?.data?.method === NOTIFICATION_NAMES.accountsChanged) {
+				const chainId = Engine.context.NetworkController.state.provider.chainId;
+				this._walletConnector.updateSession({
+					chainId: parseInt(chainId, 10),
+					accounts: msg.data.params,
+				});
+			} else if (msg?.data?.method === NOTIFICATION_NAMES.unlockStateChanged) {
+				// WC DOESN'T NEED THIS EVENT
+			} else {
+				console.warn('WC REQUEST NOT HANDLED', msg);
+			}
+		} catch (e) {
+			console.warn(e);
+		}
+	};
+}
+
+export class BackgroundBridge extends EventEmitter {
+	constructor({ webview, url, getRpcMethodMiddleware, isMainFrame, isWalletConnect, wcWalletConnector }) {
+		super();
+		this.url = url;
+		this.hostname = new URL(url).hostname;
+		this.isMainFrame = isMainFrame;
+		this.isWalletConnect = isWalletConnect;
+		this.wcWalletConnector = wcWalletConnector;
+		this._webviewRef = webview && webview.current;
+		this.disconnected = false;
+========
 export class BackgroundBridge extends EventEmitter {
   constructor({
     webview,
@@ -49,78 +130,110 @@ export class BackgroundBridge extends EventEmitter {
     wcRequestActions,
     getApprovedHosts,
     remoteConnHost,
-    isMMSDK,
   }) {
     super();
     this.url = url;
-    // TODO - When WalletConnect and MMSDK uses the Permission System, URL does not apply in all conditions anymore since hosts may not originate from web. This will need to change!
     this.hostname = new URL(url).hostname;
     this.remoteConnHost = remoteConnHost;
     this.isMainFrame = isMainFrame;
     this.isWalletConnect = isWalletConnect;
-    this.isMMSDK = isMMSDK;
     this.isRemoteConn = isRemoteConn;
     this._webviewRef = webview && webview.current;
     this.disconnected = false;
     this.getApprovedHosts = getApprovedHosts;
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-    this.createMiddleware = getRpcMethodMiddleware;
+		this.createMiddleware = getRpcMethodMiddleware;
 
+		const provider = Engine.context.NetworkController.provider;
+		const blockTracker = provider._blockTracker;
+
+		// provider and block tracker proxies - because the network changes
+		this._providerProxy = null;
+		this._blockTrackerProxy = null;
+
+		this.setProviderAndBlockTracker({ provider, blockTracker });
+
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+		this.port = this.isWalletConnect
+			? new WalletConnectPort(wcWalletConnector)
+			: new Port(this._webviewRef, isMainFrame);
+========
     this.port = isRemoteConn
       ? new RemotePort(sendMessage)
       : this.isWalletConnect
       ? new WalletConnectPort(wcRequestActions)
       : new Port(this._webviewRef, isMainFrame);
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-    this.engine = null;
+		this.engine = null;
 
-    this.chainIdSent = selectChainId(store.getState());
-    this.networkVersionSent = selectNetworkId(store.getState());
+		this.chainIdSent = Engine.context.NetworkController.state.provider.chainId;
+		this.networkVersionSent = Engine.context.NetworkController.state.network;
 
-    // This will only be used for WalletConnect for now
-    this.addressSent =
-      Engine.context.PreferencesController.state.selectedAddress?.toLowerCase();
+		// This will only be used for WalletConnect for now
+		this.addressSent = Engine.context.PreferencesController.state.selectedAddress?.toLowerCase();
 
-    const portStream = new MobilePortStream(this.port, url);
-    // setup multiplexing
-    const mux = setupMultiplex(portStream);
-    // connect features
-    this.setupProviderConnection(
-      mux.createStream(
-        isWalletConnect ? 'walletconnect-provider' : 'metamask-provider',
-      ),
-    );
+		const portStream = new MobilePortStream(this.port, url);
+		// setup multiplexing
+		const mux = setupMultiplex(portStream);
+		// connect features
+		this.setupProviderConnection(
+			mux.createStream(isWalletConnect ? 'walletconnect-provider' : 'metamask-provider')
+		);
 
-    Engine.controllerMessenger.subscribe(
-      AppConstants.NETWORK_STATE_CHANGE_EVENT,
-      this.sendStateUpdate,
-    );
-    Engine.context.PreferencesController.subscribe(this.sendStateUpdate);
+		Engine.context.NetworkController.subscribe(this.sendStateUpdate);
+		Engine.context.PreferencesController.subscribe(this.sendStateUpdate);
 
-    Engine.controllerMessenger.subscribe(
-      'KeyringController:lock',
-      this.onLock.bind(this),
-    );
-    Engine.controllerMessenger.subscribe(
-      'KeyringController:unlock',
-      this.onUnlock.bind(this),
-    );
+		Engine.context.KeyringController.onLock(this.onLock.bind(this));
+		Engine.context.KeyringController.onUnlock(this.onUnlock.bind(this));
 
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+		this.on('update', this.onStateUpdate);
+	}
+========
     this.on('update', this.onStateUpdate);
 
     if (this.isRemoteConn) {
       const memState = this.getState();
-      const publicState = this.getProviderNetworkState();
+      const publicState = this.getProviderNetworkState(memState);
       const selectedAddress = memState.selectedAddress;
       this.notifyChainChanged(publicState);
       this.notifySelectedAddressChanged(selectedAddress);
     }
   }
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-  onUnlock() {
-    // TODO UNSUBSCRIBE EVENT INSTEAD
-    if (this.disconnected) return;
+	setProviderAndBlockTracker({ provider, blockTracker }) {
+		// update or intialize proxies
+		if (this._providerProxy) {
+			this._providerProxy.setTarget(provider);
+		} else {
+			this._providerProxy = createSwappableProxy(provider);
+		}
+		if (this._blockTrackerProxy) {
+			this._blockTrackerProxy.setTarget(blockTracker);
+		} else {
+			this._blockTrackerProxy = createEventEmitterProxy(blockTracker, {
+				eventFilter: 'skipInternal',
+			});
+		}
+		// set new provider and blockTracker
+		this.provider = provider;
+		this.blockTracker = blockTracker;
+	}
 
+	onUnlock() {
+		// TODO UNSUBSCRIBE EVENT INSTEAD
+		if (this.disconnected) return;
+
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+		this.sendNotification({
+			method: NOTIFICATION_NAMES.unlockStateChanged,
+			params: true,
+		});
+	}
+========
     if (this.isRemoteConn) {
       // Not sending the lock event in case of a remote connection as this is handled correctly already by the SDK
       // In case we want to send, use  new structure
@@ -142,11 +255,19 @@ export class BackgroundBridge extends EventEmitter {
       params: true,
     });
   }
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-  onLock() {
-    // TODO UNSUBSCRIBE EVENT INSTEAD
-    if (this.disconnected) return;
+	onLock() {
+		// TODO UNSUBSCRIBE EVENT INSTEAD
+		if (this.disconnected) return;
 
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+		this.sendNotification({
+			method: NOTIFICATION_NAMES.unlockStateChanged,
+			params: false,
+		});
+	}
+========
     if (this.isRemoteConn) {
       // Not sending the lock event in case of a remote connection as this is handled correctly already by the SDK
       // In case we want to send, use  new structure
@@ -164,32 +285,68 @@ export class BackgroundBridge extends EventEmitter {
       params: false,
     });
   }
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-  getProviderNetworkState() {
-    const providerConfig = selectProviderConfig(store.getState());
-    const networkType = providerConfig.type;
+	getProviderNetworkState({ network }) {
+		const networkType = Engine.context.NetworkController.state.provider.type;
+		const networkProvider = Engine.context.NetworkController.state.provider;
 
-    const isInitialNetwork =
-      networkType && getAllNetworks().includes(networkType);
-    let chainId;
+		const isInitialNetwork = networkType && getAllNetworks().includes(networkType);
+		let chainId;
 
-    if (isInitialNetwork) {
-      chainId = NetworksChainId[networkType];
-    } else if (networkType === 'rpc') {
-      chainId = providerConfig.chainId;
-    }
-    if (chainId && !chainId.startsWith('0x')) {
-      // Convert to hex
-      chainId = `0x${parseInt(chainId, 10).toString(16)}`;
-    }
+		if (isInitialNetwork) {
+			chainId = NetworksChainId[networkType];
+		} else if (networkType === 'rpc') {
+			chainId = networkProvider.chainId;
+		}
+		if (chainId && !chainId.startsWith('0x')) {
+			// Convert to hex
+			chainId = `0x${parseInt(chainId, 10).toString(16)}`;
+		}
 
-    const result = {
-      networkVersion: selectLegacyNetwork(store.getState()),
-      chainId,
-    };
-    return result;
-  }
+		const result = {
+			networkVersion: network,
+			chainId,
+		};
+		return result;
+	}
 
+<<<<<<<< HEAD:app/core/BackgroundBridge.js
+	onStateUpdate(memState) {
+		const provider = Engine.context.NetworkController.provider;
+		const blockTracker = provider._blockTracker;
+		this.setProviderAndBlockTracker({ provider, blockTracker });
+		if (!memState) {
+			memState = this.getState();
+		}
+		const publicState = this.getProviderNetworkState(memState);
+
+		// Check if update already sent
+		if (
+			this.chainIdSent !== publicState.chainId &&
+			this.networkVersionSent !== publicState.networkVersion &&
+			publicState.networkVersion !== 'loading'
+		) {
+			this.chainIdSent = publicState.chainId;
+			this.networkVersionSent = publicState.networkVersion;
+			this.sendNotification({
+				method: NOTIFICATION_NAMES.chainChanged,
+				params: publicState,
+			});
+		}
+
+		// ONLY NEEDED FOR WC FOR NOW, THE BROWSER HANDLES THIS NOTIFICATION BY ITSELF
+		if (this.isWalletConnect) {
+			if (this.addressSent !== memState.selectedAddress) {
+				this.addressSent = memState.selectedAddress;
+				this.sendNotification({
+					method: NOTIFICATION_NAMES.accountsChanged,
+					params: [memState.selectedAddress],
+				});
+			}
+		}
+	}
+========
   notifyChainChanged(params) {
     this.sendNotification({
       method: NOTIFICATION_NAMES.chainChanged,
@@ -199,12 +356,7 @@ export class BackgroundBridge extends EventEmitter {
 
   notifySelectedAddressChanged(selectedAddress) {
     if (this.isRemoteConn) {
-      // Pass the remoteConnHost to getApprovedHosts as AndroidSDK requires it
-      if (
-        !this.getApprovedHosts?.(this.remoteConnHost)?.[this.remoteConnHost]
-      ) {
-        return;
-      }
+      if (!this.getApprovedHosts?.()?.[this.remoteConnHost]) return;
     }
     this.sendNotification({
       method: NOTIFICATION_NAMES.accountsChanged,
@@ -213,10 +365,13 @@ export class BackgroundBridge extends EventEmitter {
   }
 
   onStateUpdate(memState) {
+    const provider = Engine.context.NetworkController.provider;
+    const blockTracker = provider._blockTracker;
+    this.setProviderAndBlockTracker({ provider, blockTracker });
     if (!memState) {
       memState = this.getState();
     }
-    const publicState = this.getProviderNetworkState();
+    const publicState = this.getProviderNetworkState(memState);
 
     // Check if update already sent
     if (
@@ -237,144 +392,114 @@ export class BackgroundBridge extends EventEmitter {
       }
     }
   }
+>>>>>>>> upstream/feature/improve-dapp-connection:app/core/BackgroundBridge/BackgroundBridge.js
 
-  isUnlocked() {
-    return Engine.context.KeyringController.isUnlocked();
-  }
+	isUnlocked() {
+		return Engine.context.KeyringController.isUnlocked();
+	}
 
-  getProviderState() {
-    return {
-      isUnlocked: this.isUnlocked(),
-      ...this.getProviderNetworkState(),
-    };
-  }
+	getProviderState() {
+		const memState = this.getState();
+		return {
+			isUnlocked: this.isUnlocked(),
+			...this.getProviderNetworkState(memState),
+		};
+	}
 
-  sendStateUpdate = () => {
-    this.emit('update');
-  };
+	sendStateUpdate = () => {
+		this.emit('update');
+	};
 
-  onMessage = (msg) => {
-    this.port.emit('message', { name: msg.name, data: msg.data });
-  };
+	onMessage = (msg) => {
+		this.port.emit('message', { name: msg.name, data: msg.data });
+	};
 
-  onDisconnect = () => {
-    this.disconnected = true;
-    Engine.controllerMessenger.unsubscribe(
-      AppConstants.NETWORK_STATE_CHANGE_EVENT,
-      this.sendStateUpdate,
-    );
-    Engine.context.PreferencesController.unsubscribe(this.sendStateUpdate);
-    this.port.emit('disconnect', { name: this.port.name, data: null });
-  };
+	onDisconnect = () => {
+		this.disconnected = true;
+		Engine.context.NetworkController.unsubscribe(this.sendStateUpdate);
+		Engine.context.PreferencesController.unsubscribe(this.sendStateUpdate);
+		this.port.emit('disconnect', { name: this.port.name, data: null });
+	};
 
-  /**
-   * A method for serving our ethereum provider over a given stream.
-   * @param {*} outStream - The stream to provide over.
-   */
-  setupProviderConnection(outStream) {
-    this.engine = this.setupProviderEngine();
+	/**
+	 * A method for serving our ethereum provider over a given stream.
+	 * @param {*} outStream - The stream to provide over.
+	 */
+	setupProviderConnection(outStream) {
+		this.engine = this.setupProviderEngine();
 
-    // setup connection
-    const providerStream = createEngineStream({ engine: this.engine });
+		// setup connection
+		const providerStream = createEngineStream({ engine: this.engine });
 
-    pump(outStream, providerStream, outStream, (err) => {
-      // handle any middleware cleanup
-      this.engine._middleware.forEach((mid) => {
-        if (mid.destroy && typeof mid.destroy === 'function') {
-          mid.destroy();
-        }
-      });
-      if (err) Logger.log('Error with provider stream conn', err);
-    });
-  }
+		pump(outStream, providerStream, outStream, (err) => {
+			// handle any middleware cleanup
+			this.engine._middleware.forEach((mid) => {
+				if (mid.destroy && typeof mid.destroy === 'function') {
+					mid.destroy();
+				}
+			});
+			if (err) Logger.log('Error with provider stream conn', err);
+		});
+	}
 
-  /**
-   * A method for creating a provider that is safely restricted for the requesting domain.
-   **/
-  setupProviderEngine() {
-    const origin = this.hostname;
-    // setup json rpc engine stack
-    const engine = new JsonRpcEngine();
-    const { blockTracker, provider } =
-      Engine.context.NetworkController.getProviderAndBlockTracker();
+	/**
+	 * A method for creating a provider that is safely restricted for the requesting domain.
+	 **/
+	setupProviderEngine() {
+		const origin = this.hostname;
+		// setup json rpc engine stack
+		const engine = new JsonRpcEngine();
+		const provider = this._providerProxy;
 
-    // create filter polyfill middleware
-    const filterMiddleware = createFilterMiddleware({ provider, blockTracker });
+		const blockTracker = this._blockTrackerProxy;
 
-    // create subscription polyfill middleware
-    const subscriptionManager = createSubscriptionManager({
-      provider,
-      blockTracker,
-    });
-    subscriptionManager.events.on('notification', (message) =>
-      engine.emit('notification', message),
-    );
+		// create filter polyfill middleware
+		const filterMiddleware = createFilterMiddleware({ provider, blockTracker });
 
-    // metadata
-    engine.push(createOriginMiddleware({ origin }));
-    engine.push(createLoggerMiddleware({ origin }));
-    // filter and subscription polyfills
-    engine.push(filterMiddleware);
-    engine.push(subscriptionManager.middleware);
-    // watch asset
+		// create subscription polyfill middleware
+		const subscriptionManager = createSubscriptionManager({ provider, blockTracker });
+		subscriptionManager.events.on('notification', (message) => engine.emit('notification', message));
 
-    ///: BEGIN:ONLY_INCLUDE_IF(snaps)
-    // Snaps middleware
-    engine.push(
-      snapMethodMiddlewareBuilder(
-        Engine.context,
-        Engine.controllerMessenger,
-        origin,
-        SubjectType.Snap,
-      ),
-    );
-    ///: END:ONLY_INCLUDE_IF
+		// metadata
+		engine.push(createOriginMiddleware({ origin }));
+		engine.push(createLoggerMiddleware({ origin }));
+		// filter and subscription polyfills
+		engine.push(filterMiddleware);
+		engine.push(subscriptionManager.middleware);
+		// watch asset
 
-    // user-facing RPC methods
-    engine.push(
-      this.createMiddleware({
-        hostname: this.hostname,
-        getProviderState: this.getProviderState.bind(this),
-      }),
-    );
+		// user-facing RPC methods
+		engine.push(
+			this.createMiddleware({
+				hostname: this.hostname,
+				getProviderState: this.getProviderState.bind(this),
+			})
+		);
 
-    // TODO - Remove this condition when WalletConnect and MMSDK uses Permission System.
-    if (!this.isMMSDK && !this.isWalletConnect) {
-      const permissionController = Engine.context.PermissionController;
-      engine.push(
-        permissionController.createPermissionMiddleware({
-          origin,
-        }),
-      );
-    }
+		// forward to metamask primary provider
+		engine.push(providerAsMiddleware(provider));
+		return engine;
+	}
 
-    engine.push(createSanitizationMiddleware());
-    // forward to metamask primary provider
-    engine.push(providerAsMiddleware(provider));
-    return engine;
-  }
+	sendNotification(payload) {
+		this.engine && this.engine.emit('notification', payload);
+	}
 
-  sendNotification(payload) {
-    this.engine && this.engine.emit('notification', payload);
-  }
-
-  /**
-   * The metamask-state of the various controllers, made available to the UI
-   *
-   * TODO: Use controller state instead of flattened state for better auditability
-   *
-   * @returns {Object} status
-   */
-  getState() {
-    const vault = Engine.context.KeyringController.state.vault;
-    const { selectedAddress } = Engine.datamodel.flatState;
-    return {
-      isInitialized: !!vault,
-      isUnlocked: true,
-      network: selectLegacyNetwork(store.getState()),
-      selectedAddress,
-    };
-  }
+	/**
+	 * The metamask-state of the various controllers, made available to the UI
+	 *
+	 * @returns {Object} status
+	 */
+	getState() {
+		const vault = Engine.context.KeyringController.state.vault;
+		const { network, selectedAddress } = Engine.datamodel.flatState;
+		return {
+			isInitialized: !!vault,
+			isUnlocked: true,
+			network,
+			selectedAddress,
+		};
+	}
 }
 
 export default BackgroundBridge;

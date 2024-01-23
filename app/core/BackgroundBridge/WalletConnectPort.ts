@@ -1,7 +1,5 @@
 import Engine from '../Engine';
 import AppConstants from '../AppConstants';
-import { selectChainId } from '../../selectors/networkController';
-import { store } from '../../store';
 
 // eslint-disable-next-line import/no-nodejs-modules, import/no-commonjs, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const EventEmitter = require('events').EventEmitter;
@@ -25,7 +23,9 @@ class WalletConnectPort extends EventEmitter {
           accounts: [selectedAddress],
         });
       } else if (msg?.data?.method === NOTIFICATION_NAMES.accountsChanged) {
-        const chainId = selectChainId(store.getState());
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const chainId = Engine.context.NetworkController.state.provider.chainId;
         this._wcRequestActions?.updateSession?.({
           chainId: parseInt(chainId, 10),
           accounts: msg.data.params,
