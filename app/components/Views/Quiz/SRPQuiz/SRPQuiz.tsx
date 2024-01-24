@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, import/no-commonjs */
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, Linking, AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +10,11 @@ import { ButtonVariants } from '../../../../component-library/components/Buttons
 import Icon, {
   IconSize,
   IconName,
+<<<<<<< HEAD
 } from '../../../../component-library/components/Icons/Icon';
+=======
+} from '../../../../component-library/components/Icon';
+>>>>>>> upstream/testflight/4754-permission-system
 import { useStyles } from '../../../hooks/useStyles';
 import { strings } from '../../../../../locales/i18n';
 import AnalyticsV2 from '../../../../util/analyticsV2';
@@ -19,8 +26,11 @@ import { QuizStage } from '../types';
 import { QuizContent } from '../QuizContent';
 import stylesheet from './styles';
 
+<<<<<<< HEAD
 const introductionImg = require('../../../../images/reveal-srp.png');
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 const SRPQuiz = () => {
   const modalRef = useRef<ReusableModalRef>(null);
   const [stage, setStage] = useState<QuizStage>(QuizStage.introduction);
@@ -33,9 +43,15 @@ const SRPQuiz = () => {
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     const appStateListener = AppState.addEventListener('change', dismissModal);
     return () => {
       appStateListener.remove();
+=======
+    AppState.addEventListener('change', dismissModal);
+    return () => {
+      AppState.removeEventListener('change', dismissModal);
+>>>>>>> upstream/testflight/4754-permission-system
     };
   }, []);
 
@@ -47,7 +63,11 @@ const SRPQuiz = () => {
     (): Element => (
       <Icon
         size={IconSize.Xl}
+<<<<<<< HEAD
         name={IconName.Danger}
+=======
+        name={IconName.DangerFilled}
+>>>>>>> upstream/testflight/4754-permission-system
         color={colors.error.default}
       />
     ),
@@ -58,7 +78,11 @@ const SRPQuiz = () => {
     (): Element => (
       <Icon
         size={IconSize.Xl}
+<<<<<<< HEAD
         name={IconName.Confirmation}
+=======
+        name={IconName.CheckCircleOnFilled}
+>>>>>>> upstream/testflight/4754-permission-system
         color={colors.success.default}
       />
     ),
@@ -69,8 +93,12 @@ const SRPQuiz = () => {
     AnalyticsV2.trackEvent(MetaMetricsEvents.REVEAL_SRP_INITIATED, {});
     AnalyticsV2.trackEvent(MetaMetricsEvents.REVEAL_SRP_CTA, {});
     navigation.navigate(Routes.SETTINGS.REVEAL_PRIVATE_CREDENTIAL, {
+<<<<<<< HEAD
       credentialName: 'seed_phrase',
       shouldUpdateNav: true,
+=======
+      privateCredentialName: 'seed_phrase',
+>>>>>>> upstream/testflight/4754-permission-system
     });
   }, [navigation]);
 
@@ -79,7 +107,10 @@ const SRPQuiz = () => {
     return (
       <QuizContent
         header={strings('srp_security_quiz.title')}
+<<<<<<< HEAD
         image={introductionImg}
+=======
+>>>>>>> upstream/testflight/4754-permission-system
         title={{
           content: strings('srp_security_quiz.introduction'),
         }}
@@ -98,7 +129,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -131,7 +166,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -164,7 +203,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -197,7 +240,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -230,7 +277,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -263,7 +314,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}
@@ -296,7 +351,11 @@ const SRPQuiz = () => {
           {
             label: strings('srp_security_quiz.learn_more'),
             onPress: openSupportArticle,
+<<<<<<< HEAD
             variant: ButtonVariants.Link,
+=======
+            variant: ButtonVariants.Tertiary,
+>>>>>>> upstream/testflight/4754-permission-system
           },
         ]}
         dismiss={dismissModal}

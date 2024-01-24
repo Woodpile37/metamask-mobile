@@ -1,2 +1,2 @@
 export { default } from './Cell';
-export { CellVariant } from './Cell.types';
+export { CellVariants } from './Cell.types';

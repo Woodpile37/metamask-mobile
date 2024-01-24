@@ -1,5 +1,9 @@
 const initialState = {
   approvedHosts: {},
+<<<<<<< HEAD
+=======
+  thirdPartyApiMode: true,
+>>>>>>> upstream/testflight/4754-permission-system
   revealSRPTimestamps: [],
 };
 
@@ -25,6 +29,14 @@ const privacyReducer = (state = initialState, action) => {
         ...state,
         approvedHosts: {},
       };
+<<<<<<< HEAD
+=======
+    case 'SET_THIRD_PARTY_API_MODE':
+      return {
+        ...state,
+        thirdPartyApiMode: action.enabled,
+      };
+>>>>>>> upstream/testflight/4754-permission-system
     case 'RECORD_SRP_REVEAL_TIMESTAMP':
       return {
         ...state,

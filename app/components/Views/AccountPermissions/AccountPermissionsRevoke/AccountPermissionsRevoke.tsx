@@ -9,11 +9,19 @@ import { strings } from '../../../../../locales/i18n';
 import TagUrl from '../../../../component-library/components/Tags/TagUrl';
 import Text from '../../../../component-library/components/Texts/Text';
 import { useStyles } from '../../../../component-library/hooks';
+<<<<<<< HEAD
+=======
+import { ButtonSecondaryVariants } from '../../../../component-library/components/Buttons/Button/variants/ButtonSecondary';
+>>>>>>> upstream/testflight/4754-permission-system
 import Button, {
   ButtonSize,
   ButtonVariants,
 } from '../../../../component-library/components/Buttons/Button';
 import AccountSelectorList from '../../../../components/UI/AccountSelectorList';
+<<<<<<< HEAD
+=======
+import { ButtonTertiaryVariants } from '../../../../component-library/components/Buttons/Button/variants/ButtonTertiary';
+>>>>>>> upstream/testflight/4754-permission-system
 import { removePermittedAccounts } from '../../../../core/Permissions';
 import UntypedEngine from '../../../../core/Engine';
 import Logger from '../../../../util/Logger';
@@ -26,17 +34,23 @@ import { AccountPermissionsScreens } from '../AccountPermissions.types';
 import getAccountNameWithENS from '../../../../util/accounts';
 import { MetaMetricsEvents } from '../../../../core/Analytics';
 import AnalyticsV2 from '../../../../util/analyticsV2';
+<<<<<<< HEAD
 import { selectAccountsLength } from '../../../../selectors/accountTrackerController';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 // Internal dependencies.
 import { AccountPermissionsRevokeProps } from './AccountPermissionsRevoke.types';
 import styleSheet from './AccountPermissionsRevoke.styles';
 import { useSelector } from 'react-redux';
+<<<<<<< HEAD
 import { IconName } from '../../../../component-library/components/Icons/Icon';
 import Avatar from '../../../../component-library/components/Avatars/Avatar/Avatar';
 import { AvatarVariant } from '../../../../component-library/components/Avatars/Avatar';
 import { selectNetworkConfigurations } from '../../../../selectors/networkController';
 import { ConnectedAccountsSelectorsIDs } from '../../../../../e2e/selectors/Modals/ConnectedAccountModal.selectors';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 const AccountPermissionsRevoke = ({
   ensByAccountAddress,
@@ -45,7 +59,10 @@ const AccountPermissionsRevoke = ({
   permittedAddresses,
   onSetPermissionsScreen,
   hostname,
+<<<<<<< HEAD
   urlWithProtocol,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   favicon,
   secureIcon,
   accountAvatarType,
@@ -55,10 +72,24 @@ const AccountPermissionsRevoke = ({
   const activeAddress = permittedAddresses[0];
   const { toastRef } = useContext(ToastContext);
 
+<<<<<<< HEAD
   const accountsLength = useSelector(selectAccountsLength);
 
   const nonTestnetNetworks = useSelector(
     (state: any) => Object.keys(selectNetworkConfigurations(state)).length + 1,
+=======
+  const accountsLength = useSelector(
+    (state: any) =>
+      Object.keys(
+        state.engine.backgroundState.AccountTrackerController.accounts || {},
+      ).length,
+  );
+
+  const nonTestnetNetworks = useSelector(
+    (state: any) =>
+      state.engine.backgroundState.PreferencesController.frequentRpcList
+        .length + 1,
+>>>>>>> upstream/testflight/4754-permission-system
   );
 
   const revokeAllAccounts = useCallback(
@@ -85,6 +116,7 @@ const AccountPermissionsRevoke = ({
 
   const renderSheetAction = useCallback(
     () => (
+<<<<<<< HEAD
       <View
         style={styles.sheetActionContainer}
         testID={ConnectedAccountsSelectorsIDs.DISCONNECT_ALL_BUTTON}
@@ -95,6 +127,16 @@ const AccountPermissionsRevoke = ({
               label: strings('accounts.disconnect_all_accounts'),
               onPress: revokeAllAccounts,
               disabled: isLoading,
+=======
+      <View style={styles.sheetActionContainer}>
+        <SheetActions
+          actions={[
+            {
+              label: strings('accounts.revoke_all'),
+              onPress: revokeAllAccounts,
+              disabled: isLoading,
+              variant: ButtonTertiaryVariants.Danger,
+>>>>>>> upstream/testflight/4754-permission-system
             },
           ]}
         />
@@ -106,12 +148,17 @@ const AccountPermissionsRevoke = ({
   return (
     <>
       <SheetHeader
+<<<<<<< HEAD
         title={strings('accounts.permissions')}
+=======
+        title={strings('accounts.connected_accounts_title')}
+>>>>>>> upstream/testflight/4754-permission-system
         onBack={() =>
           onSetPermissionsScreen(AccountPermissionsScreens.Connected)
         }
       />
       <View style={styles.body}>
+<<<<<<< HEAD
         <TagUrl
           imageSource={favicon}
           label={urlWithProtocol}
@@ -132,11 +179,21 @@ const AccountPermissionsRevoke = ({
             {strings('accounts.suggest_transactions')}
           </Text>
         </View>
+=======
+        <TagUrl imageSource={favicon} label={hostname} iconName={secureIcon} />
+        <Text style={styles.description}>
+          {strings('accounts.connect_description')}
+        </Text>
+>>>>>>> upstream/testflight/4754-permission-system
       </View>
       <AccountSelectorList
         renderRightAccessory={(address, name) => (
           <Button
             variant={ButtonVariants.Secondary}
+<<<<<<< HEAD
+=======
+            buttonSecondaryVariants={ButtonSecondaryVariants.Danger}
+>>>>>>> upstream/testflight/4754-permission-system
             onPress={() => {
               if (permittedAddresses.length === 1) {
                 // Dismiss and show toast
@@ -147,7 +204,11 @@ const AccountPermissionsRevoke = ({
                     label: `${name} `,
                     isBold: true,
                   },
+<<<<<<< HEAD
                   { label: strings('toast.disconnected') },
+=======
+                  { label: strings('toast.revoked') },
+>>>>>>> upstream/testflight/4754-permission-system
                 ];
                 if (activeAddress === address) {
                   const nextActiveAddress = permittedAddresses[1];
@@ -188,10 +249,16 @@ const AccountPermissionsRevoke = ({
                 );
               }
             }}
+<<<<<<< HEAD
             label={strings('accounts.disconnect')}
             size={ButtonSize.Sm}
             style={styles.disconnectButton}
             testID={ConnectedAccountsSelectorsIDs.DISCONNECT_ALL_BUTTON}
+=======
+            label={strings('accounts.revoke')}
+            size={ButtonSize.Sm}
+            style={styles.disconnectButton}
+>>>>>>> upstream/testflight/4754-permission-system
           />
         )}
         isSelectionDisabled

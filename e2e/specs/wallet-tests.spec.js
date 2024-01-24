@@ -101,6 +101,7 @@ describe('Wallet Tests', () => {
 		await ImportAccountView.isImportSuccessSreenVisible();
 		await ImportAccountView.tapCloseButtonOnImportSuccess();
 
+<<<<<<< HEAD
 		await WalletView.isVisible();
 		await WalletView.isAccountNameCorrect('Account 3');
 	});
@@ -111,14 +112,32 @@ describe('Wallet Tests', () => {
 
 		await DrawerView.isVisible();
 		await DrawerView.tapAccountCaretButton();
+=======
+    await ImportAccountView.enterPrivateKey(TEST_PRIVATE_KEY);
+    // Check that we are on the account succesfully imported screen
+    await ImportAccountView.isImportSuccessSreenVisible();
+    await ImportAccountView.tapCloseButtonOnImportSuccess();
+
+    await AccountListView.swipeToDimssAccountsModal();
+
+    await WalletView.isVisible();
+    await WalletView.isAccountNameCorrect('Account 3');
+  });
+>>>>>>> upstream/testflight/4754-permission-system
 
 		await AccountListView.isVisible();
 		await AccountListView.tapAccountByName('Account 1');
 
 		await WalletView.tapDrawerButton();
 
+<<<<<<< HEAD
 		await DrawerView.isVisible();
 		await DrawerView.tapOnAddFundsButton();
+=======
+    await AccountListView.isVisible();
+    await AccountListView.swipeOnAccounts();
+    await AccountListView.tapAccountByName('Account 1');
+>>>>>>> upstream/testflight/4754-permission-system
 
 		await RequestPaymentModal.isVisible();
 		await RequestPaymentModal.isPublicAddressCorrect(TEST_PUBLIC_ADDRESS);
@@ -155,7 +174,17 @@ describe('Wallet Tests', () => {
 		// Check that identifier warning appears
 		await AddCustomTokenView.isNFTIdentifierWarningVisible(); // Check that warning appears
 
+<<<<<<< HEAD
 		await AddCustomTokenView.tapBackButton();
+=======
+  it('should add a collectible', async () => {
+    await WalletView.isVisible();
+    // Tap on COLLECTIBLES tab
+    await WalletView.tapNftTab();
+    await WalletView.scrollDownOnNFTsTab();
+    // Tap on the add collectibles button
+    await WalletView.tapImportNFTButton();
+>>>>>>> upstream/testflight/4754-permission-system
 
 		await WalletView.tapImportNFTButton();
 
@@ -186,12 +215,19 @@ describe('Wallet Tests', () => {
 		await NetworkListModal.changeNetwork(ETHEREUM);
 		await WalletView.isNetworkNameVisible(ETHEREUM);
 
+<<<<<<< HEAD
 		// Tap on Add Tokens
 		await WalletView.tapImportTokensButton();
 		// Search for SAI
 		await ImportTokensView.typeInTokenName('DAI Stablecoin');
 		// Wait for results to load
 		await TestHelpers.delay(2000);
+=======
+    await WalletView.isNFTNameVisible('Refinable721 #179');
+
+    await WalletView.scrollUpOnNFTsTab();
+  });
+>>>>>>> upstream/testflight/4754-permission-system
 
 		await ImportTokensView.tapOnToken(); // taps the first token in the returned list
 		await TestHelpers.delay(500);
@@ -253,12 +289,20 @@ describe('Wallet Tests', () => {
 		await WalletView.isTokenVisibleInWallet('0 BLT');
 	});
 
+<<<<<<< HEAD
 	it('should switch back to Rinkeby network', async () => {
 		await WalletView.tapNetworksButtonOnNavBar();
 		await NetworkListModal.isVisible();
 		await NetworkListModal.changeNetwork(RINKEBY);
 		await WalletView.isNetworkNameVisible(RINKEBY);
 	});
+=======
+    await AddCustomTokenView.typeTokenAddress(BLT_TOKEN_ADDRESS);
+    await AddCustomTokenView.tapTokenSymbolInputBox();
+    await AddCustomTokenView.tapTokenSymbolText();
+    await AddCustomTokenView.scrollDownOnImportCustomTokens();
+    await AddCustomTokenView.tapCustomTokenImportButton();
+>>>>>>> upstream/testflight/4754-permission-system
 
 	it('should input a valid address', async () => {
 		// Check that we are on the wallet screen

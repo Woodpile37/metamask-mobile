@@ -1,5 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+<<<<<<< HEAD
 exports[`TypedSign onConfirm signs message 1`] = `
 <View
   style={
@@ -14,6 +15,15 @@ exports[`TypedSign onConfirm signs message 1`] = `
       },
       undefined,
     ]
+=======
+exports[`TypedSign should render correctly 1`] = `
+<TypedSign
+  currentPageInformation={
+    Object {
+      "title": "title",
+      "url": "url",
+    }
+>>>>>>> upstream/testflight/4754-permission-system
   }
   testID="typed-signature-request"
 >

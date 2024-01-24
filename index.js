@@ -1,3 +1,5 @@
+// Needed to polyfill random number generation.
+import 'react-native-get-random-values';
 import './shim.js';
 
 // Needed to polyfill random number generation.

@@ -550,6 +550,7 @@
     "connect": "Conectar",
     "connect_with_count": "Conectar{{countLabel}}",
     "select_all": "Selecionar tudo",
+<<<<<<< HEAD
     "unselect_all": "Desmarcar tudo",
     "permissions": "Permissões",
     "revoke": "Revogar",
@@ -568,15 +569,26 @@
     "fake_metamask": "Versões falsas da MetaMask",
     "srp_theft": "Roubo da Frase de Recuperação Secreta ou senha",
     "malicious_transactions": "Transações mal-intencionadas que resultam no roubo de ativos"
+=======
+    "permissions": "Permissões",
+    "disconnect": "Desconectar",
+    "disconnect_all_accounts": "Desconectar todas as contas",
+    "revoke": "Revogar",
+    "revoke_all": "Revogar tudo"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "conectada e ativa.",
     "now_active": "agora ativa.",
     "revoked": "revogada.",
     "revoked_all": "Todas as contas revogadas.",
+<<<<<<< HEAD
     "accounts_connected": "contas conectadas.",
     "disconnected": "desconectada.",
     "disconnected_all": "Todas as contas desconectadas."
+=======
+    "accounts_connected": "contas conectadas."
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "Conecte uma carteira de hardware baseada em QR",
@@ -2654,16 +2666,27 @@
       "right_answer_title": "Certo! Ninguém pode ajudar a recuperar sua Frase de Recuperação Secreta",
       "right_answer_description": "Anote-a, grave em metal ou guarde-a em diversos lugares secretos para que nunca a perca. Se perdê-la, é para sempre.",
       "wrong_answer_title": "Errado! Ninguém consegue recuperar sua Frase de Recuperação Secreta",
+<<<<<<< HEAD
       "wrong_answer_description": "Se você perder sua Frase de Recuperação Secreta, é para sempre. Ninguém consegue ajudar a recuperá-la, não importa o que digam."
+=======
+      "wrong_answer_description": "Se perder sua Frase de Recuperação Secreta, é para sempre. Ninguém consegue recuperá-la, não importa o que digam."
+>>>>>>> upstream/testflight/4754-permission-system
     },
     "question_two": {
       "question": "Se alguém, até mesmo um atendente do Suporte, pedir sua Frase de Recuperação Secreta...",
       "right_answer": "Você estará sendo vítima de um golpe",
       "right_answer_title": "Correto! Compartilhar sua Frase de Recuperação Secreta nunca é uma boa ideia",
+<<<<<<< HEAD
       "right_answer_description": "Qualquer pessoa que afirme precisar da sua Frase de Recuperação Secreta está mentindo. Se você informar a frase a ela, seus ativos serão roubados.",
       "wrong_answer": "Você deverá revelar",
       "wrong_answer_title": "Não! Não compartilhe sua Frase de Recuperação Secreta com ninguém, nunca",
       "wrong_answer_description": "Qualquer pessoa que afirme precisar da sua Frase de Recuperação Secreta está mentindo. Se você informar a frase a ela, seus ativos serão roubados."
+=======
+      "right_answer_description": "Qualquer pessoa que afirme precisar da sua Frase de Recuperação Secreta está mentindo. Se você compartilhar com ela, seus ativos serão roubados.",
+      "wrong_answer": "Você deverá revelar",
+      "wrong_answer_title": "Não! Não compartilhe sua Frase de Recuperação Secreta com ninguém, nunca",
+      "wrong_answer_description": "Qualquer pessoa que afirme precisar da sua Frase de Recuperação Secreta está mentindo. Se você compartilhar com ela, seus ativos serão roubados."
+>>>>>>> upstream/testflight/4754-permission-system
     }
   },
   "ledger": {

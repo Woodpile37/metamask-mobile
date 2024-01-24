@@ -42,6 +42,7 @@ import {
   findBlockExplorerForRpc,
   isMainnetByChainId,
 } from '../../../util/networks';
+<<<<<<< HEAD
 import { mockTheme, ThemeContext } from '../../../util/theme';
 import { addAccountTimeFlagFilter } from '../../../util/transactions';
 import AssetOverview from '../../UI/AssetOverview';
@@ -65,6 +66,9 @@ import {
   TOKEN_OVERVIEW_BUY_BUTTON,
   TOKEN_OVERVIEW_SWAP_BUTTON,
 } from '../../../../wdio/screen-objects/testIDs/Screens/TokenOverviewScreen.testIds';
+=======
+import Routes from '../../../constants/navigation/Routes';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({

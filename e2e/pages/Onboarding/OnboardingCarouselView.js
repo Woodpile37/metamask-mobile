@@ -1,9 +1,15 @@
 import {
+<<<<<<< HEAD
   OnboardingCarouselSelectorIDs,
   OnboardingCarouselSelectorText,
 } from '../../selectors/Onboarding/OnboardingCarousel.selectors';
 import Matchers from '../../utils/Matchers';
 import Gestures from '../../utils/Gestures';
+=======
+  WELCOME_SCREEN_CAROUSEL_TITLE_ID,
+  WELCOME_SCREEN_GET_STARTED_BUTTON_ID,
+} from '../../../wdio/screen-objects/testIDs/Screens/WelcomeScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 class OnboardingCarouselView {
   get container() {

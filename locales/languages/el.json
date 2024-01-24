@@ -530,19 +530,33 @@
     "receive": "ΛΗΨΗ"
   },
   "accounts": {
+<<<<<<< HEAD
     "create_new_account": "Δημιουργία νέου λογαριασμού",
     "qr_hardware": "Υλικό QR",
     "import_account": "Εισαγωγή λογαριασμού",
     "connect_hardware": "Σύνδεση πορτοφολιού υλικού",
     "imported": "Έγινε εισαγωγή",
     "remove_account_title": "Αφαίρεση λογαριασμού",
+=======
+    "create_new_account": "Δημιουργία Νέου Λογαριασμού",
+    "import_account": "Εισαγωγή ενός Λογαριασμού",
+    "connect_hardware": "Σύνδεση Υλικού Πορτοφολιού",
+    "imported": "Έγινε εισαγωγή",
+    "remove_account_title": "Αφαίρεση Λογαριασμού",
+>>>>>>> upstream/testflight/4754-permission-system
     "remove_account_message": "Θέλετε σίγουρα να αφαιρέσετε αυτόν τον λογαριασμό;",
     "no": "Όχι",
     "yes_remove_it": "Ναι, αφαιρέστε τον",
     "accounts_title": "Λογαριασμοί",
+<<<<<<< HEAD
     "connect_account_title": "Σύνδεση λογαριασμού",
     "connect_accounts_title": "Σύνδεση λογαριασμών",
     "connected_accounts_title": "Συνδεδεμένοι λογαριασμοί",
+=======
+    "connect_account_title": "Σύνδεση Λογαριασμού",
+    "connect_accounts_title": "Σύνδεση Λογαριασμών",
+    "connected_accounts_title": "Συνδεδεμένοι Λογαριασμοί",
+>>>>>>> upstream/testflight/4754-permission-system
     "connect_description": "Μοιραστείτε τη διεύθυνση του λογαριασμού σας, το υπόλοιπο, τη δραστηριότητά σας και επιτρέψτε στον ιστότοπο να ξεκινήσει συναλλαγές.",
     "connect_multiple_accounts": "Σύνδεση πολλαπλών λογαριασμών",
     "connect_more_accounts": "Σύνδεση περισσότερων λογαριασμών",
@@ -550,6 +564,7 @@
     "connect": "Σύνδεση",
     "connect_with_count": "Σύνδεση{{countLabel}}",
     "select_all": "Επιλογή όλων",
+<<<<<<< HEAD
     "unselect_all": "Αποεπιλογή όλων",
     "permissions": "Άδειες",
     "revoke": "Ανάκληση",
@@ -568,15 +583,26 @@
     "fake_metamask": "Ψεύτικες εκδόσεις του MetaMask",
     "srp_theft": "Μυστική φράση ανάκτησης ή κλοπή κωδικού πρόσβασης",
     "malicious_transactions": "Κακόβουλες συναλλαγές που οδηγούν σε απώλεια περιουσιακών στοιχείων"
+=======
+    "permissions": "Άδειες",
+    "disconnect": "Αποσύνδεση",
+    "disconnect_all_accounts": "Αποσύνδεση όλων των λογαριασμών",
+    "revoke": "Ανάκληση",
+    "revoke_all": "Ανάκληση όλων"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "συνδεδεμένοι και ενεργοί.",
     "now_active": "τώρα ενεργοί.",
     "revoked": "ανακλήθηκαν.",
     "revoked_all": "Όλοι οι λογαριασμοί ανακλήθηκαν.",
+<<<<<<< HEAD
     "accounts_connected": "λογαριασμοί συνδεδεμένοι.",
     "disconnected": "αποσυνδέθηκε.",
     "disconnected_all": "Όλοι οι λογαριασμοί αποσυνδέθηκαν."
+=======
+    "accounts_connected": "λογαριασμοί συνδεδεμένοι."
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "Συνδέστε ένα πορτοφόλι υλικού με βάση το QR",
@@ -2662,7 +2688,11 @@
       "right_answer_title": "Σωστά! Το να μοιράζεστε τη Μυστική Φράση Ανάκτησης δεν είναι καλή ιδέα",
       "right_answer_description": "Όποιος ισχυριστεί ότι χρειάζεται τη Μυστική Φράση Ανάκτησης, σας λέει ψέματα. Αν την μοιραστείτε μαζί του, θα κλέψει τα περιουσιακά σας στοιχεία.",
       "wrong_answer": "Πρέπει να τους την δώσετε",
+<<<<<<< HEAD
       "wrong_answer_title": "Όχι! Ποτέ μην μοιραστείτε τη Μυστική Φράση Ανάκτησης με κανέναν, ποτέ",
+=======
+      "wrong_answer_title": "Όχι! Ποτέ μα ποτέ μην μοιραστείτε με κανέναν τη Μυστική Φράση Ανάκτησης",
+>>>>>>> upstream/testflight/4754-permission-system
       "wrong_answer_description": "Όποιος ισχυριστεί ότι χρειάζεται τη Μυστική Φράση Ανάκτησης, σας λέει ψέματα. Αν την μοιραστείτε μαζί του, θα κλέψει τα περιουσιακά σας στοιχεία."
     }
   },

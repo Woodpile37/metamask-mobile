@@ -17,10 +17,18 @@ import {
   TextStyle,
 } from 'react-native';
 import { Theme } from '@metamask/design-tokens';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
 import { baseStyles } from '../../../styles/common';
+=======
+import { useDispatch, useSelector } from 'react-redux';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
+import { baseStyles } from '../../../styles/common';
+import AccountOverview from '../../UI/AccountOverview';
+>>>>>>> upstream/testflight/4754-permission-system
 import Tokens from '../../UI/Tokens';
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
@@ -42,12 +50,18 @@ import Logger from '../../../util/Logger';
 import Routes from '../../../constants/navigation/Routes';
 import {
   getNetworkImageSource,
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   getNetworkNameFromProvider,
 =======
   getNetworkNameFromProviderConfig,
 >>>>>>> Stashed changes
 } from '../../../util/networks';
+=======
+  getNetworkNameFromProvider,
+} from '../../../util/networks';
+import { toggleNetworkModal } from '../../../actions/modals';
+>>>>>>> upstream/testflight/4754-permission-system
 import generateTestId from '../../../../wdio/utils/generateTestId';
 import {
   selectProviderConfig,
@@ -88,12 +102,20 @@ const createStyles = ({ colors, typography }: Theme) =>
       paddingVertical: 8,
     },
     tabBar: {
+<<<<<<< HEAD
       borderColor: colors.background.default,
       marginTop: 16,
     },
     textStyle: {
       ...(typography.sBodyMD as TextStyle),
       fontWeight: '500',
+=======
+      borderColor: colors.border.muted,
+      marginTop: 16,
+    },
+    textStyle: {
+      ...(typography.sHeadingSM as TextStyle),
+>>>>>>> upstream/testflight/4754-permission-system
     },
     loader: {
       backgroundColor: colors.background.default,
@@ -110,9 +132,14 @@ const Wallet = ({ navigation }: any) => {
   const { navigate } = useNavigation();
 <<<<<<< Updated upstream
   const { drawerRef } = useContext(DrawerContext);
+<<<<<<< HEAD
 =======
 >>>>>>> Stashed changes
   const walletRef = useRef(null);
+=======
+  const [refreshing, setRefreshing] = useState(false);
+  const accountOverviewRef = useRef(null);
+>>>>>>> upstream/testflight/4754-permission-system
   const theme = useTheme();
   const styles = createStyles(theme);
   const { colors } = theme;
@@ -179,10 +206,37 @@ const Wallet = ({ navigation }: any) => {
    */
   const wizardStep = useSelector((state: any) => state.wizard.step);
   /**
+<<<<<<< HEAD
 <<<<<<< Updated upstream
    * Current network
    */
   const networkProvider: ProviderConfig = useSelector(selectProviderConfig);
+=======
+   * Current network
+   */
+  const networkProvider = useSelector(
+    (state: any) => state.engine.backgroundState.NetworkController.provider,
+  );
+  const dispatch = useDispatch();
+  const networkName = useMemo(
+    () => getNetworkNameFromProvider(networkProvider),
+    [networkProvider],
+  );
+
+  const networkImageSource = useMemo(
+    () =>
+      getNetworkImageSource({
+        networkType: networkProvider.type,
+        chainId: networkProvider.chainId,
+      }),
+    [networkProvider],
+  );
+
+  /**
+   * Callback to trigger when pressing the navigation title.
+   */
+  const onTitlePress = () => dispatch(toggleNetworkModal());
+>>>>>>> upstream/testflight/4754-permission-system
 
   const networkName = useMemo(
     () => getNetworkNameFromProvider(networkProvider),
@@ -297,6 +351,7 @@ const Wallet = ({ navigation }: any) => {
     );
     /* eslint-disable-next-line */
   }, [navigation, themeColors, networkName, networkImageSource, onTitlePress]);
+<<<<<<< HEAD
 
   const renderTabBar = useCallback(
     (props) => (
@@ -313,6 +368,42 @@ const Wallet = ({ navigation }: any) => {
           {...props}
         />
       </View>
+=======
+
+  const onRefresh = useCallback(async () => {
+    requestAnimationFrame(async () => {
+      setRefreshing(true);
+      const {
+        TokenDetectionController,
+        NftDetectionController,
+        AccountTrackerController,
+        CurrencyRateController,
+        TokenRatesController,
+      } = Engine.context as any;
+      const actions = [
+        TokenDetectionController.detectTokens(),
+        NftDetectionController.detectNfts(),
+        AccountTrackerController.refresh(),
+        CurrencyRateController.start(),
+        TokenRatesController.poll(),
+      ];
+      await Promise.all(actions);
+      setRefreshing(false);
+    });
+  }, [setRefreshing]);
+
+  const renderTabBar = useCallback(
+    () => (
+      <DefaultTabBar
+        underlineStyle={styles.tabUnderlineStyle}
+        activeTextColor={colors.text.default}
+        inactiveTextColor={colors.text.muted}
+        backgroundColor={colors.background.default}
+        tabStyle={styles.tabStyle}
+        textStyle={styles.textStyle}
+        style={styles.tabBar}
+      />
+>>>>>>> upstream/testflight/4754-permission-system
     ),
     [styles, colors],
   );
@@ -349,7 +440,10 @@ const Wallet = ({ navigation }: any) => {
             currentCurrency,
           ),
           logo: '../images/eth-logo-new.png',
+<<<<<<< HEAD
 <<<<<<< Updated upstream
+=======
+>>>>>>> upstream/testflight/4754-permission-system
         },
 =======
         } as any,

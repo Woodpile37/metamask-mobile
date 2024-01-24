@@ -550,6 +550,7 @@
     "connect": "연결",
     "connect_with_count": "{{countLabel}} 연결",
     "select_all": "모두 선택",
+<<<<<<< HEAD
     "unselect_all": "모두 선택 해제",
     "permissions": "권한",
     "revoke": "취소",
@@ -568,15 +569,26 @@
     "fake_metamask": "MetaMask 위조 버전",
     "srp_theft": "비밀복구구문 또는 비밀번호 도용",
     "malicious_transactions": "자산 도난으로 이어지는 악성 거래"
+=======
+    "permissions": "권한",
+    "disconnect": "연결 해제",
+    "disconnect_all_accounts": "모든 계정 연결 해제",
+    "revoke": "취소",
+    "revoke_all": "모두 취소"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "연결되어 활성화됨.",
     "now_active": "지금 활성화됨.",
     "revoked": "취소됨.",
     "revoked_all": "모든 계정이 취소되었습니다.",
+<<<<<<< HEAD
     "accounts_connected": "계정이 연결되었습니다.",
     "disconnected": "연결 해제됨",
     "disconnected_all": "모든 계정 연결 해제됨"
+=======
+    "accounts_connected": "계정이 연결되었습니다."
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "QR 코드 기반 하드웨어 지갑 연결",
@@ -2659,11 +2671,19 @@
     "question_two": {
       "question": "누군가, 심지어 고객 센터 직원이라고 해도 여러분의 비밀복구구문을 물어본다면...",
       "right_answer": "이는 반드시 사기입니다",
+<<<<<<< HEAD
       "right_answer_title": "맞습니다! 비밀복구구문은 아무와도 공유하면 안 됩니다",
       "right_answer_description": "비밀복구구문이 필요하다고 하는 사람은 모두 거짓말쟁이입니다. 그런 자들과 비밀복구구문을 공유하면 자산을 도둑맞게 됩니다.",
       "wrong_answer": "주어야 합니다",
       "wrong_answer_title": "맞습니다! 비밀복구구문은 절대로 아무와도 공유하면 안 됩니다",
       "wrong_answer_description": "비밀복구구문이 필요하다고 하는 사람은 모두 거짓말쟁이입니다. 그런 자들과 비밀복구구문을 공유하면 자산을 도둑맞게 됩니다."
+=======
+      "right_answer_title": "맞습니다! 비밀 복구 구문은 아무와도 공유하면 안 됩니다",
+      "right_answer_description": "비밀 복구 구문이 있어야 고객을 도울 수 있다고 하는 사람은 모두 거짓말쟁이입니다. 그런 자들과 비밀 복구 구문을 공유하면 자산을 도둑맞게 됩니다.",
+      "wrong_answer": "주어야 합니다",
+      "wrong_answer_title": "맞습니다! 비밀 복구 구문은 절대로 아무와도 공유하면 안 됩니다",
+      "wrong_answer_description": "비밀 복구 구문이 있어야 고객을 도울 수 있다고 하는 사람은 모두 거짓말쟁이입니다. 그런 자들과 비밀 복구 구문을 공유하면 자산을 도둑맞게 됩니다."
+>>>>>>> upstream/testflight/4754-permission-system
     }
   },
   "ledger": {

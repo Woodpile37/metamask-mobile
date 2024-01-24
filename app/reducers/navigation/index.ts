@@ -57,5 +57,11 @@ const navigationReducer = (state = initialState, action: any = {}) => {
 /**
  * Selectors
  */
+<<<<<<< HEAD
+=======
+export const getCurrentRoute = (state: any) => state.navigation.currentRoute;
+export const getCurrentBottomNavRoute = (state: any) =>
+  state.navigation.currentBottomNavRoute;
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default navigationReducer;

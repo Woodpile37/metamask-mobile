@@ -4,7 +4,11 @@ import {
   NETWORK_EDUCATION_MODAL_CLOSE_BUTTON_ID,
   NETWORK_EDUCATION_MODAL_NETWORK_NAME_ID,
 } from '../../../wdio/screen-objects/testIDs/Components/NetworkEducationModalTestIds';
+<<<<<<< HEAD
 import { NetworkEducationModalSelectorsText } from '../../selectors/Modals/NetworkEducationModal.selectors';
+=======
+import { strings } from '../../../locales/i18n';
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default class NetworkEducationModal {
   static async tapGotItButton() {

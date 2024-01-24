@@ -2,12 +2,18 @@ import TestHelpers from '../helpers';
 
 import {
   ACCOUNT_LIST_ID,
+<<<<<<< HEAD
   ACCOUNT_LIST_ADD_BUTTON_ID,
 } from '../../wdio/screen-objects/testIDs/Components/AccountListComponent.testIds';
 import { CellModalSelectorsIDs } from '../selectors/Modals/CellModal.selectors';
 import { AccountListViewSelectorsText } from '../selectors/AccountListView.selectors';
 import { ConnectAccountModalSelectorsIDs } from '../selectors/Modals/ConnectAccountModal.selectors';
 
+=======
+  CREATE_ACCOUNT_BUTTON_ID,
+  IMPORT_ACCOUNT_BUTTON_ID,
+} from '../../wdio/screen-objects/testIDs/Components/AccountListComponent.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 export default class AccountListView {
   static async tapAccountIndex(index) {
     await TestHelpers.tapItemAtIndex(CellModalSelectorsIDs.MULTISELECT, index);
@@ -40,6 +46,12 @@ export default class AccountListView {
     await TestHelpers.tapAlertWithButton(
       AccountListViewSelectorsText.REMOVE_IMPORTED_ACCOUNT,
     );
+  }
+  static async swipeOnAccounts() {
+    await TestHelpers.swipe(ACCOUNT_LIST_ID, 'down', 'slow', 0.6);
+  }
+  static async swipeToDimssAccountsModal() {
+    await TestHelpers.swipeByText('Accounts', 'down', 'slow', 0.6);
   }
 
   static async isVisible() {

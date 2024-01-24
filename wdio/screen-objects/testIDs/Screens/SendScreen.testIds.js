@@ -12,4 +12,7 @@ export const ADD_THIS_ADDRESS_TO_BOOK = 'add-to-address-book';
 export const SEND_CANCEL_BUTTON = 'send-cancel-button';
 
 export const ADD_ADDRESS_BUTTON = 'add-address-button-a';
+<<<<<<< HEAD
 export const SEND_SCREEN_ID = 'send-screen';
+=======
+>>>>>>> upstream/testflight/4754-permission-system

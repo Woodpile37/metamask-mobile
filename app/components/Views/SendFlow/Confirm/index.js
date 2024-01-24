@@ -40,7 +40,10 @@ import {
 import { getGasLimit } from '../../../../util/custom-gas';
 import Engine from '../../../../core/Engine';
 import Logger from '../../../../util/Logger';
+<<<<<<< HEAD
 import { WALLET_CONNECT_ORIGIN } from '../../../../util/walletconnect';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 import CustomNonceModal from '../../../UI/CustomNonceModal';
 import NotificationManager from '../../../../core/NotificationManager';
 import { strings } from '../../../../../locales/i18n';
@@ -181,6 +184,13 @@ class Confirm extends PureComponent {
      */
     providerType: PropTypes.string,
     /**
+<<<<<<< HEAD
+=======
+     * List of accounts from the PreferencesController
+     */
+    identities: PropTypes.object,
+    /**
+>>>>>>> upstream/testflight/4754-permission-system
      * Selected asset from current transaction state
      */
     selectedAsset: PropTypes.object,
@@ -231,6 +241,10 @@ class Confirm extends PureComponent {
     transactionValue: undefined,
     transactionValueFiat: undefined,
     errorMessage: undefined,
+<<<<<<< HEAD
+=======
+    warningModalVisible: false,
+>>>>>>> upstream/testflight/4754-permission-system
     mode: REVIEW,
     gasSelected: AppConstants.GAS_OPTIONS.MEDIUM,
     stopUpdateGas: false,
@@ -836,7 +850,14 @@ class Confirm extends PureComponent {
   };
 
   onSelectAccount = async (accountAddress) => {
+<<<<<<< HEAD
     const { accounts } = this.props;
+=======
+    const { identities, accounts } = this.props;
+    const { name } = identities[accountAddress];
+    const ens = await doENSReverseLookup(accountAddress);
+    const fromAccountName = ens || name;
+>>>>>>> upstream/testflight/4754-permission-system
     // If new account doesn't have the asset
     this.setState({
       fromSelectedAddress: accountAddress,
@@ -862,6 +883,170 @@ class Confirm extends PureComponent {
     this.setState({ hexDataModalVisible: !hexDataModalVisible });
   };
 
+<<<<<<< HEAD
+=======
+  cancelGasEdition = () => {
+    this.setState({
+      stopUpdateGas: false,
+      gasSelectedTemp: this.state.gasSelected,
+    });
+    this.review();
+  };
+
+  saveGasEdition = (EIP1559GasTransaction, EIP1559GasObject) => {
+    const { transaction } = this.props;
+    EIP1559GasTransaction.error = this.validateAmount({
+      transaction,
+      total: EIP1559GasTransaction.totalMaxHex,
+    });
+
+    this.setState({ EIP1559GasTransaction, EIP1559GasObject });
+
+    this.review();
+  };
+
+  saveGasEditionLegacy = (
+    legacyGasTransaction,
+    legacyGasObject,
+    gasSelected,
+  ) => {
+    const { transaction } = this.props;
+
+    legacyGasTransaction.error = this.validateAmount({
+      transaction,
+      total: legacyGasTransaction.totalHex,
+    });
+    this.setState({
+      gasSelected,
+      gasSelectedTemp: gasSelected,
+      advancedGasInserted: !gasSelected,
+      stopUpdateGas: false,
+      legacyGasTransaction,
+      legacyGasObject,
+    });
+    this.review();
+  };
+
+  renderCustomGasModalEIP1559 = () => {
+    const { primaryCurrency, chainId, gasFeeEstimates } = this.props;
+    const {
+      gasSelected,
+      isAnimating,
+      animateOnChange,
+      EIP1559GasObject,
+      EIP1559GasTransaction,
+    } = this.state;
+
+    const selectedGasObject = {
+      suggestedMaxFeePerGas:
+        EIP1559GasObject.suggestedMaxFeePerGas ||
+        gasFeeEstimates[gasSelected]?.suggestedMaxFeePerGas,
+      suggestedMaxPriorityFeePerGas:
+        EIP1559GasObject.suggestedMaxPriorityFeePerGas ||
+        gasFeeEstimates[gasSelected]?.suggestedMaxPriorityFeePerGas,
+      suggestedGasLimit:
+        EIP1559GasObject.suggestedGasLimit ||
+        EIP1559GasTransaction.suggestedGasLimit,
+    };
+
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    return (
+      <Modal
+        isVisible
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        style={styles.bottomModal}
+        backdropColor={colors.overlay.default}
+        backdropOpacity={1}
+        animationInTiming={600}
+        animationOutTiming={600}
+        onBackdropPress={this.cancelGasEdition}
+        onBackButtonPress={this.cancelGasEdition}
+        onSwipeComplete={this.cancelGasEdition}
+        swipeDirection={'down'}
+        propagateSwipe
+      >
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.keyboardAwareWrapper}
+        >
+          <EditGasFee1559
+            selectedGasValue={gasSelected}
+            initialSuggestedGasLimit={this.state.suggestedGasLimit}
+            gasOptions={gasFeeEstimates}
+            onChange={this.updateGasSelected}
+            primaryCurrency={primaryCurrency}
+            chainId={chainId}
+            onCancel={this.cancelGasEdition}
+            onSave={this.saveGasEdition}
+            animateOnChange={animateOnChange}
+            isAnimating={isAnimating}
+            analyticsParams={this.getGasAnalyticsParams()}
+            view={'SendTo (Confirm)'}
+            selectedGasObject={selectedGasObject}
+            onlyGas={false}
+          />
+        </KeyboardAwareScrollView>
+      </Modal>
+    );
+  };
+
+  renderCustomGasModalLegacy = () => {
+    const { primaryCurrency, chainId, gasEstimateType, gasFeeEstimates } =
+      this.props;
+    const { legacyGasObject, gasSelected, isAnimating, animateOnChange } =
+      this.state;
+
+    const selectedGasObject = {
+      legacyGasLimit: legacyGasObject?.legacyGasLimit,
+      suggestedGasPrice: legacyGasObject?.suggestedGasPrice,
+    };
+
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    return (
+      <Modal
+        isVisible
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        style={styles.bottomModal}
+        backdropColor={colors.overlay.default}
+        backdropOpacity={1}
+        animationInTiming={600}
+        animationOutTiming={600}
+        onBackdropPress={this.cancelGasEdition}
+        onBackButtonPress={this.cancelGasEdition}
+        onSwipeComplete={this.cancelGasEdition}
+        swipeDirection={'down'}
+        propagateSwipe
+      >
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.keyboardAwareWrapper}
+        >
+          <EditGasFeeLegacy
+            selected={gasSelected}
+            gasEstimateType={gasEstimateType}
+            gasOptions={gasFeeEstimates}
+            onChange={this.calculateTempGasFeeLegacy}
+            primaryCurrency={primaryCurrency}
+            chainId={chainId}
+            onCancel={this.cancelGasEdition}
+            onSave={this.saveGasEditionLegacy}
+            animateOnChange={animateOnChange}
+            isAnimating={isAnimating}
+            analyticsParams={this.getGasAnalyticsParams()}
+            view={'SendTo (Confirm)'}
+            onlyGas={false}
+            selectedGasObject={selectedGasObject}
+          />
+        </KeyboardAwareScrollView>
+      </Modal>
+    );
+  };
+
+>>>>>>> upstream/testflight/4754-permission-system
   renderCustomNonceModal = () => {
     const { setNonce } = this.props;
     const { proposedNonce, nonce } = this.props.transaction;
@@ -949,7 +1134,11 @@ class Confirm extends PureComponent {
     const { chainId } = this.props;
     InteractionManager.runAfterInteractions(() => {
       this.props.navigation.navigate(Routes.BROWSER.VIEW, {
+<<<<<<< HEAD
         newTabUrl: TESTNET_FAUCETS[chainId],
+=======
+        newTabUrl: AppConstants.URLS.MM_FAUCET,
+>>>>>>> upstream/testflight/4754-permission-system
         timestamp: Date.now(),
       });
     });
@@ -1052,10 +1241,31 @@ class Confirm extends PureComponent {
         style={styles.wrapper}
         testID={ConfirmViewSelectorsIDs.CONTAINER}
       >
+<<<<<<< HEAD
         <AccountFromToInfoCard
           transactionState={this.props.transactionState}
           onPressFromAddressIcon={
             !paymentRequest ? null : this.openAccountSelector
+=======
+        <View style={styles.inputWrapper}>
+          <AddressFrom
+            onPressIcon={!paymentRequest ? null : this.openAccountSelector}
+            fromAccountAddress={fromSelectedAddress}
+            fromAccountName={fromAccountName}
+            fromAccountBalance={fromAccountBalance}
+          />
+          <AdressToComponentWrap />
+        </View>
+
+        <InfoModal
+          isVisible={warningModalVisible}
+          toggleModal={this.toggleWarningModal}
+          title={strings('transaction.confusable_title')}
+          body={
+            <Text style={styles.text}>
+              {strings('transaction.confusable_msg')}
+            </Text>
+>>>>>>> upstream/testflight/4754-permission-system
           }
           layout="vertical"
         />
@@ -1203,6 +1413,10 @@ class Confirm extends PureComponent {
             )}
           </StyledButton>
         </View>
+<<<<<<< HEAD
+=======
+        {mode === EDIT && this.renderCustomGasModalLegacy()}
+>>>>>>> upstream/testflight/4754-permission-system
         {mode === EDIT_NONCE && this.renderCustomNonceModal()}
         {this.renderHexDataModal()}
       </SafeAreaView>
@@ -1221,8 +1435,13 @@ const mapStateToProps = (state) => ({
   providerType: selectProviderType(state),
   showHexData: state.settings.showHexData,
   showCustomNonce: state.settings.showCustomNonce,
+<<<<<<< HEAD
   chainId: selectChainId(state),
   ticker: selectTicker(state),
+=======
+  chainId: state.engine.backgroundState.NetworkController.provider.chainId,
+  ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+>>>>>>> upstream/testflight/4754-permission-system
   transaction: getNormalizedTxState(state),
   selectedAsset: state.transaction.selectedAsset,
   transactionState: state.transaction,

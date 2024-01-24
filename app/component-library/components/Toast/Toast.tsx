@@ -10,7 +10,6 @@ import React, {
 import {
   Dimensions,
   LayoutChangeEvent,
-  Platform,
   StyleProp,
   View,
   ViewStyle,
@@ -26,8 +25,8 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // External dependencies.
-import Avatar, { AvatarSize, AvatarVariant } from '../Avatars/Avatar';
-import Text, { TextVariant } from '../Texts/Text';
+import Avatar, { AvatarSize, AvatarVariants } from '../Avatars/Avatar';
+import Text, { TextVariants } from '../Texts/Text';
 import Button, { ButtonVariants } from '../Buttons/Button';
 
 // Internal dependencies.
@@ -39,8 +38,6 @@ import {
   ToastVariants,
 } from './Toast.types';
 import styles from './Toast.styles';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import { TOAST_ID } from '../../../../wdio/screen-objects/testIDs/Common.testIds';
 
 const visibilityDuration = 2750;
 const animationDuration = 250;
@@ -105,11 +102,11 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
   };
 
   const renderLabel = (labelOptions: ToastLabelOptions) => (
-    <Text variant={TextVariant.BodyMD}>
+    <Text variant={TextVariants.sBodyMD}>
       {labelOptions.map(({ label, isBold }, index) => (
         <Text
           key={`toast-label-${index}`}
-          variant={isBold ? TextVariant.BodyMDBold : TextVariant.BodyMD}
+          variant={isBold ? TextVariants.sBodyMDBold : TextVariants.sBodyMD}
           style={styles.label}
         >
           {label}
@@ -123,9 +120,10 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
       <Button
         variant={ButtonVariants.Link}
         onPress={linkButtonOptions.onPress}
-        textVariant={TextVariant.BodyMD}
-        label={linkButtonOptions.label}
-      />
+        textVariants={TextVariants.sBodyMD}
+      >
+        {linkButtonOptions.label}
+      </Button>
     );
 
   const renderAvatar = () => {
@@ -137,7 +135,7 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
         const { accountAvatarType } = toastOptions;
         return (
           <Avatar
-            variant={AvatarVariant.Account}
+            variant={AvatarVariants.Account}
             accountAddress={accountAddress}
             // TODO PS: respect avatar global configs
             // should receive avatar type as props
@@ -151,7 +149,7 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
         const { networkImageSource, networkName } = toastOptions;
         return (
           <Avatar
-            variant={AvatarVariant.Network}
+            variant={AvatarVariants.Network}
             name={networkName}
             imageSource={networkImageSource}
             size={AvatarSize.Md}
@@ -168,10 +166,7 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
     return (
       <>
         {renderAvatar()}
-        <View
-          style={styles.labelsContainer}
-          {...generateTestId(Platform, TOAST_ID)}
-        >
+        <View style={styles.labelsContainer}>
           {renderLabel(labelOptions)}
           {renderButtonLink(linkButtonOptions)}
         </View>

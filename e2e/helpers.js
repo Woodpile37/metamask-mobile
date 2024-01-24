@@ -116,6 +116,7 @@ export default class TestHelpers {
       .tap();
   }
 
+<<<<<<< HEAD
   static async tapWebviewElement(elementId) {
     // this method only words on android: https://wix.github.io/Detox/docs/api/webviews/
     return web.element(by.web.id(elementId)).tap();
@@ -140,6 +141,14 @@ export default class TestHelpers {
 
   static async scrollTo(scrollViewId, edge) {
     await element(by.id(scrollViewId)).scrollTo(edge);
+=======
+  static async swipeByText(text, direction, speed, percentage) {
+    await element(by.text(text)).swipe(direction, speed, percentage);
+  }
+
+  static async scrollTo(scrollviewId, edge) {
+    await element(by.id(scrollviewId)).scrollTo(edge);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   static async scrollUpTo(elementId, distance, direction) {

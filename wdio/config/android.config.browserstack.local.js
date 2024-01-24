@@ -2,8 +2,11 @@ import { removeSync } from 'fs-extra';
 import generateTestReports from '../../wdio/utils/generateTestReports';
 import { config } from '../../wdio.conf';
 
+<<<<<<< HEAD
 const browserstack = require('browserstack-local');
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 // Appium capabilities
 // https://appium.io/docs/en/writing-running-appium/caps/
 

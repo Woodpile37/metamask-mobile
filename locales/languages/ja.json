@@ -531,7 +531,10 @@
   },
   "accounts": {
     "create_new_account": "新規アカウントの作成",
+<<<<<<< HEAD
     "qr_hardware": "QRハードウェア",
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     "import_account": "アカウントのインポート",
     "connect_hardware": "ハードウェアウォレットの接続",
     "imported": "インポートされました",
@@ -548,6 +551,7 @@
     "connect_more_accounts": "他のアカウントを接続",
     "cancel": "キャンセル",
     "connect": "接続",
+<<<<<<< HEAD
     "connect_with_count": "{{countLabel}}個を接続",
     "select_all": "すべて選択",
     "unselect_all": "すべて選択解除",
@@ -568,15 +572,28 @@
     "fake_metamask": "MetaMaskの偽バージョン",
     "srp_theft": "シークレットリカバリーフレーズまたはパスワードの窃取",
     "malicious_transactions": "資産の窃取に繋がる悪質なトランザクション"
+=======
+    "connect_with_count": "{{countLabel}} 個を接続",
+    "select_all": "すべて選択",
+    "permissions": "許可",
+    "disconnect": "接続解除",
+    "disconnect_all_accounts": "すべてのアカウントを接続解除",
+    "revoke": "取り消す",
+    "revoke_all": "すべて取り消す"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "接続済みかつ有効です。",
     "now_active": "有効になりました。",
     "revoked": "取り消されました。",
     "revoked_all": "すべてのアカウントが取り消されました。",
+<<<<<<< HEAD
     "accounts_connected": "アカウントが接続されました。",
     "disconnected": "接続が解除されました。",
     "disconnected_all": "すべてのアカウントの接続が解除されました。"
+=======
+    "accounts_connected": "アカウントが接続されました。"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "QRベースのハードウェアウォレットを接続",

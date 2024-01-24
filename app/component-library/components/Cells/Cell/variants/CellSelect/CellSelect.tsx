@@ -3,15 +3,18 @@
 // Third library dependencies.
 import React from 'react';
 
+import { Platform } from 'react-native';
+
 // External dependencies.
 import { useStyles } from '../../../../../hooks';
-import ListItemSelect from '../../../../List/ListItemSelect';
+import SelectItem from '../../../../Select/Select/SelectItem';
 import CellBase from '../../foundation/CellBase';
 
 // Internal dependencies.
+import { CELL_SELECT_TEST_ID } from './CellSelect.constants';
 import styleSheet from './CellSelect.styles';
 import { CellSelectProps } from './CellSelect.types';
-import { CellModalSelectorsIDs } from '../../../../../../../e2e/selectors/Modals/CellModal.selectors';
+import generateTestId from '../../../../../../../wdio/utils/generateTestId';
 
 const CellSelect = ({
   style,
@@ -27,11 +30,12 @@ const CellSelect = ({
   const { styles } = useStyles(styleSheet, { style });
 
   return (
-    <ListItemSelect
+    <SelectItem
       isSelected={isSelected}
       style={styles.base}
-      testID={CellModalSelectorsIDs.SELECT}
+      testID={CELL_SELECT_TEST_ID}
       {...props}
+      {...generateTestId(Platform, CELL_SELECT_TEST_ID)}
     >
       <CellBase
         avatarProps={avatarProps}
@@ -39,11 +43,10 @@ const CellSelect = ({
         secondaryText={secondaryText}
         tertiaryText={tertiaryText}
         tagLabel={tagLabel}
-        style={style}
       >
         {children}
       </CellBase>
-    </ListItemSelect>
+    </SelectItem>
   );
 };
 

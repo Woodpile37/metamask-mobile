@@ -59,7 +59,16 @@ class Step2 extends PureComponent {
       ref.current &&
       ref.current.measure((fx, fy, width, height, px, py) => {
         this.setState({
+<<<<<<< HEAD
           coachmarkTop: py + height,
+=======
+          coachmarkTop:
+            py +
+            height -
+            INDICATOR_HEIGHT -
+            // TODO: FIX Hardcoded offset to account for tab tab.
+            82,
+>>>>>>> upstream/testflight/4754-permission-system
         });
       });
   };

@@ -51,11 +51,17 @@ export const config = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
+<<<<<<< HEAD
   specs: ['./wdio/features/**/*.feature'],
 
   suites: {
     confirmations: ['./wdio/features/Confirmations/*.feature'],
   },
+=======
+  specs: ['./wdio/features/*.feature',
+          './wdio/features/**/*.feature'
+  ],
+>>>>>>> upstream/testflight/4754-permission-system
 
   // Patterns to exclude.
   exclude: [

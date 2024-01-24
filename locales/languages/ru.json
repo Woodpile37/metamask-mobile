@@ -550,6 +550,7 @@
     "connect": "Подключиться",
     "connect_with_count": "Подключить {{countLabel}}",
     "select_all": "Выбрать все",
+<<<<<<< HEAD
     "unselect_all": "Отменить выбор всего",
     "permissions": "Разрешения",
     "revoke": "Отозвано",
@@ -568,15 +569,26 @@
     "fake_metamask": "Поддельные версии MetaMask",
     "srp_theft": "Секретная фраза для восстановления или кража пароля",
     "malicious_transactions": "Вредоносные транзакции, приводящие к краже активов"
+=======
+    "permissions": "Разрешения",
+    "disconnect": "Отключить",
+    "disconnect_all_accounts": "Отключить все счета",
+    "revoke": "Отозвано",
+    "revoke_all": "Отозвать все"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "подключен и активен.",
     "now_active": "сейчас активен.",
     "revoked": "отозван.",
     "revoked_all": "Все счета отозваны.",
+<<<<<<< HEAD
     "accounts_connected": "счета подключены.",
     "disconnected": "отключен.",
     "disconnected_all": "Все счета отключены."
+=======
+    "accounts_connected": "счета подключены."
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "Подключите аппаратный кошелек на основе QR-кодов",

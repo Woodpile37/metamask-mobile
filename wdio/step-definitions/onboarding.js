@@ -9,8 +9,14 @@ import WalletMainScreen from '../screen-objects/WalletMainScreen.js';
 import OnboardingScreen from '../screen-objects/Onboarding/OnboardingScreen.js';
 import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel.js';
 
+<<<<<<<< HEAD:wdio/step-definitions/onboarding.js
 import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js'
 import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js'
+========
+import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js';
+import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js';
+import AddressBarScreen from '../screen-objects/BrowserObject/AddressBarScreen';
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/step-definitions/onboarding.steps.js
 
 Given(/^I just installed MetaMask on my device/, async () => {
   /** This is automatically done by the automation framework **/

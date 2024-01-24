@@ -147,7 +147,11 @@ const createStyles = (colors) =>
       marginBottom: 10,
       top: -2,
       alignItems: 'flex-end',
+<<<<<<< HEAD
       marginRight: 90,
+=======
+      marginRight: 30,
+>>>>>>> upstream/testflight/4754-permission-system
     },
     circle: {
       width: 6,
@@ -328,7 +332,10 @@ export default class Coachmark extends PureComponent {
       false,
       'bottomCenter',
       'bottomLeft',
+<<<<<<< HEAD
       'bottomLeftCorner',
+=======
+>>>>>>> upstream/testflight/4754-permission-system
       'bottomRight',
     ]),
     /**
@@ -414,7 +421,10 @@ export default class Coachmark extends PureComponent {
     const positions = {
       bottomCenter: styles.bottomCenter,
       bottomLeft: styles.bottomLeft,
+<<<<<<< HEAD
       bottomLeftCorner: styles.bottomLeftCorner,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
       bottomRight: styles.bottomRight,
       [undefined]: styles.bottomCenter,
     };

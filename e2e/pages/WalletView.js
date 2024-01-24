@@ -4,6 +4,7 @@ import {
   IMPORT_NFT_BUTTON_ID,
   IMPORT_TOKEN_BUTTON_ID,
   NAVBAR_NETWORK_BUTTON,
+<<<<<<< HEAD
   NAVBAR_NETWORK_TEXT,
   NFT_TAB_CONTAINER_ID,
   WALLET_ACCOUNT_ICON,
@@ -16,6 +17,15 @@ import {
 } from '../selectors/WalletView.selectors';
 import { CommonSelectorsText } from '../selectors/Common.selectors';
 
+=======
+  NFT_TAB_CONTAINER_ID,
+} from '../../wdio/screen-objects/testIDs/Screens/WalletView.testIds';
+
+const WALLET_CONTAINER_ID = 'wallet-screen';
+const DRAWER_BUTTON_ID = 'hamburger-menu-button-wallet';
+const NETWORK_NAME_TEXT_ID = 'network-name';
+const NFT_CONTAINER_ID = 'collectible-name';
+>>>>>>> upstream/testflight/4754-permission-system
 export default class WalletView {
   static async tapOKAlertButton() {
     await TestHelpers.tapAlertWithButton(CommonSelectorsText.OK_ALERT_BUTTON); // system alert.
@@ -31,6 +41,11 @@ export default class WalletView {
     await TestHelpers.waitAndTap(WALLET_ACCOUNT_ICON);
   }
 
+  static async tapBrowser() {
+    await TestHelpers.tapByText('Browser');
+    await TestHelpers.delay(1000);
+  }
+
   static async tapNetworksButtonOnNavBar() {
     await TestHelpers.waitAndTap(NAVBAR_NETWORK_BUTTON);
   }
@@ -44,9 +59,14 @@ export default class WalletView {
   }
 
   static async tapTokensTab() {
+<<<<<<< HEAD
     await TestHelpers.tapByText(WalletViewSelectorsText.TOKENS_TAB);
   }
 
+=======
+    await TestHelpers.tapByText('Tokens');
+  }
+>>>>>>> upstream/testflight/4754-permission-system
   static async scrollDownOnNFTsTab() {
     await TestHelpers.swipe(NFT_TAB_CONTAINER_ID, 'up', 'slow', 0.6);
   }

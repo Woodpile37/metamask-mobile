@@ -4,12 +4,19 @@ import {
   PRIVATE_KEY_INPUT_BOX_ID,
   IMPORT_PRIVATE_KEY_BUTTON_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/ImportAccountScreen.testIds';
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/testflight/4754-permission-system
 import {
   IMPORT_SUCESS_SCREEN_ID,
   IMPORT_SUCESS_SCREEN_CLOSE_BUTTON_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/ImportSuccessScreen.testIds';
+<<<<<<< HEAD
 import { CommonSelectorsText } from '../selectors/Common.selectors';
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 export default class ImportAccountView {
   static async tapImportButton() {
     if (device.getPlatform() === 'ios') {

@@ -68,7 +68,10 @@ function loadStories() {
   require('../app/components/Base/Alert.stories');
   require('../app/components/Base/ListItem.stories');
   require('../app/components/Base/Text/Text.stories');
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   require('../app/components/Base/Title.stories');
   require('../app/components/UI/ButtonReveal/ButtonReveal.stories');
   require('../app/components/UI/Fox/Fox.stories');

@@ -41,12 +41,17 @@ export interface CustomNetworkProps {
   /**
    * Switch tab between popular and custom networks
    */
+<<<<<<< HEAD
   // TODO - The name for this type is not accurate. It should be a ref of the ScrollableTabView's tab.
   switchTab?: TabBarProps;
+=======
+  switchTab: (goToPage: number) => void;
+>>>>>>> upstream/testflight/4754-permission-system
   /**
    * should navigation return to wallet after network change
    */
   shouldNetworkSwitchPopToWallet: boolean;
+<<<<<<< HEAD
   /**
    * Callback after network change, overrides shouldNetworkSwitchPopToWallet
    */
@@ -59,4 +64,6 @@ export interface CustomNetworkProps {
    * List of custom networks
    */
   customNetworksList?: Network[];
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }

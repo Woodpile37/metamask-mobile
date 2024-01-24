@@ -8,6 +8,10 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
+<<<<<<< HEAD
+=======
+import { ImageSourcePropType } from 'react-native';
+>>>>>>> upstream/testflight/4754-permission-system
 import { isEqual } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 
@@ -31,6 +35,7 @@ import AnalyticsV2 from '../../../util/analyticsV2';
 import { MetaMetricsEvents } from '../../../core/Analytics';
 import { useAccounts, Account } from '../../hooks/useAccounts';
 import getAccountNameWithENS from '../../../util/accounts';
+<<<<<<< HEAD
 import { IconName } from '../../../component-library/components/Icons/Icon';
 import { getUrlObj, prefixUrlWithProtocol } from '../../../util/browser';
 import { getActiveTabUrl } from '../../../util/transactions';
@@ -39,6 +44,13 @@ import { AvatarAccountType } from '../../../component-library/components/Avatars
 import { selectAccountsLength } from '../../../selectors/accountTrackerController';
 import { selectIdentities } from '../../../selectors/preferencesController';
 import { selectNetworkConfigurations } from '../../../selectors/networkController';
+=======
+import { IconName } from '../../../component-library/components/Icon';
+import { getUrlObj } from '../../../util/browser';
+import { getActiveTabUrl } from '../../../util/transactions';
+import { strings } from '../../../../locales/i18n';
+import { AvatarAccountType } from '../../../component-library/components/Avatars/Avatar/variants/AvatarAccount';
+>>>>>>> upstream/testflight/4754-permission-system
 
 // Internal dependencies.
 import {
@@ -47,9 +59,13 @@ import {
 } from './AccountPermissions.types';
 import AccountPermissionsConnected from './AccountPermissionsConnected';
 import AccountPermissionsRevoke from './AccountPermissionsRevoke';
+<<<<<<< HEAD
 import { USER_INTENT } from '../../../constants/permissions';
 import useFavicon from '../../hooks/useFavicon/useFavicon';
 import URLParse from 'url-parse';
+=======
+import USER_INTENT from '../../../constants/permissions';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const AccountPermissions = (props: AccountPermissionsProps) => {
   const navigation = useNavigation();
@@ -65,6 +81,7 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
       : AvatarAccountType.JazzIcon,
   );
 
+<<<<<<< HEAD
   const accountsLength = useSelector(selectAccountsLength);
 
   const nonTestnetNetworks = useSelector(
@@ -73,10 +90,27 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
 
   const origin: string = useSelector(getActiveTabUrl, isEqual);
   const faviconSource = useFavicon(origin);
+=======
+  const accountsLength = useSelector(
+    (state: any) =>
+      Object.keys(
+        state.engine.backgroundState.AccountTrackerController.accounts || {},
+      ).length,
+  );
+
+  const nonTestnetNetworks = useSelector(
+    (state: any) =>
+      state.engine.backgroundState.PreferencesController.frequentRpcList
+        .length + 1,
+  );
+
+  const origin: string = useSelector(getActiveTabUrl, isEqual);
+>>>>>>> upstream/testflight/4754-permission-system
   // TODO - Once we can pass metadata to permission system, pass origin instead of hostname into this component.
   // const hostname = useMemo(() => new URL(origin).hostname, [origin]);
   const secureIcon = useMemo(
     () =>
+<<<<<<< HEAD
       (getUrlObj(origin) as URLParse<string>).protocol === 'https:'
         ? IconName.Lock
         : IconName.LockSlash,
@@ -84,6 +118,20 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
   );
 
   const urlWithProtocol = prefixUrlWithProtocol(hostname);
+=======
+      (getUrlObj(origin) as URL).protocol === 'https:'
+        ? IconName.LockFilled
+        : IconName.LockSlashFilled,
+    [origin],
+  );
+  /**
+   * Get image url from favicon api.
+   */
+  const favicon: ImageSourcePropType = useMemo(() => {
+    const iconUrl = `https://api.faviconkit.com/${hostname}/50`;
+    return { uri: iconUrl };
+  }, [hostname]);
+>>>>>>> upstream/testflight/4754-permission-system
 
   const { toastRef } = useContext(ToastContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +151,14 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
   });
   const previousPermittedAccounts = useRef<string[]>();
   const previousIdentitiesListSize = useRef<number>();
+<<<<<<< HEAD
   const identitiesMap = useSelector(selectIdentities);
+=======
+  const identitiesMap = useSelector(
+    (state: any) =>
+      state.engine.backgroundState.PreferencesController.identities,
+  );
+>>>>>>> upstream/testflight/4754-permission-system
   const activeAddress: string = permittedAccountsByHostname[0];
 
   const [userIntent, setUserIntent] = useState(USER_INTENT.None);
@@ -124,7 +179,11 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
       hideSheet();
       toastRef?.current?.showToast({
         variant: ToastVariants.Plain,
+<<<<<<< HEAD
         labelOptions: [{ label: strings('toast.disconnected_all') }],
+=======
+        labelOptions: [{ label: strings('toast.revoked_all') }],
+>>>>>>> upstream/testflight/4754-permission-system
       });
       previousPermittedAccounts.current = permittedAccountsByHostname.length;
     }
@@ -314,9 +373,14 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
         accounts={accountsFilteredByPermissions.permitted}
         ensByAccountAddress={ensByAccountAddress}
         selectedAddresses={[activeAddress]}
+<<<<<<< HEAD
         favicon={faviconSource}
         hostname={hostname}
         urlWithProtocol={urlWithProtocol}
+=======
+        favicon={favicon}
+        hostname={hostname}
+>>>>>>> upstream/testflight/4754-permission-system
         secureIcon={secureIcon}
         accountAvatarType={accountAvatarType}
       />
@@ -329,9 +393,14 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
       setSelectedAddresses,
       setPermissionsScreen,
       hideSheet,
+<<<<<<< HEAD
       faviconSource,
       hostname,
       urlWithProtocol,
+=======
+      favicon,
+      hostname,
+>>>>>>> upstream/testflight/4754-permission-system
       secureIcon,
       accountAvatarType,
     ],
@@ -346,11 +415,18 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
         onSelectAddress={setSelectedAddresses}
         isLoading={isLoading}
         onUserAction={setUserIntent}
+<<<<<<< HEAD
         favicon={faviconSource}
         urlWithProtocol={urlWithProtocol}
         secureIcon={secureIcon}
         isAutoScrollEnabled={false}
         onBack={() => setPermissionsScreen(AccountPermissionsScreens.Connected)}
+=======
+        favicon={favicon}
+        hostname={hostname}
+        secureIcon={secureIcon}
+        isAutoScrollEnabled={false}
+>>>>>>> upstream/testflight/4754-permission-system
       />
     ),
     [
@@ -359,8 +435,13 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
       isLoading,
       accountsFilteredByPermissions,
       setUserIntent,
+<<<<<<< HEAD
       faviconSource,
       urlWithProtocol,
+=======
+      favicon,
+      hostname,
+>>>>>>> upstream/testflight/4754-permission-system
       secureIcon,
     ],
   );
@@ -373,8 +454,12 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
         ensByAccountAddress={ensByAccountAddress}
         permittedAddresses={permittedAccountsByHostname}
         isLoading={isLoading}
+<<<<<<< HEAD
         favicon={faviconSource}
         urlWithProtocol={urlWithProtocol}
+=======
+        favicon={favicon}
+>>>>>>> upstream/testflight/4754-permission-system
         hostname={hostname}
         secureIcon={secureIcon}
         accountAvatarType={accountAvatarType}
@@ -386,9 +471,14 @@ const AccountPermissions = (props: AccountPermissionsProps) => {
       permittedAccountsByHostname,
       accountsFilteredByPermissions,
       setPermissionsScreen,
+<<<<<<< HEAD
       faviconSource,
       hostname,
       urlWithProtocol,
+=======
+      favicon,
+      hostname,
+>>>>>>> upstream/testflight/4754-permission-system
       secureIcon,
       accountAvatarType,
     ],

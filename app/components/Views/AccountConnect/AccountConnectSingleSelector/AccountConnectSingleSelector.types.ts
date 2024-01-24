@@ -1,6 +1,10 @@
 // External dependencies.
 import { UseAccounts } from '../../../hooks/useAccounts';
+<<<<<<< HEAD
 import { USER_INTENT } from '../../../../constants/permissions';
+=======
+import USER_INTENT from '../../../../constants/permissions';
+>>>>>>> upstream/testflight/4754-permission-system
 import { AccountConnectScreens } from '../AccountConnect.types';
 
 /**

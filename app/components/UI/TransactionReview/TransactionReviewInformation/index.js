@@ -46,6 +46,7 @@ import Logger from '../../../../util/Logger';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
 import AppConstants from '../../../../core/AppConstants';
 import WarningMessage from '../../../Views/SendFlow/WarningMessage';
+<<<<<<< HEAD
 import {
   selectChainId,
   selectTicker,
@@ -60,6 +61,10 @@ import { createBrowserNavDetails } from '../../../Views/Browser';
 import { isNetworkRampNativeTokenSupported } from '../../Ramp/common/utils';
 import { getRampNetworks } from '../../../../reducers/fiatOrders';
 import Routes from '../../../../constants/navigation/Routes';
+=======
+import { allowedToBuy } from '../../FiatOnRampAggregator';
+import { createBrowserNavDetails } from '../../../Views/Browser';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -535,7 +540,11 @@ class TransactionReviewInformation extends PureComponent {
       this.onCancelPress();
       this.props.navigation.navigate(
         ...createBrowserNavDetails({
+<<<<<<< HEAD
           newTabUrl: TESTNET_FAUCETS[chainId],
+=======
+          newTabUrl: AppConstants.URLS.MM_FAUCET,
+>>>>>>> upstream/testflight/4754-permission-system
           timestamp: Date.now(),
         }),
       );

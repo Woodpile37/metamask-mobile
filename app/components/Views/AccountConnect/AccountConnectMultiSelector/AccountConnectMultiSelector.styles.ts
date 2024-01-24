@@ -35,10 +35,13 @@ const styleSheet = (params: { theme: Theme }) => {
     disabled: {
       opacity: 0.5,
     },
+<<<<<<< HEAD
     addAccountButtonContainer: {
       marginHorizontal: 16,
       marginTop: 16,
     },
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   });
 };
 

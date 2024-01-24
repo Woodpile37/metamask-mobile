@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 /* eslint-disable no-undef */
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 import Gestures from '../helpers/Gestures';
 import Selectors from '../helpers/Selectors';
 import {
@@ -40,13 +43,20 @@ class ImportAccountScreen {
     try {
       expect(message.includes(text.trim())).toBe(true);
     } catch (error) {
+<<<<<<< HEAD
       // eslint-disable-next-line no-console
+=======
+>>>>>>> upstream/testflight/4754-permission-system
       console.log(`Not able to get device alert text: `);
     }
   }
 
   async tapCloseButton() {
+<<<<<<< HEAD
     await Gestures.waitAndTap(this.closeButton);
+=======
+    await Gestures.tap(this.closeButton);
+>>>>>>> upstream/testflight/4754-permission-system
   }
   async isVisible() {
     await expect(this.importAccountContainer).toBeDisplayed();

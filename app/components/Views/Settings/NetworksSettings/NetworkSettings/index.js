@@ -65,9 +65,12 @@ import {
   NETWORKS_SYMBOL_INPUT_FIELD,
   BLOCK_EXPLORER_FIELD,
   REMOVE_NETWORK_BUTTON,
+<<<<<<< HEAD
   CUSTOM_NETWORKS_TAB_ID,
   POPULAR_NETWORKS_TAB_ID,
   RPC_WARNING_BANNER_ID,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 } from '../../../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
 import Button, {
   ButtonVariants,
@@ -1070,7 +1073,11 @@ class NetworkSettings extends PureComponent {
 
   render() {
     const { route } = this.props;
+<<<<<<< HEAD
     const networkTypeOrRpcUrl = route.params?.network;
+=======
+    const network = route.params?.network;
+>>>>>>> upstream/testflight/4754-permission-system
     const shouldNetworkSwitchPopToWallet =
       route.params?.shouldNetworkSwitchPopToWallet ?? true;
     const colors = this.context.colors || mockTheme.colors;

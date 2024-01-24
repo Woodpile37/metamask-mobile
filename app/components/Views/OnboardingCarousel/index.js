@@ -25,8 +25,16 @@ import AnalyticsV2 from '../../../util/analyticsV2';
 import DefaultPreference from 'react-native-default-preference';
 import { METRICS_OPT_IN } from '../../../constants/storage';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+<<<<<<< HEAD
 import { WELCOME_SCREEN_CAROUSEL_TITLE_ID } from '../../../../wdio/screen-objects/testIDs/Screens/WelcomeScreen.testIds';
 import { OnboardingCarouselSelectorIDs } from '../../../../e2e/selectors/Onboarding/OnboardingCarousel.selectors';
+=======
+import {
+  WELCOME_SCREEN_CAROUSEL_TITLE_ID,
+  WELCOME_SCREEN_GET_STARTED_BUTTON_ID,
+  WELCOME_SCREEN_CAROUSEL_CONTAINER_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/WelcomeScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 import generateTestId from '../../../../wdio/utils/generateTestId';
 const IMAGE_3_RATIO = 215 / 315;
 const IMAGE_2_RATIO = 222 / 239;

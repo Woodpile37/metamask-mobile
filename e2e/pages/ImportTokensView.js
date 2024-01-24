@@ -4,10 +4,13 @@ import {
   ASSET_BACK_BUTTON,
   TOKEN_INPUT_BOX_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/AssetSearch.testIds';
+<<<<<<< HEAD
 import {
   ImportTokenViewSelectorsIDs,
   ImportTokenViewSelectorsText,
 } from '../selectors/ImportTokenView.selectors';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default class ImportTokensView {
   static async tapImportButton() {

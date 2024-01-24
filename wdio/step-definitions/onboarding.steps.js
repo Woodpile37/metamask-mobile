@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Then, When } from '@wdio/cucumber-framework';
 import ImportFromSeedScreen from '../screen-objects/Onboarding/ImportFromSeedScreen.js';
 import CreateNewWalletScreen from '../screen-objects/Onboarding/CreateNewWalletScreen.js';
@@ -9,6 +10,70 @@ import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel.js';
 import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js';
 import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js';
 import AddressBarScreen from '../screen-objects/BrowserObject/AddressBarScreen';
+=======
+import { Given, When, Then } from '@wdio/cucumber-framework';
+import assert from 'assert';
+import Accounts from '../helpers/Accounts.js';
+import ImportFromSeedScreen from '../screen-objects/Onboarding/ImportFromSeedScreen.js';
+import CreateNewWalletScreen from '../screen-objects/Onboarding/CreateNewWalletScreen.js';
+
+import MetaMetricsScreen from '../screen-objects/Onboarding/MetaMetricsScreen.js';
+import WalletMainScreen from '../screen-objects/WalletMainScreen.js';
+import OnboardingScreen from '../screen-objects/Onboarding/OnboardingScreen.js';
+import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel.js';
+
+<<<<<<<< HEAD:wdio/step-definitions/onboarding.js
+import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js'
+import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js'
+========
+import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js';
+import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js';
+import AddressBarScreen from '../screen-objects/BrowserObject/AddressBarScreen';
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/step-definitions/onboarding.steps.js
+
+Given(/^I just installed MetaMask on my device/, async () => {
+  /** This is automatically done by the automation framework **/
+});
+
+When(/^I launch MetaMask mobile app/, async () => {
+  /** This is automatically done by the automation framework **/
+});
+
+Then(/^"([^"]*)?" is displayed/, async (text) => {
+  switch (text) {
+    case 'METAMASK':
+      await WelcomeScreen.isScreenTitleVisible();
+      break;
+    case 'Wallet setup':
+      await OnboardingScreen.isScreenTitleVisible();
+      break;
+    case 'Import an existing wallet or create a new one':
+      await OnboardingScreen.isScreenDescriptionVisible();
+      break;
+    case 'Import using Secret Recovery Phrase':
+      await OnboardingScreen.isImportWalletButtonVisible();
+      break;
+    case 'Create a new wallet':
+      await OnboardingScreen.isCreateNewWalletButtonVisible();
+      break;
+    case 'By proceeding, you agree to these Terms and Conditions.':
+      await OnboardingScreen.isTermsAndConditionsButtonVisible();
+      break;
+    case 'Help us improve MetaMask':
+      await MetaMetricsScreen.isScreenTitleVisible();
+      break;
+    case 'Import from seed':
+      await ImportFromSeedScreen.isScreenTitleVisible();
+      break;
+    case 'Welcome to your new wallet!':
+      await OnboardingWizardModal.isVisible();
+      
+      break;
+    default:
+      throw new Error('Condition not found');
+  }
+});
+>>>>>>> upstream/testflight/4754-permission-system
 
 Then(/^"([^"]*)?" carousel item is displayed/, async (text) => {
   switch (text) {
@@ -30,9 +95,16 @@ When(/^I swipe left on the carousel/, async () => {
   await WelcomeScreen.swipeNextSlide();
 });
 
+<<<<<<< HEAD
 When(/^I tap "([^"]*)"/, async (text) => {
   switch (text) {
     case 'Get started':
+=======
+When(/^I tap "([^"]*)?"/, async (text) => {
+  switch (text) {
+    case 'Get started':
+      await driver.pause(7000) //TODO: Needs a smarter set timeout 
+>>>>>>> upstream/testflight/4754-permission-system
       await WelcomeScreen.clickGetStartedButton();
       break;
     case 'Import using Secret Recovery Phrase':
@@ -44,22 +116,28 @@ When(/^I tap "([^"]*)"/, async (text) => {
     case 'Import':
       await ImportFromSeedScreen.clickImportButton();
       break;
+<<<<<<< HEAD
     case 'No, Thanks':
       await WalletMainScreen.tapNoThanks();
       break;
     case 'https://uniswap.exchange':
       await AddressBarScreen.tapUniswapSuggestionButton();
       break;
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     default:
       throw new Error('Condition not found');
   }
 });
 
+<<<<<<< HEAD
 Then(/^Wallet setup screen is displayed/, async () => {
   // await driver.pause(3000);
   await OnboardingScreen.isScreenTitleVisible();
 });
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 When(/^I type (.*) in SRP field/, async (text) => {
   await ImportFromSeedScreen.typeSecretRecoveryPhrase(text);
 });
@@ -73,11 +151,21 @@ When(/^I type (.*) in confirm password field/, async (text) => {
 });
 
 Then(/^device alert (.*) is displayed/, async (text) => {
+<<<<<<< HEAD
   await ImportFromSeedScreen.isAlertTextVisible(text);
 });
 
 Then(/^password strength (.*) is displayed/, async (text) => {
   await ImportFromSeedScreen.isPasswordStrengthTextCorrect(text);
+=======
+  await ImportFromSeedScreen.verifyAlertText(text);
+  await ImportFromSeedScreen.tapOkInAlertMessage();
+
+});
+
+Then(/^password strength (.*) is displayed/, async (text) => {
+  await ImportFromSeedScreen.verifyPasswordStrength(text);
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 When(/^On Wallet Setup Screen I tap "([^"]*)?"/, async (text) => {
@@ -85,7 +173,11 @@ When(/^On Wallet Setup Screen I tap "([^"]*)?"/, async (text) => {
     case 'Create a new wallet':
       await OnboardingScreen.tapCreateNewWalletButton();
       break;
+<<<<<<< HEAD
     case 'Agree':
+=======
+      case 'Agree':
+>>>>>>> upstream/testflight/4754-permission-system
       await MetaMetricsScreen.tapIAgreeButton();
       break;
     default:
@@ -93,12 +185,18 @@ When(/^On Wallet Setup Screen I tap "([^"]*)?"/, async (text) => {
   }
 });
 
+<<<<<<< HEAD
 When(
   /^I am presented with a new Account screen with password fields/,
   async () => {
     await CreateNewWalletScreen.isNewAccountScreenFieldsVisible();
   },
 );
+=======
+When(/^I am presented with a new Account screen with password fields/, async () => {
+  await CreateNewWalletScreen.isNewAccountScreenFieldsVisible();
+});
+>>>>>>> upstream/testflight/4754-permission-system
 
 When(/^I input a new password "([^"]*)?"/, async (password) => {
   await CreateNewWalletScreen.inputPasswordInFirstField(password);
@@ -114,7 +212,11 @@ When(/^Select "([^"]*)?" on remind secure modal/, async (button) => {
     case 'Skip':
       await SkipAccountSecurityModal.proceedWithoutWalletSecure();
       break;
+<<<<<<< HEAD
     case 'Cancel':
+=======
+      case 'Cancel':
+>>>>>>> upstream/testflight/4754-permission-system
       break;
     default:
       throw new Error('Condition not found');
@@ -122,7 +224,11 @@ When(/^Select "([^"]*)?" on remind secure modal/, async (button) => {
 });
 
 When(/^I select remind me later on secure wallet screen/, async () => {
+<<<<<<< HEAD
   await CreateNewWalletScreen.tapRemindMeLater();
+=======
+  await CreateNewWalletScreen.selectRemindMeLater();
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 When(/^secure wallet page is presented/, async () => {
@@ -133,6 +239,9 @@ Then(/^I should proceed to the new wallet/, async () => {
   await CreateNewWalletScreen.isNotVisible();
 });
 
+<<<<<<< HEAD
 Then(/^green check mark is displayed/, async () => {
   await ImportFromSeedScreen.isPasswordMatchIconVisible();
 });
+=======
+>>>>>>> upstream/testflight/4754-permission-system

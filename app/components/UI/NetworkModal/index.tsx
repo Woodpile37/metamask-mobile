@@ -26,7 +26,20 @@ import generateTestId from '../../../../wdio/utils/generateTestId';
 import { NetworkApprovalModalSelectorsIDs } from '../../../../e2e/selectors/Modals/NetworkApprovalModal.selectors';
 import { ThemeColors } from '@metamask/design-tokens/dist/js/themes/types';
 
+<<<<<<< HEAD
 const createStyles = (colors: ThemeColors) =>
+=======
+import {
+  APPROVE_NETWORK_DISPLAY_NAME_ID,
+  APPROVE_NETWORK_CANCEL_BUTTON_ID,
+} from '../../../constants/test-ids';
+import {
+  APPROVE_NETWORK_APPROVE_BUTTON,
+  APPROVE_NETWORK_MODAL,
+} from '../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
+
+const createStyles = (colors) =>
+>>>>>>> upstream/testflight/4754-permission-system
   StyleSheet.create({
     bottomModal: {
       justifyContent: 'flex-end',
@@ -104,7 +117,10 @@ interface NetworkProps {
   networkConfiguration: any;
   navigation: any;
   shouldNetworkSwitchPopToWallet: boolean;
+<<<<<<< HEAD
   onNetworkSwitch?: () => void;
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 const NetworkModals = (props: NetworkProps) => {
@@ -121,7 +137,10 @@ const NetworkModals = (props: NetworkProps) => {
       rpcPrefs: { blockExplorerUrl, imageUrl },
     },
     shouldNetworkSwitchPopToWallet,
+<<<<<<< HEAD
     onNetworkSwitch,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   } = props;
 
   const [showDetails, setShowDetails] = React.useState(false);
@@ -205,6 +224,7 @@ const NetworkModals = (props: NetworkProps) => {
     AnalyticsV2.trackEvent(MetaMetricsEvents.NETWORK_ADDED, analyticsParamsAdd);
 
     closeModal();
+<<<<<<< HEAD
     if (onNetworkSwitch) {
       onNetworkSwitch();
     } else {
@@ -212,6 +232,11 @@ const NetworkModals = (props: NetworkProps) => {
         ? navigation.navigate('WalletView')
         : navigation.goBack();
     }
+=======
+    shouldNetworkSwitchPopToWallet
+      ? navigation.navigate('WalletView')
+      : navigation.goBack();
+>>>>>>> upstream/testflight/4754-permission-system
     dispatch(networkSwitched({ networkUrl: url.href, networkStatus: true }));
   };
 

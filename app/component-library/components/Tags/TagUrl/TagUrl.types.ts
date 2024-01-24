@@ -2,7 +2,7 @@
 import { ImageSourcePropType, ViewProps } from 'react-native';
 
 // External dependencies.
-import { IconName } from '../../Icons/Icon';
+import { IconName } from '../../Icon';
 
 interface TagUrlCta {
   label: string;

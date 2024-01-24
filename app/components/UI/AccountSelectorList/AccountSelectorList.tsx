@@ -1,27 +1,22 @@
 // Third party dependencies.
 import React, { useCallback, useRef } from 'react';
-import { Alert, ListRenderItem, Platform, View } from 'react-native';
+import { Alert, ListRenderItem, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { KeyringTypes } from '@metamask/keyring-controller';
-import type { Hex } from '@metamask/utils';
 
 // External dependencies.
 import Cell, {
-  CellVariant,
+  CellVariants,
 } from '../../../component-library/components/Cells/Cell';
 import { useStyles } from '../../../component-library/hooks';
 import Text from '../../../component-library/components/Texts/Text';
 import AvatarGroup from '../../../component-library/components/Avatars/AvatarGroup';
-import {
-  formatAddress,
-  safeToChecksumAddress,
-  getLabelTextByAddress,
-} from '../../../util/address';
+import { formatAddress, safeToChecksumAddress } from '../../../util/address';
 import { AvatarAccountType } from '../../../component-library/components/Avatars/Avatar/variants/AvatarAccount';
 import { isDefaultAccountName } from '../../../util/ENSUtils';
 import { strings } from '../../../../locales/i18n';
-import { AvatarVariant } from '../../../component-library/components/Avatars/Avatar/Avatar.types';
+import { AvatarVariants } from '../../../component-library/components/Avatars/Avatar/Avatar.types';
 import { Account, Assets } from '../../hooks/useAccounts';
 import UntypedEngine from '../../../core/Engine';
 import { removeAccountsFromPermissions } from '../../../core/Permissions';
@@ -29,8 +24,6 @@ import { removeAccountsFromPermissions } from '../../../core/Permissions';
 // Internal dependencies.
 import { AccountSelectorListProps } from './AccountSelectorList.types';
 import styleSheet from './AccountSelectorList.styles';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import { ACCOUNT_BALANCE_BY_ADDRESS_TEST_ID } from '../../../../wdio/screen-objects/testIDs/Components/AccountListComponent.testIds.js';
 
 const AccountSelectorList = ({
   onSelectAccount,
@@ -58,15 +51,22 @@ const AccountSelectorList = ({
 
   const getKeyExtractor = ({ address }: Account) => address;
 
+  const getTagLabel = (type: KeyringTypes) => {
+    let label = '';
+    switch (type) {
+      case KeyringTypes.qr:
+        label = strings('transaction.hardware');
+        break;
+      case KeyringTypes.simple:
+        label = strings('accounts.imported');
+        break;
+    }
+    return label;
+  };
+
   const renderAccountBalances = useCallback(
-    ({ fiatBalance, tokens }: Assets, address: string) => (
-      <View
-        style={styles.balancesContainer}
-        {...generateTestId(
-          Platform,
-          `${ACCOUNT_BALANCE_BY_ADDRESS_TEST_ID}-${address}`,
-        )}
-      >
+    ({ fiatBalance, tokens }: Assets) => (
+      <View style={styles.balancesContainer}>
         <Text style={styles.balanceLabel}>{fiatBalance}</Text>
         {tokens && <AvatarGroup tokenList={tokens} />}
       </View>
@@ -81,7 +81,7 @@ const AccountSelectorList = ({
       isSelected,
       index,
     }: {
-      address: Hex;
+      address: string;
       imported: boolean;
       isSelected: boolean;
       index: number;
@@ -144,14 +144,14 @@ const AccountSelectorList = ({
       index,
     }) => {
       const shortAddress = formatAddress(address, 'short');
-      const tagLabel = getLabelTextByAddress(address);
+      const tagLabel = getTagLabel(type);
       const ensName = ensByAccountAddress[address];
       const accountName =
         isDefaultAccountName(name) && ensName ? ensName : name;
       const isDisabled = !!balanceError || isLoading || isSelectionDisabled;
       const cellVariant = isMultiSelect
-        ? CellVariant.MultiSelect
-        : CellVariant.Select;
+        ? CellVariants.Multiselect
+        : CellVariants.Select;
       let isSelectedAccount = isSelected;
       if (selectedAddresses) {
         isSelectedAccount = selectedAddresses.includes(address);
@@ -178,16 +178,16 @@ const AccountSelectorList = ({
           tertiaryText={balanceError}
           onPress={() => onSelectAccount?.(address, isSelectedAccount)}
           avatarProps={{
-            variant: AvatarVariant.Account,
+            variant: AvatarVariants.Account,
             type: accountAvatarType,
             accountAddress: address,
           }}
-          tagLabel={tagLabel ? strings(tagLabel) : tagLabel}
+          tagLabel={tagLabel}
           disabled={isDisabled}
           style={cellStyle}
         >
           {renderRightAccessory?.(address, accountName) ||
-            (assets && renderAccountBalances(assets, address))}
+            (assets && renderAccountBalances(assets))}
         </Cell>
       );
     },

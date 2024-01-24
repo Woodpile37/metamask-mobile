@@ -34,12 +34,15 @@ import { getTokenList } from '../../../reducers/tokens';
 import Engine from '../../../core/Engine';
 import Logger from '../../../util/Logger';
 import Analytics from '../../../core/Analytics/Analytics';
-import AnalyticsV2 from '../../../util/analyticsV2';
-import { allowedToBuy } from '../FiatOrders';
+import { MetaMetricsEvents } from '../../../core/Analytics';
+
+import { allowedToBuy } from '../FiatOnRampAggregator';
 import AssetSwapButton from '../Swaps/components/AssetSwapButton';
 import NetworkMainAssetLogo from '../NetworkMainAssetLogo';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import Routes from '../../../constants/navigation/Routes';
+import { isTestNet } from '../../../util/networks';
+import { createWebviewNavDetails } from '../../Views/SimpleWebview';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -74,6 +77,11 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
       textTransform: 'uppercase',
     },
+    testNetAmount: {
+      fontSize: 30,
+      color: colors.text.default,
+      ...fontStyles.normal,
+    },
     amountFiat: {
       fontSize: 18,
       color: colors.text.alternative,
@@ -101,67 +109,6 @@ const createStyles = (colors) =>
       color: colors.primary.default,
     },
   });
-
-const createStyles = (colors) =>
-	StyleSheet.create({
-		wrapper: {
-			flex: 1,
-			padding: 20,
-			borderBottomWidth: StyleSheet.hairlineWidth,
-			borderBottomColor: colors.border.muted,
-			alignContent: 'center',
-			alignItems: 'center',
-			paddingBottom: 30,
-		},
-		assetLogo: {
-			marginTop: 15,
-			alignItems: 'center',
-			justifyContent: 'center',
-			borderRadius: 10,
-			marginBottom: 10,
-		},
-		ethLogo: {
-			width: 70,
-			height: 70,
-		},
-		balance: {
-			alignItems: 'center',
-			marginTop: 10,
-			marginBottom: 20,
-		},
-		amount: {
-			fontSize: 30,
-			color: colors.text.default,
-			...fontStyles.normal,
-			textTransform: 'uppercase',
-		},
-		amountFiat: {
-			fontSize: 18,
-			color: colors.text.alternative,
-			...fontStyles.light,
-			textTransform: 'uppercase',
-		},
-		actions: {
-			flex: 1,
-			justifyContent: 'center',
-			alignItems: 'flex-start',
-			flexDirection: 'row',
-		},
-		warning: {
-			borderRadius: 8,
-			color: colors.text.default,
-			...fontStyles.normal,
-			fontSize: 14,
-			lineHeight: 20,
-			borderWidth: 1,
-			borderColor: colors.warning.default,
-			backgroundColor: colors.warning.muted,
-			padding: 20,
-		},
-		warningLinks: {
-			color: colors.primary.default,
-		},
-	});
 
 /**
  * View that displays the information of a specific asset (Token or ETH)
@@ -244,14 +191,11 @@ class AssetOverview extends PureComponent {
   onBuy = () => {
     this.props.navigation.navigate(Routes.FIAT_ON_RAMP_AGGREGATOR.ID);
     InteractionManager.runAfterInteractions(() => {
-      Analytics.trackEventWithParameters(
-        AnalyticsV2.ANALYTICS_EVENTS.BUY_BUTTON_CLICKED,
-        {
-          text: 'Buy',
-          location: 'Token Screen',
-          chain_id_destination: this.props.chainId,
-        },
-      );
+      Analytics.trackEventWithParameters(MetaMetricsEvents.BUY_BUTTON_CLICKED, {
+        text: 'Buy',
+        location: 'Token Screen',
+        chain_id_destination: this.props.chainId,
+      });
     });
   };
 
@@ -278,13 +222,11 @@ class AssetOverview extends PureComponent {
   };
 
   goToBrowserUrl(url) {
-    this.props.navigation.navigate(Routes.BROWSER_TAB_HOME, {
-      screen: Routes.BROWSER_VIEW,
-      params: {
-        newTabUrl: url,
-        timestamp: Date.now(),
-      },
-    });
+    this.props.navigation.navigate(
+      ...createWebviewNavDetails({
+        url,
+      }),
+    );
   }
 
   renderLogo = () => {
@@ -310,27 +252,6 @@ class AssetOverview extends PureComponent {
       );
     }
   };
-	goToBrowserUrl(url) {
-		this.props.navigation.navigate('BrowserTabHome', {
-			screen: 'BrowserView',
-			params: {
-				newTabUrl: url,
-				timestamp: Date.now(),
-			},
-		});
-	}
-
-	renderLogo = () => {
-		const { tokenList, asset } = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		return asset.isETH ? (
-			<NetworkMainAssetLogo biggest style={styles.ethLogo} />
-		) : (
-			<TokenImage asset={asset} tokenList={tokenList} />
-		);
-	};
 
   renderWarning = () => {
     const {
@@ -354,12 +275,6 @@ class AssetOverview extends PureComponent {
       </TouchableOpacity>
     );
   };
-	renderWarning = () => {
-		const {
-			asset: { symbol },
-		} = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
 
   render() {
     const {
@@ -428,7 +343,12 @@ class AssetOverview extends PureComponent {
             this.renderWarning()
           ) : (
             <>
-              <Text style={styles.amount} testID={'token-amount'}>
+              <Text
+                style={
+                  isTestNet(chainId) ? styles.testNetAmount : styles.amount
+                }
+                testID={'token-amount'}
+              >
                 {mainBalance}
               </Text>
               {secondaryBalance && (
@@ -437,58 +357,6 @@ class AssetOverview extends PureComponent {
             </>
           )}
         </View>
-	render() {
-		const {
-			accounts,
-			asset: { address, isETH = undefined, decimals, symbol, balanceError = null },
-			primaryCurrency,
-			selectedAddress,
-			tokenExchangeRates,
-			tokenBalances,
-			conversionRate,
-			currentCurrency,
-			chainId,
-			swapsIsLive,
-			swapsTokens,
-		} = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		let mainBalance, secondaryBalance;
-		const itemAddress = safeToChecksumAddress(address);
-		let balance, balanceFiat;
-		if (isETH) {
-			balance = renderFromWei(accounts[selectedAddress] && accounts[selectedAddress].balance);
-			balanceFiat = weiToFiat(hexToBN(accounts[selectedAddress].balance), conversionRate, currentCurrency);
-		} else {
-			const exchangeRate = itemAddress in tokenExchangeRates ? tokenExchangeRates[itemAddress] : undefined;
-			balance =
-				itemAddress in tokenBalances ? renderFromTokenMinimalUnit(tokenBalances[itemAddress], decimals) : 0;
-			balanceFiat = balanceToFiat(balance, conversionRate, exchangeRate, currentCurrency);
-		}
-		// choose balances depending on 'primaryCurrency'
-		if (primaryCurrency === 'ETH') {
-			mainBalance = `${balance} ${symbol}`;
-			secondaryBalance = balanceFiat;
-		} else {
-			mainBalance = !balanceFiat ? `${balance} ${symbol}` : balanceFiat;
-			secondaryBalance = !balanceFiat ? balanceFiat : `${balance} ${symbol}`;
-		}
-		return (
-			<View style={styles.wrapper} testID={'token-asset-overview'}>
-				<View style={styles.assetLogo}>{this.renderLogo()}</View>
-				<View style={styles.balance}>
-					{balanceError ? (
-						this.renderWarning()
-					) : (
-						<>
-							<Text style={styles.amount} testID={'token-amount'}>
-								{mainBalance}
-							</Text>
-							{secondaryBalance && <Text style={styles.amountFiat}>{secondaryBalance}</Text>}
-						</>
-					)}
-				</View>
 
         {!balanceError && (
           <View style={styles.actions}>

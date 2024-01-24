@@ -15,18 +15,23 @@ import { fontStyles } from '../../../../styles/common';
 import CustomText from '../../../../components/Base/Text';
 import { getNavigationOptionsTitle } from '../../../UI/Navbar';
 import { strings } from '../../../../../locales/i18n';
+<<<<<<< HEAD
 import Networks, {
   getAllNetworks,
   getNetworkImageSource,
   isDefaultMainnet,
   isLineaMainnet,
 } from '../../../../util/networks';
+=======
+import Networks, { getAllNetworks, isMainNet } from '../../../../util/networks';
+>>>>>>> upstream/testflight/4754-permission-system
 import StyledButton from '../../../UI/StyledButton';
 import Engine from '../../../../core/Engine';
 import { LINEA_MAINNET, MAINNET, RPC } from '../../../../constants/network';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { mockTheme, ThemeContext } from '../../../../util/theme';
 import ImageIcons from '../../../UI/ImageIcon';
+<<<<<<< HEAD
 import {
   ADD_NETWORK_BUTTON,
   NETWORK_SCREEN_ID,
@@ -43,6 +48,14 @@ import {
 } from '../../../../component-library/components/Avatars/Avatar';
 import AvatarNetwork from '../../../../component-library/components/Avatars/Avatar/variants/AvatarNetwork';
 import Routes from '../../../../constants/navigation/Routes';
+=======
+import { ADD_NETWORK_BUTTON } from '../../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
+import { compareSanitizedUrl } from '../../../../util/sanitizeUrl';
+import Avatar, {
+  AvatarSize,
+  AvatarVariants,
+} from '../../../../component-library/components/Avatars/Avatar';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -228,7 +241,11 @@ class NetworksSettings extends PureComponent {
       <View key={`network-${networkTypeOrRpcUrl}`}>
         {
           // Do not change. This logic must check for 'mainnet' and is used for rendering the out of the box mainnet when searching.
+<<<<<<< HEAD
           isDefaultMainnet(networkTypeOrRpcUrl) ? (
+=======
+          isMainNet(network) ? (
+>>>>>>> upstream/testflight/4754-permission-system
             this.renderMainnet()
           ) : isLineaMainnet(networkTypeOrRpcUrl) ? (
             this.renderLineaMainnet()
@@ -241,6 +258,7 @@ class NetworksSettings extends PureComponent {
               }
             >
               <View style={styles.network}>
+<<<<<<< HEAD
                 {isCustomRPC ? (
                   <AvatarNetwork
                     variant={AvatarVariant.Network}
@@ -251,14 +269,37 @@ class NetworksSettings extends PureComponent {
                   />
                 ) : null}
                 {!isCustomRPC &&
+=======
+                {isCustomRPC &&
+                  // TODO - Refactor to use only AvatarNetwork with getNetworkImageSource
+>>>>>>> upstream/testflight/4754-permission-system
                   (image ? (
                     <ImageIcons
                       image={networkTypeOrRpcUrl.toUpperCase()}
                       style={styles.networkIcon}
                     />
                   ) : (
+<<<<<<< HEAD
                     <View
                       style={[styles.networkIcon, { backgroundColor: color }]}
+=======
+                    <Avatar
+                      variant={AvatarVariants.Network}
+                      name={name}
+                      style={styles.networkIcon}
+                      size={AvatarSize.Xs}
+                    />
+                  ))}
+                {!isCustomRPC &&
+                  (image ? (
+                    <ImageIcons
+                      image={network.toUpperCase()}
+                      style={styles.networkIcon}
+                    />
+                  ) : (
+                    <View
+                      style={[styles.networkIcon, { backgroundColor: image }]}
+>>>>>>> upstream/testflight/4754-permission-system
                     >
                       <Text style={styles.text}>{name[0]}</Text>
                     </View>

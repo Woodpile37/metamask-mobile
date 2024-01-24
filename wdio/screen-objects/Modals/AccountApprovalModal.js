@@ -1,4 +1,5 @@
 import Selectors from '../../helpers/Selectors';
+<<<<<<< HEAD
 import {
   ACCOUNT_APPROVAL_CONNECT_BUTTON,
   ACCOUNT_APPROVAL_SELECT_ALL_BUTTON,
@@ -17,10 +18,17 @@ class AccountApprovalModal {
 >>>>>>> Stashed changes
   }
 
+=======
+import { ACCOUNT_APPROVAL_CONNECT_BUTTON } from '../testIDs/Components/AccountApprovalModal.testIds';
+import Gestures from '../../helpers/Gestures';
+
+class AccountApprovalModal {
+>>>>>>> upstream/testflight/4754-permission-system
   get connectButton() {
     return Selectors.getElementByPlatform(ACCOUNT_APPROVAL_CONNECT_BUTTON);
   }
 
+<<<<<<< HEAD
   get connectMultipleAccountsButton() {
     return Selectors.getElementByPlatform('multiconnect-connect-button');
   }
@@ -101,6 +109,11 @@ class AccountApprovalModal {
       text = await selectAllButton.getText();
     }
   }
+=======
+  async tapConnectButton() {
+    await Gestures.waitAndTap(this.connectButton);
+  }
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 export default new AccountApprovalModal();

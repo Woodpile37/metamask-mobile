@@ -1,5 +1,6 @@
 export const AMOUNT_SCREEN = 'amount-screen';
 
+<<<<<<< HEAD
 export const FIAT_CONVERSION_WARNING_TEXT =
   'amount-screen-fiat-conversion-warning-text';
 
@@ -15,3 +16,6 @@ export const AMOUNT_ERROR = 'amount-error';
 export const CARET_DROP_DOWN = 'amount-screen-caret-drop-down';
 
 export const CURRENCY_SWITCH = 'amount-screen-currency-switch';
+=======
+export const CARET_DROP_DOWN = 'amount-screen-caret-drop-down';
+>>>>>>> upstream/testflight/4754-permission-system

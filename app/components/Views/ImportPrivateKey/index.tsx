@@ -5,6 +5,10 @@ import {
   TextInput,
   Text,
   View,
+<<<<<<< HEAD
+=======
+  Platform,
+>>>>>>> upstream/testflight/4754-permission-system
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -18,7 +22,17 @@ import Device from '../../../util/device';
 import { importAccountFromPrivateKey } from '../../../util/address';
 import { useAppTheme } from '../../../util/theme';
 import { createStyles } from './styles';
+<<<<<<< HEAD
 import { ImportAccountFromPrivateKeySelectorsIDs } from '../../../../e2e/selectors/ImportAccountFromPrivateKey.selectors';
+=======
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  IMPORT_ACCOUNT_SCREEN_ID,
+  IMPORT_PRIVATE_KEY_BUTTON_ID,
+  PRIVATE_KEY_INPUT_BOX_ID,
+  CLOSE_BUTTON_ON_IMPORT_ACCOUNT_SCREEN_ID,
+} from '../../../../wdio/features/testIDs/Screens/ImportAccountScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 /**
  * View that's displayed the first time a user receives funds
@@ -119,22 +133,37 @@ const ImportPrivateKey = () => {
       <KeyboardAwareScrollView
         contentContainerStyle={styles.wrapper}
         style={styles.topOverlay}
+<<<<<<< HEAD
+=======
+        testID={'first-incoming-transaction-screen'}
+>>>>>>> upstream/testflight/4754-permission-system
         resetScrollToCoords={{ x: 0, y: 0 }}
       >
         <View
           style={styles.content}
+<<<<<<< HEAD
           testID={
             ImportAccountFromPrivateKeySelectorsIDs.IMPORT_ACCOUNT_SCREEN_ID
           }
+=======
+          {...generateTestId(Platform, IMPORT_ACCOUNT_SCREEN_ID)}
+>>>>>>> upstream/testflight/4754-permission-system
         >
           <TouchableOpacity onPress={dismiss} style={styles.navbarRightButton}>
             <MaterialIcon
               name="close"
               size={15}
               style={styles.closeIcon}
+<<<<<<< HEAD
               testID={
                 ImportAccountFromPrivateKeySelectorsIDs.CLOSE_BUTTON_ON_IMPORT_ACCOUNT_SCREEN_ID
               }
+=======
+              {...generateTestId(
+                Platform,
+                CLOSE_BUTTON_ON_IMPORT_ACCOUNT_SCREEN_ID,
+              )}
+>>>>>>> upstream/testflight/4754-permission-system
             />
           </TouchableOpacity>
           <View style={styles.top}>
@@ -165,9 +194,13 @@ const ImportPrivateKey = () => {
               multiline
               style={[styles.input, inputWidth ? { width: inputWidth } : {}]}
               onChangeText={setPrivateKey}
+<<<<<<< HEAD
               testID={
                 ImportAccountFromPrivateKeySelectorsIDs.PRIVATE_KEY_INPUT_BOX_ID
               }
+=======
+              {...generateTestId(Platform, PRIVATE_KEY_INPUT_BOX_ID)}
+>>>>>>> upstream/testflight/4754-permission-system
               blurOnSubmit
               onSubmitEditing={() => goNext()}
               returnKeyType={'next'}
@@ -190,9 +223,13 @@ const ImportPrivateKey = () => {
             containerStyle={styles.button}
             type={'confirm'}
             onPress={() => goNext()}
+<<<<<<< HEAD
             testID={
               ImportAccountFromPrivateKeySelectorsIDs.IMPORT_PRIVATE_KEY_BUTTON_ID
             }
+=======
+            {...generateTestId(Platform, IMPORT_PRIVATE_KEY_BUTTON_ID)}
+>>>>>>> upstream/testflight/4754-permission-system
           >
             {loading ? (
               <ActivityIndicator size="small" color={colors.primary.inverse} />

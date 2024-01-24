@@ -5,15 +5,15 @@ import React from 'react';
 
 // External dependencies.
 import { useStyles } from '../../../../../hooks';
-import ListItemMultiSelect from '../../../../List/ListItemMultiSelect';
+import MultiselectItem from '../../../../Select/Multiselect/MultiselectItem';
 import CellBase from '../../foundation/CellBase';
-import { CellModalSelectorsIDs } from '../../../../../../../e2e/selectors/Modals/CellModal.selectors';
 
 // Internal dependencies.
-import styleSheet from './CellMultiSelect.styles';
-import { CellMultiSelectProps } from './CellMultiSelect.types';
+import { CELL_MULTI_SELECT_TEST_ID } from './CellMultiselect.constants';
+import styleSheet from './CellMultiselect.styles';
+import { CellMultiselectProps } from './CellMultiselect.types';
 
-const CellMultiSelect = ({
+const CellMultiselect = ({
   style,
   avatarProps,
   title,
@@ -23,14 +23,14 @@ const CellMultiSelect = ({
   isSelected = false,
   children,
   ...props
-}: CellMultiSelectProps) => {
+}: CellMultiselectProps) => {
   const { styles } = useStyles(styleSheet, { style });
 
   return (
-    <ListItemMultiSelect
+    <MultiselectItem
       isSelected={isSelected}
       style={styles.base}
-      testID={CellModalSelectorsIDs.MULTISELECT}
+      testID={CELL_MULTI_SELECT_TEST_ID}
       {...props}
     >
       <CellBase
@@ -39,12 +39,11 @@ const CellMultiSelect = ({
         secondaryText={secondaryText}
         tertiaryText={tertiaryText}
         tagLabel={tagLabel}
-        style={styles.cell}
       >
         {children}
       </CellBase>
-    </ListItemMultiSelect>
+    </MultiselectItem>
   );
 };
 
-export default CellMultiSelect;
+export default CellMultiselect;

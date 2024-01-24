@@ -43,6 +43,10 @@ type TabBarOptions = BottomTabBarOptions & {
   };
 };
 
+type TabBarOptions = BottomTabBarOptions & {
+  descriptors: BottomTabBarProps['descriptors'];
+};
+
 /**
  * TabBar component props.
  */

@@ -15,7 +15,11 @@ exports[`WebsiteIcon should render correctly 1`] = `
       onLoadEnd={[Function]}
       source={
         Object {
+<<<<<<< HEAD
           "uri": "mockedFaviconSource.png",
+=======
+          "uri": "https://api.faviconkit.com/url.com/50",
+>>>>>>> upstream/testflight/4754-permission-system
         }
       }
     />

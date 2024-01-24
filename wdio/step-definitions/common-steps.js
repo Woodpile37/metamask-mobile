@@ -1,10 +1,16 @@
+<<<<<<< HEAD
 import { Given, Then, When } from '@wdio/cucumber-framework';
 
+=======
+/* global driver */
+import { Given } from '@wdio/cucumber-framework';
+>>>>>>> upstream/testflight/4754-permission-system
 import Accounts from '../helpers/Accounts';
 import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel';
 import OnboardingScreen from '../screen-objects/Onboarding/OnboardingScreen';
 import MetaMetricsScreen from '../screen-objects/Onboarding/MetaMetricsScreen';
 import ImportFromSeedScreen from '../screen-objects/Onboarding/ImportFromSeedScreen';
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 import TabBarModal from "../screen-objects/Modals/TabBarModal";
 =======
@@ -59,11 +65,24 @@ Then(/^Terms of Use is not displayed$/, async () => {
 Given(/^I have imported my wallet$/, async () => {
   const validAccount = Accounts.getValidAccount();
 
+=======
+
+import CreateNewWalletScreen from '../screen-objects/Onboarding/CreateNewWalletScreen.js';
+
+import SkipAccountSecurityModal from '../screen-objects/Modals/SkipAccountSecurityModal.js';
+import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModal.js';
+
+Given(/^I have imported my wallet$/, async () => {
+  const validAccount = Accounts.getValidAccount();
+  await WelcomeScreen.isScreenTitleVisible();
+  await driver.pause(22000); //TODO: Needs a smarter set timeout
+>>>>>>> upstream/testflight/4754-permission-system
   await WelcomeScreen.clickGetStartedButton();
   await OnboardingScreen.isScreenTitleVisible();
   await OnboardingScreen.clickImportWalletButton();
   await MetaMetricsScreen.isScreenTitleVisible();
   await MetaMetricsScreen.tapIAgreeButton();
+<<<<<<< HEAD
   await TermOfUseScreen.isDisplayed();
   await TermOfUseScreen.textIsDisplayed();
   await TermOfUseScreen.tapAgreeCheckBox();
@@ -92,11 +111,26 @@ Given(/^I create a new wallet$/, async () => {
 
   await WelcomeScreen.waitForSplashAnimationToDisplay();
   await WelcomeScreen.waitForScreenToDisplay();
+=======
+  await ImportFromSeedScreen.isScreenTitleVisible();
+  await ImportFromSeedScreen.typeSecretRecoveryPhrase(validAccount.seedPhrase);
+  await ImportFromSeedScreen.typeNewPassword(validAccount.password);
+  await ImportFromSeedScreen.typeConfirmPassword(validAccount.password);
+  await ImportFromSeedScreen.clickImportButton();
+});
+
+Given(/^I have created my wallet$/, async () => {
+  // should be in a common step file
+  const validAccount = Accounts.getValidAccount();
+  await WelcomeScreen.isScreenTitleVisible();
+  await driver.pause(13000); //TODO: Needs a smarter set timeout
+>>>>>>> upstream/testflight/4754-permission-system
   await WelcomeScreen.clickGetStartedButton();
   await OnboardingScreen.isScreenTitleVisible();
   await OnboardingScreen.tapCreateNewWalletButton();
   await MetaMetricsScreen.isScreenTitleVisible();
   await MetaMetricsScreen.tapNoThanksButton();
+<<<<<<< HEAD
   await TermOfUseScreen.isDisplayed();
   await TermOfUseScreen.tapAgreeCheckBox();
   await TermOfUseScreen.tapScrollEndButton();
@@ -129,6 +163,16 @@ Given(/^I import wallet using seed phrase "([^"]*)?"/, async (phrase) => {
   await ImportFromSeedScreen.typeNewPassword(validAccount.password);
   await ImportFromSeedScreen.typeConfirmPassword(validAccount.password);
   await ImportFromSeedScreen.clickImportButton();
+=======
+  await CreateNewWalletScreen.isNewAccountScreenFieldsVisible();
+  await CreateNewWalletScreen.inputPasswordInFirstField(validAccount.password);
+  await CreateNewWalletScreen.inputConfirmPasswordField(validAccount.password);
+  await SkipAccountSecurityModal.isVisible();
+  await SkipAccountSecurityModal.proceedWithoutWalletSecure();
+  await CreateNewWalletScreen.selectRemindMeLater();
+  await CreateNewWalletScreen.isAccountCreated();
+  await CreateNewWalletScreen.isNotVisible();
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 Given(/^I tap No thanks on the onboarding welcome tutorial/, async () => {
@@ -137,6 +181,7 @@ Given(/^I tap No thanks on the onboarding welcome tutorial/, async () => {
   await driver.pause(setTimeout);
   await OnboardingWizardModal.tapNoThanksButton();
 });
+<<<<<<< HEAD
 
 Then(/^"([^"]*)?" is visible/, async (text) => {
   const timeout = 2500;
@@ -316,3 +361,5 @@ When(/^I tap on the Activity tab option$/, async () => {
   await TabBarModal.tapActivityButton();
 >>>>>>> Stashed changes
 });
+=======
+>>>>>>> upstream/testflight/4754-permission-system

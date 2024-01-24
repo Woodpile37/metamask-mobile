@@ -21,6 +21,7 @@ import Device from '../../../util/device';
 import { importAccountFromPrivateKey } from '../../../util/address';
 import PreventScreenshot from '../../../core/PreventScreenshot';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+<<<<<<< HEAD
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -223,6 +224,16 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+import { createStyles } from './styles';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  IMPORT_ACCOUNT_SCREEN_ID,
+  IMPORT_PRIVATE_KEY_BUTTON_ID,
+  PRIVATE_KEY_INPUT_BOX_ID,
+  CLOSE_BUTTON_ON_IMPORT_ACCOUNT_SCREEN_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/ImportAccountScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 /**
  * View that's displayed the first time a user receives funds

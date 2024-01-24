@@ -138,6 +138,10 @@ exports[`GetStarted renders correctly 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -1476,6 +1480,10 @@ exports[`GetStarted renders correctly when getStarted is true 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -1915,6 +1923,10 @@ exports[`GetStarted renders correctly when sdkError is present 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/GetStarted/__snapshots__/GetStarted.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}

@@ -95,10 +95,9 @@
       "content3": "now to edit account name."
     },
     "step4": {
-      "title": "Main Navigation",
-      "content1": "Tap here",
-      "content2": "to access your Wallet, Browser, and Transaction activity.",
-      "content3": "You can take more actions with your accounts & access MetaMask settings."
+      "title": "Main Menu",
+      "content1": "You can access Transaction history, Settings, and Support from this menu.",
+      "content2": "You can take more actions with your accounts & access MetaMask settings."
     },
     "step5": {
       "title": "Explore the Browser",
@@ -277,13 +276,13 @@
   },
   "wallet": {
     "title": "Wallet",
-    "tokens": "TOKENS",
+    "tokens": "Tokens",
     "collectible": "Collectible",
     "collectibles": "NFTs",
     "transactions": "TRANSACTIONS",
     "no_collectibles": "Don’t see your NFT?",
     "no_available_tokens": "Don't see your token?",
-    "add_tokens": "Import Tokens",
+    "add_tokens": "Import tokens",
     "tokens_detected_in_account": "{{tokenCount}} new {{tokensLabel}} found in this account",
     "token_toast": {
       "tokens_imported_title": "Imported Tokens",
@@ -444,7 +443,33 @@
     "remove_account_title": "Account removal",
     "remove_account_message": "Do you really want to remove this account?",
     "no": "No",
+<<<<<<< HEAD
     "yes_remove_it": "Yes, remove it"
+=======
+    "yes_remove_it": "Yes, remove it",
+    "accounts_title": "Accounts",
+    "connect_account_title": "Connect account",
+    "connect_accounts_title": "Connect accounts",
+    "connected_accounts_title": "Connected accounts",
+    "connect_description": "Share your account address, balance, activity, and allow site to initiate transactions.",
+    "connect_multiple_accounts": "Connect multiple accounts",
+    "connect_more_accounts": "Connect more accounts",
+    "cancel": "Cancel",
+    "connect": "Connect",
+    "connect_with_count": "Connect{{countLabel}}",
+    "select_all": "Select all",
+    "unselect_all": "Unselect all",
+    "permissions": "Permissions",
+    "revoke": "Revoke",
+    "revoke_all": "Revoke all"
+  },
+  "toast": {
+    "connected_and_active": "connected and active.",
+    "now_active": "now active.",
+    "revoked": "revoked.",
+    "revoked_all": "All accounts revoked.",
+    "accounts_connected": "accounts connected."
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "Connect a QR-based hardware wallet",
@@ -2173,5 +2198,85 @@
   "automatic_security_checks": {
     "title": "Automatic security checks",
     "description": "Automatically checking for updates may expose your IP address to GitHub servers. This only indicates that your IP address is using MetaMask. No other information or account addresses are exposed."
+<<<<<<< HEAD
+=======
+  },
+  "update_needed": {
+    "title": "Updates needed",
+    "description": "We've increased security for your wallet! Please take a moment to protect yourself and update to the latest version.",
+    "primary_action": "Update to latest version",
+    "secondary_action": "Remind me later"
+  },
+  "enable_automatic_security_check_modal": {
+    "title": "Automatically check for security updates?",
+    "description": "Automatically checking for updates may expose your IP address to GitHub servers. This only indicates that your IP address is using MetaMask. No other information or account addresses are exposed.",
+    "primary_action": "Enable automatic security checks",
+    "secondary_action": "No thanks"
+  },
+  "contract_allowance": {
+    "custom_spend_cap": {
+      "max": "Max",
+      "edit": "Edit",
+      "title": "Custom spending cap",
+      "use_default": "Use default",
+      "from_your_balance": "from your current balance.",
+      "no_value_selected": "Only enter a number that you're comfortable with {{domain}} accessing now or in the future. You can always increase the token limit later.",
+      "this_contract_allows": "This contract allows the site to spend",
+      "from_your_current_balance": "from your current balance plus",
+      "future_tokens": "you might have in the future. Your tokens may be at risk.",
+      "info_modal_description_default": "The contract could spend your entire token balance without further notice or consent. Protect yourself by setting a lower spending cap.",
+      "set_spend_cap": "Set a spending cap",
+      "be_careful": "Be careful",
+      "error_enter_number": "Error: Enter only numbers"
+    }
+  },
+  "restore_wallet": {
+    "restore_needed_title": "Restore needed",
+    "restore_needed_description": "Something has gone wrong but don’t worry! Let’s try to restore your wallet.",
+    "restore_needed_action": "Restore wallet"
+  },
+  "wallet_restored": {
+    "wallet_restored_title": "Your wallet is ready!",
+    "wallet_restored_action": "Continue to wallet",
+    "wallet_restored_description_part_one": "You may need to add some of your assets, networks, and settings again manually.",
+    "wallet_restored_description_part_two": "Take a moment to",
+    "wallet_restored_description_link": "back up your Secret Recovery Phrase",
+    "wallet_restored_description_part_three": "in case you need to restore your wallet again in the future."
+  },
+  "new_wallet_needed": {
+    "new_wallet_needed_title": "New wallet needed",
+    "new_wallet_needed_create_new_wallet_action": "Create a new wallet",
+    "new_wallet_needed_create_try_again_action": "Try recovering wallet",
+    "new_wallet_needed_description_part_one": "Something's wrong with your wallet, and you'll need to create a new one. Because your accounts are on the blockchain, they're still safe. Only the preferences, saved networks, account names, and related data saved on your device are gone.",
+    "new_wallet_needed_description_part_two": "To import your accounts to a new wallet, you'll need your Secret Recovery Phrase. If you don't have your Secret Recovery Phrase, you won't be able to import your accounts.",
+    "new_wallet_needed_description_part_three": "To keep this from happening again, be sure to always keep your MetaMask app and OS updated to the latest version."
+  },
+  "srp_security_quiz": {
+    "title": "Security quiz",
+    "introduction": "To reveal your Secret Recovery Phrase, you need to correctly answer two questions",
+    "get_started": "Get started",
+    "learn_more": "Learn more",
+    "try_again": "Try again",
+    "continue": "Continue",
+    "of": "of",
+    "question_one": {
+      "question": "If you lose your Secret Recovery Phrase, MetaMask...",
+      "right_answer": "Can’t help you",
+      "wrong_answer": "Can get it back for you",
+      "right_answer_title": "Right! No one can help get your Secret Recovery Phrase back",
+      "right_answer_description": "Write it down, engrave it on metal, or keep it in multiple secret spots so you never lose it. If you lose it, it’s gone forever.",
+      "wrong_answer_title": "Wrong! No one can help get your Secret Recovery Phrase back",
+      "wrong_answer_description": "If you lose your Secret Recovery Phrase, it’s gone forever. No one can help you get it back, no matter what they might say."
+    },
+    "question_two": {
+      "question": "If anyone, even a support agent, asks for your Secret Recovery Phrase...",
+      "right_answer": "You’re being scammed",
+      "right_answer_title": "Correct! Sharing your Secret Recovery Phrase is never a good idea",
+      "right_answer_description": "Anyone claiming to need your Secret Recovery Phrase is lying to you. If you share it with them, they will steal your assets.",
+      "wrong_answer": "You should give it to them",
+      "wrong_answer_title": "Nope! Never share your Secret Recovery Phrase with anyone, ever",
+      "wrong_answer_description": "Anyone claiming to need your Secret Recovery Phrase is lying to you. If you share it with them, they will steal your assets."
+    }
+>>>>>>> upstream/testflight/4754-permission-system
   }
 }

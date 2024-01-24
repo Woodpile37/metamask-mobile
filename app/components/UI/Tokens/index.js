@@ -28,6 +28,17 @@ import { getTokenList } from '../../../reducers/tokens';
 import { isZero } from '../../../util/lodash';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import Text from '../../Base/Text';
+<<<<<<< HEAD
+=======
+import NotificationManager from '../../../core/NotificationManager';
+import { getDecimalChainId, isTestNet } from '../../../util/networks';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  IMPORT_TOKEN_BUTTON_ID,
+  MAIN_WALLET_VIEW_VIA_TOKENS_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/WalletView.testIds';
+import { createDetectedTokensNavDetails } from '../../Views/DetectedTokens';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -281,6 +292,50 @@ class Tokens extends PureComponent {
     });
   };
 
+<<<<<<< HEAD
+=======
+  showDetectedTokens = () => {
+    const { NetworkController } = Engine.context;
+    const { detectedTokens } = this.props;
+    this.props.navigation.navigate(...createDetectedTokensNavDetails());
+    InteractionManager.runAfterInteractions(() => {
+      AnalyticsV2.trackEvent(MetaMetricsEvents.TOKEN_IMPORT_CLICKED, {
+        source: 'detected',
+        chain_id: getDecimalChainId(
+          NetworkController?.state?.provider?.chainId,
+        ),
+        tokens: detectedTokens.map(
+          (token) => `${token.symbol} - ${token.address}`,
+        ),
+      });
+      this.setState({ isAddTokenEnabled: true });
+    });
+  };
+
+  renderTokensDetectedSection = () => {
+    const { isTokenDetectionEnabled, detectedTokens } = this.props;
+    const styles = this.getStyles();
+
+    if (!isTokenDetectionEnabled || !detectedTokens?.length) {
+      return null;
+    }
+
+    return (
+      <TouchableOpacity
+        style={styles.tokensDetectedButton}
+        onPress={this.showDetectedTokens}
+      >
+        <Text style={styles.tokensDetectedText}>
+          {strings('wallet.tokens_detected_in_account', {
+            tokenCount: detectedTokens.length,
+            tokensLabel: detectedTokens.length > 1 ? 'tokens' : 'token',
+          })}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+>>>>>>> upstream/testflight/4754-permission-system
   renderList() {
     const { tokens, hideZeroBalanceTokens, tokenBalances } = this.props;
     const tokensToDisplay = hideZeroBalanceTokens

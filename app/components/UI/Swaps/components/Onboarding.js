@@ -9,10 +9,14 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 >>>>>>> Stashed changes
+=======
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+>>>>>>> upstream/testflight/4754-permission-system
 import { useNavigation } from '@react-navigation/native';
 import { strings } from '../../../../../locales/i18n';
 import Device from '../../../../util/device';
@@ -35,11 +39,15 @@ const swapsAggregatorsLight = require('../../../../images/swaps_aggs-light.png')
 const swapsAggregatorsDark = require('../../../../images/swaps_aggs-dark.png');
 /* eslint-enable import/no-commonjs */
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 const createStyles = (colors) =>
 =======
 const createStyles = (colors, bottomInset) =>
 >>>>>>> Stashed changes
+=======
+const createStyles = (colors, bottomInset) =>
+>>>>>>> upstream/testflight/4754-permission-system
   StyleSheet.create({
     screen: {
       flex: 1,
@@ -74,10 +82,14 @@ const createStyles = (colors, bottomInset) =>
     },
     actionButtonWrapper: {
       width: '100%',
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
       paddingBottom: bottomInset,
 >>>>>>> Stashed changes
+=======
+      paddingBottom: bottomInset,
+>>>>>>> upstream/testflight/4754-permission-system
     },
     actionButton: {
       marginVertical: 10,
@@ -135,6 +147,7 @@ if (
 
 function Onboarding({ setHasOnboarded }) {
   const navigation = useNavigation();
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
@@ -143,6 +156,11 @@ function Onboarding({ setHasOnboarded }) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const styles = createStyles(colors, bottomInset);
 >>>>>>> Stashed changes
+=======
+  const { colors } = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const styles = createStyles(colors, bottomInset);
+>>>>>>> upstream/testflight/4754-permission-system
   const swapsAggregators = useAssetFromTheme(
     swapsAggregatorsLight,
     swapsAggregatorsDark,

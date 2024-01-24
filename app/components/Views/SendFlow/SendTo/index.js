@@ -10,6 +10,10 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { toChecksumAddress } from 'ethereumjs-util';
+<<<<<<< HEAD
+=======
+import { hexToBN } from '@metamask/controller-utils';
+>>>>>>> upstream/testflight/4754-permission-system
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Analytics from '../../../../core/Analytics/Analytics';
@@ -17,6 +21,10 @@ import AddressList from './../AddressList';
 import Text from '../../../Base/Text';
 import WarningMessage from '../WarningMessage';
 import { getSendFlowTitle } from '../../../UI/Navbar';
+<<<<<<< HEAD
+=======
+import ActionModal from '../../../UI/ActionModal';
+>>>>>>> upstream/testflight/4754-permission-system
 import StyledButton from '../../../UI/StyledButton';
 import { MetaMetricsEvents } from '../../../../core/Analytics';
 import AnalyticsV2 from '../../../../util/analyticsV2';
@@ -48,10 +56,15 @@ import {
   SYMBOL_ERROR,
 } from '../../../../constants/error';
 import createStyles from './styles';
+<<<<<<< HEAD
 import {
   ADD_ADDRESS_BUTTON,
   SEND_SCREEN_ID,
 } from '../../../../../wdio/screen-objects/testIDs/Screens/SendScreen.testIds';
+=======
+import { ADD_ADDRESS_BUTTON } from '../../../../../wdio/screen-objects/testIDs/Screens/SendScreen.testIds';
+import { ENTER_ALIAS_INPUT_BOX_ID } from '../../../../../wdio/screen-objects/testIDs/Screens/AddressBook.testids';
+>>>>>>> upstream/testflight/4754-permission-system
 import generateTestId from '../../../../../wdio/utils/generateTestId';
 import {
   selectChainId,
@@ -153,6 +166,10 @@ class SendFlow extends PureComponent {
   state = {
     addressError: undefined,
     balanceIsZero: false,
+<<<<<<< HEAD
+=======
+    addToAddressBookModalVisible: false,
+>>>>>>> upstream/testflight/4754-permission-system
     fromSelectedAddress: this.props.selectedAddress,
     toAccount: undefined,
     toSelectedAddressName: undefined,
@@ -215,6 +232,7 @@ class SendFlow extends PureComponent {
     this.updateNavBar();
   };
 
+<<<<<<< HEAD
   componentWillUnmount() {
     BackHandler.removeEventListener(
       'hardwareBackPress',
@@ -366,6 +384,49 @@ class SendFlow extends PureComponent {
     this.setState({ fromSelectedAddress: address });
   };
 
+=======
+  toggleAddToAddressBookModal = () => {
+    const { addToAddressBookModalVisible } = this.state;
+    this.setState({
+      addToAddressBookModalVisible: !addToAddressBookModalVisible,
+    });
+  };
+
+  onSelectAccount = async (accountAddress) => {
+    const { ticker, accounts, identities } = this.props;
+    const { name } = identities[accountAddress];
+    const fromAccountBalance = `${renderFromWei(
+      accounts[accountAddress].balance,
+    )} ${getTicker(ticker)}`;
+    const ens = await doENSReverseLookup(accountAddress);
+    const fromAccountName = ens || name;
+    // If new account doesn't have the asset
+    this.props.setSelectedAsset(getEther(ticker));
+    this.setState({
+      fromAccountName,
+      fromAccountBalance,
+      fromSelectedAddress: accountAddress,
+      balanceIsZero: hexToBN(accounts[accountAddress].balance).isZero(),
+    });
+  };
+
+  openAccountSelector = () => {
+    const { navigation } = this.props;
+    navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
+      screen: Routes.SHEET.ACCOUNT_SELECTOR,
+      params: {
+        isSelectOnly: true,
+        onSelectAccount: this.onSelectAccount,
+      },
+    });
+  };
+
+  /**
+   * This returns the address name from the address book or user accounts if the selectedAddress exist there
+   * @param {String} toAccount - Address input
+   * @returns {String | null} - Address or null if toAccount is not in the addressBook or identities array
+   */
+>>>>>>> upstream/testflight/4754-permission-system
   getAddressNameFromBookOrIdentities = (toAccount) => {
     const { addressBook, identities, chainId } = this.props;
     if (!toAccount) return;
@@ -464,6 +525,165 @@ class SendFlow extends PureComponent {
     this.setState({ showAmbiguousAcountWarning: false });
   };
 
+<<<<<<< HEAD
+=======
+  onScan = () => {
+    this.props.navigation.navigate(
+      ...createQRScannerNavDetails({
+        onScanSuccess: (meta) => {
+          if (meta.chain_id) {
+            this.handleNetworkSwitch(meta.chain_id);
+          }
+          if (meta.target_address) {
+            this.onToSelectedAddressChange(meta.target_address);
+          }
+        },
+        origin: Routes.SEND_FLOW.SEND_TO,
+      }),
+    );
+  };
+
+  onTransactionDirectionSet = async () => {
+    const { setRecipient, navigation, providerType, addRecent } = this.props;
+    const {
+      fromSelectedAddress,
+      toAccount,
+      toEnsName,
+      toSelectedAddressName,
+      fromAccountName,
+      toEnsAddressResolved,
+    } = this.state;
+    if (!this.isAddressSaved()) {
+      const addressError = this.validateToAddress();
+      if (addressError) return;
+    }
+    const toAddress = toEnsAddressResolved || toAccount;
+    addRecent(toAddress);
+    setRecipient(
+      fromSelectedAddress,
+      toAddress,
+      toEnsName,
+      toSelectedAddressName,
+      fromAccountName,
+    );
+    InteractionManager.runAfterInteractions(() => {
+      Analytics.trackEventWithParameters(
+        MetaMetricsEvents.SEND_FLOW_ADDS_RECIPIENT,
+        {
+          network: providerType,
+        },
+      );
+    });
+    navigation.navigate('Amount');
+  };
+
+  renderAddToAddressBookModal = () => {
+    const { addToAddressBookModalVisible, alias } = this.state;
+    const colors = this.context.colors || mockTheme.colors;
+    const themeAppearance = this.context.themeAppearance || 'light';
+    const styles = createStyles(colors);
+
+    return (
+      <ActionModal
+        modalVisible={addToAddressBookModalVisible}
+        confirmText={strings('address_book.save')}
+        cancelText={strings('address_book.cancel')}
+        onCancelPress={this.toggleAddToAddressBookModal}
+        onRequestClose={this.toggleAddToAddressBookModal}
+        onConfirmPress={this.onSaveToAddressBook}
+        cancelButtonMode={'normal'}
+        confirmButtonMode={'confirm'}
+        confirmDisabled={!alias}
+      >
+        <View style={styles.addToAddressBookRoot}>
+          <View
+            style={styles.addToAddressBookWrapper}
+            testID={ADD_ADDRESS_MODAL_CONTAINER_ID}
+          >
+            <View style={baseStyles.flexGrow}>
+              <Text style={styles.addTextTitle}>
+                {strings('address_book.add_to_address_book')}
+              </Text>
+              <Text style={styles.addTextSubtitle}>
+                {strings('address_book.enter_an_alias')}
+              </Text>
+              <View style={styles.addInputWrapper}>
+                <View style={styles.input}>
+                  <TextInput
+                    autoFocus
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    onChangeText={this.onChangeAlias}
+                    placeholder={strings(
+                      'address_book.enter_an_alias_placeholder',
+                    )}
+                    placeholderTextColor={colors.text.muted}
+                    spellCheck={false}
+                    style={styles.addTextInput}
+                    numberOfLines={1}
+                    onBlur={this.onBlur}
+                    onFocus={this.onInputFocus}
+                    onSubmitEditing={this.onFocus}
+                    value={alias}
+                    keyboardAppearance={themeAppearance}
+                    {...generateTestId(Platform, ENTER_ALIAS_INPUT_BOX_ID)}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </ActionModal>
+    );
+  };
+
+  onToInputFocus = () => {
+    const { toInputHighlighted } = this.state;
+    this.setState({ toInputHighlighted: !toInputHighlighted });
+  };
+
+  goToBuy = () => {
+    this.props.navigation.navigate(Routes.FIAT_ON_RAMP_AGGREGATOR.ID);
+    InteractionManager.runAfterInteractions(() => {
+      AnalyticsV2.trackEvent(MetaMetricsEvents.BUY_BUTTON_CLICKED, {
+        button_location: 'Send Flow warning',
+        button_copy: 'Buy Native Token',
+        chain_id_destination: this.props.chainId,
+      });
+    });
+  };
+
+  renderBuyEth = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    if (!allowedToBuy(this.props.network)) {
+      return null;
+    }
+
+    return (
+      <>
+        <Text bold style={styles.buyEth} onPress={this.goToBuy}>
+          {strings('fiat_on_ramp.buy', {
+            ticker: getTicker(this.props.ticker),
+          })}
+        </Text>
+      </>
+    );
+  };
+
+  renderAddressError = (addressError) =>
+    addressError === SYMBOL_ERROR ? (
+      <Fragment>
+        <Text>{strings('transaction.tokenContractAddressWarning_1')}</Text>
+        <Text bold>{strings('transaction.tokenContractAddressWarning_2')}</Text>
+        <Text>{strings('transaction.tokenContractAddressWarning_3')}</Text>
+      </Fragment>
+    ) : (
+      addressError
+    );
+
+>>>>>>> upstream/testflight/4754-permission-system
   render = () => {
     const { ticker, addressBook, chainId } = this.props;
     const {
@@ -507,9 +727,17 @@ class SendFlow extends PureComponent {
         {...generateTestId(Platform, SEND_SCREEN_ID)}
       >
         <View style={styles.imputWrapper}>
+<<<<<<< HEAD
           <SendFlowAddressFrom
             fromAccountBalanceState={this.fromAccountBalanceState}
             setFromAddress={this.setFromAddress}
+=======
+          <AddressFrom
+            onPressIcon={this.openAccountSelector}
+            fromAccountAddress={fromSelectedAddress}
+            fromAccountName={fromAccountName}
+            fromAccountBalance={fromAccountBalance}
+>>>>>>> upstream/testflight/4754-permission-system
           />
           <SendFlowAddressTo
             inputRef={this.addressToInputRef}
@@ -661,6 +889,10 @@ class SendFlow extends PureComponent {
             )}
           </View>
         )}
+<<<<<<< HEAD
+=======
+        {this.renderAddToAddressBookModal()}
+>>>>>>> upstream/testflight/4754-permission-system
       </SafeAreaView>
     );
   };
@@ -673,9 +905,16 @@ const mapStateToProps = (state) => ({
   chainId: selectChainId(state),
   selectedAddress: selectSelectedAddress(state),
   selectedAsset: state.transaction.selectedAsset,
+<<<<<<< HEAD
   identities: selectIdentities(state),
   ticker: selectTicker(state),
   providerType: selectProviderType(state),
+=======
+  identities: state.engine.backgroundState.PreferencesController.identities,
+  ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+  network: state.engine.backgroundState.NetworkController.network,
+  providerType: state.engine.backgroundState.NetworkController.provider.type,
+>>>>>>> upstream/testflight/4754-permission-system
   isPaymentRequest: state.transaction.paymentRequest,
   isNativeTokenBuySupported: isNetworkRampNativeTokenSupported(
     selectChainId(state),

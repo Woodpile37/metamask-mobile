@@ -15,11 +15,15 @@ import AnalyticsV2 from '../../../util/analyticsV2';
 import useTokenBalance from '../../hooks/useTokenBalance';
 import { useTheme } from '../../../util/theme';
 import NotificationManager from '../../../core/NotificationManager';
+<<<<<<< HEAD
 import { selectChainId } from '../../../selectors/networkController';
 import ApproveTransactionHeader from '../ApproveTransactionHeader';
 import { getActiveTabUrl } from '../../../util/transactions';
 import { isEqual } from 'lodash';
 import { SigningModalSelectorsIDs } from '../../../../e2e/selectors/Modals/SigningModal.selectors';
+=======
+import { safeToChecksumAddress } from '../../../util/address';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -101,7 +105,12 @@ const WatchAssetRequest = ({
   onConfirm,
 }) => {
   const { asset, interactingAddress } = suggestedAssetMeta;
+<<<<<<< HEAD
   // TODO - Once TokensController is updated, interactingAddress should always be defined
+=======
+  let [balance] = useTokenBalance(asset.address, selectedAddress);
+  balance = renderFromTokenMinimalUnit(balance, asset.decimals);
+>>>>>>> upstream/testflight/4754-permission-system
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const [balance, , error] = useTokenBalance(asset.address, interactingAddress);
@@ -129,7 +138,17 @@ const WatchAssetRequest = ({
   };
 
   const onConfirmPress = async () => {
+<<<<<<< HEAD
     await onConfirm();
+=======
+    const { TokensController } = Engine.context;
+    await TokensController.acceptWatchAsset(
+      suggestedAssetMeta.id,
+      // TODO - Ideally, this is already checksummed.
+      safeToChecksumAddress(interactingAddress),
+    );
+    onConfirm && onConfirm();
+>>>>>>> upstream/testflight/4754-permission-system
     InteractionManager.runAfterInteractions(() => {
       AnalyticsV2.trackEvent(
         MetaMetricsEvents.TOKEN_ADDED,

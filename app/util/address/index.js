@@ -15,6 +15,7 @@ import { tlc } from '../general';
 import {
   doENSLookup,
   doENSReverseLookup,
+<<<<<<< HEAD
   getCachedENSName,
   isDefaultAccountName,
 } from '../../util/ENSUtils';
@@ -23,6 +24,12 @@ import {
   findBlockExplorerForRpc,
 } from '../../util/networks';
 import { RPC } from '../../constants/network';
+=======
+  ENSCache,
+  isDefaultAccountName,
+} from '../../util/ENSUtils';
+import { isMainnetByChainId } from '../../util/networks';
+>>>>>>> upstream/testflight/4754-permission-system
 import { collectConfusables } from '../../util/confusables';
 import {
   CONTACT_ALREADY_SAVED,
@@ -111,11 +118,20 @@ export function renderSlightlyLongAddress(
  * @returns {String} - String corresponding to account name. If there is no name, returns the original short format address
  */
 export function renderAccountName(address, identities) {
+<<<<<<< HEAD
   const chainId = selectChainId(store.getState());
   address = safeToChecksumAddress(address);
   if (identities && address && address in identities) {
     const identityName = identities[address].name;
     const ensName = getCachedENSName(address, chainId) || '';
+=======
+  const { NetworkController } = Engine.context;
+  const network = NetworkController.state.network;
+  address = safeToChecksumAddress(address);
+  if (identities && address && address in identities) {
+    const identityName = identities[address].name;
+    const ensName = ENSCache.cache[`${network}${address}`]?.name || '';
+>>>>>>> upstream/testflight/4754-permission-system
     return isDefaultAccountName(identityName) && ensName
       ? ensName
       : identityName;

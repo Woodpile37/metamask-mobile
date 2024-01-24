@@ -4,9 +4,14 @@ import { IQRState } from '../types';
 import { StyleSheet, View } from 'react-native';
 import QRSigningDetails from '../QRSigningDetails';
 import { useTheme } from '../../../../util/theme';
+<<<<<<< HEAD
 import { useDispatch, useSelector } from 'react-redux';
 import { getNormalizedTxState } from '../../../../util/transactions';
 import { resetTransaction } from '../../../../actions/transaction';
+=======
+import { useSelector } from 'react-redux';
+import { getNormalizedTxState } from '../../../../util/transactions';
+>>>>>>> upstream/testflight/4754-permission-system
 
 interface IQRSigningModalProps {
   isVisible: boolean;
@@ -45,6 +50,7 @@ const QRSigningModal = ({
   const [isModalCompleteShow, setModalCompleteShow] = useState(false);
   const { from } = useSelector(getNormalizedTxState);
 
+<<<<<<< HEAD
   const handleCancel = () => {
     onCancel?.();
     dispatch(resetTransaction());
@@ -59,6 +65,8 @@ const QRSigningModal = ({
     dispatch(resetTransaction());
   };
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   return (
     <Modal
       isVisible={isVisible}

@@ -201,7 +201,18 @@ import DefaultPreference from 'react-native-default-preference';
 import { Authentication } from '../../../core';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import AnimatedFox from 'react-native-animated-fox';
+<<<<<<< HEAD
 import { OnboardingSelectorIDs } from '../../../../e2e/selectors/Onboarding/Onboarding.selectors';
+=======
+import Routes from '../../../constants/navigation/Routes';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  WALLET_SETUP_SCREEN_TITLE_ID,
+  WALLET_SETUP_SCREEN_DESCRIPTION_ID,
+  WALLET_SETUP_SCREEN_IMPORT_FROM_SEED_BUTTON_ID,
+  WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/WalletSetupScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 >>>>>>> Stashed changes
 import Routes from '../../../constants/navigation/Routes';

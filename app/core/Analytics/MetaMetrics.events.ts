@@ -314,6 +314,7 @@ enum EVENT_NAME {
 
   OPEN_DAPP_PERMISSIONS = 'Viewed dapp permissions',
   CHANGE_DAPP_PERMISSIONS = 'Changed dapp permissions',
+<<<<<<< HEAD
 
   // Vault Corruption
   VAULT_CORRUPTION_RESTORE_WALLET_SCREEN_VIEWED = 'Vault Corruption Restore Wallet Screen Viewed',
@@ -346,6 +347,8 @@ enum EVENT_NAME {
   LEDGER_HARDWARE_TRANSACTION_CANCELLED = 'User canceled Ledger hardware transaction',
   LEDGER_HARDWARE_WALLET_ERROR = 'Ledger hardware wallet error',
   LEDGER_HARDWARE_WALLET_FORGOTTEN = 'Ledger hardware wallet forgotten',
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 enum ACTIONS {
@@ -387,6 +390,7 @@ enum ACTIONS {
   // Swaps
   QUOTE = 'Quote',
   SWAP = 'Swap',
+<<<<<<< HEAD
   BRIDGE = 'Bridge',
   PERMISSION_NEW_ACCOUNT = 'Connected new account(s)',
   PERMISSION_REVOKE_ACCOUNT = 'Revoked account(s)',
@@ -394,6 +398,10 @@ enum ACTIONS {
   ADVANCED_SETTINGS_ETH_SIGN_FRICTION_SECOND_STEP = 'eth_sign_input_seen',
   ADVANCED_SETTINGS_ETH_SIGN_ENABLED = 'eth_sign_enabled',
   ADVANCED_SETTINGS_ETH_SIGN_DISABLED = 'eth_sign_disabled',
+=======
+  PERMISSION_NEW_ACCOUNT = 'Connected new account(s)',
+  PERMISSION_REVOKE_ACCOUNT = 'Revoked account(s)',
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 const events = {
@@ -736,6 +744,7 @@ const events = {
     ACTIONS.PERMISSION_NEW_ACCOUNT,
   ),
   BROWSER_SWITCH_TAB: generateOpt(EVENT_NAME.BROWSER_SWITCH_TAB),
+<<<<<<< HEAD
 
   // Vault corruption
   VAULT_CORRUPTION_RESTORE_WALLET_SCREEN_VIEWED: generateOpt(
@@ -817,6 +826,8 @@ const events = {
   LEDGER_HARDWARE_WALLET_FORGOTTEN: generateOpt(
     EVENT_NAME.LEDGER_HARDWARE_WALLET_FORGOTTEN,
   ),
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 };
 
 /**
@@ -913,7 +924,10 @@ enum DESCRIPTION {
   PAYMENTS_SELECTS_DEBIT_OR_ACH = 'Selects debit card or bank account as payment method',
   PAYMENTS_SELECTS_APPLE_PAY = 'Selects Apple Pay as payment method',
   SWAPS = 'Swaps',
+<<<<<<< HEAD
   BRIDGE = 'Bridge',
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 const legacyMetaMetricsEvents = {

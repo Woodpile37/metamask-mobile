@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   InteractionManager,
+  Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,11 +23,13 @@ import {
 } from '../../../util/networks';
 import Identicon from '../Identicon';
 import StyledButton from '../StyledButton';
+import NetworkList from '../NetworkList';
 import { renderFromWei, renderFiat } from '../../../util/number';
 import { strings } from '../../../../locales/i18n';
 import Modal from 'react-native-modal';
+import SecureKeychain from '../../../core/SecureKeychain';
 import {
-  toggleInfoNetworkModal,
+  toggleNetworkModal,
   toggleReceiveModal,
 } from '../../../actions/modals';
 import { showAlert } from '../../../actions/alert';
@@ -37,6 +40,7 @@ import {
 import Engine from '../../../core/Engine';
 import Logger from '../../../util/Logger';
 import Device from '../../../util/device';
+import OnboardingWizard from '../OnboardingWizard';
 import ReceiveRequest from '../ReceiveRequest';
 import Analytics from '../../../core/Analytics/Analytics';
 import AppConstants from '../../../core/AppConstants';
@@ -45,8 +49,10 @@ import URL from 'url-parse';
 import EthereumAddress from '../EthereumAddress';
 import { getEther } from '../../../util/transactions';
 import { newAssetTransaction } from '../../../actions/transaction';
-import { protectWalletModalVisible } from '../../../actions/user';
-import DeeplinkManager from '../../../core/DeeplinkManager/SharedDeeplinkManager';
+import { logOut, protectWalletModalVisible } from '../../../actions/user';
+import DeeplinkManager from '../../../core/DeeplinkManager';
+import SettingsNotification from '../SettingsNotification';
+import InvalidCustomNetworkAlert from '../InvalidCustomNetworkAlert';
 import { RPC } from '../../../constants/network';
 import { findRouteNameFromNavigatorState } from '../../../util/general';
 import AnalyticsV2 from '../../../util/analyticsV2';
@@ -56,34 +62,26 @@ import {
 } from '../../../util/ENSUtils';
 import ClipboardManager from '../../../core/ClipboardManager';
 import { collectiblesSelector } from '../../../reducers/collectibles';
+import { getCurrentRoute } from '../../../reducers/navigation';
 import { ScrollView } from 'react-native-gesture-handler';
 import { isZero } from '../../../util/lodash';
-import { Authentication } from '../../../core/';
+import { KeyringTypes } from '@metamask/keyring-controller';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { getLabelTextByAddress } from '../../../util/address';
+import NetworkInfo from '../NetworkInfo';
+import sanitizeUrl from '../../../util/sanitizeUrl';
 import {
   onboardNetworkAction,
   networkSwitched,
 } from '../../../actions/onboardNetwork';
 import Routes from '../../../constants/navigation/Routes';
 import { scale } from 'react-native-size-matters';
-import { DRAWER_VIEW_LOCK_TEXT_ID } from '../../../../wdio/screen-objects/testIDs/Screens/DrawerView.testIds';
+import generateTestId from '../../../../wdio/utils/generateTestId';
 import {
-  selectNetworkConfigurations,
-  selectProviderConfig,
-  selectTicker,
-} from '../../../selectors/networkController';
-import { selectCurrentCurrency } from '../../../selectors/currencyRateController';
-import { selectTokens } from '../../../selectors/tokensController';
-import { selectAccounts } from '../../../selectors/accountTrackerController';
-import { selectContractBalances } from '../../../selectors/tokenBalancesController';
-import {
-  selectIdentities,
-  selectSelectedAddress,
-} from '../../../selectors/preferencesController';
+  DRAWER_VIEW_LOCK_TEXT_ID,
+  DRAWER_VIEW_SETTINGS_TEXT_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/DrawerView.testIds';
 
 import { createAccountSelectorNavDetails } from '../../Views/AccountSelector';
-import NetworkInfo from '../NetworkInfo';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -334,9 +332,9 @@ class DrawerView extends PureComponent {
     */
     navigation: PropTypes.object,
     /**
-     * Object representing the configuration of the current selected network
+     * Object representing the selected the selected network
      */
-    providerConfig: PropTypes.object.isRequired,
+    network: PropTypes.object.isRequired,
     /**
      * Selected address as string
      */
@@ -358,6 +356,10 @@ class DrawerView extends PureComponent {
      */
     keyrings: PropTypes.array,
     /**
+     * Action that toggles the network modal
+     */
+    toggleNetworkModal: PropTypes.func,
+    /**
      * Action that toggles the receive modal
      */
     toggleReceiveModal: PropTypes.func,
@@ -365,6 +367,10 @@ class DrawerView extends PureComponent {
      * Action that shows the global alert
      */
     showAlert: PropTypes.func.isRequired,
+    /**
+     * Boolean that determines the status of the networks modal
+     */
+    networkModalVisible: PropTypes.bool.isRequired,
     /**
      * Boolean that determines the status of the receive modal
      */
@@ -378,13 +384,17 @@ class DrawerView extends PureComponent {
      */
     passwordSet: PropTypes.bool,
     /**
+     * Wizard onboarding state
+     */
+    wizard: PropTypes.object,
+    /**
      * Current provider ticker
      */
     ticker: PropTypes.string,
     /**
-     * Network configurations
+     * Frequent RPC list from PreferencesController
      */
-    networkConfigurations: PropTypes.object,
+    frequentRpcList: PropTypes.array,
     /**
      * Array of ERC20 assets
      */
@@ -406,27 +416,35 @@ class DrawerView extends PureComponent {
      * Prompts protect wallet modal
      */
     protectWalletModalVisible: PropTypes.func,
+    logOut: PropTypes.func,
     /**
      * Callback to close drawer
      */
     onCloseDrawer: PropTypes.func,
-
+    /**
+     * Latest navigation route
+     */
+    currentRoute: PropTypes.string,
     /**
      * handles action for onboarding to a network
      */
     onboardNetworkAction: PropTypes.func,
     /**
+     * returns network onboarding state
+     */
+    networkOnboarding: PropTypes.object,
+    /**
+     * returns switched network state
+     */
+    switchedNetwork: PropTypes.object,
+    /**
      * updates when network is switched
      */
     networkSwitched: PropTypes.func,
     /**
-     *  Boolean that determines the state of network info modal
+     *
      */
-    infoNetworkModalVisible: PropTypes.bool,
-    /**
-     * Redux action to close info network modal
-     */
-    toggleInfoNetworkModal: PropTypes.func,
+    networkOnboardedState: PropTypes.array,
   };
 
   state = {
@@ -435,9 +453,11 @@ class DrawerView extends PureComponent {
       ens: undefined,
       name: undefined,
       address: undefined,
-      currentChainId: undefined,
+      currentNetwork: undefined,
     },
+    networkSelected: false,
     networkType: undefined,
+    networkCurrency: undefined,
     showModal: false,
     networkUrl: undefined,
   };
@@ -467,14 +487,28 @@ class DrawerView extends PureComponent {
   }
 
   renderTag() {
+    let tag = null;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
-    const label = getLabelTextByAddress(this.props.selectedAddress);
-
-    return label ? (
-      <View style={[styles.importedWrapper]}>
+    const { keyrings, selectedAddress } = this.props;
+    const allKeyrings =
+      keyrings && keyrings.length
+        ? keyrings
+        : Engine.context.KeyringController.state.keyrings;
+    for (const keyring of allKeyrings) {
+      if (keyring.accounts.includes(selectedAddress)) {
+        if (keyring.type === KeyringTypes.simple) {
+          tag = strings('accounts.imported');
+        } else if (keyring.type === KeyringTypes.qr) {
+          tag = strings('transaction.hardware');
+        }
+        break;
+      }
+    }
+    return tag ? (
+      <View style={styles.importedWrapper}>
         <Text numberOfLines={1} style={styles.importedText}>
-          {strings(label)}
+          {tag}
         </Text>
       </View>
     ) : null;
@@ -495,7 +529,7 @@ class DrawerView extends PureComponent {
           'ManualBackupStep2',
           'ManualBackupStep3',
           'Webview',
-          Routes.LOCK_SCREEN,
+          'LockScreen',
         ].includes(route)
       ) {
         this.state.showProtectWalletModal &&
@@ -543,7 +577,7 @@ class DrawerView extends PureComponent {
     if (
       pendingDeeplink &&
       KeyringController.isUnlocked() &&
-      route !== Routes.LOCK_SCREEN
+      route !== 'LockScreen'
     ) {
       DeeplinkManager.expireDeeplink();
       DeeplinkManager.parse(pendingDeeplink, {
@@ -554,23 +588,23 @@ class DrawerView extends PureComponent {
   }
 
   updateAccountInfo = async () => {
-    const { identities, providerConfig, selectedAddress } = this.props;
-    const { currentChainId, address, name } = this.state.account;
+    const { identities, network, selectedAddress } = this.props;
+    const { currentNetwork, address, name } = this.state.account;
     const accountName = identities[selectedAddress]?.name;
     if (
-      currentChainId !== providerConfig.chainId ||
+      currentNetwork !== network ||
       address !== selectedAddress ||
       name !== accountName
     ) {
       const ens = await doENSReverseLookup(
         selectedAddress,
-        providerConfig.chainId,
+        network.provider.chainId,
       );
       this.setState((state) => ({
         account: {
           ens,
           name: accountName,
-          currentChainId: providerConfig.chainId,
+          currentNetwork: network,
           address: selectedAddress,
         },
       }));
@@ -594,6 +628,59 @@ class DrawerView extends PureComponent {
     this.props.toggleReceiveModal();
   };
 
+  onNetworksModalClose = async (manualClose) => {
+    this.toggleNetworksModal();
+    if (!manualClose) {
+      await this.hideDrawer();
+    }
+  };
+
+  onInfoNetworksModalClose = async (manualClose) => {
+    const {
+      networkOnboarding: { showNetworkOnboarding, networkUrl },
+      onboardNetworkAction,
+      switchedNetwork: { networkUrl: switchedNetworkUrl },
+      networkSwitched,
+    } = this.props;
+    this.setState({
+      networkSelected: !this.state.networkSelected,
+      showModal: false,
+    });
+    !showNetworkOnboarding && this.toggleNetworksModal();
+    onboardNetworkAction(
+      sanitizeUrl(networkUrl) ||
+        sanitizeUrl(switchedNetworkUrl) ||
+        this.state.networkUrl,
+    );
+    networkSwitched({ networkUrl: '', networkStatus: false });
+    if (!manualClose) {
+      await this.hideDrawer();
+    }
+  };
+
+  toggleNetworksModal = () => {
+    if (!this.animatingNetworksModal) {
+      this.animatingNetworksModal = true;
+      this.props.toggleNetworkModal();
+      setTimeout(() => {
+        this.animatingNetworksModal = false;
+      }, 500);
+    }
+  };
+
+  onNetworkSelected = (type, currency, url) => {
+    this.setState({
+      networkType: type,
+      networkUrl: url || type,
+      networkCurrency: currency,
+      networkSelected: true,
+    });
+  };
+
+  switchModalContent = () => {
+    this.setState({ showModal: true });
+  };
+
   showReceiveModal = () => {
     this.toggleReceiveModal();
   };
@@ -606,16 +693,15 @@ class DrawerView extends PureComponent {
 
   // NOTE: do we need this event?
   trackOpenBrowserEvent = () => {
-    const { providerConfig } = this.props;
+    const { network } = this.props;
     AnalyticsV2.trackEvent(MetaMetricsEvents.BROWSER_OPENED, {
       source: 'In-app Navigation',
-      chain_id: providerConfig.chainId,
+      chain_id: network,
     });
   };
 
   onReceive = () => {
     this.toggleReceiveModal();
-    this.hideDrawer();
     this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_RECEIVE);
   };
 
@@ -640,20 +726,39 @@ class DrawerView extends PureComponent {
     this.trackEvent(MetaMetricsEvents.WALLET_OPENED);
   };
 
-  onPressLock = async () => {
+  goToTransactionHistory = () => {
+    this.props.navigation.navigate('TransactionsHome');
+    this.hideDrawer();
+    this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_TRANSACTION_HISTORY);
+  };
+
+  showSettings = async () => {
+    this.props.navigation.navigate('SettingsView');
+    this.hideDrawer();
+    this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_SETTINGS);
+  };
+
+  logOut = () => {
+    this.props.navigation.navigate(Routes.ONBOARDING.LOGIN);
+    this.props.logOut();
+  };
+
+  onPress = async () => {
     const { passwordSet } = this.props;
-    await Authentication.lockApp();
+    const { KeyringController } = Engine.context;
+    await SecureKeychain.resetGenericPassword();
+    await KeyringController.setLocked();
     if (!passwordSet) {
       this.props.navigation.navigate('OnboardingRootNav', {
         screen: Routes.ONBOARDING.NAV,
         params: { screen: 'Onboarding' },
       });
     } else {
-      this.props.navigation.replace(Routes.ONBOARDING.LOGIN, { locked: true });
+      this.logOut();
     }
   };
 
-  lock = () => {
+  logout = () => {
     Alert.alert(
       strings('drawer.lock_title'),
       '',
@@ -665,7 +770,7 @@ class DrawerView extends PureComponent {
         },
         {
           text: strings('drawer.lock_ok'),
-          onPress: this.onPressLock,
+          onPress: this.onPress,
         },
       ],
       { cancelable: false },
@@ -674,19 +779,25 @@ class DrawerView extends PureComponent {
   };
 
   viewInEtherscan = () => {
-    const { selectedAddress, providerConfig, networkConfigurations } =
-      this.props;
-    if (providerConfig.type === RPC) {
-      const blockExplorer = findBlockExplorerForRpc(
-        providerConfig.rpcTarget,
-        networkConfigurations,
-      );
+    const {
+      selectedAddress,
+      network,
+      network: {
+        provider: { rpcTarget },
+      },
+      frequentRpcList,
+    } = this.props;
+    if (network.provider.type === RPC) {
+      const blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       const url = `${blockExplorer}/address/${selectedAddress}`;
       const title = new URL(blockExplorer).hostname;
       this.goToBrowserUrl(url, title);
     } else {
-      const url = getEtherscanAddressUrl(providerConfig.type, selectedAddress);
-      const etherscan_url = getEtherscanBaseUrl(providerConfig.type).replace(
+      const url = getEtherscanAddressUrl(
+        network.provider.type,
+        selectedAddress,
+      );
+      const etherscan_url = getEtherscanBaseUrl(network.provider.type).replace(
         'https://',
         '',
       );
@@ -704,15 +815,11 @@ class DrawerView extends PureComponent {
   };
 
   showHelp = () => {
-    this.props.navigation.navigate(Routes.BROWSER.HOME, {
-      screen: Routes.BROWSER.VIEW,
-      params: {
-        newTabUrl: 'https://support.metamask.io',
-        timestamp: Date.now(),
-      },
-    });
+    this.goToBrowserUrl(
+      'https://support.metamask.io',
+      strings('drawer.metamask_support'),
+    );
     this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_GET_HELP);
-    this.hideDrawer();
   };
 
   goToBrowserUrl(url, title) {
@@ -731,15 +838,14 @@ class DrawerView extends PureComponent {
   };
 
   hasBlockExplorer = (providerType) => {
-    const { networkConfigurations } = this.props;
+    const { frequentRpcList } = this.props;
     if (providerType === RPC) {
       const {
-        providerConfig: { rpcTarget },
+        network: {
+          provider: { rpcTarget },
+        },
       } = this.props;
-      const blockExplorer = findBlockExplorerForRpc(
-        rpcTarget,
-        networkConfigurations,
-      );
+      const blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       if (blockExplorer) {
         return true;
       }
@@ -796,6 +902,18 @@ class DrawerView extends PureComponent {
     );
   }
 
+  getSelectedFeatherIcon(name, size) {
+    const colors = this.context.colors || mockTheme.colors;
+
+    return (
+      <FeatherIcon
+        name={name}
+        size={size || 24}
+        color={colors.primary.default}
+      />
+    );
+  }
+
   getSelectedMaterialIcon(name, size) {
     const colors = this.context.colors || mockTheme.colors;
 
@@ -822,15 +940,26 @@ class DrawerView extends PureComponent {
 
   getSections = () => {
     const {
-      providerConfig: { type, rpcTarget },
-      networkConfigurations,
+      network: {
+        provider: { type, rpcTarget },
+      },
+      frequentRpcList,
     } = this.props;
     let blockExplorer, blockExplorerName;
     if (type === RPC) {
-      blockExplorer = findBlockExplorerForRpc(rpcTarget, networkConfigurations);
+      blockExplorer = findBlockExplorerForRpc(rpcTarget, frequentRpcList);
       blockExplorerName = getBlockExplorerName(blockExplorer);
     }
     return [
+      [
+        {
+          name: strings('drawer.transaction_activity'),
+          icon: this.getFeatherIcon('list'),
+          selectedIcon: this.getSelectedFeatherIcon('list'),
+          action: this.goToTransactionHistory,
+          routeNames: ['TransactionsView'],
+        },
+      ],
       [
         {
           name: strings('drawer.share_address'),
@@ -848,6 +977,13 @@ class DrawerView extends PureComponent {
       ],
       [
         {
+          name: strings('drawer.settings'),
+          icon: this.getFeatherIcon('settings'),
+          warning: strings('drawer.settings_warning_short'),
+          action: this.showSettings,
+          testID: DRAWER_VIEW_SETTINGS_TEXT_ID,
+        },
+        {
           name: strings('drawer.help'),
           icon: this.getIcon('comments'),
           action: this.showHelp,
@@ -860,7 +996,7 @@ class DrawerView extends PureComponent {
         {
           name: strings('drawer.lock'),
           icon: this.getFeatherIcon('log-out'),
-          action: this.lock,
+          action: this.logout,
           // ...generateTestId(Platform, DRAWER_VIEW_LOCK_ICON_ID),
           testID: DRAWER_VIEW_LOCK_TEXT_ID,
         },
@@ -896,6 +1032,33 @@ class DrawerView extends PureComponent {
     this.trackEvent(MetaMetricsEvents.NAVIGATION_TAPS_SHARE_PUBLIC_ADDRESS);
   };
 
+  closeInvalidCustomNetworkAlert = () => {
+    this.setState({ invalidCustomNetwork: null });
+  };
+
+  showInvalidCustomNetworkAlert = (network) => {
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({ invalidCustomNetwork: network });
+    });
+  };
+
+  /**
+   * Return step 5 of onboarding wizard if that is the current step
+   */
+  renderOnboardingWizard = () => {
+    const {
+      wizard: { step },
+    } = this.props;
+    return (
+      step === 5 && (
+        <OnboardingWizard
+          navigation={this.props.navigation}
+          coachmarkRef={this.browserSectionRef}
+        />
+      )
+    );
+  };
+
   onSecureWalletModalAction = () => {
     this.setState({ showProtectWalletModal: false });
     this.props.navigation.navigate(
@@ -911,18 +1074,6 @@ class DrawerView extends PureComponent {
         },
       );
     });
-  };
-
-  onInfoNetworksModalClose = () => {
-    const {
-      providerConfig,
-      onboardNetworkAction,
-      networkSwitched,
-      toggleInfoNetworkModal,
-    } = this.props;
-    onboardNetworkAction(providerConfig.chainId);
-    networkSwitched({ networkUrl: '', networkStatus: false });
-    toggleInfoNetworkModal();
   };
 
   renderProtectModal = () => {
@@ -971,18 +1122,27 @@ class DrawerView extends PureComponent {
 
   render() {
     const {
-      providerConfig,
+      network,
       accounts,
       identities,
       selectedAddress,
       currentCurrency,
-      navigation,
-      infoNetworkModalVisible,
+      ticker,
+      seedphraseBackedUp,
+      currentRoute,
+      networkOnboarding,
+      networkOnboardedState,
+      switchedNetwork: { networkUrl, networkStatus },
+      networkModalVisible,
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
+
     const {
+      invalidCustomNetwork,
       account: { name: nameFromState, ens: ensFromState },
+      showModal,
+      networkType,
     } = this.state;
 
     const account = {
@@ -1004,6 +1164,19 @@ class DrawerView extends PureComponent {
     this.currentBalance = fiatBalance;
     const fiatBalanceStr = renderFiat(this.currentBalance, currentCurrency);
     const accountName = isDefaultAccountName(name) && ens ? ens : name;
+    const checkIfCustomNetworkExists = networkOnboardedState.filter(
+      (item) => item.network === sanitizeUrl(networkUrl),
+    );
+
+    const networkSwitchedAndInWalletView =
+      currentRoute === 'WalletView' &&
+      networkStatus &&
+      checkIfCustomNetworkExists.length === 0;
+
+    const canShowNetworkInfoModal =
+      showModal ||
+      networkOnboarding.showNetworkOnboarding ||
+      networkSwitchedAndInWalletView;
 
     return (
       <View style={styles.wrapper} testID={'drawer-screen'}>
@@ -1092,25 +1265,124 @@ class DrawerView extends PureComponent {
               </View>
             </StyledButton>
           </View>
+          <View style={styles.menu}>
+            {this.getSections().map(
+              (section, i) =>
+                section?.length > 0 && (
+                  <View
+                    key={`section_${i}`}
+                    style={[
+                      styles.menuSection,
+                      i === 0 ? styles.noTopBorder : null,
+                    ]}
+                  >
+                    {section
+                      .filter((item) => {
+                        if (!item) return undefined;
+                        const { name = undefined } = item;
+                        if (
+                          name &&
+                          name.toLowerCase().indexOf('etherscan') !== -1
+                        ) {
+                          const type = network.provider?.type;
+                          return (
+                            (type && this.hasBlockExplorer(type)) || undefined
+                          );
+                        }
+                        return true;
+                      })
+                      .map((item, j) => (
+                        <TouchableOpacity
+                          key={`item_${i}_${j}`}
+                          style={[
+                            styles.menuItem,
+                            item.routeNames &&
+                            item.routeNames.includes(currentRoute)
+                              ? styles.selectedRoute
+                              : null,
+                          ]}
+                          ref={
+                            item.name === strings('drawer.browser') &&
+                            this.browserSectionRef
+                          }
+                          onPress={() => item.action()} // eslint-disable-line
+                        >
+                          {item.icon
+                            ? item.routeNames &&
+                              item.routeNames.includes(currentRoute)
+                              ? item.selectedIcon
+                              : item.icon
+                            : null}
+                          <Text
+                            style={[
+                              styles.menuItemName,
+                              !item.icon ? styles.noIcon : null,
+                              item.routeNames &&
+                              item.routeNames.includes(currentRoute)
+                                ? styles.selectedName
+                                : null,
+                            ]}
+                            {...generateTestId(Platform, item.testID)}
+                            numberOfLines={1}
+                          >
+                            {item.name}
+                          </Text>
+                          {!seedphraseBackedUp && item.warning ? (
+                            <SettingsNotification isNotification isWarning>
+                              <Text style={styles.menuItemWarningText}>
+                                {item.warning}
+                              </Text>
+                            </SettingsNotification>
+                          ) : null}
+                        </TouchableOpacity>
+                      ))}
+                  </View>
+                ),
+            )}
+          </View>
         </ScrollView>
-
         <Modal
-          isVisible={infoNetworkModalVisible}
-          onBackdropPress={navigation.goBack}
-          onBackButtonPress={navigation.goBack}
-          onSwipeComplete={navigation.goBack}
+          isVisible={
+            networkModalVisible || networkOnboarding.showNetworkOnboarding
+          }
+          onBackdropPress={
+            canShowNetworkInfoModal ? null : this.toggleNetworksModal
+          }
+          onBackButtonPress={showModal ? null : this.toggleNetworksModa}
+          onSwipeComplete={showModal ? null : this.toggleNetworksModa}
           swipeDirection={'down'}
           propagateSwipe
           backdropColor={colors.overlay.default}
           backdropOpacity={1}
         >
-          <NetworkInfo
-            onClose={this.onInfoNetworksModalClose}
-            type={providerConfig.type}
-            ticker={providerConfig.ticker}
+          {canShowNetworkInfoModal ? (
+            <NetworkInfo
+              onClose={this.onInfoNetworksModalClose}
+              type={networkType || networkOnboarding.networkType}
+              ticker={ticker}
+            />
+          ) : (
+            <NetworkList
+              navigation={this.props.navigation}
+              onClose={this.onNetworksModalClose}
+              onNetworkSelected={this.onNetworkSelected}
+              showInvalidCustomNetworkAlert={this.showInvalidCustomNetworkAlert}
+              switchModalContent={this.switchModalContent}
+            />
+          )}
+        </Modal>
+        <Modal
+          backdropColor={colors.overlay.default}
+          backdropOpacity={1}
+          isVisible={!!invalidCustomNetwork}
+        >
+          <InvalidCustomNetworkAlert
+            navigation={this.props.navigation}
+            network={invalidCustomNetwork}
+            onClose={this.closeInvalidCustomNetworkAlert}
           />
         </Modal>
-
+        {this.renderOnboardingWizard()}
         <Modal
           isVisible={this.props.receiveModalVisible}
           onBackdropPress={this.toggleReceiveModal}
@@ -1135,33 +1407,44 @@ class DrawerView extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  providerConfig: selectProviderConfig(state),
-  accounts: selectAccounts(state),
-  selectedAddress: selectSelectedAddress(state),
-  identities: selectIdentities(state),
-  networkConfigurations: selectNetworkConfigurations(state),
-  currentCurrency: selectCurrentCurrency(state),
+  network: state.engine.backgroundState.NetworkController,
+  selectedAddress:
+    state.engine.backgroundState.PreferencesController.selectedAddress,
+  accounts: state.engine.backgroundState.AccountTrackerController.accounts,
+  identities: state.engine.backgroundState.PreferencesController.identities,
+  frequentRpcList:
+    state.engine.backgroundState.PreferencesController.frequentRpcList,
+  currentCurrency:
+    state.engine.backgroundState.CurrencyRateController.currentCurrency,
   keyrings: state.engine.backgroundState.KeyringController.keyrings,
+  networkModalVisible: state.modals.networkModalVisible,
   receiveModalVisible: state.modals.receiveModalVisible,
-  infoNetworkModalVisible: state.modals.infoNetworkModalVisible,
   passwordSet: state.user.passwordSet,
-  ticker: selectTicker(state),
-  tokens: selectTokens(state),
-  tokenBalances: selectContractBalances(state),
+  wizard: state.wizard,
+  ticker: state.engine.backgroundState.NetworkController.provider.ticker,
+  tokens: state.engine.backgroundState.TokensController.tokens,
+  tokenBalances:
+    state.engine.backgroundState.TokenBalancesController.contractBalances,
   collectibles: collectiblesSelector(state),
   seedphraseBackedUp: state.user.seedphraseBackedUp,
+  currentRoute: getCurrentRoute(state),
+  networkOnboarding: state.networkOnboarded.networkState,
+  networkOnboardedState: state.networkOnboarded.networkOnboardedState,
+  networkProvider: state.engine.backgroundState.NetworkController.provider,
+  switchedNetwork: state.networkOnboarded.switchedNetwork,
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  toggleNetworkModal: () => dispatch(toggleNetworkModal()),
   toggleReceiveModal: () => dispatch(toggleReceiveModal()),
   showAlert: (config) => dispatch(showAlert(config)),
   newAssetTransaction: (selectedAsset) =>
     dispatch(newAssetTransaction(selectedAsset)),
   protectWalletModalVisible: () => dispatch(protectWalletModalVisible()),
-  onboardNetworkAction: (chainId) => dispatch(onboardNetworkAction(chainId)),
+  logOut: () => dispatch(logOut()),
+  onboardNetworkAction: (network) => dispatch(onboardNetworkAction(network)),
   networkSwitched: ({ networkUrl, networkStatus }) =>
     dispatch(networkSwitched({ networkUrl, networkStatus })),
-  toggleInfoNetworkModal: () => dispatch(toggleInfoNetworkModal(false)),
 });
 
 DrawerView.contextType = ThemeContext;

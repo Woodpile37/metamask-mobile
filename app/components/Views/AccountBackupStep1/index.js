@@ -217,9 +217,17 @@ import AnalyticsV2 from '../../../util/analyticsV2';
 
 import DefaultPreference from 'react-native-default-preference';
 import { useTheme } from '../../../util/theme';
+<<<<<<< HEAD
 import { ManualBackUpStepsSelectorsIDs } from '../../../../e2e/selectors/Onboarding/ManualBackUpSteps.selectors';
 
 >>>>>>> Stashed changes
+=======
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  PROTECT_YOUR_WALLET_CONTAINER_ID,
+  REMIND_LATER_BUTTON_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/WalletSetupScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 const createStyles = (colors) =>
   StyleSheet.create({
     mainWrapper: {

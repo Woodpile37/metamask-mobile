@@ -7,7 +7,6 @@ import {
   InteractionManager,
   Platform,
 } from 'react-native';
-import { Text, TextInput, View, StyleSheet, InteractionManager } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
@@ -34,8 +33,6 @@ import {
   TOKEN_PRECISION_WARNING_MESSAGE_ID,
 } from '../../../../wdio/screen-objects/testIDs/Screens/AddCustomToken.testIds';
 import { NFT_IDENTIFIER_INPUT_BOX_ID } from '../../../../wdio/screen-objects/testIDs/Screens/NFTImportScreen.testIds';
-import { regex } from '../../../../app/util/regex';
-import { AddCustomTokenViewSelectorsIDs } from '../../../../e2e/selectors/AddCustomTokenView.selectors';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -54,10 +51,6 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
       color: colors.text.default,
     },
-    textInputDisabled: {
-      color: colors.text.muted,
-      fontWeight: 'bold',
-    },
     inputLabel: {
       ...fontStyles.normal,
       color: colors.text.default,
@@ -75,37 +68,6 @@ const createStyles = (colors) =>
       paddingRight: 8,
     },
   });
-import { ThemeContext, mockTheme } from '../../../util/theme';
-
-const createStyles = (colors) =>
-	StyleSheet.create({
-		wrapper: {
-			backgroundColor: colors.background.default,
-			flex: 1,
-		},
-		rowWrapper: {
-			padding: 20,
-		},
-		textInput: {
-			borderWidth: 1,
-			borderRadius: 4,
-			borderColor: colors.border.default,
-			padding: 16,
-			...fontStyles.normal,
-			color: colors.text.default,
-		},
-		inputLabel: {
-			...fontStyles.normal,
-			color: colors.text.default,
-		},
-		warningText: {
-			marginTop: 15,
-			color: colors.error.default,
-			...fontStyles.normal,
-		},
-		warningContainer: { marginHorizontal: 20, marginTop: 20, paddingRight: 0 },
-		warningLink: { color: colors.primary.default },
-	});
 
 /**
  * Copmonent that provides ability to add custom tokens.
@@ -115,18 +77,12 @@ export default class AddCustomToken extends PureComponent {
     address: '',
     symbol: '',
     decimals: '',
-    name: '',
     warningAddress: '',
     warningSymbol: '',
     warningDecimals: '',
-    isSymbolAndDecimalEditable: true,
   };
 
   static propTypes = {
-    /**
-     * The chain ID for the current selected network
-     */
-    chainId: PropTypes.string,
     /**
     /* navigation object required to push new views
     */
@@ -139,7 +95,8 @@ export default class AddCustomToken extends PureComponent {
 
   getAnalyticsParams = () => {
     try {
-      const { chainId } = this.props;
+      const { NetworkController } = Engine.context;
+      const { chainId } = NetworkController?.state?.provider || {};
       const { address, symbol } = this.state;
       return {
         token_address: address,
@@ -155,8 +112,8 @@ export default class AddCustomToken extends PureComponent {
   addToken = async () => {
     if (!(await this.validateCustomToken())) return;
     const { TokensController } = Engine.context;
-    const { address, symbol, decimals, name } = this.state;
-    await TokensController.addToken(address, symbol, decimals, { name });
+    const { address, symbol, decimals } = this.state;
+    await TokensController.addToken(address, symbol, decimals);
 
     AnalyticsV2.trackEvent(
       MetaMetricsEvents.TOKEN_ADDED,
@@ -193,42 +150,8 @@ export default class AddCustomToken extends PureComponent {
     this.props.navigation.goBack();
   };
 
-  onAddressChange = async (address) => {
+  onAddressChange = (address) => {
     this.setState({ address });
-    if (address.length === 42) {
-      try {
-        this.setState({ isSymbolAndDecimalEditable: false });
-        const validated = await this.validateCustomTokenAddress(address);
-        if (validated) {
-          const { AssetsContractController } = Engine.context;
-          const [decimals, symbol, name] = await Promise.all([
-            AssetsContractController.getERC20TokenDecimals(address),
-            AssetsContractController.getERC721AssetSymbol(address),
-            AssetsContractController.getERC20TokenName(address),
-          ]);
-
-          this.setState({
-            decimals: String(decimals),
-            symbol,
-            name,
-          });
-        } else {
-          this.setState({ isSymbolAndDecimalEditable: true });
-        }
-      } catch (e) {
-        this.setState({ isSymbolAndDecimalEditable: true });
-      }
-    } else {
-      // We are cleaning other fields when changing the token address
-      this.setState({
-        decimals: '',
-        symbol: '',
-        name: '',
-        warningAddress: '',
-        warningSymbol: '',
-        warningDecimals: '',
-      });
-    }
   };
 
   onSymbolChange = (symbol) => {
@@ -239,25 +162,35 @@ export default class AddCustomToken extends PureComponent {
     this.setState({ decimals });
   };
 
-  validateCustomTokenAddress = async (address) => {
-    let validated = true;
-    const isValidTokenAddress = isValidAddress(address);
+  onAddressBlur = async () => {
+    const validated = await this.validateCustomTokenAddress();
+    if (validated) {
+      const address = this.state.address;
+      const { AssetsContractController } = Engine.context;
+      const decimals = await AssetsContractController.getERC20TokenDecimals(
+        address,
+      );
+      const symbol = await AssetsContractController.getERC721AssetSymbol(
+        address,
+      );
+      this.setState({ decimals: String(decimals), symbol });
+    }
+  };
 
-    const { chainId } = this.props;
+  validateCustomTokenAddress = async () => {
+    let validated = true;
+    const address = this.state.address;
+    const isValidTokenAddress = isValidAddress(address);
+    const { NetworkController } = Engine.context;
+    const { chainId } = NetworkController?.state?.provider || {};
     const toSmartContract =
       isValidTokenAddress && (await isSmartContractAddress(address, chainId));
-
-    const addressWithoutSpaces = address.replace(regex.addressWithSpaces, '');
-
+    const addressWithoutSpaces = address.replace(/\s/g, '');
     if (addressWithoutSpaces.length === 0) {
-      this.setState({
-        warningAddress: strings('token.address_cant_be_empty'),
-      });
+      this.setState({ warningAddress: strings('token.address_cant_be_empty') });
       validated = false;
     } else if (!isValidTokenAddress) {
-      this.setState({
-        warningAddress: strings('token.address_must_be_valid'),
-      });
+      this.setState({ warningAddress: strings('token.address_must_be_valid') });
       validated = false;
     } else if (!toSmartContract) {
       this.setState({
@@ -273,7 +206,7 @@ export default class AddCustomToken extends PureComponent {
   validateCustomTokenSymbol = () => {
     let validated = true;
     const symbol = this.state.symbol;
-    const symbolWithoutSpaces = symbol.replace(regex.addressWithSpaces, '');
+    const symbolWithoutSpaces = symbol.replace(/\s/g, '');
     if (symbolWithoutSpaces.length === 0) {
       this.setState({ warningSymbol: strings('token.symbol_cant_be_empty') });
       validated = false;
@@ -282,21 +215,11 @@ export default class AddCustomToken extends PureComponent {
     }
     return validated;
   };
-	onAddressBlur = async () => {
-		const validated = await this.validateCustomTokenAddress();
-		if (validated) {
-			const address = this.state.address;
-			const { AssetsContractController } = Engine.context;
-			const decimals = await AssetsContractController.getERC20TokenDecimals(address);
-			const symbol = await AssetsContractController.getERC721AssetSymbol(address);
-			this.setState({ decimals: String(decimals), symbol });
-		}
-	};
 
   validateCustomTokenDecimals = () => {
     let validated = true;
     const decimals = this.state.decimals;
-    const decimalsWithoutSpaces = decimals.replace(regex.addressWithSpaces, '');
+    const decimalsWithoutSpaces = decimals.replace(/\s/g, '');
     if (decimalsWithoutSpaces.length === 0) {
       this.setState({
         warningDecimals: strings('token.decimals_cant_be_empty'),
@@ -309,9 +232,7 @@ export default class AddCustomToken extends PureComponent {
   };
 
   validateCustomToken = async () => {
-    const validatedAddress = await this.validateCustomTokenAddress(
-      this.state.address,
-    );
+    const validatedAddress = await this.validateCustomTokenAddress();
     const validatedSymbol = this.validateCustomTokenSymbol();
     const validatedDecimals = this.validateCustomTokenDecimals();
     return validatedAddress && validatedSymbol && validatedDecimals;
@@ -413,15 +334,10 @@ export default class AddCustomToken extends PureComponent {
       : this.renderInfoBanner();
 
   render = () => {
-    const { address, symbol, decimals, isSymbolAndDecimalEditable } =
-      this.state;
+    const { address, symbol, decimals } = this.state;
     const colors = this.context.colors || mockTheme.colors;
     const themeAppearance = this.context.themeAppearance || 'light';
     const styles = createStyles(colors);
-
-    const textInputSymbolAndDecimalsStyle = !isSymbolAndDecimalEditable
-      ? { ...styles.textInput, ...styles.textInputDisabled }
-      : styles.textInput;
 
     return (
       <View
@@ -429,8 +345,8 @@ export default class AddCustomToken extends PureComponent {
         {...generateTestId(Platform, CUSTOM_TOKEN_CONTAINER_ID)}
       >
         <ActionView
-          cancelTestID={AddCustomTokenViewSelectorsIDs.CANCEL_BUTTON}
-          confirmTestID={AddCustomTokenViewSelectorsIDs.CONFIRM_BUTTON}
+          cancelTestID={'add-custom-asset-cancel-button'}
+          confirmTestID={'add-custom-asset-confirm-button'}
           cancelText={strings('add_asset.tokens.cancel_add_token')}
           confirmText={strings('add_asset.tokens.add_token')}
           onCancelPress={this.cancelAddToken}
@@ -450,6 +366,7 @@ export default class AddCustomToken extends PureComponent {
                 placeholderTextColor={colors.text.muted}
                 value={this.state.address}
                 onChangeText={this.onAddressChange}
+                onBlur={this.onAddressBlur}
                 {...generateTestId(Platform, TOKEN_ADDRESS_INPUT_BOX_ID)}
                 onSubmitEditing={this.jumpToAssetSymbol}
                 returnKeyType={'next'}
@@ -467,7 +384,7 @@ export default class AddCustomToken extends PureComponent {
                 {strings('token.token_symbol')}
               </Text>
               <TextInput
-                style={textInputSymbolAndDecimalsStyle}
+                style={styles.textInput}
                 placeholder={'GNO'}
                 placeholderTextColor={colors.text.muted}
                 value={this.state.symbol}
@@ -478,7 +395,6 @@ export default class AddCustomToken extends PureComponent {
                 onSubmitEditing={this.jumpToAssetPrecision}
                 returnKeyType={'next'}
                 keyboardAppearance={themeAppearance}
-                editable={isSymbolAndDecimalEditable}
               />
               <Text style={styles.warningText}>{this.state.warningSymbol}</Text>
             </View>
@@ -487,7 +403,7 @@ export default class AddCustomToken extends PureComponent {
                 {strings('token.token_decimal')}
               </Text>
               <TextInput
-                style={textInputSymbolAndDecimalsStyle}
+                style={styles.textInput}
                 value={this.state.decimals}
                 keyboardType="numeric"
                 maxLength={2}
@@ -500,7 +416,6 @@ export default class AddCustomToken extends PureComponent {
                 onSubmitEditing={this.addToken}
                 returnKeyType={'done'}
                 keyboardAppearance={themeAppearance}
-                editable={isSymbolAndDecimalEditable}
               />
               <Text
                 style={styles.warningText}
@@ -517,120 +432,6 @@ export default class AddCustomToken extends PureComponent {
       </View>
     );
   };
-	renderWarning = () => {
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-
-		return (
-			<WarningMessage
-				style={styles.warningContainer}
-				warningMessage={
-					<>
-						{strings('add_asset.warning_body_description')}
-						<Text
-							suppressHighlighting
-							onPress={() => {
-								// TODO: This functionality exists in a bunch of other places. We need to unify this into a utils function
-								this.props.navigation.navigate('Webview', {
-									screen: 'SimpleWebview',
-									params: {
-										url: AppConstants.URLS.SECURITY,
-										title: strings('add_asset.security_tips'),
-									},
-								});
-							}}
-							style={styles.warningLink}
-							testID={'add-asset-warning-message'}
-						>
-							{strings('add_asset.warning_link')}
-						</Text>
-					</>
-				}
-			/>
-		);
-	};
-
-	render = () => {
-		const { address, symbol, decimals } = this.state;
-		const colors = this.context.colors || mockTheme.colors;
-		const themeAppearance = this.context.themeAppearance || 'light';
-		const styles = createStyles(colors);
-
-		return (
-			<View style={styles.wrapper} testID={'add-custom-token-screen'}>
-				<ActionView
-					cancelTestID={'add-custom-asset-cancel-button'}
-					confirmTestID={'add-custom-asset-confirm-button'}
-					cancelText={strings('add_asset.tokens.cancel_add_token')}
-					confirmText={strings('add_asset.tokens.add_token')}
-					onCancelPress={this.cancelAddToken}
-					testID={'add-asset-cancel-button'}
-					onConfirmPress={this.addToken}
-					confirmDisabled={!(address && symbol && decimals)}
-				>
-					<View>
-						{this.renderWarning()}
-						<View style={styles.rowWrapper}>
-							<Text style={styles.inputLabel}>{strings('token.token_address')}</Text>
-							<TextInput
-								style={styles.textInput}
-								placeholder={'0x...'}
-								placeholderTextColor={colors.text.muted}
-								value={this.state.address}
-								onChangeText={this.onAddressChange}
-								onBlur={this.onAddressBlur}
-								testID={'input-token-address'}
-								onSubmitEditing={this.jumpToAssetSymbol}
-								returnKeyType={'next'}
-								keyboardAppearance={themeAppearance}
-							/>
-							<Text style={styles.warningText} testID={'token-address-warning'}>
-								{this.state.warningAddress}
-							</Text>
-						</View>
-						<View style={styles.rowWrapper}>
-							<Text style={styles.inputLabel}>{strings('token.token_symbol')}</Text>
-							<TextInput
-								style={styles.textInput}
-								placeholder={'GNO'}
-								placeholderTextColor={colors.text.muted}
-								value={this.state.symbol}
-								onChangeText={this.onSymbolChange}
-								onBlur={this.validateCustomTokenSymbol}
-								testID={'input-token-symbol'}
-								ref={this.assetSymbolInput}
-								onSubmitEditing={this.jumpToAssetPrecision}
-								returnKeyType={'next'}
-								keyboardAppearance={themeAppearance}
-							/>
-							<Text style={styles.warningText}>{this.state.warningSymbol}</Text>
-						</View>
-						<View style={styles.rowWrapper}>
-							<Text style={styles.inputLabel}>{strings('token.token_precision')}</Text>
-							<TextInput
-								style={styles.textInput}
-								value={this.state.decimals}
-								keyboardType="numeric"
-								maxLength={2}
-								placeholder={'18'}
-								placeholderTextColor={colors.text.muted}
-								onChangeText={this.onDecimalsChange}
-								onBlur={this.validateCustomTokenDecimals}
-								testID={'input-token-decimals'}
-								ref={this.assetPrecisionInput}
-								onSubmitEditing={this.addToken}
-								returnKeyType={'done'}
-								keyboardAppearance={themeAppearance}
-							/>
-							<Text style={styles.warningText} testID={'token-decimals-warning'}>
-								{this.state.warningDecimals}
-							</Text>
-						</View>
-					</View>
-				</ActionView>
-			</View>
-		);
-	};
 }
 
 AddCustomToken.contextType = ThemeContext;

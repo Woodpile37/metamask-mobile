@@ -101,7 +101,26 @@ function createWrapper({
 
 describe('PersonalSign', () => {
   it('should render correctly', () => {
+<<<<<<< HEAD
     const wrapper = createWrapper();
+=======
+    const wrapper = shallow(
+      <Provider store={store}>
+        <PersonalSign
+          currentPageInformation={{ title: 'title', url: 'url' }}
+          messageParams={{
+            data: 'message',
+            from: '0x0',
+            origin: 'origin',
+            metamaskId: 'id',
+          }}
+          onConfirm={() => ({})}
+          onCancel={() => ({})}
+          selectedAddress="0x0"
+        />
+      </Provider>,
+    );
+>>>>>>> upstream/testflight/4754-permission-system
     expect(wrapper).toMatchSnapshot();
   });
 

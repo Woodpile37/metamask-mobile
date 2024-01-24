@@ -50,7 +50,11 @@ When(
   async (buttons) => {
     switch (buttons) {
       case 'Switch Network':
+<<<<<<< HEAD
         await NetworkApprovalModal.isSwitchToNetworkButtonDisplayed();
+=======
+        await NetworkApprovalModal.isApproveNetworkButton();
+>>>>>>> upstream/testflight/4754-permission-system
         break;
       case 'Close':
         await NetworkApprovalModal.isCloseNetworkButton();
@@ -72,7 +76,11 @@ When(/^I am back to the wallet view/, async () => {
 When(
   /^I should see the added network name "([^"]*)?" in the top navigation bar/,
   async (network) => {
+<<<<<<< HEAD
     await WalletMainScreen.isNetworkNavbarTitle(network);
+=======
+    await WalletMainScreen.isNetworkNameCorrect(network);
+>>>>>>> upstream/testflight/4754-permission-system
   },
 );
 
@@ -104,7 +112,10 @@ Then(
   /^"([^"]*)?" is not visible in the Popular Networks section/,
   async (network) => {
     await NetworksScreen.isNetworkNotVisible(network);
+<<<<<<< HEAD
     await NetworksScreen.tapCloseNetworkScreen();
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   },
 );
 
@@ -162,11 +173,24 @@ Then(/^I specify the following details:/, async () => {
   await NetworksScreen.isBlockExplorerUrlVisible();
 });
 
+<<<<<<< HEAD
 Then(/^I tap on the Add button to add Custom Network/, async () => {
   await driver.hideKeyboard();
   await Gestures.swipeUp();
   await NetworksScreen.tapCustomAddButton();
   await NetworksScreen.tapCustomAddButton();
+=======
+Then(/^Add button is disabled/, async () => {
+  await NetworksScreen.addButtonNetworkIsdisabled();
+});
+
+Then(/^I tap on the Add button/, async () => {
+  await driver.hideKeyboard(); // hides keyboard so it can view elements below
+  await NetworksScreen.tapAddButton();
+  await NetworksScreen.tapAddButton();
+  const setTimeout = 1500;
+  await driver.pause(setTimeout);
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 Then(/^I tap and hold network "([^"]*)?"/, async (network) => {

@@ -64,7 +64,12 @@ import {
   IMPORT_FROM_SEED_SCREEN_TITLE_ID,
   IMPORT_FROM_SEED_SCREEN_NEW_PASSWORD_INPUT_ID,
   IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
+<<<<<<< HEAD
 } from '../../../../wdio/features/testIDs/Screens/ImportFromSeedScreen.testIds';
+=======
+  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/ImportFromSeedScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 import { IMPORT_PASSWORD_CONTAINER_ID } from '../../../constants/test-ids';
 
 const MINIMUM_SUPPORTED_CLIPBOARD_VERSION = 9;

@@ -76,6 +76,17 @@ class WebsiteIcon extends PureComponent {
   };
 
   /**
+<<<<<<< HEAD
+=======
+   * Get image url from favicon api
+   */
+  getIconUrl = (url) => {
+    const iconUrl = `https://api.faviconkit.com/${getHost(url)}/50`;
+    return iconUrl;
+  };
+
+  /**
+>>>>>>> upstream/testflight/4754-permission-system
    * Sets component state to renderIconUrlError to render placeholder image
    */
   onRenderIconUrlError = async () => {

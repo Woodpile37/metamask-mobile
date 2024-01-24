@@ -1,4 +1,5 @@
 import Selectors from '../../helpers/Selectors';
+<<<<<<< HEAD
 import Gestures from '../../helpers/Gestures';
 import { AddBookmarkViewSelectorsIDs } from '../../../e2e/selectors/AddBookmarkView.selectors';
 
@@ -21,6 +22,36 @@ class AddFavoriteScreen {
 
   get cancelButton() {
     return Selectors.getXpathElementByText('Cancel');
+=======
+import {
+  FAVORITE_SCREEN_ID,
+  FAVORITE_TITLE_EDIT_TEXT,
+  FAVORITE_URL_EDIT_TEXT,
+  FAVORITE_ADD_BUTTON,
+  FAVORITE_CANCEL_BUTTON,
+} from '../testIDs/BrowserScreen/AddFavorite.testIds';
+import Gestures from '../../helpers/Gestures';
+
+class AddFavoriteScreen {
+  get screen() {
+    return Selectors.getXpathElementByResourceId(FAVORITE_SCREEN_ID);
+  }
+
+  get titleEditText() {
+    return Selectors.getXpathElementByResourceId(FAVORITE_TITLE_EDIT_TEXT);
+  }
+
+  get urlEditText() {
+    return Selectors.getXpathElementByResourceId(FAVORITE_URL_EDIT_TEXT);
+  }
+
+  get addButton() {
+    return Selectors.getElementByPlatform(FAVORITE_ADD_BUTTON);
+  }
+
+  get cancelButton() {
+    return Selectors.getElementByPlatform(FAVORITE_CANCEL_BUTTON);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async isScreenDisplayed() {
@@ -28,7 +59,13 @@ class AddFavoriteScreen {
   }
 
   async titleEditTextContains(expectedTitle) {
+<<<<<<< HEAD
     await expect(this.titleEditText).toHaveText(expectedTitle);
+=======
+    const textFromElement = await this.titleEditText;
+    const actualTitle = await textFromElement.getText();
+    await expect(expectedTitle).toContain(actualTitle);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async editTitleEditText(title) {
@@ -36,7 +73,13 @@ class AddFavoriteScreen {
   }
 
   async urlEditTextContains(expectedUrl) {
+<<<<<<< HEAD
     await expect(this.urlEditText).toHaveText(expectedUrl);
+=======
+    const textFromElement = await this.urlEditText;
+    const actualUrl = await textFromElement.getText();
+    await expect(expectedUrl).toContain(actualUrl);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async editUrlEditText(title) {

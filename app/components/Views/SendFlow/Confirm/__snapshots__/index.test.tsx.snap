@@ -7,6 +7,7 @@ exports[`Confirm should render correctly 1`] = `
       "flex": 1,
     }
   }
+<<<<<<< HEAD
 >
   <RNCSafeAreaProvider
     onInsetsChange={[Function]}
@@ -17,6 +18,33 @@ exports[`Confirm should render correctly 1`] = `
         },
         undefined,
       ]
+=======
+  contractBalances={Object {}}
+  contractExchangeRates={Object {}}
+  conversionRate={1}
+  currentCurrency="USD"
+  identities={Object {}}
+  network="1"
+  prepareTransaction={[Function]}
+  providerType="mainnet"
+  removeFavoriteCollectible={[Function]}
+  resetTransaction={[Function]}
+  selectedAsset={Object {}}
+  setNonce={[Function]}
+  setProposedNonce={[Function]}
+  showAlert={[Function]}
+  showHexData={true}
+  ticker="ETH"
+  transaction={
+    Object {
+      "from": "0x1",
+      "selectedAsset": Object {},
+      "to": "0x2",
+      "transaction": Object {
+        "from": "0x1",
+        "to": "0x2",
+      },
+>>>>>>> upstream/testflight/4754-permission-system
     }
   >
     <View

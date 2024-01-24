@@ -11,14 +11,21 @@ import {
   NFT_ADDRESS_WARNING_MESSAGE_ID,
   NFT_IDENTIFIER_INPUT_BOX_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/NFTImportScreen.testIds';
+<<<<<<< HEAD
 import { AddCustomTokenViewSelectorsText } from '../selectors/AddCustomTokenView.selectors';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default class AddCustomTokenView {
   static async tapImportButton() {
     //await TestHelpers.swipe(TOKEN_ADDRESS_SYMBOL_ID, 'up', 'slow', 0.6);
+<<<<<<< HEAD
     await TestHelpers.waitAndTapText(
       AddCustomTokenViewSelectorsText.IMPORT_BUTTON,
     );
+=======
+    await TestHelpers.tapByText('IMPORT');
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   static async tapCustomTokenImportButton() {
@@ -40,6 +47,10 @@ export default class AddCustomTokenView {
 
   static async tapTokenSymbolText() {
     await TestHelpers.tapByText(AddCustomTokenViewSelectorsText.TOKEN_SYMBOL);
+  }
+
+  static async scrollDownOnImportCustomTokens() {
+    await TestHelpers.swipe(TOKEN_ADDRESS_SYMBOL_ID, 'up', 'slow', 0.6);
   }
 
   static async scrollDownOnImportCustomTokens() {

@@ -21,11 +21,15 @@ import {
 import Routes from '../../../constants/navigation/Routes';
 import Device from '../../../util/device';
 import generateTestId from '../../../../wdio/utils/generateTestId';
+<<<<<<< HEAD
 import {
   URL_CLEAR_ICON,
   URL_INPUT_BOX_ID,
   CANCEL_BUTTON_ON_BROWSER_ID,
 } from '../../../../wdio/screen-objects/testIDs/BrowserScreen/AddressBar.testIds';
+=======
+import { URL_CLEAR_ICON } from '../../../../wdio/screen-objects/testIDs/BrowserScreen/AddressBar.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 export interface BrowserUrlParams {
   onUrlInputSubmit: (inputValue: string | undefined) => void;

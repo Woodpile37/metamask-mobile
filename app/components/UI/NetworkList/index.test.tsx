@@ -20,6 +20,7 @@ const initialState = {
   networkOnboarded: {
     networkOnboardedState: [{ network: 'mainnet', onboarded: true }],
   },
+<<<<<<< HEAD
 	privacy: {
 		approvedHosts: {},
 	},
@@ -34,6 +35,14 @@ const initialState = {
 	networkOnboarded: {
 		networkOnboardedState: [{ network: 'mainnet', onboarded: true }],
 	},
+=======
+  modals: {
+    shouldNetworkSwitchPopToWallet: false,
+  },
+  navigation: {
+    currentBottomNavRoute: 'Wallet',
+  },
+>>>>>>> upstream/testflight/4754-permission-system
 };
 const store = mockStore(initialState);
 

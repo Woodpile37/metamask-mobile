@@ -550,6 +550,7 @@
     "connect": "连接",
     "connect_with_count": "连接{{countLabel}}",
     "select_all": "全部选择",
+<<<<<<< HEAD
     "unselect_all": "取消全部选择",
     "permissions": "权限",
     "revoke": "撤销",
@@ -568,15 +569,26 @@
     "fake_metamask": "MetaMask的伪造版本",
     "srp_theft": "私钥助记词或密码被盗",
     "malicious_transactions": "导致资产被盗的恶意交易"
+=======
+    "permissions": "权限",
+    "disconnect": "断开连接",
+    "disconnect_all_accounts": "断开所有账户的连接",
+    "revoke": "撤销",
+    "revoke_all": "全部撤销"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "已连接且处于活动状态。",
     "now_active": "现处于活动状态。",
     "revoked": "已撤销。",
     "revoked_all": "已撤销所有账户。",
+<<<<<<< HEAD
     "accounts_connected": "账户已连接。",
     "disconnected": "已断开连接。",
     "disconnected_all": "所有账户都已断开连接。"
+=======
+    "accounts_connected": "账户已连接。"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "连接基于二维码的硬件钱包",

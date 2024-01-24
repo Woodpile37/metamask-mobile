@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import { strings } from '../../../../../locales/i18n';
 import Alert, { AlertType } from '../../../Base/Alert';
 import Text from '../../../Base/Text';
+<<<<<<< HEAD
 import { CommonSelectorsIDs } from '../../../../../e2e/selectors/Common.selectors';
+=======
+import { SEND_WARNING_MESSAGE } from '../../../../../wdio/screen-objects/testIDs/Screens/SendScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const styles = StyleSheet.create({
   button: {

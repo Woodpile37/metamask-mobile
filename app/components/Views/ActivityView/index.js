@@ -14,8 +14,11 @@ import { useTheme } from '../../../util/theme';
 import Routes from '../../../constants/navigation/Routes';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { MetaMetricsEvents } from '../../../core/Analytics';
+<<<<<<< HEAD
 import { selectAccounts } from '../../../selectors/accountTrackerController';
 import { selectSelectedAddress } from '../../../selectors/preferencesController';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -26,9 +29,20 @@ const styles = StyleSheet.create({
 const ActivityView = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
+<<<<<<< HEAD
   const selectedAddress = useSelector(selectSelectedAddress);
   const hasOrders = useSelector((state) => getHasOrders(state) || false);
   const accounts = useSelector(selectAccounts);
+=======
+  const selectedAddress = useSelector(
+    (state) =>
+      state.engine.backgroundState.PreferencesController.selectedAddress,
+  );
+  const hasOrders = useSelector((state) => getHasOrders(state) || false);
+  const accounts = useSelector(
+    (state) => state.engine.backgroundState.AccountTrackerController.accounts,
+  );
+>>>>>>> upstream/testflight/4754-permission-system
 
   const openAccountSelector = useCallback(() => {
     navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {

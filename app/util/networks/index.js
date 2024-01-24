@@ -21,12 +21,22 @@ import { toLowerCaseEquals } from '../general';
 import { fastSplit } from '../number';
 import { buildUnserializedTransaction } from '../transactions/optimismTransaction';
 import handleNetworkSwitch from './handleNetworkSwitch';
+<<<<<<< HEAD
 import { regex } from '../../../app/util/regex';
+=======
+import {
+  GOERLI_TEST_NETWORK_OPTION,
+  KOVAN_NETWORK_OPTION,
+  RINKEBY_NETWORK_OPTION,
+  ROPSTEN_NETWORK_OPTION,
+} from '../../../wdio/screen-objects/testIDs/Components/NetworkListModal.TestIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 export { handleNetworkSwitch };
 
 /* eslint-disable */
 const ethLogo = require('../../images/eth-logo-new.png');
+<<<<<<< HEAD
 const goerliLogo = require('../../images/goerli-logo-dark.png');
 const sepoliaLogo = require('../../images/sepolia-logo-dark.png');
 const lineaGoerliLogo = require('../../images/linea-testnet-logo.png');
@@ -41,6 +51,14 @@ import {
   getEtherscanTransactionUrl,
 } from '../etherscan';
 import { LINEA_FAUCET, SEPOLIA_FAUCET } from '../../constants/urls';
+=======
+const ropstenLogo = require('../../images/ropsten-logo-dark.png');
+const kovanLogo = require('../../images/kovan-logo-dark.png');
+const rinkebyLogo = require('../../images/rinkeby-logo-dark.png');
+const goerliLogo = require('../../images/goerli-logo-dark.png');
+/* eslint-enable */
+import PopularList from './customNetworks';
+>>>>>>> upstream/testflight/4754-permission-system
 
 /**
  * List of the supported networks
@@ -60,6 +78,7 @@ const NetworkList = {
     networkType: 'mainnet',
     imageSource: ethLogo,
   },
+<<<<<<< HEAD
   [LINEA_MAINNET]: {
     name: 'Linea Main Network',
     shortName: 'Linea',
@@ -69,6 +88,40 @@ const NetworkList = {
     color: '#121212',
     networkType: 'linea-mainnet',
     imageSource: lineaMainnetLogo,
+=======
+  [ROPSTEN]: {
+    name: 'Ropsten Test Network',
+    shortName: 'Ropsten',
+    networkId: 3,
+    chainId: 3,
+    hexChainId: '0x3',
+    color: '#ff4a8d',
+    networkType: 'ropsten',
+    imageSource: ropstenLogo,
+    testId: ROPSTEN_NETWORK_OPTION,
+  },
+  [KOVAN]: {
+    name: 'Kovan Test Network',
+    shortName: 'Kovan',
+    networkId: 42,
+    chainId: 42,
+    hexChainId: '0x2a',
+    color: '#7057ff',
+    networkType: 'kovan',
+    imageSource: kovanLogo,
+    testId: KOVAN_NETWORK_OPTION,
+  },
+  [RINKEBY]: {
+    name: 'Rinkeby Test Network',
+    shortName: 'Rinkeby',
+    networkId: 4,
+    chainId: 4,
+    hexChainId: '0x4',
+    color: '#f6c343',
+    networkType: 'rinkeby',
+    imageSource: rinkebyLogo,
+    testId: RINKEBY_NETWORK_OPTION,
+>>>>>>> upstream/testflight/4754-permission-system
   },
   [GOERLI]: {
     name: 'Goerli Test Network',
@@ -79,6 +132,7 @@ const NetworkList = {
     color: '#3099f2',
     networkType: 'goerli',
     imageSource: goerliLogo,
+<<<<<<< HEAD
   },
   [SEPOLIA]: {
     name: 'Sepolia Test Network',
@@ -99,6 +153,9 @@ const NetworkList = {
     color: '#61dfff',
     networkType: 'linea-goerli',
     imageSource: lineaGoerliLogo,
+=======
+    testId: GOERLI_TEST_NETWORK_OPTION,
+>>>>>>> upstream/testflight/4754-permission-system
   },
   [RPC]: {
     name: 'Private Network',
@@ -123,6 +180,7 @@ export const getAllNetworks = () =>
  */
 export const isDefaultMainnet = (networkType) => networkType === MAINNET;
 
+<<<<<<< HEAD
 /**
  * Check whether the given chain ID is Ethereum Mainnet.
  *
@@ -132,6 +190,10 @@ export const isDefaultMainnet = (networkType) => networkType === MAINNET;
 export const isMainNet = (chainId) => chainId === String(1);
 
 export const isLineaMainnet = (networkType) => networkType === LINEA_MAINNET;
+=======
+export const isMainNet = (network) =>
+  isDefaultMainnet(network?.provider?.type) || network === String(1);
+>>>>>>> upstream/testflight/4754-permission-system
 
 export const getDecimalChainId = (chainId) => {
   if (!chainId || typeof chainId !== 'string' || !chainId.startsWith('0x')) {
@@ -149,6 +211,12 @@ export const isLineaMainnetByChainId = (chainId) =>
 export const isMultiLayerFeeNetwork = (chainId) =>
   chainId === NETWORKS_CHAIN_ID.OPTIMISM;
 
+<<<<<<< HEAD
+=======
+export const getNetworkName = (id) =>
+  NetworkListKeys.find((key) => NetworkList[key].networkId === Number(id));
+
+>>>>>>> upstream/testflight/4754-permission-system
 /**
  * Gets the test network image icon.
  *
@@ -157,12 +225,33 @@ export const isMultiLayerFeeNetwork = (chainId) =>
  */
 export const getTestNetImage = (networkType) => {
   if (
+<<<<<<< HEAD
     networkType === GOERLI ||
     networkType === SEPOLIA ||
     networkType === LINEA_GOERLI
   ) {
     return networksWithImages?.[networkType.toUpperCase()];
   }
+=======
+    networkType === ROPSTEN ||
+    networkType === GOERLI ||
+    networkType === KOVAN ||
+    networkType === RINKEBY
+  ) {
+    return networksWithImages?.[networkType.toUpperCase()];
+  }
+};
+
+export const isTestNet = (networkId) => {
+  const networkName = getNetworkName(networkId);
+
+  return (
+    networkName === ROPSTEN ||
+    networkName === GOERLI ||
+    networkName === KOVAN ||
+    networkName === RINKEBY
+  );
+>>>>>>> upstream/testflight/4754-permission-system
 };
 
 export const getTestNetImageByChainId = (chainId) => {
@@ -363,6 +452,7 @@ export function blockTagParamIndex(payload) {
 /**
  * Gets the current network name given the network provider.
  *
+<<<<<<< HEAD
  * @param {Object} providerConfig - The provider configuration for the current selected network.
  * @returns {string} Name of the network.
  */
@@ -372,6 +462,17 @@ export const getNetworkNameFromProviderConfig = (providerConfig) => {
     name = providerConfig.nickname;
   } else {
     const networkType = providerConfig.type;
+=======
+ * @param {Object} provider - Network provider state from the NetworkController.
+ * @returns {string} Name of the network.
+ */
+export const getNetworkNameFromProvider = (provider) => {
+  let name = '';
+  if (provider.nickname) {
+    name = provider.nickname;
+  } else {
+    const networkType = provider.type;
+>>>>>>> upstream/testflight/4754-permission-system
     name = NetworkList?.[networkType]?.name || NetworkList.rpc.name;
   }
   return name;
@@ -388,6 +489,7 @@ export const getNetworkNameFromProviderConfig = (providerConfig) => {
 export const getNetworkImageSource = ({ networkType, chainId }) => {
   const defaultNetwork = getDefaultNetworkByChainId(chainId);
   const isDefaultEthMainnet = isDefaultMainnet(networkType);
+<<<<<<< HEAD
   const isLineaMainnetNetwork = isLineaMainnet(networkType);
 
   if (defaultNetwork && isDefaultEthMainnet) {
@@ -400,6 +502,13 @@ export const getNetworkImageSource = ({ networkType, chainId }) => {
 
   const popularNetwork = PopularList.find(
     (networkConfig) => networkConfig.chainId === chainId,
+=======
+  if (defaultNetwork && isDefaultEthMainnet) {
+    return defaultNetwork.imageSource;
+  }
+  const popularNetwork = PopularList.find(
+    (network) => network.chainId === chainId,
+>>>>>>> upstream/testflight/4754-permission-system
   );
   if (popularNetwork) {
     return popularNetwork.rpcPrefs.imageSource;

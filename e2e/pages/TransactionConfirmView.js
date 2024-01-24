@@ -1,4 +1,5 @@
 import TestHelpers from '../helpers';
+<<<<<<< HEAD
 import {
   COMFIRM_TXN_AMOUNT,
   CONFIRM_TRANSACTION_BUTTON_ID,
@@ -13,6 +14,13 @@ import {
 import { EditGasViewSelectorsText } from '../selectors/EditGasView.selectors';
 import { TransactionConfirmViewSelectorsText } from '../selectors/TransactionConfirmView.selectors';
 
+=======
+
+const TRANSACTION_VIEW_CONTAINER_ID = 'txn-confirm-screen';
+const TRANSACTION_AMOUNT_ID = 'confirm-txn-amount';
+const CONFIRM_TRANSACTION_BUTTON_ID = 'txn-confirm-send-button';
+const NAVBAR_TITLE_TEXT = 'navbar-title-text';
+>>>>>>> upstream/testflight/4754-permission-system
 export default class TransactionConfirmationView {
   static async tapConfirmButton() {
     if (device.getPlatform() === 'ios') {
@@ -81,7 +89,11 @@ export default class TransactionConfirmationView {
   }
 
   static async isNetworkNameVisible(text) {
+<<<<<<< HEAD
     await TestHelpers.checkIfElementHasString(NAVBAR_TITLE_NETWORKS_TEXT, text);
+=======
+    await TestHelpers.checkIfElementHasString(NAVBAR_TITLE_TEXT, text);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 <<<<<<< Updated upstream
 	static async tapCancelButton() {

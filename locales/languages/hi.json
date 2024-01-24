@@ -531,7 +531,10 @@
   },
   "accounts": {
     "create_new_account": "नया खाता बनाएं",
+<<<<<<< HEAD
     "qr_hardware": "QR हार्डवेयर",
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     "import_account": "एक खाता इम्पोर्ट करें",
     "connect_hardware": "हार्डवेयर वॉलेट कनेक्ट करें",
     "imported": "इम्पोर्ट किया गया",
@@ -541,7 +544,11 @@
     "yes_remove_it": "हां, इसे हटा दें",
     "accounts_title": "खाता",
     "connect_account_title": "खाता कनेक्ट करें",
+<<<<<<< HEAD
     "connect_accounts_title": "खातों को कनेक्ट करें",
+=======
+    "connect_accounts_title": "खाते को कनेक्ट करें",
+>>>>>>> upstream/testflight/4754-permission-system
     "connected_accounts_title": "कनेक्ट किए हुए खाते",
     "connect_description": "अपना खाता पता, शेष राशि, गतिविधि साझा करें और साइट को लेन-देन शुरू करने की अनुमति दें।",
     "connect_multiple_accounts": "एक से अधिक खाते को कनेक्ट करें",
@@ -550,6 +557,7 @@
     "connect": "कनेक्ट करें",
     "connect_with_count": "{{countLabel}} को कनेक्ट करें",
     "select_all": "सभी का चयन करें",
+<<<<<<< HEAD
     "unselect_all": "सभी को अचयनित करें",
     "permissions": "अनुमतियां",
     "revoke": "निरस्त करें",
@@ -568,15 +576,26 @@
     "fake_metamask": "MetaMask के नकली वर्जन",
     "srp_theft": "सीक्रेट रिकवरी फ्रेज़ या पासवर्ड की चोरी",
     "malicious_transactions": "बुरी नीयत वाले ट्रांसेक्शन जिनके कारण एसेट चोरी हो जाते हैं"
+=======
+    "permissions": "अनुमतियां",
+    "disconnect": "डिस्कनेक्ट करें",
+    "disconnect_all_accounts": "सभी खाते डिस्कनेक्ट करें",
+    "revoke": "निरस्त करें",
+    "revoke_all": "सभी निरस्त करें"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "toast": {
     "connected_and_active": "कनेक्ट किया हुआ और सक्रिय।",
     "now_active": "अब सक्रिय है",
     "revoked": "निरस्त किया हुआ।",
     "revoked_all": "सभी खाते निरस्त कर दिए गए।",
+<<<<<<< HEAD
     "accounts_connected": "खाते कनेक्ट किए गए।",
     "disconnected": "डिसकनेक्ट किया गया।",
     "disconnected_all": "सभी खाते डिसकनेक्ट किए गए।"
+=======
+    "accounts_connected": "खाते कनेक्ट किए गए।"
+>>>>>>> upstream/testflight/4754-permission-system
   },
   "connect_qr_hardware": {
     "title": "क्यूआर-आधारित हार्डवेयर वॉलेट के साथ कनेक्ट करें",
@@ -2663,7 +2682,11 @@
       "right_answer_description": "आपके सीक्रेट रिकवरी फ्रेज़ की आवश्यकता का दावा करने वाला कोई भी व्यक्ति आपसे झूठ बोल रहा है। यदि आप इसे उनके साथ साझा करते हैं, तो वे आपकी संपत्ति चुरा लेंगे।",
       "wrong_answer": "आपको उन्हें यह देना चाहिए",
       "wrong_answer_title": "नहीं! अपने सीक्रेट रिकवरी फ्रेज़ को कभी भी किसी के साथ साझा न करें",
+<<<<<<< HEAD
       "wrong_answer_description": "आपके सीक्रेट रिकवरी फ्रेज़ की आवश्यकता का दावा करने वाला कोई भी व्यक्ति आपसे झूठ बोल रहा है। यदि आप इसे उनके साथ साझा करते हैं, तो वे आपकी संपत्तियां चुरा लेंगे।"
+=======
+      "wrong_answer_description": "आपके सीक्रेट रिकवरी फ्रेज़ की आवश्यकता का दावा करने वाला कोई भी व्यक्ति आपसे झूठ बोल रहा है। यदि आप इसे उनके साथ साझा करते हैं, तो वे आपकी संपत्ति चुरा लेंगे।"
+>>>>>>> upstream/testflight/4754-permission-system
     }
   },
   "ledger": {

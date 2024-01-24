@@ -16,8 +16,16 @@ import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/device';
 import { ScreenshotDeterrent } from '../../UI/ScreenshotDeterrent';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+<<<<<<< HEAD
 
 import { ImportPrivateKeySuccessScreenSelectorsIDs } from '../../../../e2e/selectors/ImportPrivateKeySuccessScreen.selectors';
+=======
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import {
+  IMPORT_SUCESS_SCREEN_ID,
+  IMPORT_SUCESS_SCREEN_CLOSE_BUTTON_ID,
+} from '../../../../wdio/screen-objects/testIDs/Screens/ImportSuccessScreen.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({

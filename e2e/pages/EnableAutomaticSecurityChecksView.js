@@ -2,7 +2,11 @@ import TestHelpers from '../helpers';
 
 import {
   ENABLE_AUTOMATIC_SECURITY_CHECK_CONTAINER_ID,
+<<<<<<< HEAD
   ENABLE_AUTOMATIC_SECURITY_CHECK_NO_THANKS_BUTTON_ID,
+=======
+  ENABLE_AUTOMATIC_SECURITY_CHECK_NO_THANKS_BUTTON,
+>>>>>>> upstream/testflight/4754-permission-system
 } from '../../wdio/screen-objects/testIDs/Screens/EnableAutomaticSecurityChecksScreen.testIds';
 
 export default class EnableAutomaticSecurityChecksView {

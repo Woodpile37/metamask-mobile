@@ -1,9 +1,13 @@
 // Third party dependencies.
 import React, { useCallback, useContext, useMemo } from 'react';
 import { View } from 'react-native';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { ProviderConfig } from '@metamask/network-controller';
+=======
+import { useDispatch, useSelector } from 'react-redux';
+>>>>>>> upstream/testflight/4754-permission-system
 
 // External dependencies.
 import SheetActions from '../../../../component-library/components-temp/SheetActions';
@@ -12,10 +16,18 @@ import { strings } from '../../../../../locales/i18n';
 import TagUrl from '../../../../component-library/components/Tags/TagUrl';
 import PickerNetwork from '../../../../component-library/components/Pickers/PickerNetwork';
 import {
+<<<<<<< HEAD
   getNetworkNameFromProviderConfig,
   getNetworkImageSource,
 } from '../../../../util/networks';
 import AccountSelectorList from '../../../../components/UI/AccountSelectorList';
+=======
+  getNetworkNameFromProvider,
+  getNetworkImageSource,
+} from '../../../../util/networks';
+import AccountSelectorList from '../../../../components/UI/AccountSelectorList';
+import { toggleNetworkModal } from '../../../../actions/modals';
+>>>>>>> upstream/testflight/4754-permission-system
 import { AccountPermissionsScreens } from '../AccountPermissions.types';
 import { switchActiveAccounts } from '../../../../core/Permissions';
 import {
@@ -25,9 +37,12 @@ import {
 import getAccountNameWithENS from '../../../../util/accounts';
 import AnalyticsV2 from '../../../../util/analyticsV2';
 import { MetaMetricsEvents } from '../../../../core/Analytics';
+<<<<<<< HEAD
 import Routes from '../../../../constants/navigation/Routes';
 import { selectProviderConfig } from '../../../../selectors/networkController';
 import { ConnectedAccountsSelectorsIDs } from '../../../../../e2e/selectors/Modals/ConnectedAccountModal.selectors';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 // Internal dependencies.
 import { AccountPermissionsConnectedProps } from './AccountPermissionsConnected.types';
@@ -45,6 +60,7 @@ const AccountPermissionsConnected = ({
   favicon,
   secureIcon,
   accountAvatarType,
+<<<<<<< HEAD
   urlWithProtocol,
 }: AccountPermissionsConnectedProps) => {
   const { navigate } = useNavigation();
@@ -59,6 +75,21 @@ const AccountPermissionsConnected = ({
     const { type, chainId } = providerConfig;
     return getNetworkImageSource({ networkType: type, chainId });
   }, [providerConfig]);
+=======
+}: AccountPermissionsConnectedProps) => {
+  const dispatch = useDispatch();
+  const networkController = useSelector(
+    (state: any) => state.engine.backgroundState.NetworkController,
+  );
+  const networkName = useMemo(
+    () => getNetworkNameFromProvider(networkController.provider),
+    [networkController.provider],
+  );
+  const networkImageSource = useMemo(() => {
+    const { type, chainId } = networkController.provider;
+    return getNetworkImageSource({ networkType: type, chainId });
+  }, [networkController.provider]);
+>>>>>>> upstream/testflight/4754-permission-system
 
   const activeAddress = selectedAddresses[0];
   const { toastRef } = useContext(ToastContext);
@@ -107,6 +138,7 @@ const AccountPermissionsConnected = ({
   );
 
   const switchNetwork = useCallback(() => {
+<<<<<<< HEAD
     navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
       screen: Routes.SHEET.NETWORK_SELECTOR,
     });
@@ -122,6 +154,17 @@ const AccountPermissionsConnected = ({
         style={styles.sheetActionContainer}
         testID={ConnectedAccountsSelectorsIDs.CONNECT_ACCOUNTS_BUTTON}
       >
+=======
+    dispatch(toggleNetworkModal(false));
+    AnalyticsV2.trackEvent(MetaMetricsEvents.BROWSER_SWITCH_NETWORK, {
+      from_chain_id: networkController.network,
+    });
+  }, [networkController.network, dispatch]);
+
+  const renderSheetAction = useCallback(
+    () => (
+      <View style={styles.sheetActionContainer}>
+>>>>>>> upstream/testflight/4754-permission-system
         <SheetActions
           actions={[
             {
@@ -139,6 +182,7 @@ const AccountPermissionsConnected = ({
   return (
     <>
       <SheetHeader title={strings('accounts.connected_accounts_title')} />
+<<<<<<< HEAD
       <View
         style={styles.body}
         testID={ConnectedAccountsSelectorsIDs.CONTAINER}
@@ -146,6 +190,12 @@ const AccountPermissionsConnected = ({
         <TagUrl
           imageSource={favicon}
           label={urlWithProtocol}
+=======
+      <View style={styles.body}>
+        <TagUrl
+          imageSource={favicon}
+          label={hostname}
+>>>>>>> upstream/testflight/4754-permission-system
           cta={{
             label: strings('accounts.permissions'),
             onPress: openRevokePermissions,
@@ -157,7 +207,10 @@ const AccountPermissionsConnected = ({
           imageSource={networkImageSource}
           onPress={switchNetwork}
           style={styles.networkPicker}
+<<<<<<< HEAD
           testID={ConnectedAccountsSelectorsIDs.NETWORK_PICKER}
+=======
+>>>>>>> upstream/testflight/4754-permission-system
         />
       </View>
       <AccountSelectorList

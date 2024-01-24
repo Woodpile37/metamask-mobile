@@ -1,15 +1,24 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
-  TouchableOpacity,
   View,
   StyleSheet,
+<<<<<<< HEAD
   Text,
   Dimensions,
   InteractionManager,
 } from 'react-native';
 import { TouchableOpacity, View, StyleSheet, Text, Dimensions, InteractionManager } from 'react-native';
 import { colors as importedColors, fontStyles } from '../../../styles/common';
+=======
+  InteractionManager,
+  Platform,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import { colors as importedColors } from '../../../styles/common';
+import { strings } from '../../../../locales/i18n';
+>>>>>>> upstream/testflight/4754-permission-system
 import { connect } from 'react-redux';
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -18,19 +27,30 @@ import Step4 from './Step4';
 import Step5 from './Step5';
 import Step6 from './Step6';
 import setOnboardingWizardStep from '../../../actions/wizard';
-import { strings } from '../../../../locales/i18n';
 import DefaultPreference from 'react-native-default-preference';
-import ElevatedView from 'react-native-elevated-view';
 import Modal from 'react-native-modal';
+<<<<<<< HEAD
 import Device from '../../../util/device';
 import { ONBOARDING_WIZARD_STEP_DESCRIPTION } from '../../../util/analytics';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 import { ONBOARDING_WIZARD, EXPLORED } from '../../../constants/storage';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { DrawerContext } from '../../../components/Nav/Main/MainNavigator';
+<<<<<<< HEAD
 import { useAppThemeFromContext, mockTheme } from '../../../util/theme';
 
 const MIN_HEIGHT = Dimensions.get('window').height;
 const createStyles = (colors) =>
+=======
+import ElevatedView from 'react-native-elevated-view';
+import { useTheme } from '../../../util/theme';
+import { ONBOARDING_WIZARD_SKIP_TUTORIAL_BUTTON } from '../../../../wdio/screen-objects/testIDs/Components/OnboardingWizard.testIds';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+import Device from '../../../util/device';
+
+const createStyles = ({ colors, typography }) =>
+>>>>>>> upstream/testflight/4754-permission-system
   StyleSheet.create({
     root: {
       top: 0,
@@ -49,12 +69,12 @@ const createStyles = (colors) =>
     smallSkipWrapper: {
       alignItems: 'center',
       alignSelf: 'center',
-      bottom: Device.isIos() ? 30 : 35,
+      bottom: Device.isIos() ? 25 : 30,
     },
     largeSkipWrapper: {
       alignItems: 'center',
       alignSelf: 'center',
-      bottom: Device.isIos() && Device.isIphoneX() ? 98 : 66,
+      bottom: Device.isIos() && Device.isIphoneX() ? 93 : 61,
     },
     skipButtonContainer: {
       height: 30,
@@ -67,16 +87,13 @@ const createStyles = (colors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    androidElevated: {
-      width: 120,
-      borderRadius: 30,
-    },
-    iosTouchable: {
-      width: 120,
-    },
     skipText: {
+<<<<<<< HEAD
       ...fontStyles.normal,
       fontSize: 12,
+=======
+      ...typography.sBodyMD,
+>>>>>>> upstream/testflight/4754-permission-system
       color: colors.primary.default,
     },
   });
@@ -89,8 +106,13 @@ const OnboardingWizard = (props) => {
     coachmarkRef,
   } = props;
   const { drawerRef } = useContext(DrawerContext);
+<<<<<<< HEAD
   const { colors } = useAppThemeFromContext() || mockTheme;
   const styles = createStyles(colors);
+=======
+  const theme = useTheme();
+  const styles = createStyles(theme);
+>>>>>>> upstream/testflight/4754-permission-system
 
   /**
    * Close onboarding wizard setting step to 0 and closing drawer
@@ -125,13 +147,7 @@ const OnboardingWizard = (props) => {
           navigation={navigation}
         />
       ),
-      5: (
-        <Step5
-          coachmarkRef={coachmarkRef}
-          drawerRef={drawerRef}
-          navigation={navigation}
-        />
-      ),
+      5: <Step5 drawerRef={drawerRef} navigation={navigation} />,
       6: (
         <Step6
           coachmarkRef={coachmarkRef}

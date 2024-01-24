@@ -8,6 +8,7 @@ exports[`TokenIcon component should Render correctly 2`] = `
   onError={[Function]}
   source={
     Object {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       "testUri": "../../../app/images/eth-logo.png",
 =======
@@ -15,6 +16,9 @@ exports[`TokenIcon component should Render correctly 2`] = `
         "uri": "MockImage",
       },
 >>>>>>> Stashed changes
+=======
+      "testUri": "../../../app/images/eth-logo-new.png",
+>>>>>>> upstream/testflight/4754-permission-system
     }
   }
   style={
@@ -116,6 +120,7 @@ exports[`TokenIcon component should Render correctly 6`] = `
   onError={[Function]}
   source={
     Object {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       "testUri": "../../../app/images/eth-logo.png",
 =======
@@ -123,6 +128,9 @@ exports[`TokenIcon component should Render correctly 6`] = `
         "uri": "MockImage",
       },
 >>>>>>> Stashed changes
+=======
+      "testUri": "../../../app/images/eth-logo-new.png",
+>>>>>>> upstream/testflight/4754-permission-system
     }
   }
   style={

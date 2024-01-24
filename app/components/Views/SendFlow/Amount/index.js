@@ -78,9 +78,14 @@ import { gte } from '../../../../util/lodash';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
 import Alert, { AlertType } from '../../../../components/Base/Alert';
 import {
+<<<<<<< HEAD
   FIAT_CONVERSION_WARNING_TEXT,
   TRANSACTION_AMOUNT_CONVERSION_VALUE,
   CURRENCY_SWITCH,
+=======
+  AMOUNT_SCREEN,
+  AMOUNT_SCREEN_CARET_DROP_DOWN,
+>>>>>>> upstream/testflight/4754-permission-system
 } from '../../../../../wdio/screen-objects/testIDs/Screens/AmountScreen.testIds.js';
 import generateTestId from '../../../../../wdio/utils/generateTestId';
 import {

@@ -252,12 +252,17 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
   );
 
   const onUnlock = useCallback(async () => {
+    const { PreferencesController } = Engine.context as any;
     resetError();
     setBlockingModalVisible(true);
+    const importedAccountAddresses = [];
     try {
       for (const account of checkedAccounts) {
-        await KeyringController.unlockQRHardwareWalletAccount(account);
+        const accountAddress =
+          await KeyringController.unlockQRHardwareWalletAccount(account);
+        importedAccountAddresses.push(accountAddress);
       }
+      PreferencesController.setSelectedAddress(importedAccountAddresses[0]);
     } catch (err) {
       Logger.log('Error: Connecting QR hardware wallet', err);
     }
@@ -278,7 +283,11 @@ const ConnectQRHardware = ({ navigation }: IConnectQRHardwareProps) => {
       safeToChecksumAddress,
     );
     removeAccountsFromPermissions(checksummedRemovedAccounts);
+<<<<<<< HEAD
     navigation.pop(2);
+=======
+    navigation.goBack();
+>>>>>>> upstream/testflight/4754-permission-system
   }, [KeyringController, navigation, resetError]);
 
   const renderAlert = () =>

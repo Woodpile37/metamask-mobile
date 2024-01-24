@@ -23,9 +23,12 @@ const CustomNetwork = ({
   showNetworkModal,
   switchTab,
   shouldNetworkSwitchPopToWallet,
+<<<<<<< HEAD
   onNetworkSwitch,
   showAddedNetworks,
   customNetworksList,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }: CustomNetworkProps) => {
   const networkConfigurations = useSelector(selectNetworkConfigurations);
 
@@ -64,7 +67,10 @@ const CustomNetwork = ({
           networkConfiguration={selectedNetwork}
           navigation={navigation}
           shouldNetworkSwitchPopToWallet={shouldNetworkSwitchPopToWallet}
+<<<<<<< HEAD
           onNetworkSwitch={onNetworkSwitch}
+=======
+>>>>>>> upstream/testflight/4754-permission-system
         />
       )}
       {filteredPopularList.map((networkConfiguration, index) => (

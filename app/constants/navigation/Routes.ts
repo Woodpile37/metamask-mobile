@@ -45,7 +45,10 @@ const Routes = {
     ENABLE_AUTOMATIC_SECURITY_CHECKS: 'EnableAutomaticSecurityChecksModal',
     DETECTED_TOKENS: 'DetectedTokens',
     SRP_REVEAL_QUIZ: 'SRPRevealQuiz',
+<<<<<<< HEAD
     WALLET_ACTIONS: 'WalletActions',
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   },
   ONBOARDING: {
     ROOT_NAV: 'OnboardingRootNav',
@@ -66,11 +69,34 @@ const Routes = {
   ACCOUNT_BACKUP: {
     STEP_1_B: 'AccountBackupStep1B',
   },
+  ACCOUNT_BACKUP: {
+    STEP_1_B: 'AccountBackupStep1B',
+  },
   SETTINGS: {
     CONTACT_FORM: 'ContactForm',
     REVEAL_PRIVATE_CREDENTIAL: 'RevealPrivateCredentialView',
+<<<<<<< HEAD
     CHANGE_PASSWORD: 'ResetPassword',
     EXPERIMENTAL_SETTINGS: 'ExperimentalSettings',
+=======
+  },
+  SHEET: {
+    ACCOUNT_SELECTOR: 'AccountSelector',
+    ACCOUNT_CONNECT: 'AccountConnect',
+    ACCOUNT_PERMISSIONS: 'AccountPermissions',
+  },
+  BROWSER: {
+    HOME: 'BrowserTabHome',
+    URL_MODAL: 'BrowserUrlModal',
+    VIEW: 'BrowserView',
+  },
+  WEBVIEW: {
+    MAIN: 'Webview',
+    SIMPLE: 'SimpleWebview',
+  },
+  WALLET: {
+    HOME: 'WalletTabHome',
+>>>>>>> upstream/testflight/4754-permission-system
   },
   SHEET: {
     ACCOUNT_SELECTOR: 'AccountSelector',

@@ -12,7 +12,11 @@ import { AccountConnectScreens } from '../AccountConnect.types';
 // Internal dependencies.
 import { AccountConnectSingleSelectorProps } from './AccountConnectSingleSelector.types';
 import styles from './AccountConnectSingleSelector.styles';
+<<<<<<< HEAD
 import { USER_INTENT } from '../../../../constants/permissions';
+=======
+import USER_INTENT from '../../../../constants/permissions';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const AccountConnectSingleSelector = ({
   accounts,

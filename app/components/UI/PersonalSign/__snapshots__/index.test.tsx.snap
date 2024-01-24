@@ -11,12 +11,22 @@ exports[`PersonalSign should render correctly 1`] = `
   messageParams={
     Object {
       "data": "message",
+<<<<<<< HEAD
       "from": "0xC4955C0d639D99699Bfd7Ec54d9FaFEe40e4D272",
+=======
+      "from": "0x0",
+>>>>>>> upstream/testflight/4754-permission-system
       "metamaskId": "id",
       "origin": "origin",
     }
   }
+<<<<<<< HEAD
   onConfirm={[MockFunction]}
   onReject={[MockFunction]}
+=======
+  onCancel={[Function]}
+  onConfirm={[Function]}
+  selectedAddress="0x0"
+>>>>>>> upstream/testflight/4754-permission-system
 />
 `;

@@ -1,17 +1,16 @@
 import React, { memo, useEffect, useState, useCallback } from 'react';
-import { TextInput, View, StyleSheet, Platform, TextStyle } from 'react-native';
+import { TextInput, View, StyleSheet, Platform } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import Fuse from 'fuse.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { toLowerCaseEquals } from '../../../util/general';
 import { useSelector } from 'react-redux';
+import { getTokenListArray } from '../../../reducers/tokens';
 import { TokenListToken } from '@metamask/assets-controllers';
 import { useTheme } from '../../../util/theme';
 import generateTestId from '../../../../wdio/utils/generateTestId';
 import { TOKEN_INPUT_BOX_ID } from '../../../../wdio/screen-objects/testIDs/Screens/AssetSearch.testIds';
-import { TokenViewSelectors } from '../../../../e2e/selectors/AddTokenView.selectors';
-import { selectTokenListArray } from '../../../selectors/tokenListController';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -30,34 +29,12 @@ const createStyles = (colors: any) =>
     textInput: {
       ...fontStyles.normal,
       color: colors.text.default,
-    } as TextStyle,
+    } as StyleSheet.NamedStyles<any>,
     icon: {
       padding: 16,
       color: colors.icon.alternative,
     },
   });
-	StyleSheet.create({
-		searchSection: {
-			margin: 20,
-			marginBottom: 0,
-			flex: 1,
-			flexDirection: 'row',
-			justifyContent: 'center',
-			alignItems: 'center',
-			borderWidth: 1,
-			borderRadius: 4,
-			borderColor: colors.border.default,
-			color: colors.text.default,
-		},
-		textInput: {
-			...fontStyles.normal,
-			color: colors.text.default,
-		} as StyleSheet.NamedStyles<any>,
-		icon: {
-			padding: 16,
-			color: colors.icon.default,
-		},
-	});
 
 const fuse = new Fuse<TokenListToken>([], {
   shouldSort: true,
@@ -94,7 +71,7 @@ interface Props {
 const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [inputDimensions, setInputDimensions] = useState('85%');
-  const tokenList = useSelector(selectTokenListArray);
+  const tokenList = useSelector<any, TokenListToken[]>(getTokenListArray);
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
 
@@ -103,17 +80,6 @@ const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
       setInputDimensions('86%');
     }, 100);
   }, []);
-	const [searchQuery, setSearchQuery] = useState('');
-	const [inputDimensions, setInputDimensions] = useState('85%');
-	const tokenList = useSelector<any, TokenListToken[]>(getTokenListArray);
-	const { colors, themeAppearance } = useAppThemeFromContext() || mockTheme;
-	const styles = createStyles(colors);
-
-	useEffect(() => {
-		setTimeout(() => {
-			setInputDimensions('86%');
-		}, 100);
-	}, []);
 
   // Update fuse list
   useEffect(() => {
@@ -134,10 +100,7 @@ const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
   );
 
   return (
-    <View
-      style={styles.searchSection}
-      testID={TokenViewSelectors.ASSET_SEARCH_SCREEN_CONTAINER}
-    >
+    <View style={styles.searchSection} testID={'add-searched-token-screen'}>
       <Icon name="search" size={22} style={styles.icon} />
       <TextInput
         style={[
@@ -155,22 +118,6 @@ const AssetSearch = memo(({ onSearch, onFocus, onBlur }: Props) => {
       />
     </View>
   );
-	return (
-		<View style={styles.searchSection} testID={'add-searched-token-screen'}>
-			<Icon name="search" size={22} style={styles.icon} />
-			<TextInput
-				style={[styles.textInput, { height: inputDimensions, width: inputDimensions }]}
-				value={searchQuery}
-				onFocus={onFocus}
-				onBlur={onBlur}
-				placeholder={strings('token.search_tokens_placeholder')}
-				placeholderTextColor={colors.text.muted}
-				onChangeText={handleSearch}
-				testID={'input-search-asset'}
-				keyboardAppearance={themeAppearance}
-			/>
-		</View>
-	);
 });
 
 export default AssetSearch;

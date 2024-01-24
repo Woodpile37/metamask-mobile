@@ -1,3 +1,4 @@
+/* global driver */
 import Gestures from '../../helpers/Gestures';
 import Selectors from '../../helpers/Selectors';
 
@@ -21,7 +22,11 @@ class BrowserScreen {
   }
 
   get urlBarTitle() {
+<<<<<<< HEAD
     return Selectors.getXpathElementByResourceId(NAVBAR_TITLE_NETWORK);
+=======
+    return Selectors.getElementByPlatform(NAVBAR_TITLE_NETWORK);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   get accountIconButton() {
@@ -60,6 +65,10 @@ class BrowserScreen {
     return Selectors.getElementByPlatform(NETWORK_AVATAR_ICON);
   }
 
+  get networkAvatarIcon() {
+    return Selectors.getXpathElementByResourceId(NETWORK_AVATAR_ICON);
+  }
+
   async isScreenContentDisplayed() {
     const screen = await this.container;
     await screen.waitForDisplayed();
@@ -67,8 +76,11 @@ class BrowserScreen {
 
   async tapUrlBar() {
     await driver.pause(500);
+<<<<<<< HEAD
     const urlBarTitle = await this.urlBarTitle;
     await urlBarTitle.waitForEnabled();
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     await Gestures.waitAndTap(this.urlBarTitle);
   }
 
@@ -117,12 +129,15 @@ class BrowserScreen {
   async tapNetworkAvatarIcon() {
     await Gestures.waitAndTap(this.networkAvatarIcon);
   }
+<<<<<<< HEAD
 
   async waitForBackButtonEnabled() {
     const element = await this.backButton;
     await element.waitForEnabled();
     await driver.pause(2000);
   }
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 export default new BrowserScreen();

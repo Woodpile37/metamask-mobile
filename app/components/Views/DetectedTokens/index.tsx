@@ -18,11 +18,14 @@ import { getDecimalChainId } from '../../../util/networks';
 import { FlatList } from 'react-native-gesture-handler';
 import { createNavigationDetails } from '../../../util/navigation/navUtils';
 import Routes from '../../../constants/navigation/Routes';
+<<<<<<< HEAD
 import SheetBottom, {
   SheetBottomRef,
 } from '../../../component-library/components/Sheet/SheetBottom';
 import { selectDetectedTokens } from '../../../selectors/tokensController';
 import { selectChainId } from '../../../selectors/networkController';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors: any) =>
   StyleSheet.create({

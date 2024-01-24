@@ -138,6 +138,10 @@ exports[`Regions View renders correctly 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -962,6 +966,10 @@ exports[`Regions View renders correctly while loading 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -1568,6 +1576,10 @@ exports[`Regions View renders correctly with error 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -2248,6 +2260,10 @@ exports[`Regions View renders correctly with no data 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -2854,6 +2870,10 @@ exports[`Regions View renders correctly with sdkError 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -3534,6 +3554,10 @@ exports[`Regions View renders correctly with selectedRegion 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -4356,6 +4380,10 @@ exports[`Regions View renders correctly with unsupportedRegion 1`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}
@@ -5554,6 +5582,10 @@ exports[`Regions View renders correctly with unsupportedRegion 2`] = `
                     "justifyContent": "center",
                   }
                 }
+<<<<<<< HEAD:app/components/UI/Ramp/buy/Views/Regions/__snapshots__/Regions.test.tsx.snap
+=======
+                testID="navbar-title-text"
+>>>>>>> upstream/testflight/4754-permission-system:app/components/UI/FiatOnRampAggregator/Views/Regions/__snapshots__/Regions.test.tsx.snap
               >
                 <Text
                   numberOfLines={1}

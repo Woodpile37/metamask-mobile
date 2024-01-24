@@ -4,6 +4,7 @@ import {
   OPTIN_METRICS_PRIVACY_POLICY_DESCRIPTION_CONTENT_1_ID,
   METAMETRICS_OPT_IN_CONTAINER_ID,
 } from '../../../wdio/screen-objects/testIDs/Screens/OptinMetricsScreen.testIds';
+<<<<<<< HEAD
 import Matchers from '../../utils/Matchers';
 import Gestures from '../../utils/Gestures';
 
@@ -14,6 +15,12 @@ class MetaMetricsOptIn {
 
   get optInMetricsContent() {
     return Matchers.getElementByID(
+=======
+import TestHelpers from '../../helpers';
+export default class MetaMetricsOptIn {
+  static async tapAgreeButton() {
+    await TestHelpers.swipe(
+>>>>>>> upstream/testflight/4754-permission-system
       OPTIN_METRICS_PRIVACY_POLICY_DESCRIPTION_CONTENT_1_ID,
     );
   }

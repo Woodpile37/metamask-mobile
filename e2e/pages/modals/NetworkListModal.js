@@ -3,9 +3,13 @@ import {
   NETWORK_SCROLL_ID,
   NETWORK_TEST_SWITCH_ID,
   OTHER_NETWORK_LIST_ID,
+<<<<<<< HEAD
   ADD_NETWORK_BUTTON,
 } from '../../../wdio/screen-objects/testIDs/Components/NetworkListModal.TestIds';
 import { NetworkListModalSelectorsText } from '../../selectors/Modals/NetworkListModal.selectors';
+=======
+} from '../../../wdio/screen-objects/testIDs/Components/NetworkListModal.TestIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default class NetworkListModal {
   static async changeNetwork(networkName) {
