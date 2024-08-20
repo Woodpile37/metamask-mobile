@@ -17,6 +17,7 @@ describe('SimpleWebview', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(
 			<SimpleWebview
@@ -31,4 +32,6 @@ describe('SimpleWebview', () => {
 		);
 		expect(wrapper).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

@@ -40,6 +40,7 @@ const checkIfAddressIsSaved = (
     }
     return [];
   }
+<<<<<<< Updated upstream
 const checkIfAddressIsSaved = (addressBook: [], network: string, transaction: any) => {
 	if (transaction.to === undefined) {
 		return [];
@@ -55,6 +56,8 @@ const checkIfAddressIsSaved = (addressBook: [], network: string, transaction: an
 		}
 		return [];
 	}
+=======
+>>>>>>> Stashed changes
 };
 
 export default checkIfAddressIsSaved;

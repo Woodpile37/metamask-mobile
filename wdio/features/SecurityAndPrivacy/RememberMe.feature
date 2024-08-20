@@ -8,7 +8,10 @@ Feature: Security & Privacy Remember Me
     And I have imported my wallet
     And I tap No Thanks on the Enable security check screen
     And I tap No thanks on the onboarding welcome tutorial
+<<<<<<< Updated upstream
     And I close the Whats New modal
+=======
+>>>>>>> Stashed changes
     When I tap on the Settings tab option
     And In settings I tap on "Security & Privacy"
     Then on Security & Privacy screen I toggle on Remember me

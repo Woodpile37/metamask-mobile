@@ -6,7 +6,10 @@ import {
   TouchableOpacity,
   LayoutAnimation,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { View, Image, Text, TouchableOpacity, LayoutAnimation } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import ReusableModal, { ReusableModalRef } from '../ReusableModal';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
@@ -34,6 +37,7 @@ const helpOptions: HelpOption[] = [
     label: strings('review_prompt.swap_issues'),
     link: AppConstants.REVIEW_PROMPT.SWAP_ISSUES,
   },
+<<<<<<< Updated upstream
 	label: string;
 	link: string;
 }
@@ -51,6 +55,8 @@ const helpOptions: HelpOption[] = [
 		label: strings('review_prompt.swap_issues'),
 		link: AppConstants.REVIEW_PROMPT.SWAP_ISSUES,
 	},
+=======
+>>>>>>> Stashed changes
 ];
 
 /* eslint-disable-next-line */
@@ -174,6 +180,7 @@ const ReviewModal = () => {
       </View>
     </ReusableModal>
   );
+<<<<<<< Updated upstream
 	const navigation = useNavigation();
 	const modalRef = useRef<ReusableModalRef>(null);
 	const [showHelpOptions, setShowHelpOptions] = useState(false);
@@ -270,6 +277,8 @@ const ReviewModal = () => {
 			</View>
 		</ReusableModal>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 export default ReviewModal;

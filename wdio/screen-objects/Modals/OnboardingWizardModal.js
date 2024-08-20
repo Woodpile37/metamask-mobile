@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   ONBOARDING_WIZARD_BACK_BUTTON,
   ONBOARDING_WIZARD_FIFTH_STEP_CONTENT_ID,
@@ -121,3 +122,41 @@ class OnboardingWizardModal {
 }
 
 export default new OnboardingWizardModal();
+=======
+<<<<<<<< HEAD:wdio/features/screen-objects/Modals/OnboardingWizardModal.js
+  import { ONBOARDING_WIZARD_STEP_1_CONTAINER_ID } from '../../testIDs/Components/OnboardingWizard.testIds';
+========
+import {
+  ONBOARDING_WIZARD_STEP_1_CONTAINER_ID,
+  ONBOARDING_WIZARD_STEP_1_NO_THANKS_ID,
+  ONBOARDING_WIZARD_STEP_1_TAKE_THE_TOUR_ID,
+  ONBOARDING_WIZARD_YOUR_ACCOUNTS_DESC_1,
+  ONBOARDING_WIZARD_YOUR_ACCOUNTS_DESC_2,
+  ONBOARDING_WIZARD_BACK_BUTTON,
+  ONBOARDING_WIZARD_NEXT_GOT_IT_BUTTON,
+  ONBOARDING_WIZARD_SKIP_TUTORIAL_BUTTON,
+  ONBOARDING_WIZARD_EDIT_ACCOUNTS_NAME_DESC_1,
+  ONBOARDING_WIZARD_EDIT_ACCOUNTS_NAME_DESC_2,
+  ONBOARDING_WIZARD_MAIN_NAVIGATION_DESC_1,
+  ONBOARDING_WIZARD_MAIN_NAVIGATION_DESC_2,
+  ONBOARDING_WIZARD_EXPLORE_BROWSER_DESC,
+  ONBOARDING_WIZARD_SEARCH_DESC,
+} from '../testIDs/Components/OnboardingWizard.testIds';
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/screen-objects/Modals/OnboardingWizardModal.js
+
+  import Selectors from '../../helpers/Selectors';
+
+class OnboardingWizardModal {
+    
+  get onBoardingWizardContainer() {
+    return Selectors.getElementByPlatform(ONBOARDING_WIZARD_STEP_1_CONTAINER_ID);
+  }
+
+
+  async isVisible(){
+    await expect(this.onBoardingWizardContainer).toBeDisplayed();
+  }
+
+}
+export default new OnboardingWizardModal();
+>>>>>>> upstream/testflight/4754-permission-system

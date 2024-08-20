@@ -1,36 +1,38 @@
 /* eslint-disable react/prop-types */
 
 // Third party dependencies.
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 // External dependencies.
+import Text, { TextVariants } from '../../Texts/Text';
+import Icon, { IconSize } from '../../Icon';
 import { useStyles } from '../../../hooks';
 
 // Internal dependencies
 import styleSheet from './TabBarItem.styles';
 import { TabBarItemProps } from './TabBarItem.types';
-import Avatar, { AvatarVariants } from '../../Avatars/Avatar';
 
 const TabBarItem = ({
   style,
+  label,
   icon,
-  iconSize,
-  iconColor,
-  iconBackgroundColor,
+  isSelected,
   ...props
 }: TabBarItemProps) => {
-  const { styles } = useStyles(styleSheet, { style });
+  const { styles, theme } = useStyles(styleSheet, { style, isSelected });
+  const tabColor = useMemo(
+    () =>
+      isSelected ? theme.colors.primary.default : theme.colors.icon.alternative,
+    [isSelected, theme],
+  );
 
   return (
     <TouchableOpacity {...props} style={styles.base}>
-      <Avatar
-        variant={AvatarVariants.Icon}
-        name={icon}
-        size={iconSize}
-        backgroundColor={iconBackgroundColor}
-        iconColor={iconColor}
-      />
+      <Icon size={IconSize.Lg} name={icon} color={tabColor} />
+      <Text variant={TextVariants.sBodySM} style={styles.label}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 };

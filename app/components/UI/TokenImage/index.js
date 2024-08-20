@@ -47,6 +47,7 @@ const TokenImage = ({ asset, containerStyle, iconStyle, tokenList }) => {
     </View>
   );
 };
+<<<<<<< Updated upstream
 export function TokenImage({ asset, containerStyle, iconStyle, tokenList }) {
 	const assetImage = isUrl(asset?.image) ? asset.image : null;
 	const iconUrl =
@@ -62,6 +63,8 @@ export function TokenImage({ asset, containerStyle, iconStyle, tokenList }) {
 		</View>
 	);
 }
+=======
+>>>>>>> Stashed changes
 
 TokenImage.propTypes = {
   asset: PropTypes.object,

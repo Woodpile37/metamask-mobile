@@ -10,6 +10,7 @@ interface Props {
    */
   warningMessage: ReactNode;
   style?: StyleProp<ViewStyle>;
+  onDismiss?: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -19,13 +20,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const WarningMessage = ({ warningMessage, style }: Props) => {
+const WarningMessage = ({ warningMessage, style, onDismiss }: Props) => {
   const { colors } = useTheme();
 
   return (
     <Alert
       type={AlertType.Warning}
       style={style}
+      onDismiss={onDismiss}
       renderIcon={() => (
         <FontAwesome
           style={styles.icon}
@@ -40,6 +42,7 @@ const WarningMessage = ({ warningMessage, style }: Props) => {
   );
 };
 
+<<<<<<< Updated upstream
 	/**
 	 * Warning message to display (Plain text or JSX)
 	 */
@@ -70,4 +73,6 @@ const WarningMessage = ({ warningMessage, style }: Props) => {
 	);
 };
 
+=======
+>>>>>>> Stashed changes
 export default WarningMessage;

@@ -4,7 +4,7 @@ CellDisplay is a component used for displaying cell displays.
 
 ## Props
 
-This component extends [CellBase](../../foundation/CellBase/CellBase.types.ts#L13).
+This component extends [CellDisplayContainerProps](../CellDisplayContainer/CellDisplayContainer/CellDisplayContainer.types.ts) and [CellBase](../CellBase/CellBase.types.ts#L17).
 
 ### `variant`
 

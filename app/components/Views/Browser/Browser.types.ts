@@ -1,7 +1,11 @@
 import { createNavigationDetails } from '../../../util/navigation/navUtils';
 import Routes from '../../../constants/navigation/Routes';
 
+<<<<<<< HEAD
+export interface BrowserParams {
+=======
 interface BrowserParams {
+>>>>>>> upstream/testflight/4754-permission-system
   newTabUrl?: string;
   timestamp?: number;
 }

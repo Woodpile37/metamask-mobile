@@ -6,7 +6,10 @@ import {
   HOME_SUGGESTION,
   UNISWAP_SUGGESTION,
   URL_CLEAR_ICON,
+<<<<<<< HEAD
   URL_INPUT_BOX_ID,
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 } from '../testIDs/BrowserScreen/AddressBar.testIds';
 
 class AddressBarScreen {

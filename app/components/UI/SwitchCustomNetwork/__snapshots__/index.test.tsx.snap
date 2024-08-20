@@ -14,6 +14,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
   }
 >
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -31,6 +32,12 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
     right={false}
     small={false}
     strikethrough={false}
+=======
+    bold={true}
+    centered={true}
+    noMargin={true}
+    primary={true}
+>>>>>>> Stashed changes
     style={
       Object {
         "fontSize": 24,
@@ -40,12 +47,16 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
         "marginTop": 16,
       }
     }
+<<<<<<< Updated upstream
     underline={false}
     upper={false}
+=======
+>>>>>>> Stashed changes
   >
     New network added
   </Text>
   <Text
+<<<<<<< Updated upstream
     bigger={false}
     black={false}
     blue={false}
@@ -63,6 +74,10 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
     right={false}
     small={false}
     strikethrough={false}
+=======
+    noMargin={true}
+    primary={true}
+>>>>>>> Stashed changes
     style={
       Object {
         "fontSize": 13,
@@ -72,6 +87,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
         "width": "100%",
       }
     }
+<<<<<<< Updated upstream
     underline={false}
     upper={false}
   >
@@ -115,10 +131,19 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
         strikethrough={false}
         underline={false}
         upper={false}
+=======
+  >
+    <Text>
+      <Text
+        bold={true}
+        noMargin={true}
+        primary={true}
+>>>>>>> Stashed changes
       >
         ""
       </Text>
       <Text
+<<<<<<< Updated upstream
         bigger={false}
         black={false}
         blue={false}
@@ -138,6 +163,9 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
         strikethrough={false}
         underline={false}
         upper={false}
+=======
+        noMargin={true}
+>>>>>>> Stashed changes
       >
          
         is now available in the network selector.
@@ -176,7 +204,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
           "opacity": 0.6,
         }
       }
-      testID="connect-cancel-button"
+      testID="cancel-button"
       type="cancel"
     >
       Cancel
@@ -203,7 +231,7 @@ exports[`SwitchCustomNetwork should render correctly 1`] = `
           "opacity": 0.6,
         }
       }
-      testID="connect-approve-button"
+      testID="connect-button"
       type="confirm"
     >
       Switch Network

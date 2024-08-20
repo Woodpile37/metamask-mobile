@@ -116,6 +116,7 @@ function TokenImportModal({ isVisible, dismiss, token, onPressImport }) {
       </SafeAreaView>
     </Modal>
   );
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		modal: {
 			margin: 0,
@@ -214,6 +215,8 @@ function TokenImportModal({ isVisible, dismiss, token, onPressImport }) {
 			</SafeAreaView>
 		</Modal>
 	);
+=======
+>>>>>>> Stashed changes
 }
 
 TokenImportModal.propTypes = {

@@ -40,6 +40,7 @@ const SeedPhraseVideo = ({ style, onClose }) => {
       ) : null}
     </View>
   );
+<<<<<<< Updated upstream
 	const video_source_uri =
 		'https://github.com/MetaMask/metamask-mobile/blob/main/app/videos/recovery-phrase.mp4?raw=true';
 
@@ -64,6 +65,8 @@ const SeedPhraseVideo = ({ style, onClose }) => {
 			/>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 SeedPhraseVideo.propTypes = {

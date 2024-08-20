@@ -65,6 +65,7 @@ export default class WebviewProgressBar extends PureComponent {
       </FadeView>
     );
   };
+<<<<<<< Updated upstream
 	render = () => {
 		const colors = this.context.colors || mockTheme.colors;
 
@@ -82,6 +83,8 @@ export default class WebviewProgressBar extends PureComponent {
 			</FadeView>
 		);
 	};
+=======
+>>>>>>> Stashed changes
 }
 
 WebviewProgressBar.contextType = ThemeContext;

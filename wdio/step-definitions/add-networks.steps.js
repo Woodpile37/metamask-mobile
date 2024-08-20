@@ -4,8 +4,13 @@ import NetworksScreen from '../screen-objects/NetworksScreen';
 import NetworkApprovalModal from '../screen-objects/Modals/NetworkApprovalModal';
 import NetworkEducationModal from '../screen-objects/Modals/NetworkEducationModal';
 import NetworkListModal from '../screen-objects/Modals/NetworkListModal';
+<<<<<<< Updated upstream
 import TabBarModal from "../screen-objects/Modals/TabBarModal";
 import Gestures from "../helpers/Gestures";
+=======
+import TabBarModal from '../screen-objects/Modals/TabBarModal';
+import Gestures from '../helpers/Gestures';
+>>>>>>> Stashed changes
 
 When(/^I tap on the Add a Network button/, async () => {
   await NetworkListModal.tapAddNetworkButton();
@@ -45,7 +50,11 @@ When(
   async (buttons) => {
     switch (buttons) {
       case 'Switch Network':
+<<<<<<< HEAD
         await NetworkApprovalModal.isSwitchToNetworkButtonDisplayed();
+=======
+        await NetworkApprovalModal.isApproveNetworkButton();
+>>>>>>> upstream/testflight/4754-permission-system
         break;
       case 'Close':
         await NetworkApprovalModal.isCloseNetworkButton();
@@ -67,14 +76,21 @@ When(/^I am back to the wallet view/, async () => {
 When(
   /^I should see the added network name "([^"]*)?" in the top navigation bar/,
   async (network) => {
+<<<<<<< HEAD
     await WalletMainScreen.isNetworkNavbarTitle(network);
+=======
+    await WalletMainScreen.isNetworkNameCorrect(network);
+>>>>>>> upstream/testflight/4754-permission-system
   },
 );
 
+<<<<<<< Updated upstream
 Then(/^I tap on the burger menu/, async () => {
   await WalletMainScreen.tapBurgerButton();
 });
 
+=======
+>>>>>>> Stashed changes
 Then(/^In settings I tap on "([^"]*)?"/, async (option) => {
   await NetworksScreen.tapOptionInSettings(option); // Can be moved later on to more common page object folder
   const setTimeout = 2000;
@@ -96,7 +112,10 @@ Then(
   /^"([^"]*)?" is not visible in the Popular Networks section/,
   async (network) => {
     await NetworksScreen.isNetworkNotVisible(network);
+<<<<<<< HEAD
     await NetworksScreen.tapCloseNetworkScreen();
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   },
 );
 
@@ -154,11 +173,24 @@ Then(/^I specify the following details:/, async () => {
   await NetworksScreen.isBlockExplorerUrlVisible();
 });
 
+<<<<<<< HEAD
 Then(/^I tap on the Add button to add Custom Network/, async () => {
   await driver.hideKeyboard();
   await Gestures.swipeUp();
   await NetworksScreen.tapCustomAddButton();
   await NetworksScreen.tapCustomAddButton();
+=======
+Then(/^Add button is disabled/, async () => {
+  await NetworksScreen.addButtonNetworkIsdisabled();
+});
+
+Then(/^I tap on the Add button/, async () => {
+  await driver.hideKeyboard(); // hides keyboard so it can view elements below
+  await NetworksScreen.tapAddButton();
+  await NetworksScreen.tapAddButton();
+  const setTimeout = 1500;
+  await driver.pause(setTimeout);
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 Then(/^I tap and hold network "([^"]*)?"/, async (network) => {
@@ -238,7 +270,10 @@ Given(/^the network screen is displayed$/, async () => {
 });
 
 Given(/^Ganache network is selected$/, async () => {
+<<<<<<< Updated upstream
   await WalletMainScreen.tapBurgerButton();
+=======
+>>>>>>> Stashed changes
   await TabBarModal.tapSettingButton();
   await NetworksScreen.tapOptionInSettings('Networks');
   await NetworksScreen.tapAddNetworkButton();
@@ -253,6 +288,10 @@ Given(/^Ganache network is selected$/, async () => {
   await NetworksScreen.tapCustomAddButton();
   await NetworksScreen.tapCustomAddButton();
   await NetworkEducationModal.tapGotItButton();
+<<<<<<< Updated upstream
+=======
+  await WalletMainScreen.waitForNetworkModaltoDisappear();
+>>>>>>> Stashed changes
 });
 
 Then(

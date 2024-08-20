@@ -126,6 +126,7 @@ const createStyles = (colors, shadows) =>
       marginTop: -7,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		noTabs: {
 			flex: 1,
@@ -220,6 +221,8 @@ const createStyles = (colors, shadows) =>
 			marginTop: -7,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that wraps all the thumbnails
@@ -313,6 +316,7 @@ export default class Tabs extends PureComponent {
   onSwitch = async (tab) => {
     this.props.switchToTab(tab);
   };
+<<<<<<< Updated upstream
 
   getStyles = () => {
     const colors = this.context.colors || mockTheme.colors;
@@ -353,6 +357,14 @@ export default class Tabs extends PureComponent {
 			</ScrollView>
 		);
 	}
+=======
+
+  getStyles = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    const shadows = this.context.shadows || mockTheme.shadows;
+    return createStyles(colors, shadows);
+  };
+>>>>>>> Stashed changes
 
   renderNoTabs() {
     const styles = this.getStyles();
@@ -371,6 +383,7 @@ export default class Tabs extends PureComponent {
   }
   renderTabs(tabs, activeTab) {
     const styles = this.getStyles();
+<<<<<<< Updated upstream
 
     return (
       <ScrollView
@@ -425,6 +438,43 @@ export default class Tabs extends PureComponent {
 		const { tabs, activeTab } = this.props;
 		const styles = this.getStyles();
 
+=======
+
+    return (
+      <ScrollView
+        style={styles.tabs}
+        contentContainerStyle={styles.tabsContent}
+        ref={this.scrollview}
+      >
+        {tabs.map((tab) => (
+          // eslint-disable-next-line react/jsx-key
+          <TabThumbnail
+            ref={this.thumbnails[tab.id]}
+            key={tab.id}
+            tab={tab}
+            isActiveTab={activeTab === tab.id}
+            onClose={this.props.closeTab}
+            onSwitch={this.onSwitch}
+          />
+        ))}
+      </ScrollView>
+    );
+  }
+
+  onNewTabPress = () => {
+    const { tabs, newTab } = this.props;
+    newTab();
+    this.trackNewTabEvent(tabs.length);
+  };
+
+  trackNewTabEvent = (tabsNumber) => {
+    AnalyticsV2.trackEvent(MetaMetricsEvents.BROWSER_NEW_TAB, {
+      option_chosen: 'Browser Bottom Bar Menu',
+      number_of_tabs: tabsNumber,
+    });
+  };
+
+>>>>>>> Stashed changes
   renderTabActions() {
     const { tabs, closeAllTabs, closeTabsView } = this.props;
     const styles = this.getStyles();

@@ -125,6 +125,7 @@ export async function getGasLimit(transaction, resetGas = false) {
 
   const gas = hexToBN(estimation.gas);
   return { gas };
+<<<<<<< Updated upstream
 	let tempMin = min,
 		parsed = '',
 		val;
@@ -166,6 +167,8 @@ export async function getGasLimit(transaction) {
 
 	const gas = hexToBN(estimation.gas);
 	return { gas };
+=======
+>>>>>>> Stashed changes
 }
 
 export function getValueFromWeiHex({

@@ -5,6 +5,8 @@ const initialState = {
   receiveModalVisible: false,
   receiveAsset: undefined,
   dappTransactionModalVisible: false,
+
+  signMessageModalVisible: true,
 };
 
 const modalsReducer = (state = initialState, action) => {
@@ -52,9 +54,21 @@ const modalsReducer = (state = initialState, action) => {
         ...state,
         infoNetworkModalVisible: !state.infoNetworkModalVisible,
       };
+    case 'TOGGLE_SIGN_MODAL':
+      if (action.show === false) {
+        return {
+          ...state,
+          signMessageModalVisible: false,
+        };
+      }
+      return {
+        ...state,
+        signMessageModalVisible: !state.signMessageModalVisible,
+      };
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	switch (action.type) {
 		case 'TOGGLE_NETWORK_MODAL':
 			return {
@@ -103,5 +117,7 @@ const modalsReducer = (state = initialState, action) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 export default modalsReducer;

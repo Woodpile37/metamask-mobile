@@ -1,25 +1,14 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import {
-  InteractionManager,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
-} from 'react-native';
-import { strings } from '../../../../../locales/i18n';
-import Engine from '../../../../core/Engine';
-import {
-  colors as importedColors,
-  fontStyles,
-} from '../../../../styles/common';
-import { useTheme } from '../../../../util/theme';
-import { getNavigationOptionsTitle } from '../../../UI/Navbar';
+import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, Text, ScrollView, View } from 'react-native';
 import StyledButton from '../../../UI/StyledButton';
-import SECURITY_ALERTS_TOGGLE_TEST_ID from './constants';
-import { isBlockaidFeatureEnabled } from '../../../../util/blockaid';
-import AnalyticsV2 from '../../../../util/analyticsV2';
-import { MetaMetricsEvents } from '../../../../core/Analytics';
+import { fontStyles } from '../../../../styles/common';
+import { getNavigationOptionsTitle } from '../../../UI/Navbar';
+import { strings } from '../../../../../locales/i18n';
+import ActionModal from '../../../../components/UI/ActionModal';
+import SDKConnect from '../../../../core/SDKConnect';
+import { useTheme } from '../../../../util/theme';
+import DefaultPreference from 'react-native-default-preference';
+import AppConstants from '../../../../core/AppConstants';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -37,26 +26,12 @@ const createStyles = (colors: any) =>
       paddingTop: 4,
       marginTop: -4,
     },
-    boldTitle: {
-      ...(fontStyles.bold as any),
-      marginTop: 18,
-      marginBottom: 18,
-    },
-    heading: {
-      marginTop: 18,
-      fontSize: 24,
-      lineHeight: 20,
-    },
     desc: {
       ...(fontStyles.normal as any),
       color: colors.text.alternative,
       fontSize: 14,
       lineHeight: 20,
       marginTop: 12,
-    },
-    mutedText: {
-      ...(fontStyles.normal as any),
-      color: colors.text.muted,
     },
     setting: {
       marginVertical: 18,
@@ -65,15 +40,8 @@ const createStyles = (colors: any) =>
       marginTop: 18,
     },
     switchElement: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      flexDirection: 'row',
-    },
-    switch: {
-      alignSelf: 'flex-end',
-    },
-    switchLabel: {
-      alignSelf: 'flex-start',
+      marginTop: 18,
+      alignItems: 'flex-start',
     },
     modalView: {
       alignItems: 'center',
@@ -96,49 +64,6 @@ const createStyles = (colors: any) =>
       color: colors.text.default,
     },
   });
-import { fontStyles, colors as importedColors } from '../../../../styles/common';
-import { getNavigationOptionsTitle } from '../../../UI/Navbar';
-import { strings } from '../../../../../locales/i18n';
-import Engine from '../../../../core/Engine';
-import { useSelector } from 'react-redux';
-import { MAINNET } from '../../../../constants/network';
-import AnalyticsV2 from '../../../../util/analyticsV2';
-import { useAppThemeFromContext, mockTheme } from '../../../../util/theme';
-
-const createStyles = (colors: any) =>
-	StyleSheet.create({
-		wrapper: {
-			backgroundColor: colors.background.default,
-			flex: 1,
-			padding: 24,
-			paddingBottom: 48,
-		},
-		title: {
-			...(fontStyles.normal as any),
-			color: colors.text.default,
-			fontSize: 20,
-			lineHeight: 20,
-			paddingTop: 4,
-			marginTop: -4,
-		},
-		desc: {
-			...(fontStyles.normal as any),
-			color: colors.text.alternative,
-			fontSize: 14,
-			lineHeight: 20,
-			marginTop: 12,
-		},
-		setting: {
-			marginVertical: 18,
-		},
-		clearHistoryConfirm: {
-			marginTop: 18,
-		},
-		switchElement: {
-			marginTop: 18,
-			alignItems: 'flex-start',
-		},
-	});
 
 interface Props {
   /**
@@ -155,26 +80,12 @@ interface Props {
  * Main view for app Experimental Settings
  */
 const ExperimentalSettings = ({ navigation, route }: Props) => {
-  const { PreferencesController } = Engine.context;
-  const [securityAlertsEnabled, setSecurityAlertsEnabled] = useState(
-    () => PreferencesController.state.securityAlertsEnabled,
-  );
+  const [showClearMMSDKConnectionsModal, setshowClearMMSDKConnectionsModal] =
+    useState(false);
+
   const isFullScreenModal = route?.params?.isFullScreenModal;
   const { colors } = useTheme();
   const styles = createStyles(colors);
-
-  const toggleSecurityAlertsEnabled = () => {
-    PreferencesController?.setSecurityAlertsEnabled(!securityAlertsEnabled);
-    setSecurityAlertsEnabled(!securityAlertsEnabled);
-    InteractionManager.runAfterInteractions(() => {
-      AnalyticsV2.trackEvent(
-        MetaMetricsEvents.SETTINGS_EXPERIMENTAL_SECURITY_ALERTS_ENABLED,
-        {
-          security_alerts_enabled: !securityAlertsEnabled,
-        },
-      );
-    });
-  };
 
   useEffect(
     () => {
@@ -191,144 +102,87 @@ const ExperimentalSettings = ({ navigation, route }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [colors],
   );
-	const { colors } = useAppThemeFromContext() || mockTheme;
-	const styles = createStyles(colors);
-
-	useEffect(
-		() => {
-			navigation.setOptions(
-				getNavigationOptionsTitle(
-					strings('app_settings.experimental_title'),
-					navigation,
-					isFullScreenModal,
-					colors
-				)
-			);
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[colors]
-	);
 
   const goToWalletConnectSessions = useCallback(() => {
     navigation.navigate('WalletConnectSessionsView');
   }, [navigation]);
 
-  const WalletConnectSettings: FC = () => (
-    <>
-      <Text style={styles.title}>
-        {strings('experimental_settings.wallet_connect_dapps')}
-      </Text>
-      <Text style={styles.desc}>
-        {strings('experimental_settings.wallet_connect_dapps_desc')}
-      </Text>
-      <StyledButton
-        type="normal"
-        onPress={goToWalletConnectSessions}
-        containerStyle={styles.clearHistoryConfirm}
-      >
-        {strings('experimental_settings.wallet_connect_dapps_cta')}
-      </StyledButton>
-    </>
-  );
+  const toggleClearMMSDKConnectionModal = () => {
+    setshowClearMMSDKConnectionsModal((show) => !show);
+  };
 
-  const BlockaidSettings: FC = () => (
-    <>
-      <Text style={[styles.title, styles.heading]}>
-        {strings('app_settings.security_heading')}
-      </Text>
-      <View style={styles.setting}>
-        <Text style={styles.title}>
-          {strings('experimental_settings.security_alerts')}
+  const clearMMSDKConnections = async () => {
+    SDKConnect.disconnectAll();
+    await DefaultPreference.set(
+      AppConstants.MM_SDK.SDK_CONNECTIONS,
+      JSON.stringify({}),
+    );
+    await DefaultPreference.set(
+      AppConstants.MM_SDK.SDK_APPROVEDHOSTS,
+      JSON.stringify({}),
+    );
+    toggleClearMMSDKConnectionModal();
+  };
+
+  const renderMMSDKConnectionsModal = () => (
+    <ActionModal
+      modalVisible={showClearMMSDKConnectionsModal}
+      confirmText={strings('app_settings.clear')}
+      cancelText={strings('app_settings.reset_account_cancel_button')}
+      onCancelPress={toggleClearMMSDKConnectionModal}
+      onRequestClose={toggleClearMMSDKConnectionModal}
+      onConfirmPress={clearMMSDKConnections}
+    >
+      <View style={styles.modalView}>
+        <Text style={styles.modalTitle}>
+          {strings('app_settings.clear_sdk_connections_title')}
         </Text>
-        <Text style={styles.desc}>
-          {strings('experimental_settings.security_alerts_desc')}
-        </Text>
-        <Text style={[styles.title, styles.boldTitle]}>
-          {strings('experimental_settings.select_providers')}
+        <Text style={styles.modalText}>
+          {strings('app_settings.clear_sdk_connections_text')}
         </Text>
       </View>
-      <View style={styles.switchElement}>
-        <Text style={[styles.switchLabel, styles.title]}>
-          {strings('experimental_settings.blockaid')}
-        </Text>
-        <Switch
-          value={securityAlertsEnabled}
-          onValueChange={toggleSecurityAlertsEnabled}
-          trackColor={{
-            true: colors.primary.default,
-            false: colors.border.muted,
-          }}
-          thumbColor={importedColors.white}
-          style={styles.switch}
-          ios_backgroundColor={colors.border.muted}
-          testID={SECURITY_ALERTS_TOGGLE_TEST_ID}
-        />
-      </View>
-      <Text style={[styles.title, styles.mutedText]}>
-        {strings('experimental_settings.moreProviders')}
-      </Text>
-    </>
+    </ActionModal>
   );
 
   return (
     <ScrollView style={styles.wrapper}>
-      <WalletConnectSettings />
-      {isBlockaidFeatureEnabled() && <BlockaidSettings />}
+      <View style={styles.setting}>
+        <View>
+          <Text style={styles.title}>
+            {strings('app_settings.sdk_connections')}
+          </Text>
+          <Text style={styles.desc}>
+            {strings('app_settings.clear_sdk_connections_title')}
+          </Text>
+          <StyledButton
+            type="signingCancel"
+            onPress={toggleClearMMSDKConnectionModal}
+            containerStyle={styles.clearHistoryConfirm}
+          >
+            {strings('app_settings.clear_sdk_connections_title')}
+          </StyledButton>
+        </View>
+      </View>
+      <View style={styles.setting}>
+        <View>
+          <Text style={styles.title}>
+            {strings('experimental_settings.wallet_connect_dapps')}
+          </Text>
+          <Text style={styles.desc}>
+            {strings('experimental_settings.wallet_connect_dapps_desc')}
+          </Text>
+          <StyledButton
+            type="normal"
+            onPress={goToWalletConnectSessions}
+            containerStyle={styles.clearHistoryConfirm}
+          >
+            {strings('experimental_settings.wallet_connect_dapps_cta')}
+          </StyledButton>
+        </View>
+      </View>
+      {renderMMSDKConnectionsModal()}
     </ScrollView>
   );
-	const toggleTokenDetection = useCallback(
-		(enabled) => {
-			const { PreferencesController } = Engine.context as any;
-			const eventOn = AnalyticsV2.ANALYTICS_EVENTS.SETTINGS_TOKEN_DETECTION_ON;
-			const eventOff = AnalyticsV2.ANALYTICS_EVENTS.SETTINGS_TOKEN_DETECTION_OFF;
-			PreferencesController.setUseStaticTokenList(!enabled);
-			InteractionManager.runAfterInteractions(() => {
-				AnalyticsV2.trackEvent((enabled ? eventOn : eventOff) as any, {
-					chain_id: chainId,
-				});
-			});
-		},
-		[chainId]
-	);
-
-	const renderTokenDetectionSection = useCallback(
-		() =>
-			isMainnet ? (
-				<View style={styles.setting} testID={'token-detection-section'}>
-					<Text style={styles.title}>{strings('app_settings.token_detection_title')}</Text>
-					<Text style={styles.desc}>{strings('app_settings.token_detection_description')}</Text>
-					<View style={styles.switchElement}>
-						<Switch
-							value={isTokenDetectionEnabled}
-							onValueChange={toggleTokenDetection}
-							trackColor={{ true: colors.primary.default, false: colors.border.muted }}
-							thumbColor={importedColors.white}
-							ios_backgroundColor={colors.border.muted}
-						/>
-					</View>
-				</View>
-			) : null,
-		[isTokenDetectionEnabled, toggleTokenDetection, isMainnet, colors, styles]
-	);
-
-	return (
-		<ScrollView style={styles.wrapper}>
-			<View style={styles.setting}>
-				<View>
-					<Text style={styles.title}>{strings('experimental_settings.wallet_connect_dapps')}</Text>
-					<Text style={styles.desc}>{strings('experimental_settings.wallet_connect_dapps_desc')}</Text>
-					<StyledButton
-						type="normal"
-						onPress={goToWalletConnectSessions}
-						containerStyle={styles.clearHistoryConfirm}
-					>
-						{strings('experimental_settings.wallet_connect_dapps_cta')}
-					</StyledButton>
-				</View>
-			</View>
-			{renderTokenDetectionSection()}
-		</ScrollView>
-	);
 };
 
 export default ExperimentalSettings;

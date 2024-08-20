@@ -1,60 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ImportPrivateKey should render correctly 1`] = `
+<<<<<<< HEAD
+<<<<<<< Updated upstream
 <View
   style={
+=======
+<ContextProvider
+  value={
+>>>>>>> upstream/testflight/4754-permission-system
     Object {
-      "backgroundColor": "#FFFFFF",
-      "flex": 1,
+      "options": undefined,
     }
   }
 >
-  <KeyboardAwareScrollView
-    contentContainerStyle={
+  <ThemeProvider
+    value={
       Object {
-        "flexGrow": 1,
+        "colors": Object {
+          "background": "rgb(242, 242, 242)",
+          "border": "rgb(216, 216, 216)",
+          "card": "rgb(255, 255, 255)",
+          "notification": "rgb(255, 59, 48)",
+          "primary": "rgb(0, 122, 255)",
+          "text": "rgb(28, 28, 30)",
+        },
+        "dark": false,
       }
     }
-    enableAutomaticScroll={true}
-    enableOnAndroid={false}
-    enableResetScrollToCoords={true}
-    extraHeight={75}
-    extraScrollHeight={0}
-    keyboardOpeningTime={250}
-    resetScrollToCoords={
-      Object {
-        "x": 0,
-        "y": 0,
-      }
-    }
-    style={
-      Object {
-        "backgroundColor": "#037DD619",
-        "flex": 1,
-      }
-    }
-    testID="first-incoming-transaction-screen"
-    viewIsInsideTabBar={false}
   >
-    <View
-      style={
-        Object {
-          "alignItems": "flex-start",
-        }
-      }
-      testID="import-account-screen"
-    >
-      <TouchableOpacity
-        onPress={[Function]}
-        style={
+    <ForwardRef(BaseNavigationContainer)>
+      <ImportPrivateKey
+        route={
           Object {
-            "alignSelf": "flex-end",
-            "marginTop": 40,
-            "paddingBottom": 10,
-            "paddingHorizontal": 22,
-            "paddingTop": 20,
+            "params": Object {},
           }
         }
+<<<<<<< HEAD
       >
         <Icon
           allowFontScaling={false}
@@ -280,4 +262,39 @@ exports[`ImportPrivateKey should render correctly 1`] = `
     </View>
   </KeyboardAwareScrollView>
 </View>
+=======
+<ContextProvider
+  value={
+    Object {
+      "options": undefined,
+    }
+  }
+>
+  <ThemeProvider
+    value={
+      Object {
+        "colors": Object {
+          "background": "rgb(242, 242, 242)",
+          "border": "rgb(216, 216, 216)",
+          "card": "rgb(255, 255, 255)",
+          "notification": "rgb(255, 59, 48)",
+          "primary": "rgb(0, 122, 255)",
+          "text": "rgb(28, 28, 30)",
+        },
+        "dark": false,
+      }
+    }
+  >
+    <ForwardRef(BaseNavigationContainer)>
+      <ImportPrivateKey />
+    </ForwardRef(BaseNavigationContainer)>
+  </ThemeProvider>
+</ContextProvider>
+>>>>>>> Stashed changes
+=======
+      />
+    </ForwardRef(BaseNavigationContainer)>
+  </ThemeProvider>
+</ContextProvider>
+>>>>>>> upstream/testflight/4754-permission-system
 `;

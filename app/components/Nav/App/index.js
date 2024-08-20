@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { CommonActions, NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, CommonActions } from '@react-navigation/native';
 import { Animated, Linking } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,12 +14,14 @@ import QRScanner from '../../Views/QRScanner';
 import Onboarding from '../../Views/Onboarding';
 import OnboardingCarousel from '../../Views/OnboardingCarousel';
 import ChoosePassword from '../../Views/ChoosePassword';
+import ExtensionSync from '../../Views/ExtensionSync';
 import AccountBackupStep1 from '../../Views/AccountBackupStep1';
 import AccountBackupStep1B from '../../Views/AccountBackupStep1B';
 import ManualBackupStep1 from '../../Views/ManualBackupStep1';
 import ManualBackupStep2 from '../../Views/ManualBackupStep2';
 import ManualBackupStep3 from '../../Views/ManualBackupStep3';
-import ImportFromSecretRecoveryPhrase from '../../Views/ImportFromSecretRecoveryPhrase';
+import ImportFromSeed from '../../Views/ImportFromSeed';
+import SyncWithExtensionSuccess from '../../Views/SyncWithExtensionSuccess';
 import DeleteWalletModal from '../../../components/UI/DeleteWalletModal';
 import WhatsNewModal from '../../UI/WhatsNewModal/WhatsNewModal';
 import Main from '../Main';
@@ -36,20 +38,20 @@ import { routingInstrumentation } from '../../../util/sentryUtils';
 import Analytics from '../../../core/Analytics/Analytics';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import {
-  CURRENT_APP_VERSION,
   EXISTING_USER,
+  CURRENT_APP_VERSION,
   LAST_APP_VERSION,
 } from '../../../constants/storage';
 import { getVersion } from 'react-native-device-info';
+import { checkedAuth } from '../../../actions/user';
 import {
-  setCurrentBottomNavRoute,
   setCurrentRoute,
+  setCurrentBottomNavRoute,
 } from '../../../actions/navigation';
 import { findRouteNameFromNavigatorState } from '../../../util/general';
-import { Authentication } from '../../../core/';
 import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
-import SDKConnect from '../../../core/SDKConnect/SDKConnect';
+import SDKConnect from '../../../core/SDKConnect';
 import { colors as importedColors } from '../../../styles/common';
 import Routes from '../../../constants/navigation/Routes';
 import ModalConfirmation from '../../../component-library/components/Modals/ModalConfirmation';
@@ -68,20 +70,6 @@ import AssetOptions from '../../Views/AssetOptions';
 import ImportPrivateKey from '../../Views/ImportPrivateKey';
 import ImportPrivateKeySuccess from '../../Views/ImportPrivateKeySuccess';
 import ConnectQRHardware from '../../Views/ConnectQRHardware';
-import { AUTHENTICATION_APP_TRIGGERED_AUTH_NO_CREDENTIALS } from '../../../constants/error';
-import { UpdateNeeded } from '../../../components/UI/UpdateNeeded';
-import { EnableAutomaticSecurityChecksModal } from '../../../components/UI/EnableAutomaticSecurityChecksModal';
-import NetworkSettings from '../../Views/Settings/NetworksSettings/NetworkSettings';
-import ModalMandatory from '../../../component-library/components/Modals/ModalMandatory';
-import { RestoreWallet } from '../../Views/RestoreWallet';
-import WalletRestored from '../../Views/RestoreWallet/WalletRestored';
-import WalletResetNeeded from '../../Views/RestoreWallet/WalletResetNeeded';
-import SDKLoadingModal from '../../Views/SDKLoadingModal/SDKLoadingModal';
-import SDKFeedbackModal from '../../Views/SDKFeedbackModal/SDKFeedbackModal';
-import AccountActions from '../../../components/Views/AccountActions';
-import WalletActions from '../../Views/WalletActions';
-import NetworkSelector from '../../../components/Views/NetworkSelector';
-import EditAccountName from '../../Views/EditAccountName/EditAccountName';
 
 const clearStackNavigatorOptions = {
   headerShown: false,
@@ -95,6 +83,9 @@ const clearStackNavigatorOptions = {
   },
   animationEnabled: false,
 };
+import { UpdateNeeded } from '../../../components/UI/UpdateNeeded';
+import { EnableAutomaticSecurityChecksModal } from '../../../components/UI/EnableAutomaticSecurityChecksModal';
+import NetworkSettings from '../../Views/Settings/NetworksSettings/NetworkSettings';
 
 const Stack = createStackNavigator();
 /**
@@ -118,6 +109,7 @@ const OnboardingNav = () => (
       component={ChoosePassword}
       options={ChoosePassword.navigationOptions}
     />
+    <Stack.Screen name="ExtensionSync" component={ExtensionSync} />
     <Stack.Screen
       name="AccountBackupStep1"
       component={AccountBackupStep1}
@@ -144,15 +136,16 @@ const OnboardingNav = () => (
       options={ManualBackupStep3.navigationOptions}
     />
     <Stack.Screen
-      name={Routes.ONBOARDING.IMPORT_FROM_SECRET_RECOVERY_PHRASE}
-      component={ImportFromSecretRecoveryPhrase}
-      options={ImportFromSecretRecoveryPhrase.navigationOptions}
+      name="ImportFromSeed"
+      component={ImportFromSeed}
+      options={ImportFromSeed.navigationOptions}
     />
     <Stack.Screen
       name="OptinMetrics"
       component={OptinMetrics}
       options={OptinMetrics.navigationOptions}
     />
+    <Stack.Screen name="NetworkSettings" component={NetworkSettings} />
   </Stack.Navigator>
 );
 
@@ -178,6 +171,10 @@ const OnboardingRootNav = () => (
   >
     <Stack.Screen name="OnboardingNav" component={OnboardingNav} />
     <Stack.Screen
+      name="SyncWithExtensionSuccess"
+      component={SyncWithExtensionSuccess}
+    />
+    <Stack.Screen
       name={Routes.QR_SCANNER}
       component={QRScanner}
       header={null}
@@ -190,37 +187,20 @@ const OnboardingRootNav = () => (
   </Stack.Navigator>
 );
 
-const VaultRecoveryFlow = () => (
-  <Stack.Navigator
-    initialRouteName={Routes.VAULT_RECOVERY.RESTORE_WALLET}
-    screenOptions={{ headerShown: false }}
-  >
-    <Stack.Screen
-      name={Routes.VAULT_RECOVERY.RESTORE_WALLET}
-      component={RestoreWallet}
-    />
-    <Stack.Screen
-      name={Routes.VAULT_RECOVERY.WALLET_RESTORED}
-      component={WalletRestored}
-    />
-    <Stack.Screen
-      name={Routes.VAULT_RECOVERY.WALLET_RESET_NEEDED}
-      component={WalletResetNeeded}
-    />
-  </Stack.Navigator>
-);
-
 const App = ({ userLoggedIn }) => {
-  const animationRef = useRef(null);
-  const animationNameRef = useRef(null);
+  const animation = useRef(null);
+  const animationName = useRef(null);
   const opacity = useRef(new Animated.Value(1)).current;
   const [navigator, setNavigator] = useState(undefined);
   const prevNavigator = useRef(navigator);
   const [route, setRoute] = useState();
-  const [animationPlayed, setAnimationPlayed] = useState(false);
+  const [animationPlayed, setAnimationPlayed] = useState();
   const { colors } = useTheme();
   const { toastRef } = useContext(ToastContext);
+
+  const isAuthChecked = useSelector((state) => state.user.isAuthChecked);
   const dispatch = useDispatch();
+  const triggerCheckedAuth = () => dispatch(checkedAuth('onboarding'));
   const triggerSetCurrentRoute = (route) => {
     dispatch(setCurrentRoute(route));
     if (route === 'Wallet' || route === 'BrowserView') {
@@ -231,43 +211,6 @@ const App = ({ userLoggedIn }) => {
     (state) =>
       state?.engine?.backgroundState?.PreferencesController?.frequentRpcList,
   );
-
-  useEffect(() => {
-    if (prevNavigator.current || !navigator) return;
-    const appTriggeredAuth = async () => {
-      const { PreferencesController } = Engine.context;
-      const selectedAddress = PreferencesController.state.selectedAddress;
-      const existingUser = await AsyncStorage.getItem(EXISTING_USER);
-      try {
-        if (existingUser && selectedAddress) {
-          await Authentication.appTriggeredAuth(selectedAddress);
-          // we need to reset the navigator here so that the user cannot go back to the login screen
-          navigator.reset({ routes: [{ name: Routes.ONBOARDING.HOME_NAV }] });
-        }
-      } catch (error) {
-        // if there are no credentials, then they were cleared in the last session and we should not show biometrics on the login screen
-        if (
-          error.message === AUTHENTICATION_APP_TRIGGERED_AUTH_NO_CREDENTIALS
-        ) {
-          navigator.dispatch(
-            CommonActions.setParams({
-              locked: true,
-            }),
-          );
-        }
-        await Authentication.lockApp(false);
-        trackErrorAsAnalytics(
-          'App: Max Attempts Reached',
-          error?.message,
-          `Unlock attempts: 1`,
-        );
-      } finally {
-        animationRef?.current?.play();
-        animationNameRef?.current?.play();
-      }
-    };
-    appTriggeredAuth();
-  }, [navigator]);
 
   const handleDeeplink = useCallback(({ error, params, uri }) => {
     if (error) {
@@ -345,22 +288,8 @@ const App = ({ userLoggedIn }) => {
   }, []);
 
   useEffect(() => {
-    if (navigator) {
-      SDKConnect.getInstance().init({ navigation: navigator });
-    }
-    return () => {
-      SDKConnect.getInstance().unmount();
-    };
-  }, [navigator]);
-
-  useEffect(() => {
-    if (navigator) {
-      SDKConnect.getInstance().init({ navigation: navigator });
-    }
-    return () => {
-      SDKConnect.getInstance().unmount();
-    };
-  }, [navigator]);
+    SDKConnect.init();
+  }, []);
 
   useEffect(() => {
     async function checkExisting() {
@@ -369,8 +298,10 @@ const App = ({ userLoggedIn }) => {
         ? Routes.ONBOARDING.ROOT_NAV
         : Routes.ONBOARDING.LOGIN;
       setRoute(route);
+      if (!existingUser) {
+        triggerCheckedAuth();
+      }
     }
-
     checkExisting();
     /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
@@ -405,6 +336,18 @@ const App = ({ userLoggedIn }) => {
     startApp();
   }, []);
 
+  useEffect(() => {
+    if (!isAuthChecked) {
+      return;
+    }
+    const startAnimation = async () => {
+      await new Promise((res) => setTimeout(res, 50));
+      animation?.current?.play();
+      animationName?.current?.play();
+    };
+    startAnimation();
+  }, [isAuthChecked]);
+
   const setNavigatorRef = (ref) => {
     if (!prevNavigator.current) {
       setNavigator(ref);
@@ -426,8 +369,8 @@ const App = ({ userLoggedIn }) => {
     if (!animationPlayed) {
       return (
         <MetaMaskAnimation
-          animationRef={animationRef}
-          animationName={animationNameRef}
+          animation={animation}
+          animationName={animationName}
           opacity={opacity}
           onAnimationFinish={onAnimationFinished}
         />
@@ -453,10 +396,6 @@ const App = ({ userLoggedIn }) => {
   const RootModalFlow = () => (
     <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
       <Stack.Screen
-        name={Routes.MODAL.WALLET_ACTIONS}
-        component={WalletActions}
-      />
-      <Stack.Screen
         name={Routes.MODAL.DELETE_WALLET}
         component={DeleteWalletModal}
       />
@@ -464,22 +403,10 @@ const App = ({ userLoggedIn }) => {
         name={Routes.MODAL.MODAL_CONFIRMATION}
         component={ModalConfirmation}
       />
-      <Stack.Screen
-        name={Routes.MODAL.MODAL_MANDATORY}
-        component={ModalMandatory}
-      />
       <Stack.Screen name={Routes.MODAL.WHATS_NEW} component={WhatsNewModal} />
       <Stack.Screen
         name={Routes.SHEET.ACCOUNT_SELECTOR}
         component={AccountSelector}
-      />
-      <Stack.Screen
-        name={Routes.SHEET.SDK_LOADING}
-        component={SDKLoadingModal}
-      />
-      <Stack.Screen
-        name={Routes.SHEET.SDK_FEEDBACK}
-        component={SDKFeedbackModal}
       />
       <Stack.Screen
         name={Routes.SHEET.ACCOUNT_CONNECT}
@@ -488,10 +415,6 @@ const App = ({ userLoggedIn }) => {
       <Stack.Screen
         name={Routes.SHEET.ACCOUNT_PERMISSIONS}
         component={AccountPermissions}
-      />
-      <Stack.Screen
-        name={Routes.SHEET.NETWORK_SELECTOR}
-        component={NetworkSelector}
       />
       <Stack.Screen
         name={Routes.MODAL.TURN_OFF_REMEMBER_ME}
@@ -512,10 +435,6 @@ const App = ({ userLoggedIn }) => {
         component={EnableAutomaticSecurityChecksModal}
       />
       <Stack.Screen name={Routes.MODAL.SRP_REVEAL_QUIZ} component={SRPQuiz} />
-      <Stack.Screen
-        name={Routes.SHEET.ACCOUNT_ACTIONS}
-        component={AccountActions}
-      />
     </Stack.Navigator>
   );
 
@@ -533,9 +452,7 @@ const App = ({ userLoggedIn }) => {
       <Stack.Screen
         name={Routes.QR_SCANNER}
         component={QRScanner}
-        screenOptions={{
-          headerShown: false,
-        }}
+        header={null}
       />
     </Stack.Navigator>
   );
@@ -547,24 +464,6 @@ const App = ({ userLoggedIn }) => {
       }}
     >
       <Stack.Screen name="ConnectQRHardware" component={ConnectQRHardware} />
-    </Stack.Navigator>
-  );
-
-  const EditAccountNameFlow = () => (
-    <Stack.Navigator>
-      <Stack.Screen name="EditAccountName" component={EditAccountName} />
-    </Stack.Navigator>
-  );
-
-  // eslint-disable-next-line react/prop-types
-  const AddNetworkFlow = ({ route }) => (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="AddNetwork"
-        component={NetworkSettings}
-        // eslint-disable-next-line react/prop-types
-        initialParams={route?.params}
-      />
     </Stack.Navigator>
   );
 
@@ -596,7 +495,7 @@ const App = ({ userLoggedIn }) => {
             }}
           >
             <Stack.Screen
-              name={Routes.ONBOARDING.LOGIN}
+              name="Login"
               component={Login}
               options={{ headerShown: false }}
             />
@@ -607,15 +506,11 @@ const App = ({ userLoggedIn }) => {
             />
             {userLoggedIn && (
               <Stack.Screen
-                name={Routes.ONBOARDING.HOME_NAV}
+                name="HomeNav"
                 component={Main}
                 options={{ headerShown: false }}
               />
             )}
-            <Stack.Screen
-              name={Routes.VAULT_RECOVERY.RESTORE_WALLET}
-              component={VaultRecoveryFlow}
-            />
             <Stack.Screen
               name={Routes.MODAL.ROOT_MODAL_FLOW}
               component={RootModalFlow}
@@ -628,16 +523,6 @@ const App = ({ userLoggedIn }) => {
             <Stack.Screen
               name="ConnectQRHardwareFlow"
               component={ConnectQRHardwareFlow}
-              options={{ animationEnabled: true }}
-            />
-            <Stack.Screen
-              name="EditAccountName"
-              component={EditAccountNameFlow}
-              options={{ animationEnabled: true }}
-            />
-            <Stack.Screen
-              name={Routes.ADD_NETWORK}
-              component={AddNetworkFlow}
               options={{ animationEnabled: true }}
             />
           </Stack.Navigator>

@@ -12,8 +12,11 @@ describe('AddBookmark', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(<AddBookmark navigation={{ setOptions: () => null }} route={{ params: {} }} />);
 		expect(wrapper).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

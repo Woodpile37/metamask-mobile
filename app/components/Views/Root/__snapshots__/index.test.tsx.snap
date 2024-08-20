@@ -14,6 +14,7 @@ exports[`Root should render correctly 1`] = `
 >
   <PersistGate
     loading={null}
+<<<<<<< Updated upstream
     persistor={
       Object {
         "@@observable": [Function],
@@ -34,6 +35,10 @@ exports[`Root should render correctly 1`] = `
     >
       <RootApp />
     </ErrorBoundary>
+=======
+  >
+    <ConnectedRoot />
+>>>>>>> Stashed changes
   </PersistGate>
 </Provider>
 `;

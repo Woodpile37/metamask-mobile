@@ -2,8 +2,11 @@ import { removeSync } from 'fs-extra';
 import generateTestReports from '../../wdio/utils/generateTestReports';
 import { config } from '../../wdio.conf';
 
+<<<<<<< HEAD
 const browserstack = require('browserstack-local');
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 // Appium capabilities
 // https://appium.io/docs/en/writing-running-appium/caps/
 
@@ -25,7 +28,11 @@ config.capabilities = [
 ];
 
 config.connectionRetryCount = 3;
+<<<<<<< Updated upstream
 config.cucumberOpts.tagExpression = '@androidApp'; // pass tag to run tests specific to android
+=======
+config.cucumberOpts.tagExpression = '@performance and @androidApp'; // pass tag to run tests specific to android
+>>>>>>> Stashed changes
 config.onPrepare = function (config, capabilities) {
   removeSync('./wdio/reports');
   console.log('Connecting local');

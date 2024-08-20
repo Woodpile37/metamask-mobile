@@ -96,6 +96,7 @@ const createStyles = (colors, shadows) =>
       fontSize: 12,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			position: 'relative',
@@ -168,6 +169,8 @@ const createStyles = (colors, shadows) =>
 			fontSize: 12,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const setAnimatedValue = (animatedValue, value) =>
   animatedValue.setValue(value);
@@ -194,6 +197,7 @@ const SlippageSlider = ({
   /* Layout State */
   const [trackWidth, setTrackWidth] = useState(0);
   const [componentWidth, setComponentWidth] = useState(0);
+<<<<<<< Updated upstream
 const SlippageSlider = ({ range, increment, onChange, value, formatTooltipText, disabled, changeOnRelease }) => {
 	const { colors } = useAppThemeFromContext() || mockTheme;
 	const styles = createStyles(colors);
@@ -205,6 +209,8 @@ const SlippageSlider = ({ range, increment, onChange, value, formatTooltipText, 
 	/* Layout State */
 	const [trackWidth, setTrackWidth] = useState(0);
 	const [componentWidth, setComponentWidth] = useState(0);
+=======
+>>>>>>> Stashed changes
 
   /* State */
   const [isResponderGranted, setIsResponderGranted] = useState(false);
@@ -225,11 +231,14 @@ const SlippageSlider = ({ range, increment, onChange, value, formatTooltipText, 
     outputRange: [colors.primary.default, colors.error.default],
     extrapolate: 'clamp',
   });
+<<<<<<< Updated upstream
 	const sliderColor = sliderPosition.interpolate({
 		inputRange: [0, trackWidth],
 		outputRange: [colors.primary.default, colors.error.default],
 		extrapolate: 'clamp',
 	});
+=======
+>>>>>>> Stashed changes
 
   /* Value effect, this updates the UI if the value prop changes */
   useEffect(() => {
@@ -376,6 +385,7 @@ const SlippageSlider = ({ range, increment, onChange, value, formatTooltipText, 
       />
     </View>
   );
+<<<<<<< Updated upstream
 	return (
 		<View
 			style={[styles.root, disabled && styles.rootDisabled]}
@@ -416,6 +426,8 @@ const SlippageSlider = ({ range, increment, onChange, value, formatTooltipText, 
 			/>
 		</View>
 	);
+=======
+>>>>>>> Stashed changes
 };
 
 SlippageSlider.propTypes = {

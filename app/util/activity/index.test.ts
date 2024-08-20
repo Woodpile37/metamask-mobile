@@ -4,7 +4,10 @@ import {
   sortTransactions,
   filterByAddressAndNetwork,
 } from '.';
+<<<<<<< Updated upstream
 import { isFromOrToSelectedAddress, isFromCurrentChain, sortTransactions, filterByAddressAndNetwork } from '.';
+=======
+>>>>>>> Stashed changes
 import { TX_SUBMITTED } from '../../constants/transaction';
 
 const TEST_ADDRESS_ONE = '0x5a3ca5cd63807ce5e4d7841ab32ce6b6d9bbba2d';
@@ -218,6 +221,7 @@ describe('Activity utils :: filterByAddressAndNetwork', () => {
     );
     expect(result).toEqual(false);
   });
+<<<<<<< Updated upstream
 	const tx = {
 		transaction: {
 			from: TEST_ADDRESS_ONE,
@@ -392,4 +396,6 @@ describe('Activity utils :: filterByAddressAndNetwork', () => {
 		const result = filterByAddressAndNetwork(transaction, tokens, TEST_ADDRESS_ONE, chainId, chainId);
 		expect(result).toEqual(false);
 	});
+=======
+>>>>>>> Stashed changes
 });

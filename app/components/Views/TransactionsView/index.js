@@ -16,8 +16,11 @@ import {
   sortTransactions,
   filterByAddressAndNetwork,
 } from '../../../util/activity';
+<<<<<<< Updated upstream
 import { TX_UNAPPROVED, TX_SUBMITTED, TX_SIGNED, TX_PENDING, TX_CONFIRMED } from '../../../constants/transaction';
 import { sortTransactions, filterByAddressAndNetwork } from '../../../util/activity';
+=======
+>>>>>>> Stashed changes
 import { safeToChecksumAddress } from '../../../util/address';
 import { addAccountTimeFlagFilter } from '../../../util/transactions';
 import { toLowerCaseEquals } from '../../../util/general';
@@ -35,6 +38,7 @@ import {
   selectIdentities,
   selectSelectedAddress,
 } from '../../../selectors/preferencesController';
+import { WalletViewSelectorsIDs } from '../../../../e2e/selectors/WalletView.selectors';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -139,6 +143,7 @@ const TransactionsView = ({
       ) {
         allTransactions[allTransactions.length - 1].insertImportTime = true;
       }
+<<<<<<< Updated upstream
 
       setAllTransactions(allTransactions);
       setSubmittedTxs(submittedTxsFiltered);
@@ -162,7 +167,10 @@ const TransactionsView = ({
   }, [filterTransactions, networkId]);
 
   return (
-    <View style={styles.wrapper} testID={'wallet-screen'}>
+    <View
+      style={styles.wrapper}
+      testID={WalletViewSelectorsIDs.WALLET_CONTAINER}
+    >
       <Transactions
         navigation={navigation}
         transactions={allTransactions}
@@ -316,6 +324,89 @@ TransactionsView.propTypes = {
   chainId: PropTypes.string,
 };
 
+=======
+
+      setAllTransactions(allTransactions);
+      setSubmittedTxs(submittedTxsFiltered);
+      setConfirmedTxs(confirmedTxs);
+      setLoading(false);
+    },
+    [transactions, identities, selectedAddress, tokens, chainId],
+  );
+
+  useEffect(() => {
+    setLoading(true);
+    /*
+    Since this screen is always mounted and computations happen on this screen everytime the user changes network
+    using the InteractionManager will help by giving enough time for any animations/screen transactions before it starts
+    computing the transactions which will make the app feel more responsive. Also this takes usually less than 1 seconds
+    so the effect will not be noticeable if the user is in this screen.
+    */
+    InteractionManager.runAfterInteractions(() => {
+      filterTransactions(networkId);
+    });
+  }, [filterTransactions, networkId]);
+
+  return (
+    <View
+      style={styles.wrapper}
+      testID={WalletViewSelectorsIDs.WALLET_CONTAINER}
+    >
+      <Transactions
+        navigation={navigation}
+        transactions={allTransactions}
+        submittedTransactions={submittedTxs}
+        confirmedTransactions={confirmedTxs}
+        conversionRate={conversionRate}
+        currentCurrency={currentCurrency}
+        selectedAddress={selectedAddress}
+        networkType={networkType}
+        loading={loading}
+      />
+    </View>
+  );
+};
+
+TransactionsView.propTypes = {
+  /**
+   * ETH to current currency conversion rate
+   */
+  conversionRate: PropTypes.number,
+  /**
+   * Currency code of the currently-active currency
+   */
+  currentCurrency: PropTypes.string,
+  /**
+  /* Identities object required to get account name
+  */
+  identities: PropTypes.object,
+  /**
+  /* navigation object required to push new views
+  */
+  navigation: PropTypes.object,
+  /**
+   * A string that represents the selected address
+   */
+  selectedAddress: PropTypes.string,
+  /**
+   * An array that represents the user transactions
+   */
+  transactions: PropTypes.array,
+  /**
+   * A string represeting the network name
+   */
+  networkType: PropTypes.string,
+  /**
+   * Array of ERC20 assets
+   */
+  tokens: PropTypes.array,
+  /**
+   * Current chainId
+   */
+  chainId: PropTypes.string,
+};
+
+>>>>>>> Stashed changes
 const mapStateToProps = (state) => ({
   conversionRate: selectConversionRate(state),
   currentCurrency: selectCurrentCurrency(state),

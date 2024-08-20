@@ -4,11 +4,19 @@ import {
   PRIVATE_KEY_INPUT_BOX_ID,
   IMPORT_PRIVATE_KEY_BUTTON_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/ImportAccountScreen.testIds';
+<<<<<<< HEAD
+=======
 
+>>>>>>> upstream/testflight/4754-permission-system
 import {
   IMPORT_SUCESS_SCREEN_ID,
   IMPORT_SUCESS_SCREEN_CLOSE_BUTTON_ID,
 } from '../../wdio/screen-objects/testIDs/Screens/ImportSuccessScreen.testIds';
+<<<<<<< HEAD
+import { CommonSelectorsText } from '../selectors/Common.selectors';
+
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 export default class ImportAccountView {
   static async tapImportButton() {
     if (device.getPlatform() === 'ios') {
@@ -19,7 +27,7 @@ export default class ImportAccountView {
   }
 
   static async tapOKAlertButton() {
-    await TestHelpers.tapAlertWithButton('OK');
+    await TestHelpers.tapAlertWithButton(CommonSelectorsText.OK_ALERT_BUTTON);
   }
 
   static async enterPrivateKey(privateKey) {
@@ -36,9 +44,6 @@ export default class ImportAccountView {
       );
     }
   }
-  static async clearPrivateKeyInputBox() {
-    await TestHelpers.clearField(PRIVATE_KEY_INPUT_BOX_ID);
-  }
 
   // Closing import success view
   static async tapCloseButtonOnImportSuccess() {
@@ -49,15 +54,7 @@ export default class ImportAccountView {
     await TestHelpers.checkIfVisible(IMPORT_ACCOUNT_SCREEN_ID);
   }
 
-  static async isNotVisible() {
-    await TestHelpers.checkIfNotVisible(IMPORT_ACCOUNT_SCREEN_ID);
-  }
-
   static async isImportSuccessSreenVisible() {
     await TestHelpers.checkIfVisible(IMPORT_SUCESS_SCREEN_ID);
-  }
-
-  static async isnewAccountNameVisible() {
-    await TestHelpers.checkIfElementWithTextIsVisible('Account 2');
   }
 }

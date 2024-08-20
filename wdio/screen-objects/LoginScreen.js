@@ -1,5 +1,6 @@
 import Gestures from '../helpers/Gestures';
 import Selectors from '../helpers/Selectors';
+<<<<<<< HEAD
 import {
   LOGIN_VIEW_PASSWORD_INPUT_ID,
   LOGIN_VIEW_RESET_WALLET_ID,
@@ -41,11 +42,27 @@ class LoginScreen {
   async waitForScreenToDisplay() {
     const element = await this.loginScreen;
     await element.waitForDisplayed({ interval: 500 });
+=======
+import { LOGIN_VIEW_RESET_WALLET_ID } from './testIDs/Screens/LoginScreen.testIds';
+
+class LoginScreen {
+  get loginScreen() {
+    return Selectors.getElementByPlatform('login');
+  }
+
+  get resetWalletButton() {
+    return Selectors.getElementByPlatform(LOGIN_VIEW_RESET_WALLET_ID);
+  }
+
+  async isLoginScreenVisible() {
+    await expect(this.loginScreen).toBeDisplayed();
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async tapResetWalletButton() {
     await Gestures.waitAndTap(this.resetWalletButton);
   }
+<<<<<<< HEAD
 
   async typePassword(password) {
     await Gestures.typeText(this.passwordInput, password);
@@ -66,6 +83,8 @@ class LoginScreen {
   async isRememberMeToggle(value) {
     await expect(this.rememberMeToggle).toHaveText(value);
   }
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 export default new LoginScreen();

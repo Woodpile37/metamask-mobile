@@ -42,6 +42,8 @@ const mockuseRampSDKInitialValues: Partial<RampSDK> = {
   selectedChainId: '1',
   selectedRegion: null,
   rampType: RampType.BUY,
+  isBuy: true,
+  isSell: false,
 };
 
 let mockUseRampSDKValues: Partial<RampSDK> = {
@@ -98,6 +100,12 @@ describe('GetStarted', () => {
   it('renders correctly', async () => {
     render(GetStarted);
     expect(screen.toJSON()).toMatchSnapshot();
+
+    mockUseRampSDKValues.rampType = RampType.SELL;
+    mockUseRampSDKValues.isSell = true;
+    mockUseRampSDKValues.isBuy = false;
+    render(GetStarted);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it('renders correctly when sdkError is present', async () => {
@@ -135,6 +143,20 @@ describe('GetStarted', () => {
     expect(mockPop).toHaveBeenCalled();
     expect(mockTrackEvent).toBeCalledWith('ONRAMP_CANCELED', {
       chain_id_destination: '1',
+      location: 'Get Started Screen',
+    });
+
+    mockTrackEvent.mockReset();
+    mockUseRampSDKValues = {
+      ...mockUseRampSDKValues,
+      isBuy: false,
+      isSell: true,
+      rampType: RampType.SELL,
+    };
+    render(GetStarted);
+    fireEvent.press(screen.getByRole('button', { name: 'Cancel' }));
+    expect(mockTrackEvent).toBeCalledWith('OFFRAMP_CANCELED', {
+      chain_id_source: '1',
       location: 'Get Started Screen',
     });
   });

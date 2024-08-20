@@ -9,7 +9,11 @@ describe('PermissionController specifications', () => {
   describe('caveat specifications', () => {
     it('getCaveatSpecifications returns the expected specifications object', () => {
       const caveatSpecifications = getCaveatSpecifications({});
+<<<<<<< HEAD
+      expect(Object.keys(caveatSpecifications)).toHaveLength(9);
+=======
       expect(Object.keys(caveatSpecifications)).toHaveLength(1);
+>>>>>>> upstream/testflight/4754-permission-system
       expect(
         caveatSpecifications[CaveatTypes.restrictReturnedAccounts].type,
       ).toStrictEqual(CaveatTypes.restrictReturnedAccounts);
@@ -17,28 +21,43 @@ describe('PermissionController specifications', () => {
 
     describe('restrictReturnedAccounts', () => {
       describe('decorator', () => {
+<<<<<<< HEAD
         it('returns array members included in the caveat value', async () => {
+=======
+        it('returns the first array member included in the caveat value', async () => {
+>>>>>>> upstream/testflight/4754-permission-system
           const getIdentities = jest.fn();
           const caveatValues = [
             { address: '0x1', lastUsed: '1' },
             { address: '0x2', lastUsed: '2' },
+<<<<<<< HEAD
             { address: '0x3', lastUsed: '3' },
+=======
+>>>>>>> upstream/testflight/4754-permission-system
           ];
           const { decorator } = getCaveatSpecifications({ getIdentities })[
             CaveatTypes.restrictReturnedAccounts
           ];
 
+<<<<<<< HEAD
           const method = async () => ['0x1', '0x2', '0x4'];
+=======
+          const method = async () => ['0x1', '0x2', '0x3'];
+>>>>>>> upstream/testflight/4754-permission-system
           const caveat = {
             type: CaveatTypes.restrictReturnedAccounts,
             value: caveatValues,
           };
           const decorated = decorator(method, caveat);
 
+<<<<<<< HEAD
           expect(await decorated()).toStrictEqual([
             caveatValues[0],
             caveatValues[1],
           ]);
+=======
+          expect(await decorated()).toStrictEqual([caveatValues[0]]);
+>>>>>>> upstream/testflight/4754-permission-system
         });
 
         it('returns an empty array if no array members are included in the caveat value', async () => {
@@ -132,7 +151,11 @@ describe('PermissionController specifications', () => {
       const permissionSpecifications = getPermissionSpecifications({});
       expect(Object.keys(permissionSpecifications)).toHaveLength(1);
       expect(
+<<<<<<< HEAD
         permissionSpecifications[RestrictedMethods.eth_accounts].targetName,
+=======
+        permissionSpecifications[RestrictedMethods.eth_accounts].targetKey,
+>>>>>>> upstream/testflight/4754-permission-system
       ).toStrictEqual(RestrictedMethods.eth_accounts);
     });
 

@@ -4,6 +4,7 @@ const initialState = {
   history: [],
   whitelist: [],
   tabs: [],
+  favicons: [],
   activeTab: null,
 };
 const browserReducer = (state = initialState, action) => {
@@ -25,6 +26,7 @@ const browserReducer = (state = initialState, action) => {
       return {
         ...state,
         history: [],
+        favicons: [],
         tabs: [{ url: AppConstants.HOMEPAGE_URL, id: action.id }],
         activeTab: action.id,
       };
@@ -58,9 +60,18 @@ const browserReducer = (state = initialState, action) => {
           return { ...tab };
         }),
       };
+    case 'STORE_FAVICON_URL':
+      return {
+        ...state,
+        favicons: [
+          { origin: action.origin, url: action.url },
+          ...state.favicons,
+        ].slice(0, AppConstants.FAVICON_CACHE_MAX_SIZE),
+      };
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	switch (action.type) {
 		case 'ADD_TO_BROWSER_HISTORY':
 			return {
@@ -112,5 +123,7 @@ const browserReducer = (state = initialState, action) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 export default browserReducer;

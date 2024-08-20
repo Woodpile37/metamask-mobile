@@ -1,7 +1,11 @@
 import Engine from './Engine';
 import Logger from '../util/Logger';
 import { syncPrefs, syncAccounts } from '../util/sync';
+<<<<<<< Updated upstream
 import { KeyringTypes } from '@metamask/controllers';
+=======
+import { KeyringTypes } from '@metamask/keyring-controller';
+>>>>>>> Stashed changes
 
 /**
  * Returns current vault seed phrase
@@ -10,6 +14,7 @@ import { KeyringTypes } from '@metamask/controllers';
  */
 export const getSeedPhrase = async (password = '') => {
   const { KeyringController } = Engine.context;
+<<<<<<< Updated upstream
   const mnemonic = await KeyringController.exportSeedPhrase(
     password,
   ).toString();
@@ -23,6 +28,22 @@ export const getSeedPhrase = async (password = '') => {
  */
 export const recreateVaultWithSamePassword = async (
   password = '',
+=======
+  return await KeyringController.exportSeedPhrase(password);
+};
+
+/**
+ * Recreates a vault with the new password
+ *
+ * @param password - current password
+ * @param newPassword - new password
+ * @param selectedAddress
+ */
+
+export const recreateVaultWithNewPassword = async (
+  password,
+  newPassword,
+>>>>>>> Stashed changes
   selectedAddress,
 ) => {
   const { KeyringController, PreferencesController, AccountTrackerController } =
@@ -55,6 +76,7 @@ export const recreateVaultWithSamePassword = async (
 
   const qrKeyring = await KeyringController.getOrAddQRKeyring();
   const serializedQRKeyring = await qrKeyring.serialize();
+<<<<<<< Updated upstream
 	let importedAccounts = [];
 	try {
 		// Get imported accounts
@@ -80,16 +102,24 @@ export const recreateVaultWithSamePassword = async (
 
   // Recreate keyring with password given to this method
   await KeyringController.createNewVaultAndRestore(password, seedPhrase);
+=======
+>>>>>>> Stashed changes
 
   // Get props to restore vault
   const hdKeyring = KeyringController.state.keyrings[0];
   const existingAccountCount = hdKeyring.accounts.length;
+<<<<<<< Updated upstream
 	await KeyringController.restoreQRKeyring(serializedQRKeyring);
 
 	// Create previous accounts again
 	for (let i = 0; i < existingAccountCount - 1; i++) {
 		await KeyringController.addNewAccount();
 	}
+=======
+
+  // Recreate keyring with password given to this method
+  await KeyringController.createNewVaultAndRestore(newPassword, seedPhrase);
+>>>>>>> Stashed changes
 
   await KeyringController.restoreQRKeyring(serializedQRKeyring);
 
@@ -121,6 +151,7 @@ export const recreateVaultWithSamePassword = async (
   await PreferencesController.update(prefUpdates);
   await AccountTrackerController.update(updateAccounts);
 
+<<<<<<< Updated upstream
   // Reselect previous selected account if still available
   if (hdKeyring.accounts.includes(selectedAddress)) {
     PreferencesController.setSelectedAddress(selectedAddress);
@@ -128,3 +159,27 @@ export const recreateVaultWithSamePassword = async (
     PreferencesController.setSelectedAddress(hdKeyring.accounts[0]);
   }
 };
+=======
+  const recreatedKeyrings = KeyringController.state.keyrings;
+  // Reselect previous selected account if still available
+  for (const keyring of recreatedKeyrings) {
+    if (keyring.accounts.includes(selectedAddress.toLowerCase())) {
+      PreferencesController.setSelectedAddress(selectedAddress);
+      return;
+    }
+  }
+
+  // Default to first account as fallback
+  PreferencesController.setSelectedAddress(hdKeyring.accounts[0]);
+};
+
+/**
+ * Recreates a vault with the same password for the purpose of using the newest encryption methods
+ *
+ * @param password - Password to recreate and set the vault with
+ */
+export const recreateVaultWithSamePassword = async (
+  password = '',
+  selectedAddress,
+) => recreateVaultWithNewPassword(password, password, selectedAddress);
+>>>>>>> Stashed changes

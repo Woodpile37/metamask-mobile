@@ -13,7 +13,7 @@ import { strings } from '../../../../locales/i18n';
 import { createStyles } from './styles';
 import { useTheme } from '../../../util/theme';
 import UrlAutocomplete from '../../UI/UrlAutocomplete';
-import { BROWSER_URL_MODAL_ID } from '../../../constants/test-ids';
+import { BrowserUrlModalSelectorsIDs } from '../../../../e2e/selectors/Modals/BrowserUrlModal.selectors';
 import {
   createNavigationDetails,
   useParams,
@@ -21,11 +21,15 @@ import {
 import Routes from '../../../constants/navigation/Routes';
 import Device from '../../../util/device';
 import generateTestId from '../../../../wdio/utils/generateTestId';
+<<<<<<< HEAD
 import {
   URL_CLEAR_ICON,
   URL_INPUT_BOX_ID,
   CANCEL_BUTTON_ON_BROWSER_ID,
 } from '../../../../wdio/screen-objects/testIDs/BrowserScreen/AddressBar.testIds';
+=======
+import { URL_CLEAR_ICON } from '../../../../wdio/screen-objects/testIDs/BrowserScreen/AddressBar.testIds';
+>>>>>>> upstream/testflight/4754-permission-system
 
 export interface BrowserUrlParams {
   onUrlInputSubmit: (inputValue: string | undefined) => void;
@@ -80,7 +84,10 @@ const BrowserUrlModal = () => {
 
   const renderContent = () => (
     <>
-      <View style={styles.urlModalContent} testID={BROWSER_URL_MODAL_ID}>
+      <View
+        style={styles.urlModalContent}
+        testID={BrowserUrlModalSelectorsIDs.CONTAINER}
+      >
         <View style={styles.searchWrapper}>
           <TextInput
             keyboardType="web-search"

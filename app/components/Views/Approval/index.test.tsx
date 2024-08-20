@@ -23,6 +23,7 @@ const initialState = {
   engine: {
     backgroundState: initialBackgroundState,
   },
+<<<<<<< Updated upstream
 	settings: {
 		showCustomNonce: false,
 	},
@@ -54,6 +55,8 @@ const initialState = {
 			},
 		},
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 const navigation = { state: { params: { address: '0x1' } } } as any;

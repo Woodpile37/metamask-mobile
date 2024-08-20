@@ -33,12 +33,15 @@ const useTokenBalance = (
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
+<<<<<<< Updated upstream
 	const fetchBalance = async (tokenAddress: string, userAddress: string): Promise<void> => {
 		TokenBalancesController.getERC20BalanceOf(tokenAddress, userAddress)
 			.then((balance: BN) => setTokenBalance(balance))
 			.catch(() => setError(true))
 			.finally(() => setLoading(false));
 	};
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     fetchBalance(requestedTokenAddress, userCurrentAddress);

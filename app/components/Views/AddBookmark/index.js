@@ -1,12 +1,5 @@
 import React, { PureComponent } from 'react';
-import {
-  SafeAreaView,
-  Text,
-  TextInput,
-  View,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { SafeAreaView, Text, TextInput, View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { strings } from '../../../../locales/i18n';
 import { fontStyles } from '../../../styles/common';
@@ -14,12 +7,7 @@ import ActionView from '../../UI/ActionView';
 import { getNavigationOptionsTitle } from '../../UI/Navbar';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import {
-  FAVORITE_TITLE_EDIT_TEXT,
-  ADD_BOOKMARKS_SCREEN_ID,
-  FAVORITE_URL_EDIT_TEXT,
-} from '../../../../wdio/screen-objects/testIDs/BrowserScreen/AddFavorite.testIds';
+import { AddBookmarkViewSelectorsIDs } from '../../../../e2e/selectors/AddBookmarkView.selectors';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -47,6 +35,7 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		wrapper: {
 			backgroundColor: colors.background.default,
@@ -72,6 +61,8 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * Copmonent that provides ability to add a bookmark
@@ -92,6 +83,7 @@ export default class AddBookmark extends PureComponent {
      */
     route: PropTypes.object,
   };
+<<<<<<< Updated upstream
 
   updateNavBar = () => {
     const { navigation } = this.props;
@@ -158,11 +150,11 @@ export default class AddBookmark extends PureComponent {
     return (
       <SafeAreaView
         style={styles.wrapper}
-        {...generateTestId(Platform, ADD_BOOKMARKS_SCREEN_ID)}
+        testID={AddBookmarkViewSelectorsIDs.CONTAINER}
       >
         <ActionView
-          cancelTestID={'add-bookmark-cancel-button'}
-          confirmTestID={'add-bookmark-confirm-button'}
+          cancelTestID={AddBookmarkViewSelectorsIDs.CANCEL_BUTTON}
+          confirmTestID={AddBookmarkViewSelectorsIDs.CONFIRM_BUTTON}
           cancelText={strings('add_favorite.cancel_button')}
           confirmText={strings('add_favorite.add_button')}
           onCancelPress={this.cancelAddBookmark}
@@ -179,7 +171,7 @@ export default class AddBookmark extends PureComponent {
                 placeholderTextColor={colors.text.muted}
                 value={this.state.title}
                 onChangeText={this.onTitleChange}
-                {...generateTestId(Platform, FAVORITE_TITLE_EDIT_TEXT)}
+                testID={AddBookmarkViewSelectorsIDs.BOOKMARK_TITLE}
                 onSubmitEditing={this.jumpToUrl}
                 returnKeyType={'next'}
                 keyboardAppearance={themeAppearance}
@@ -195,7 +187,7 @@ export default class AddBookmark extends PureComponent {
                 placeholder={''}
                 value={this.state.url}
                 onChangeText={this.onUrlChange}
-                {...generateTestId(Platform, FAVORITE_URL_EDIT_TEXT)}
+                testID={AddBookmarkViewSelectorsIDs.URL_TEXT}
                 ref={this.urlInput}
                 onSubmitEditing={this.addToken}
                 returnKeyType={'done'}
@@ -257,11 +249,41 @@ export default class AddBookmark extends PureComponent {
 		this.props.route.params.onAddBookmark({ name: title, url });
 		this.props.navigation.pop();
 	};
+=======
 
-	cancelAddBookmark = () => {
-		this.props.navigation.pop();
-	};
+  updateNavBar = () => {
+    const { navigation } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
 
+    navigation.setOptions(
+      getNavigationOptionsTitle(
+        strings('add_favorite.title'),
+        navigation,
+        false,
+        colors,
+      ),
+    );
+  };
+
+  componentDidMount() {
+    this.updateNavBar();
+    this.loadInitialValues();
+  }
+
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
+>>>>>>> Stashed changes
+
+  loadInitialValues() {
+    const { route } = this.props;
+    this.setState({
+      title: route.params?.title ?? '',
+      url: route.params?.url ?? '',
+    });
+  }
+
+<<<<<<< Updated upstream
 	onTitleChange = (title) => {
 		this.setState({ title });
 	};
@@ -269,14 +291,28 @@ export default class AddBookmark extends PureComponent {
 	onUrlChange = (url) => {
 		this.setState({ url });
 	};
+=======
+  addBookmark = () => {
+    const { title, url } = this.state;
+    if (title === '' || url === '') return false;
+    this.props.route.params.onAddBookmark({ name: title, url });
+    this.props.navigation.pop();
+  };
 
-	urlInput = React.createRef();
+  cancelAddBookmark = () => {
+    this.props.navigation.pop();
+  };
+>>>>>>> Stashed changes
 
-	jumpToUrl = () => {
-		const { current } = this.urlInput;
-		current && current.focus();
-	};
+  onTitleChange = (title) => {
+    this.setState({ title });
+  };
 
+  onUrlChange = (url) => {
+    this.setState({ url });
+  };
+
+<<<<<<< Updated upstream
 	render = () => {
 		const colors = this.context.colors || mockTheme.colors;
 		const themeAppearance = this.context.themeAppearance || 'light';
@@ -329,6 +365,76 @@ export default class AddBookmark extends PureComponent {
 			</SafeAreaView>
 		);
 	};
+=======
+  urlInput = React.createRef();
+
+  jumpToUrl = () => {
+    const { current } = this.urlInput;
+    current && current.focus();
+  };
+
+  render = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    const themeAppearance = this.context.themeAppearance || 'light';
+    const styles = createStyles(colors);
+
+    return (
+      <SafeAreaView
+        style={styles.wrapper}
+        testID={AddBookmarkViewSelectorsIDs.CONTAINER}
+      >
+        <ActionView
+          cancelTestID={AddBookmarkViewSelectorsIDs.CANCEL_BUTTON}
+          confirmTestID={AddBookmarkViewSelectorsIDs.CONFIRM_BUTTON}
+          cancelText={strings('add_favorite.cancel_button')}
+          confirmText={strings('add_favorite.add_button')}
+          onCancelPress={this.cancelAddBookmark}
+          onConfirmPress={this.addBookmark}
+        >
+          <View>
+            <View style={styles.rowWrapper}>
+              <Text style={styles.inputTitle}>
+                {strings('add_favorite.title_label')}
+              </Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder={''}
+                placeholderTextColor={colors.text.muted}
+                value={this.state.title}
+                onChangeText={this.onTitleChange}
+                testID={AddBookmarkViewSelectorsIDs.BOOKMARK_TITLE}
+                onSubmitEditing={this.jumpToUrl}
+                returnKeyType={'next'}
+                keyboardAppearance={themeAppearance}
+              />
+              <Text style={styles.warningText}>{this.state.warningSymbol}</Text>
+            </View>
+            <View style={styles.rowWrapper}>
+              <Text style={styles.inputTitle}>
+                {strings('add_favorite.url_label')}
+              </Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder={''}
+                value={this.state.url}
+                onChangeText={this.onUrlChange}
+                testID={AddBookmarkViewSelectorsIDs.URL_TEXT}
+                ref={this.urlInput}
+                onSubmitEditing={this.addToken}
+                returnKeyType={'done'}
+                placeholderTextColor={colors.text.muted}
+                keyboardAppearance={themeAppearance}
+              />
+              <Text style={styles.warningText}>
+                {this.state.warningDecimals}
+              </Text>
+            </View>
+          </View>
+        </ActionView>
+      </SafeAreaView>
+    );
+  };
+>>>>>>> Stashed changes
 }
 
 AddBookmark.contextType = ThemeContext;

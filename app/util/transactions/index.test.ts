@@ -1,9 +1,20 @@
 import { swapsUtils } from '@metamask/swaps-controller';
+<<<<<<< Updated upstream
 import { util } from '@metamask/controllers';
 import { BNToHex } from '../number';
 import { UINT256_BN_MAX_VALUE } from '../../constants/transaction';
 import { NEGATIVE_TOKEN_DECIMALS } from '../../constants/error';
 
+=======
+import { BN } from 'ethereumjs-util';
+
+/* eslint-disable-next-line import/no-namespace */
+import * as controllerUtilsModule from '@metamask/controller-utils';
+
+import { BNToHex } from '../number';
+import { UINT256_BN_MAX_VALUE } from '../../constants/transaction';
+import { NEGATIVE_TOKEN_DECIMALS } from '../../constants/error';
+>>>>>>> Stashed changes
 import {
   generateTransferData,
   decodeApproveData,
@@ -15,6 +26,7 @@ import {
   TOKEN_METHOD_TRANSFER,
   CONTRACT_METHOD_DEPLOY,
   TOKEN_METHOD_TRANSFER_FROM,
+<<<<<<< Updated upstream
 
 import {
 	generateTransferData,
@@ -28,6 +40,18 @@ import {
 import Engine from '../../core/Engine';
 import { strings } from '../../../locales/i18n';
 
+=======
+  calculateEIP1559Times,
+} from '.';
+import { buildUnserializedTransaction } from './optimismTransaction';
+import Engine from '../../core/Engine';
+import { strings } from '../../../locales/i18n';
+
+jest.mock('@metamask/controller-utils', () => ({
+  ...jest.requireActual('@metamask/controller-utils'),
+  query: jest.fn(),
+}));
+>>>>>>> Stashed changes
 jest.mock('../../core/Engine');
 const ENGINE_MOCK = Engine as jest.MockedClass<any>;
 
@@ -35,9 +59,12 @@ ENGINE_MOCK.context = {
   TransactionController: {
     ethQuery: null,
   },
+<<<<<<< Updated upstream
 	TransactionController: {
 		ethQuery: null,
 	},
+=======
+>>>>>>> Stashed changes
 };
 
 const MOCK_ADDRESS1 = '0x0001';
@@ -49,13 +76,19 @@ const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984';
 
 const MOCK_CHAIN_ID = '1';
 
+<<<<<<< Updated upstream
 const spyOnQueryMethod = (returnValue: string | undefined) => {
   jest.spyOn(util, 'query').mockImplementation(
+=======
+const spyOnQueryMethod = (returnValue: string | undefined) =>
+  jest.spyOn(controllerUtilsModule, 'query').mockImplementation(
+>>>>>>> Stashed changes
     () =>
       new Promise<string | undefined>((resolve) => {
         resolve(returnValue);
       }),
   );
+<<<<<<< Updated upstream
 	jest.spyOn(util, 'query').mockImplementation(
 		() =>
 			new Promise<string | undefined>((resolve) => {
@@ -63,6 +96,8 @@ const spyOnQueryMethod = (returnValue: string | undefined) => {
 			})
 	);
 };
+=======
+>>>>>>> Stashed changes
 
 describe('Transactions utils :: generateTransferData', () => {
   it('generateTransferData should throw if undefined values', () => {
@@ -396,6 +431,7 @@ describe('Transactions utils :: minimumTokenAllowance', () => {
       minimumTokenAllowance(-1);
     }).toThrow(NEGATIVE_TOKEN_DECIMALS);
   });
+<<<<<<< Updated upstream
 	beforeEach(() => {
 		jest.spyOn(swapsUtils, 'getSwapsContractAddress').mockImplementation(() => 'SWAPS_CONTRACT_ADDRESS');
 	});
@@ -506,4 +542,121 @@ describe('Transactions utils :: minimumTokenAllowance', () => {
 		const result = await getActionKey(tx, MOCK_ADDRESS1, undefined, MOCK_CHAIN_ID);
 		expect(result).toBe(strings('transactions.contract_deploy'));
 	});
+=======
+});
+
+describe('Transaction utils :: calculateEIP1559Times', () => {
+  const gasFeeEstimates = {
+    baseFeeTrend: 'down',
+    estimatedBaseFee: '2.420440144',
+    high: {
+      maxWaitTimeEstimate: 60000,
+      minWaitTimeEstimate: 15000,
+      suggestedMaxFeePerGas: '6.114748245',
+      suggestedMaxPriorityFeePerGas: '2',
+    },
+    historicalBaseFeeRange: ['2.420440144', '9.121942855'],
+    historicalPriorityFeeRange: ['0.006333568', '2997.107725'],
+    latestPriorityFeeRange: ['0.039979856', '5'],
+    low: {
+      maxWaitTimeEstimate: 30000,
+      minWaitTimeEstimate: 15000,
+      suggestedMaxFeePerGas: '3.420440144',
+      suggestedMaxPriorityFeePerGas: '1',
+    },
+    medium: {
+      maxWaitTimeEstimate: 45000,
+      minWaitTimeEstimate: 15000,
+      suggestedMaxFeePerGas: '4.767594195',
+      suggestedMaxPriorityFeePerGas: '1.5',
+    },
+    networkCongestion: 0,
+    priorityFeeTrend: 'level',
+  };
+
+  it('returns data for very large gas fees estimates', () => {
+    const EIP1559Times = calculateEIP1559Times({
+      suggestedMaxFeePerGas: 1000000,
+      suggestedMaxPriorityFeePerGas: 1000000,
+      gasFeeEstimates,
+      selectedOption: 'medium',
+      recommended: undefined,
+    });
+    expect(EIP1559Times).toStrictEqual({
+      timeEstimate: 'Likely in  15 seconds',
+      timeEstimateColor: 'orange',
+      timeEstimateId: 'very_likely',
+    });
+  });
+
+  it('returns data for aggresive gas fees estimates', () => {
+    const EIP1559Times = calculateEIP1559Times({
+      suggestedMaxFeePerGas: 5.320770797,
+      suggestedMaxPriorityFeePerGas: 2,
+      gasFeeEstimates,
+      selectedOption: 'high',
+      recommended: undefined,
+    });
+    expect(EIP1559Times).toStrictEqual({
+      timeEstimate: 'Likely in  15 seconds',
+      timeEstimateColor: 'orange',
+      timeEstimateId: 'very_likely',
+    });
+  });
+
+  it('returns data for market gas fees estimates', () => {
+    const EIP1559Times = calculateEIP1559Times({
+      suggestedMaxFeePerGas: 4.310899437,
+      suggestedMaxPriorityFeePerGas: 1.5,
+      gasFeeEstimates,
+      selectedOption: 'medium',
+      recommended: undefined,
+    });
+    expect(EIP1559Times).toStrictEqual({
+      timeEstimate: 'Likely in < 30 seconds',
+      timeEstimateColor: 'green',
+      timeEstimateId: 'likely',
+    });
+  });
+
+  it('returns data for low gas fees estimates', () => {
+    const EIP1559Times = calculateEIP1559Times({
+      suggestedMaxFeePerGas: 2.667821471,
+      suggestedMaxPriorityFeePerGas: 1,
+      gasFeeEstimates,
+      selectedOption: 'low',
+      recommended: undefined,
+    });
+    expect(EIP1559Times).toStrictEqual({
+      timeEstimate: 'Maybe in 30 seconds',
+      timeEstimateColor: 'red',
+      timeEstimateId: 'maybe',
+    });
+  });
+});
+
+describe('Transactions utils :: buildUnserializedTransaction', () => {
+  it('returns a transaction that can be serialized and fed to an Optimism smart contract', () => {
+    const unserializedTransaction = buildUnserializedTransaction({
+      txParams: {
+        nonce: '0x0',
+        gasPrice: `0x${new BN('100').toString(16)}`,
+        gas: `0x${new BN('21000').toString(16)}`,
+        to: '0x0000000000000000000000000000000000000000',
+        value: `0x${new BN('10000000000000').toString(16)}`,
+        data: '0x0',
+      },
+      chainId: '10',
+      metamaskNetworkId: '10',
+    });
+    expect(unserializedTransaction.toJSON()).toMatchObject({
+      nonce: '0x0',
+      gasPrice: '0x64',
+      gasLimit: '0x5208',
+      to: '0x0000000000000000000000000000000000000000',
+      value: '0x9184e72a000',
+      data: '0x00',
+    });
+  });
+>>>>>>> Stashed changes
 });

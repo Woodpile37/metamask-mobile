@@ -44,6 +44,7 @@ const createStyles = (colors) =>
       marginBottom: 15,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		mainWrapper: {
 			backgroundColor: colors.background.default,
@@ -69,6 +70,8 @@ const createStyles = (colors) =>
 			marginBottom: 15,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * View where users can re-enter their password
@@ -90,6 +93,7 @@ export default class EnterPasswordSimple extends PureComponent {
     loading: false,
     error: null,
   };
+<<<<<<< Updated upstream
 	static propTypes = {
 		/**
 		 * The navigator object
@@ -145,6 +149,36 @@ export default class EnterPasswordSimple extends PureComponent {
     this.mounted = false;
   };
 
+=======
+
+  mounted = true;
+
+  updateNavBar = () => {
+    const { navigation } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    navigation.setOptions(
+      getNavigationOptionsTitle(
+        strings('enter_password.title'),
+        navigation,
+        false,
+        colors,
+      ),
+    );
+  };
+
+  componentDidMount = () => {
+    this.updateNavBar();
+  };
+
+  componentDidUpdate = () => {
+    this.updateNavBar();
+  };
+
+  componentWillUnmount = () => {
+    this.mounted = false;
+  };
+
+>>>>>>> Stashed changes
   onPressConfirm = async () => {
     if (this.state.loading) return;
     if (!passwordRequirementsMet(this.state.password)) {
@@ -170,7 +204,7 @@ export default class EnterPasswordSimple extends PureComponent {
 
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <View style={styles.wrapper} testID={'enter-password-screen'}>
+        <View style={styles.wrapper}>
           <KeyboardAwareScrollView
             style={styles.wrapper}
             resetScrollToCoords={{ x: 0, y: 0 }}
@@ -194,7 +228,6 @@ export default class EnterPasswordSimple extends PureComponent {
                 <StyledButton
                   type={'blue'}
                   onPress={this.onPressConfirm}
-                  testID={'submit-button'}
                   disabled={
                     !(
                       this.state.password !== '' ||
@@ -218,6 +251,7 @@ export default class EnterPasswordSimple extends PureComponent {
       </SafeAreaView>
     );
   }
+<<<<<<< Updated upstream
 	render() {
 		const colors = this.context.colors || mockTheme.colors;
 		const themeAppearance = this.context.themeAppearance || 'light';
@@ -262,6 +296,8 @@ export default class EnterPasswordSimple extends PureComponent {
 			</SafeAreaView>
 		);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 EnterPasswordSimple.contextType = ThemeContext;

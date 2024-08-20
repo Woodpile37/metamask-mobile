@@ -8,10 +8,15 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
+<<<<<<< HEAD
+import { isEqual } from 'lodash';
+import { useNavigation } from '@react-navigation/native';
+=======
 import { ImageSourcePropType } from 'react-native';
 import { isEqual } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 
+>>>>>>> upstream/testflight/4754-permission-system
 // External dependencies.
 import SheetBottom, {
   SheetBottomRef,
@@ -29,18 +34,31 @@ import {
 import { ToastOptions } from '../../../component-library/components/Toast/Toast.types';
 import { useAccounts, Account } from '../../hooks/useAccounts';
 import getAccountNameWithENS from '../../../util/accounts';
+<<<<<<< HEAD
 import { IconName } from '../../../component-library/components/Icons/Icon';
 import { getActiveTabUrl } from '../../../util/transactions';
 import { getUrlObj, prefixUrlWithProtocol } from '../../../util/browser';
 import { strings } from '../../../../locales/i18n';
 import { AvatarAccountType } from '../../../component-library/components/Avatars/Avatar/variants/AvatarAccount';
-import { safeToChecksumAddress } from '../../../util/address';
-import USER_INTENT from '../../../constants/permissions';
+import {
+  getAddressAccountType,
+  safeToChecksumAddress,
+} from '../../../util/address';
+import { USER_INTENT } from '../../../constants/permissions';
 import { selectAccountsLength } from '../../../selectors/accountTrackerController';
 import {
   selectIdentities,
   selectSelectedAddress,
 } from '../../../selectors/preferencesController';
+=======
+import { IconName } from '../../../component-library/components/Icon';
+import { getActiveTabUrl } from '../../../util/transactions';
+import { getUrlObj } from '../../../util/browser';
+import { strings } from '../../../../locales/i18n';
+import { AvatarAccountType } from '../../../component-library/components/Avatars/Avatar/variants/AvatarAccount';
+import { safeToChecksumAddress } from '../../../util/address';
+import USER_INTENT from '../../../constants/permissions';
+>>>>>>> upstream/testflight/4754-permission-system
 
 // Internal dependencies.
 import {
@@ -50,14 +68,25 @@ import {
 import AccountConnectSingle from './AccountConnectSingle';
 import AccountConnectSingleSelector from './AccountConnectSingleSelector';
 import AccountConnectMultiSelector from './AccountConnectMultiSelector';
+<<<<<<< HEAD
+import useFavicon from '../../hooks/useFavicon/useFavicon';
 import URLParse from 'url-parse';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 const AccountConnect = (props: AccountConnectProps) => {
   const Engine = UntypedEngine as any;
   const { hostInfo, permissionRequestId } = props.route.params;
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+<<<<<<< HEAD
   const selectedWalletAddress = useSelector(selectSelectedAddress);
+=======
+  const selectedWalletAddress = useSelector(
+    (state: any) =>
+      state.engine.backgroundState.PreferencesController.selectedAddress,
+  );
+>>>>>>> upstream/testflight/4754-permission-system
   const [selectedAddresses, setSelectedAddresses] = useState<string[]>([
     selectedWalletAddress,
   ]);
@@ -69,7 +98,14 @@ const AccountConnect = (props: AccountConnectProps) => {
     isLoading,
   });
   const previousIdentitiesListSize = useRef<number>();
+<<<<<<< HEAD
   const identitiesMap = useSelector(selectIdentities);
+=======
+  const identitiesMap = useSelector(
+    (state: any) =>
+      state.engine.backgroundState.PreferencesController.identities,
+  );
+>>>>>>> upstream/testflight/4754-permission-system
 
   const [userIntent, setUserIntent] = useState(USER_INTENT.None);
 
@@ -80,6 +116,10 @@ const AccountConnect = (props: AccountConnectProps) => {
       : AvatarAccountType.JazzIcon,
   );
   const origin: string = useSelector(getActiveTabUrl, isEqual);
+<<<<<<< HEAD
+
+  const faviconSource = useFavicon(origin);
+
   const hostname = hostInfo.metadata.origin;
   const urlWithProtocol = prefixUrlWithProtocol(hostname);
 
@@ -92,6 +132,23 @@ const AccountConnect = (props: AccountConnectProps) => {
   );
 
   const accountsLength = useSelector(selectAccountsLength);
+=======
+  const hostname = hostInfo.metadata.origin;
+
+  const secureIcon = useMemo(
+    () =>
+      (getUrlObj(origin) as URL).protocol === 'https:'
+        ? IconName.LockFilled
+        : IconName.LockSlashFilled,
+    [origin],
+  );
+
+  const accountsLength = useSelector(
+    (state: any) =>
+      Object.keys(
+        state.engine.backgroundState.AccountTrackerController.accounts || {},
+      ).length,
+  );
 
   /**
    * Get image url from favicon api.
@@ -100,6 +157,7 @@ const AccountConnect = (props: AccountConnectProps) => {
     const iconUrl = `https://api.faviconkit.com/${hostname}/50`;
     return { uri: iconUrl };
   }, [hostname]);
+>>>>>>> upstream/testflight/4754-permission-system
 
   // Refreshes selected addresses based on the addition and removal of accounts.
   useEffect(() => {
@@ -154,6 +212,10 @@ const AccountConnect = (props: AccountConnectProps) => {
       AnalyticsV2.trackEvent(MetaMetricsEvents.CONNECT_REQUEST_COMPLETED, {
         number_of_accounts: accountsLength,
         number_of_accounts_connected: connectedAccountLength,
+<<<<<<< HEAD
+        account_type: getAddressAccountType(activeAddress),
+=======
+>>>>>>> upstream/testflight/4754-permission-system
         source: 'in-app browser',
       });
       let labelOptions: ToastOptions['labelOptions'] = [];
@@ -314,9 +376,15 @@ const AccountConnect = (props: AccountConnectProps) => {
         onUserAction={setUserIntent}
         defaultSelectedAccount={defaultSelectedAccount}
         isLoading={isLoading}
-        favicon={favicon}
+<<<<<<< HEAD
+        favicon={faviconSource}
         secureIcon={secureIcon}
         urlWithProtocol={urlWithProtocol}
+=======
+        favicon={favicon}
+        hostname={hostname}
+        secureIcon={secureIcon}
+>>>>>>> upstream/testflight/4754-permission-system
       />
     );
   }, [
@@ -326,9 +394,15 @@ const AccountConnect = (props: AccountConnectProps) => {
     isLoading,
     setScreen,
     setSelectedAddresses,
-    favicon,
+<<<<<<< HEAD
+    faviconSource,
     secureIcon,
     urlWithProtocol,
+=======
+    favicon,
+    hostname,
+    secureIcon,
+>>>>>>> upstream/testflight/4754-permission-system
     setUserIntent,
   ]);
 
@@ -363,11 +437,18 @@ const AccountConnect = (props: AccountConnectProps) => {
         selectedAddresses={selectedAddresses}
         onSelectAddress={setSelectedAddresses}
         isLoading={isLoading}
-        favicon={favicon}
+<<<<<<< HEAD
+        favicon={faviconSource}
         secureIcon={secureIcon}
         urlWithProtocol={urlWithProtocol}
         onUserAction={setUserIntent}
         onBack={() => setScreen(AccountConnectScreens.SingleConnect)}
+=======
+        favicon={favicon}
+        hostname={hostname}
+        secureIcon={secureIcon}
+        onUserAction={setUserIntent}
+>>>>>>> upstream/testflight/4754-permission-system
       />
     ),
     [
@@ -377,8 +458,13 @@ const AccountConnect = (props: AccountConnectProps) => {
       setSelectedAddresses,
       isLoading,
       setUserIntent,
-      favicon,
+<<<<<<< HEAD
+      faviconSource,
       urlWithProtocol,
+=======
+      favicon,
+      hostname,
+>>>>>>> upstream/testflight/4754-permission-system
       secureIcon,
     ],
   );

@@ -43,6 +43,7 @@ function useBalance(
     }
     return safeNumberToBN(0);
   }, [accounts, asUnits, balances, selectedAddress, sourceToken]);
+<<<<<<< Updated upstream
 import { renderFromTokenMinimalUnit, renderFromWei, safeNumberToBN } from '../../../../util/number';
 import { safeToChecksumAddress } from '../../../../util/address';
 
@@ -69,6 +70,8 @@ function useBalance(accounts, balances, selectedAddress, sourceToken, { asUnits 
 		}
 		return safeNumberToBN(0);
 	}, [accounts, asUnits, balances, selectedAddress, sourceToken]);
+=======
+>>>>>>> Stashed changes
 
   return balance;
 }

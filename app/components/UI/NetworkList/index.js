@@ -30,8 +30,19 @@ import getImage from '../../../util/getImage';
 import {
   NETWORK_LIST_MODAL_CONTAINER_ID,
   NETWORK_SCROLL_ID,
+<<<<<<< HEAD
 } from '../../../constants/test-ids';
 import ImageIcon from '../ImageIcon';
+=======
+} from '../../../../wdio/screen-objects/testIDs/Components/NetworkListModal.TestIds';
+import ImageIcon from '../ImageIcon';
+import Avatar, {
+  AvatarVariants,
+  AvatarSize,
+} from '../../../component-library/components/Avatars/Avatar';
+import { ADD_NETWORK_BUTTON } from '../../../../wdio/screen-objects/testIDs/Screens/NetworksScreen.testids';
+import generateTestId from '../../../../wdio/utils/generateTestId';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -87,6 +98,7 @@ const createStyles = (colors) =>
     footer: {
       marginVertical: 10,
       flexDirection: 'row',
+      paddingBottom: 8,
     },
     footerButton: {
       flex: 1,
@@ -275,6 +287,14 @@ export class NetworkList extends PureComponent {
      * react-navigation object used for switching between screens
      */
     navigation: PropTypes.object,
+    /**
+     * Boolean indicating if switching network action should result in popping back to the wallet.
+     */
+    shouldNetworkSwitchPopToWallet: PropTypes.bool,
+    /**
+     * Current Bottom nav bar route.
+     */
+    currentBottomNavRoute: PropTypes.string,
   };
 
   getOtherNetworks = () => getAllNetworks().slice(1);
@@ -294,6 +314,12 @@ export class NetworkList extends PureComponent {
     } else {
       onClose(false);
     }
+    AnalyticsV2.trackEvent(MetaMetricsEvents.NETWORK_SWITCHED, {
+      chain_id: type,
+      source: this.props.currentBottomNavRoute,
+      symbol: ticker,
+    });
+
     return onNetworkSelected(type, ticker, url, networkOnboardedState);
   };
 	static propTypes = {
@@ -340,12 +366,15 @@ export class NetworkList extends PureComponent {
       setTimeout(() => {
         Engine.refreshTransactionHistory();
       }, 1000);
+<<<<<<< HEAD
 
     AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.NETWORK_SWITCHED, {
       network_name: type,
       chain_id: String(Networks[type].chainId),
       source: 'Settings',
     });
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   };
 
   closeModal = () => {
@@ -422,7 +451,7 @@ export class NetworkList extends PureComponent {
     AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.NETWORK_SWITCHED, {
       rpc_url: rpcUrl,
       chain_id: chainId,
-      source: 'Settings',
+      source: this.props.currentBottomNavRoute,
       symbol: ticker,
       block_explorer_url: blockExplorerUrl,
       network_name: 'rpc',
@@ -442,6 +471,11 @@ export class NetworkList extends PureComponent {
     i,
     network,
     isCustomRpc,
+<<<<<<< HEAD
+=======
+    color,
+    testId,
+>>>>>>> upstream/testflight/4754-permission-system
   ) => {
     const styles = this.getStyles();
 
@@ -453,16 +487,27 @@ export class NetworkList extends PureComponent {
       >
         <View style={styles.selected}>{selected}</View>
         {isCustomRpc &&
+          // TODO - Refactor to use only AvatarNetwork with getNetworkImageSource
           (image ? (
-            <ImageIcon image={image} style={styles.networkIcon} />
+            <Avatar
+              variant={AvatarVariants.Network}
+              name={name}
+              imageSource={image}
+              style={styles.networkIcon}
+              size={AvatarSize.Xs}
+            />
+          ) : null)}
+        {!isCustomRpc &&
+          (image ? (
+            <ImageIcon
+              image={network.toUpperCase()}
+              style={styles.networkIcon}
+            />
           ) : (
-            <View style={styles.networkIcon} />
+            <View style={[styles.networkIcon, { backgroundColor: color }]}>
+              <Text style={styles.text}>{name[0]}</Text>
+            </View>
           ))}
-        {!isCustomRpc && (
-          <View style={[styles.networkIcon, { backgroundColor: image }]}>
-            <Text style={styles.text}>{name[0]}</Text>
-          </View>
-        )}
         <View style={styles.networkInfo}>
           <Text numberOfLines={1} style={styles.networkLabel}>
             {name}
@@ -477,7 +522,11 @@ export class NetworkList extends PureComponent {
     const colors = this.context.colors || mockTheme.colors;
 
     return this.getOtherNetworks().map((network, i) => {
+<<<<<<< HEAD
       const { color, name } = Networks[network];
+=======
+      const { name, imageSource, color, testId } = Networks[network];
+>>>>>>> upstream/testflight/4754-permission-system
       const isCustomRpc = false;
       const selected =
         provider.type === network ? (
@@ -487,10 +536,15 @@ export class NetworkList extends PureComponent {
         selected,
         this.onNetworkChange,
         name,
-        color,
+        imageSource,
         i,
         network,
         isCustomRpc,
+<<<<<<< HEAD
+=======
+        color,
+        testId,
+>>>>>>> upstream/testflight/4754-permission-system
       );
     });
   };
@@ -619,12 +673,13 @@ export class NetworkList extends PureComponent {
   }
 
   goToNetworkSettings = () => {
+    const { shouldNetworkSwitchPopToWallet } = this.props;
     this.props.onClose(false);
     this.props.navigation.navigate('SettingsView', {
       screen: 'SettingsFlow',
       params: {
         screen: 'NetworkSettings',
-        params: { isFullScreenModal: true },
+        params: { isFullScreenModal: true, shouldNetworkSwitchPopToWallet },
       },
     });
   };
@@ -673,10 +728,12 @@ export class NetworkList extends PureComponent {
 
 const mapStateToProps = (state) => ({
   provider: state.engine.backgroundState.NetworkController.provider,
+  currentBottomNavRoute: state.navigation.currentBottomNavRoute,
   frequentRpcList:
     state.engine.backgroundState.PreferencesController.frequentRpcList,
   thirdPartyApiMode: state.privacy.thirdPartyApiMode,
   networkOnboardedState: state.networkOnboarded.networkOnboardedState,
+<<<<<<< HEAD
 	render = () => {
 		const styles = this.getStyles();
 
@@ -712,6 +769,9 @@ const mapStateToProps = (state) => ({
 	frequentRpcList: state.engine.backgroundState.PreferencesController.frequentRpcList,
 	thirdPartyApiMode: state.privacy.thirdPartyApiMode,
 	networkOnboardedState: state.networkOnboarded.networkOnboardedState,
+=======
+  shouldNetworkSwitchPopToWallet: state.modals.shouldNetworkSwitchPopToWallet,
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 NetworkList.contextType = ThemeContext;

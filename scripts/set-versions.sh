@@ -44,6 +44,9 @@ perform_updates () {
   # update bitrise.yml
   sed -i -e 's/VERSION_NAME: .*/VERSION_NAME: '"$SEMVER_VERSION"'/' bitrise.yml
   sed -i -e 's/VERSION_NUMBER: [0-9]\+/VERSION_NUMBER: '"$VERSION_NUMBER"'/' bitrise.yml
+  # update flask version numbers in bitrise.yml
+  sed -i -e 's/FLASK_VERSION_NAME: .*/FLASK_VERSION_NAME: '"$SEMVER_VERSION"'/' bitrise.yml
+  sed -i -e 's/FLASK_VERSION_NUMBER: [0-9]\+/FLASK_VERSION_NUMBER: '"$VERSION_NUMBER"'/' bitrise.yml
 
   # update ios/MetaMask.xcodeproj/project.pbxproj
   sed -i -e 's/MARKETING_VERSION = .*/MARKETING_VERSION = '"$SEMVER_VERSION;"'/' ios/MetaMask.xcodeproj/project.pbxproj
@@ -77,10 +80,13 @@ SEMVER_VERSION_NAT=$(semver_to_nat "$SEMVER_VERSION")
 #   echo "semver $SEMVER_VERSION is less than or equal to current: $CURRENT_SEMVER"
 #   exit 1
 # fi
+<<<<<<< Updated upstream
 if [[ "$SEMVER_VERSION_NAT" -le "$CURRENT_SEMVER_NAT" ]]; then
   echo "semver $SEMVER_VERSION is less than or equal to current: $CURRENT_SEMVER"
   exit 1
 fi
+=======
+>>>>>>> Stashed changes
 
 # ensure VERSION_NUMBER goes up
 if [[ "$VERSION_NUMBER" -le "$CURRENT_VERSION_NUMBER" ]]; then

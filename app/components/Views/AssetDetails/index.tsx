@@ -32,6 +32,7 @@ import { useTheme } from '../../../util/theme';
 import { MetaMetricsEvents } from '../../../core/Analytics';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import Routes from '../../../constants/navigation/Routes';
+<<<<<<< HEAD
 import {
   selectChainId,
   selectProviderConfig,
@@ -43,6 +44,8 @@ import {
 import { selectTokens } from '../../../selectors/tokensController';
 import { selectContractExchangeRates } from '../../../selectors/tokenRatesController';
 import { selectContractBalances } from '../../../selectors/tokenBalancesController';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -161,7 +164,11 @@ const AssetDetails = (props: Props) => {
   };
 
   const triggerHideToken = () => {
+<<<<<<< HEAD
     const { TokensController } = Engine.context as any;
+=======
+    const { TokensController, NetworkController } = Engine.context as any;
+>>>>>>> upstream/testflight/4754-permission-system
     navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
       screen: 'AssetHideConfirmation',
       params: {
@@ -183,7 +190,13 @@ const AssetDetails = (props: Props) => {
                 token_standard: 'ERC20',
                 asset_type: 'token',
                 tokens: [`${symbol} - ${address}`],
+<<<<<<< HEAD
                 chain_id: getDecimalChainId(chainId),
+=======
+                chain_id: getDecimalChainId(
+                  NetworkController?.state?.provider?.chainId,
+                ),
+>>>>>>> upstream/testflight/4754-permission-system
               });
             } catch (err) {
               Logger.log(err, 'AssetDetails: Failed to hide token!');

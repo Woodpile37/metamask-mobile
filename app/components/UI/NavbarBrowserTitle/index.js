@@ -7,7 +7,6 @@ import Networks from '../../../util/networks';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Device from '../../../util/device';
 import { mockTheme, ThemeContext } from '../../../util/theme';
-import { selectProviderConfig } from '../../../selectors/networkController';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -59,55 +58,6 @@ const createStyles = (colors) =>
       marginRight: 4,
     },
   });
-	StyleSheet.create({
-		wrapper: {
-			alignItems: 'center',
-			flex: 1,
-		},
-		network: {
-			flexDirection: 'row',
-			marginBottom: 5,
-		},
-		networkName: {
-			fontSize: 11,
-			lineHeight: 11,
-			color: colors.text.default,
-			...fontStyles.normal,
-		},
-		networkIcon: {
-			marginTop: 3,
-			width: 5,
-			height: 5,
-			borderRadius: 100,
-			marginRight: 5,
-		},
-		currentUrlWrapper: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			justifyContent: 'center',
-			flex: 1,
-			marginBottom: Device.isAndroid() ? 5 : 0,
-		},
-		lockIcon: {
-			marginTop: 2,
-			marginLeft: 10,
-			color: colors.text.default,
-		},
-		currentUrl: {
-			...fontStyles.normal,
-			fontSize: 14,
-			textAlign: 'center',
-			color: colors.text.default,
-		},
-		currentUrlAndroid: {
-			maxWidth: '60%',
-		},
-		siteIcon: {
-			width: 16,
-			height: 16,
-			marginRight: 4,
-		},
-	});
 
 /**
  * UI PureComponent that renders inside the navbar
@@ -116,9 +66,9 @@ const createStyles = (colors) =>
 class NavbarBrowserTitle extends PureComponent {
   static propTypes = {
     /**
-     * Object representing the configuration for the selected network
+     * Object representing the selected the selected network
      */
-    providerConfig: PropTypes.object.isRequired,
+    network: PropTypes.object.isRequired,
     /**
      * hostname of the current webview
      */
@@ -145,14 +95,14 @@ class NavbarBrowserTitle extends PureComponent {
     this.props.route.params?.showUrlModal?.();
   };
 
-  getNetworkName(providerConfig) {
+  getNetworkName(network) {
     let name = { ...Networks.rpc, color: null }.name;
 
-    if (providerConfig) {
-      if (providerConfig.nickname) {
-        name = providerConfig.nickname;
-      } else if (providerConfig.type) {
-        const currentNetwork = Networks[providerConfig.type];
+    if (network && network.provider) {
+      if (network.provider.nickname) {
+        name = network.provider.nickname;
+      } else if (network.provider.type) {
+        const currentNetwork = Networks[network.provider.type];
         if (currentNetwork && currentNetwork.name) {
           name = currentNetwork.name;
         }
@@ -163,13 +113,14 @@ class NavbarBrowserTitle extends PureComponent {
   }
 
   render = () => {
-    const { https, providerConfig, hostname, error, icon } = this.props;
+    const { https, network, hostname, error, icon } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
     const color =
-      (Networks[providerConfig.type] && Networks[providerConfig.type].color) ||
+      (Networks[network.provider.type] &&
+        Networks[network.provider.type].color) ||
       null;
-    const name = this.getNetworkName(providerConfig);
+    const name = this.getNetworkName(network);
 
     return (
       <TouchableOpacity onPress={this.onTitlePress} style={styles.wrapper}>
@@ -209,42 +160,11 @@ class NavbarBrowserTitle extends PureComponent {
       </TouchableOpacity>
     );
   };
-	render = () => {
-		const { https, network, hostname, error, icon } = this.props;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
-		const color = (Networks[network.provider.type] && Networks[network.provider.type].color) || null;
-		const name = this.getNetworkName(network);
-
-		return (
-			<TouchableOpacity onPress={this.onTitlePress} style={styles.wrapper}>
-				<View style={styles.currentUrlWrapper}>
-					{Boolean(icon) && <Image style={styles.siteIcon} source={{ uri: icon }} />}
-					<Text
-						numberOfLines={1}
-						ellipsizeMode={'head'}
-						style={[styles.currentUrl, Device.isAndroid() ? styles.currentUrlAndroid : {}]}
-					>
-						{hostname}
-					</Text>
-					{https && !error ? <Icon name="lock" size={14} style={styles.lockIcon} /> : null}
-				</View>
-				<View style={styles.network}>
-					<View style={[styles.networkIcon, { backgroundColor: color || colors.error.default }]} />
-					<Text numberOfLines={1} style={styles.networkName} testID={'navbar-title-network'}>
-						{name}
-					</Text>
-				</View>
-			</TouchableOpacity>
-		);
-	};
 }
 
 const mapStateToProps = (state) => ({
-  providerConfig: selectProviderConfig(state),
+  network: state.engine.backgroundState.NetworkController,
 });
-
-NavbarBrowserTitle.contextType = ThemeContext;
 
 NavbarBrowserTitle.contextType = ThemeContext;
 

@@ -21,7 +21,11 @@ import initialBackgroundState from '../../../util/test/initial-background-state.
 
 const mockStore = configureMockStore();
 const initialState = {
+<<<<<<< HEAD
   user: { seedphraseBackedUp: true, passwordSet: true },
+=======
+  user: { seedphraseBackedUp: true },
+>>>>>>> upstream/testflight/4754-permission-system
   privacy: { approvedHosts: [] },
   browser: { history: [] },
   settings: {

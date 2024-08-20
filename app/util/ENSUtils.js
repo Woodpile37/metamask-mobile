@@ -1,17 +1,23 @@
 import Engine from '../core/Engine';
 import ENS from 'ethjs-ens';
 import { toLowerCaseEquals } from '../util/general';
+<<<<<<< HEAD
 import {
   NetworkId,
   NetworksChainId,
   NetworkType,
 } from '@metamask/controller-utils';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 const ENS_NAME_NOT_DEFINED_ERROR = 'ENS name not defined';
 const INVALID_ENS_NAME_ERROR = 'invalid ENS name';
 // One hour cache threshold.
 const CACHE_REFRESH_THRESHOLD = 60 * 60 * 1000;
 import { EMPTY_ADDRESS } from '../constants/transaction';
+<<<<<<< HEAD
 import { regex } from '../../app/util/regex';
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 
 /**
  * Utility class with the single responsibility
@@ -23,6 +29,7 @@ export class ENSCache {
   static cache = {};
 }
 
+<<<<<<< HEAD
 /**
  * A list of all chain IDs supported by the current legacy ENS library we are
  * using.
@@ -58,6 +65,16 @@ export function getCachedENSName(address, chainId) {
   const cacheEntry = ENSCache.cache[networkId + address];
   return cacheEntry?.name;
 }
+=======
+export async function doENSReverseLookup(address, network) {
+  const { provider } = Engine.context.NetworkController;
+  const { name: cachedName, timestamp } =
+    ENSCache.cache[network + address] || {};
+  const nowTimestamp = Date.now();
+  if (timestamp && nowTimestamp - timestamp < CACHE_REFRESH_THRESHOLD) {
+    return Promise.resolve(cachedName);
+  }
+>>>>>>> upstream/testflight/4754-permission-system
 
 export async function doENSReverseLookup(address, chainId) {
   const { provider } =
@@ -78,7 +95,11 @@ export async function doENSReverseLookup(address, chainId) {
       const name = await this.ens.reverse(address);
       const resolvedAddress = await this.ens.lookup(name);
       if (toLowerCaseEquals(address, resolvedAddress)) {
+<<<<<<< HEAD
         ENSCache.cache[networkId + address] = { name, timestamp: Date.now() };
+=======
+        ENSCache.cache[network + address] = { name, timestamp: Date.now() };
+>>>>>>> upstream/testflight/4754-permission-system
         return name;
       }
     } catch (e) {
@@ -86,7 +107,11 @@ export async function doENSReverseLookup(address, chainId) {
         e.message.includes(ENS_NAME_NOT_DEFINED_ERROR) ||
         e.message.includes(INVALID_ENS_NAME_ERROR)
       ) {
+<<<<<<< HEAD
         ENSCache.cache[networkId + address] = { timestamp: Date.now() };
+=======
+        ENSCache.cache[network + address] = { timestamp: Date.now() };
+>>>>>>> upstream/testflight/4754-permission-system
       }
     }
   }

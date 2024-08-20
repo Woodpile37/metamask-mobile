@@ -204,6 +204,7 @@ export default class TransactionReviewDetailsCard extends Component {
       </View>
     );
   }
+<<<<<<< Updated upstream
 
 const createStyles = (colors) =>
 	StyleSheet.create({
@@ -372,6 +373,8 @@ export default class TransactionReviewDetailsCard extends Component {
 			</View>
 		);
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 TransactionReviewDetailsCard.contextType = ThemeContext;

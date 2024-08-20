@@ -90,6 +90,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress1}
+          accessibilityRole="button"
+          accessible
         >
           1
         </Keypad.Button>
@@ -97,6 +99,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress2}
+          accessibilityRole="button"
+          accessible
         >
           2
         </Keypad.Button>
@@ -104,6 +108,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress3}
+          accessibilityRole="button"
+          accessible
         >
           3
         </Keypad.Button>
@@ -113,6 +119,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress4}
+          accessibilityRole="button"
+          accessible
         >
           4
         </Keypad.Button>
@@ -120,6 +128,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress5}
+          accessibilityRole="button"
+          accessible
         >
           5
         </Keypad.Button>
@@ -127,6 +137,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress6}
+          accessibilityRole="button"
+          accessible
         >
           6
         </Keypad.Button>
@@ -136,6 +148,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress7}
+          accessibilityRole="button"
+          accessible
         >
           7
         </Keypad.Button>
@@ -143,6 +157,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress8}
+          accessibilityRole="button"
+          accessible
         >
           8
         </Keypad.Button>
@@ -150,6 +166,8 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress9}
+          accessibilityRole="button"
+          accessible
         >
           9
         </Keypad.Button>
@@ -166,10 +184,13 @@ function KeypadComponent({
           style={digitButtonStyle}
           textStyle={digitTextStyle}
           onPress={handleKeypadPress0}
+          accessibilityRole="button"
+          accessible
         >
           0
         </Keypad.Button>
         <Keypad.DeleteButton
+          testID="keypad-delete-button"
           style={deleteButtonStyle}
           icon={deleteIcon}
           onPress={handleKeypadPressBack}

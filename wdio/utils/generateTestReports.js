@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   readdirSync,
   readFileSync,
@@ -8,6 +9,11 @@ import {
 } from 'fs';
 import { Parser } from 'xml2js';
 import { generate } from 'multiple-cucumber-html-reporter';
+=======
+const fs = require('fs');
+const xml2js = require('xml2js');
+const { generate } = require('multiple-cucumber-html-reporter');
+>>>>>>> upstream/testflight/4754-permission-system
 
 function generateTestReports() {
   // Generate the report when it all tests are done

@@ -22,6 +22,7 @@ export default class Root extends PureComponent {
   static propTypes = {
     foxCode: PropTypes.string,
   };
+<<<<<<< Updated upstream
 
   static defaultProps = {
     foxCode: 'null',
@@ -123,4 +124,77 @@ const ConnectedRoot = () => {
 			</ErrorBoundary>
 		</ThemeContext.Provider>
 	);
+=======
+
+  static defaultProps = {
+    foxCode: 'null',
+  };
+
+  async waitForStore() {
+    // Wait until store is initialized
+    await new Promise((resolve) => {
+      const intervalId = setInterval(() => {
+        if (store && persistor) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, 100);
+    });
+  }
+
+  constructor(props) {
+    super(props);
+    if (props.foxCode === '') {
+      Logger.error('WARN - foxCode is an empty string');
+    }
+    SecureKeychain.init(props.foxCode);
+    // Init EntryScriptWeb3 asynchronously on the background
+    EntryScriptWeb3.init();
+
+    this.state = {
+      isLoading: true, // Track loading state
+      isTest,
+    };
+  }
+
+  async componentDidMount() {
+    const { isTest } = this.state;
+    if (isTest) {
+      await this.waitForStore();
+      this.setState({ isLoading: false });
+    }
+  }
+
+  render() {
+    const { isTest, isLoading } = this.state;
+    if (isTest && isLoading) {
+      return null;
+    }
+    SplashScreen.hide();
+
+    return (
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <ConnectedRoot />
+        </PersistGate>
+      </Provider>
+    );
+  }
+}
+
+const ConnectedRoot = () => {
+  const theme = useAppTheme();
+
+  return (
+    <SafeAreaProvider>
+      <ThemeContext.Provider value={theme}>
+        <ToastContextWrapper>
+          <ErrorBoundary view="Root">
+            <App />
+          </ErrorBoundary>
+        </ToastContextWrapper>
+      </ThemeContext.Provider>
+    </SafeAreaProvider>
+  );
+>>>>>>> Stashed changes
 };

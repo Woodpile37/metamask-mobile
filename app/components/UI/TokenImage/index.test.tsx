@@ -32,6 +32,7 @@ describe('TokenImage', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(
 			<Provider store={store}>
@@ -40,4 +41,6 @@ describe('TokenImage', () => {
 		);
 		expect(wrapper.dive()).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

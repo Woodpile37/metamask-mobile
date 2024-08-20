@@ -9,7 +9,10 @@ import {
   shouldShowBlockExplorer,
   isQRHardwareAccount,
   getAddressAccountType,
+  isHardwareAccount,
   resemblesAddress,
+  getKeyringByAddress,
+  getLabelTextByAddress,
 } from '.';
 
 describe('isENS', () => {
@@ -95,6 +98,7 @@ describe('isValidHexAddress', () => {
   it('should return false if the address is an  empty string', () => {
     expect(isValidHexAddress('', { mixedCaseUseChecksum: true })).toBe(false);
   });
+<<<<<<< Updated upstream
 import { isENS, renderSlightlyLongAddress } from '.';
 
 describe('isENS', () => {
@@ -128,6 +132,8 @@ describe('renderSlightlyLongAddress', () => {
 		expect(renderSlightlyLongAddress(mockAddress, 5, 2).split('.')[0]).toBe('0xC4955');
 		expect(renderSlightlyLongAddress(mockAddress, 5, 0).split('.')[3]).toBe('4D272');
 	});
+=======
+>>>>>>> Stashed changes
 });
 
 describe('isValidAddressInputViaQRCode', () => {
@@ -274,6 +280,60 @@ describe('isQRHardwareAccount', () => {
     expect(
       isQRHardwareAccount('0xB374Ca013934e498e5baD3409147F34E6c462389'),
     ).toBeTruthy();
+  });
+});
+describe('getKeyringByAddress', () => {
+  it('should return undefined if argument address is undefined', () => {
+    expect(getKeyringByAddress(undefined as any)).toBeUndefined();
+  });
+  it('should return undefined if argument address is not hex address', () => {
+    expect(getKeyringByAddress('ens.eth')).toBeUndefined();
+  });
+  it('should return address if found', () => {
+    expect(
+      getKeyringByAddress('0xB374Ca013934e498e5baD3409147F34E6c462389'),
+    ).not.toBe(undefined);
+  });
+  it('should return null if address not found', () => {
+    expect(
+      getKeyringByAddress('0xB374Ca013934e498e5baD3409147F34E6c462387'),
+    ).toBe(undefined);
+  });
+});
+describe('isHardwareAccount,', () => {
+  it('should return true if account is a QR keyring', () => {
+    expect(
+      isHardwareAccount('0xB374Ca013934e498e5baD3409147F34E6c462389'),
+    ).toBeTruthy();
+  });
+
+  it('should return false if account is not a hardware keyring', () => {
+    expect(
+      isHardwareAccount('0xD5955C0d639D99699Bfd7Ec54d9FaFEe40e4D278'),
+    ).toBeFalsy();
+  });
+});
+describe('getLabelTextByAddress,', () => {
+  it('should return accounts.qr_hardware if account is a QR keyring', () => {
+    expect(
+      getLabelTextByAddress('0xB374Ca013934e498e5baD3409147F34E6c462389'),
+    ).toBe('accounts.qr_hardware');
+  });
+
+  it('should return KeyringTypes.simple if address is a imported account', () => {
+    expect(
+      getLabelTextByAddress('0xd018538C87232FF95acbCe4870629b75640a78E7'),
+    ).toBe('accounts.imported');
+  });
+
+  it('should return null if address is empty', () => {
+    expect(getLabelTextByAddress('')).toBe(null);
+  });
+
+  it('should return null if account not found', () => {
+    expect(
+      getLabelTextByAddress('0xD5955C0d639D99699Bfd7Ec54d9FaFEe40e4D278'),
+    ).toBe(null);
   });
 });
 describe('getAddressAccountType', () => {

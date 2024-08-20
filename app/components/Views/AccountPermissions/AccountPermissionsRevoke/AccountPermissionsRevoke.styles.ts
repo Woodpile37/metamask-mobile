@@ -16,6 +16,10 @@ const styleSheet = (params: { theme: Theme }) => {
       paddingHorizontal: 16,
     },
     description: {
+<<<<<<< HEAD
+=======
+      textAlign: 'center',
+>>>>>>> upstream/testflight/4754-permission-system
       marginVertical: 16,
       color: colors.text.alternative,
     },
@@ -32,6 +36,7 @@ const styleSheet = (params: { theme: Theme }) => {
     },
     downCaretContainer: { justifyContent: 'center', flex: 1 },
     disconnectButton: { alignSelf: 'center' },
+<<<<<<< HEAD
     permissionContainer: { flexDirection: 'row', alignItems: 'center' },
     securityContainer: {
       flexDirection: 'row',
@@ -39,6 +44,8 @@ const styleSheet = (params: { theme: Theme }) => {
       marginVertical: 16,
     },
     permissionDescription: { marginLeft: 16 },
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   });
 };
 

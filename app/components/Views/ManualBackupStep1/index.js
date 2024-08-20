@@ -1,29 +1,45 @@
+<<<<<<< Updated upstream
+import React, { useState, useEffect, useCallback } from 'react';
+=======
+<<<<<<< HEAD
 import React, { PureComponent } from 'react';
+>>>>>>> Stashed changes
 import {
-	Text,
-	View,
-	SafeAreaView,
-	StyleSheet,
-	ActivityIndicator,
-	InteractionManager,
-	TextInput,
-	KeyboardAvoidingView
+  Text,
+  View,
+  SafeAreaView,
+  ActivityIndicator,
+  InteractionManager,
+  TextInput,
+  KeyboardAvoidingView,
+  Appearance,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { colors, fontStyles, baseStyles } from '../../../styles/common';
+import { connect } from 'react-redux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import FeatherIcons from 'react-native-vector-icons/Feather';
+import { BlurView } from '@react-native-community/blur';
+import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english';
+import { baseStyles } from '../../../styles/common';
 import StyledButton from '../../UI/StyledButton';
 import OnboardingProgress from '../../UI/OnboardingProgress';
 import { strings } from '../../../../locales/i18n';
-import FeatherIcons from 'react-native-vector-icons/Feather';
-import { BlurView } from '@react-native-community/blur';
 import ActionView from '../../UI/ActionView';
-import Device from '../../../util/Device';
 import Engine from '../../../core/Engine';
-import PreventScreenshot from '../../../core/PreventScreenshot';
-import SecureKeychain from '../../../core/SecureKeychain';
 import { getOnboardingNavbarOptions } from '../../UI/Navbar';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ScreenshotDeterrent } from '../../UI/ScreenshotDeterrent';
+import {
+  MANUAL_BACKUP_STEPS,
+  SEED_PHRASE,
+  CONFIRM_PASSWORD,
+  WRONG_PASSWORD_ERROR,
+} from '../../../constants/onboarding';
+import { useTheme } from '../../../util/theme';
+import { uint8ArrayToMnemonic } from '../../../util/mnemonic';
+import { createStyles } from './styles';
 
+<<<<<<< Updated upstream
+=======
 const styles = StyleSheet.create({
 	mainWrapper: {
 		backgroundColor: colors.white,
@@ -199,197 +215,175 @@ const styles = StyleSheet.create({
 const WRONG_PASSWORD_ERROR = 'Error: Decrypt failed';
 const SEED_PHRASE = 'seed_phrase';
 const CONFIRM_PASSWORD = 'confirm_password';
+=======
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  ActivityIndicator,
+  InteractionManager,
+  TextInput,
+  KeyboardAvoidingView,
+  Appearance,
+} from 'react-native';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import FeatherIcons from 'react-native-vector-icons/Feather';
+import { BlurView } from '@react-native-community/blur';
+import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english';
+import { baseStyles } from '../../../styles/common';
+import StyledButton from '../../UI/StyledButton';
+import OnboardingProgress from '../../UI/OnboardingProgress';
+import { strings } from '../../../../locales/i18n';
+import ActionView from '../../UI/ActionView';
+import Engine from '../../../core/Engine';
+import { getOnboardingNavbarOptions } from '../../UI/Navbar';
+import { ScreenshotDeterrent } from '../../UI/ScreenshotDeterrent';
+import {
+  MANUAL_BACKUP_STEPS,
+  SEED_PHRASE,
+  CONFIRM_PASSWORD,
+  WRONG_PASSWORD_ERROR,
+} from '../../../constants/onboarding';
+import { useTheme } from '../../../util/theme';
+import { uint8ArrayToMnemonic } from '../../../util/mnemonic';
+import { createStyles } from './styles';
+
+>>>>>>> Stashed changes
+import { MetaMetricsEvents } from '../../../core/Analytics';
+import AnalyticsV2 from '../../../util/analyticsV2';
+import { Authentication } from '../../../core';
+import { ManualBackUpStepsSelectorsIDs } from '../../../../e2e/selectors/Onboarding/ManualBackUpSteps.selectors';
+<<<<<<< Updated upstream
+=======
+>>>>>>> upstream/main
+>>>>>>> Stashed changes
 
 /**
  * View that's shown during the second step of
  * the backup seed phrase flow
  */
+<<<<<<< Updated upstream
+const ManualBackupStep1 = ({ route, navigation, appTheme }) => {
+  const [seedPhraseHidden, setSeedPhraseHidden] = useState(true);
+=======
+<<<<<<< HEAD
 export default class ManualBackupStep1 extends PureComponent {
 	static navigationOptions = ({ navigation }) => getOnboardingNavbarOptions(navigation);
+>>>>>>> Stashed changes
 
-	static propTypes = {
-		/**
-		/* navigation object required to push and pop other views
-		*/
-		navigation: PropTypes.object
-	};
+  const [password, setPassword] = useState(undefined);
+  const [warningIncorrectPassword, setWarningIncorrectPassword] =
+    useState(undefined);
+  const [ready, setReady] = useState(false);
+  const [view, setView] = useState(SEED_PHRASE);
+  const [words, setWords] = useState([]);
 
-	steps = [
-		strings('manual_backup.progressOne'),
-		strings('manual_backup.progressTwo'),
-		strings('manual_backup.progressThree')
-	];
+  const { colors, themeAppearance } = useTheme();
+  const styles = createStyles(colors);
 
-	state = {
-		seedPhraseHidden: true,
-		currentStep: 1,
-		password: undefined,
-		warningIncorrectPassword: undefined,
-		ready: false,
-		view: SEED_PHRASE
-	};
+  const currentStep = 1;
+  const steps = MANUAL_BACKUP_STEPS;
 
-	async componentDidMount() {
-		this.words = this.props.navigation.getParam('words', []);
-		if (!this.words.length) {
-			try {
-				const credentials = await SecureKeychain.getGenericPassword();
-				if (credentials) {
-					this.words = await this.tryExportSeedPhrase(credentials.password);
-				} else {
-					this.setState({ view: CONFIRM_PASSWORD });
-				}
-			} catch (e) {
-				this.setState({ view: CONFIRM_PASSWORD });
-			}
-		}
-		this.setState({ ready: true });
-		InteractionManager.runAfterInteractions(() => PreventScreenshot.forbid());
-	}
+  const updateNavBar = useCallback(() => {
+    navigation.setOptions(getOnboardingNavbarOptions(route, {}, colors));
+  }, [colors, navigation, route]);
 
-	onPasswordChange = password => {
-		this.setState({ password });
-	};
+  const tryExportSeedPhrase = async (password) => {
+    const { KeyringController } = Engine.context;
+    const uint8ArrayMnemonic = await KeyringController.exportSeedPhrase(
+      password,
+    );
+    return uint8ArrayToMnemonic(uint8ArrayMnemonic, wordlist).split(' ');
+  };
 
-	goNext = () => {
-		this.props.navigation.navigate('ManualBackupStep2', { words: this.words, steps: this.steps });
-	};
+  useEffect(() => {
+    const getSeedphrase = async () => {
+      if (!words.length) {
+        try {
+          const credentials = await Authentication.getPassword();
+          if (credentials) {
+            setWords(await tryExportSeedPhrase(credentials.password));
+          } else {
+            setView(CONFIRM_PASSWORD);
+          }
+        } catch (e) {
+          setView(CONFIRM_PASSWORD);
+        }
+      }
+    };
 
-	revealSeedPhrase = () => this.setState({ seedPhraseHidden: false });
+    getSeedphrase();
+    setWords(route.params?.words ?? []);
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	tryExportSeedPhrase = async password => {
-		const { KeyringController } = Engine.context;
-		const mnemonic = await KeyringController.exportSeedPhrase(password);
-		const seed = JSON.stringify(mnemonic)
-			.replace(/"/g, '')
-			.split(' ');
-		return seed;
-	};
+  useEffect(() => {
+    updateNavBar();
+  }, [updateNavBar]);
 
-	tryUnlockWithPassword = async password => {
-		this.setState({ ready: false });
-		try {
-			this.words = await this.tryExportSeedPhrase(password);
-			this.setState({ view: SEED_PHRASE, ready: true });
-		} catch (e) {
-			let msg = strings('reveal_credential.warning_incorrect_password');
-			if (e.toString().toLowerCase() !== WRONG_PASSWORD_ERROR.toLowerCase()) {
-				msg = strings('reveal_credential.unknown_error');
-			}
-			this.setState({
-				warningIncorrectPassword: msg,
-				ready: true
-			});
-		}
-	};
+  const onPasswordChange = (password) => {
+    setPassword(password);
+  };
 
-	tryUnlock = () => {
-		const { password } = this.state;
-		this.tryUnlockWithPassword(password);
-	};
+  const goNext = () => {
+    navigation.navigate('ManualBackupStep2', {
+      words,
+      steps,
+    });
+  };
 
-	renderLoader = () => (
-		<View style={styles.loader}>
-			<ActivityIndicator size="small" />
-		</View>
-	);
+  const revealSeedPhrase = () => {
+    setSeedPhraseHidden(false);
+    InteractionManager.runAfterInteractions(() => {
+      AnalyticsV2.trackEvent(MetaMetricsEvents.WALLET_SECURITY_PHRASE_REVEALED);
+    });
+  };
 
-	renderSeedPhraseConcealer = () => (
-		<React.Fragment>
-			<BlurView blurType="light" blurAmount={5} style={styles.blurView} />
-			<View style={styles.seedPhraseConcealer}>
-				<FeatherIcons name="eye-off" size={24} style={styles.icon} />
-				<Text style={styles.reveal}>{strings('manual_backup_step_1.reveal')}</Text>
-				<Text style={styles.watching}>{strings('manual_backup_step_1.watching')}</Text>
-				<View style={styles.viewButtonWrapper}>
-					<StyledButton
-						type={'view'}
-						onPress={this.revealSeedPhrase}
-						testID={'view-button'}
-						containerStyle={styles.viewButtonContainer}
-					>
-						{strings('manual_backup_step_1.view')}
-					</StyledButton>
-				</View>
-			</View>
-		</React.Fragment>
-	);
+  const tryUnlockWithPassword = async (password) => {
+    setReady(false);
+    try {
+      const seedPhrase = await tryExportSeedPhrase(password);
+      setWords(seedPhrase);
+      setView(SEED_PHRASE);
+      setReady(true);
+    } catch (e) {
+      let msg = strings('reveal_credential.warning_incorrect_password');
+      if (e.toString().toLowerCase() !== WRONG_PASSWORD_ERROR.toLowerCase()) {
+        msg = strings('reveal_credential.unknown_error');
+      }
+      setWarningIncorrectPassword(msg);
+      setReady(true);
+    }
+  };
 
-	renderConfirmPassword() {
-		const { warningIncorrectPassword } = this.state;
-		return (
-			<KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={'padding'}>
-				<KeyboardAwareScrollView style={baseStyles.flexGrow} enableOnAndroid>
-					<View style={styles.confirmPasswordWrapper}>
-						<View style={[styles.content, styles.passwordRequiredContent]}>
-							<Text style={styles.title}>{strings('manual_backup_step_1.confirm_password')}</Text>
-							<View style={styles.text}>
-								<Text style={styles.label}>{strings('manual_backup_step_1.before_continiuing')}</Text>
-							</View>
-							<TextInput
-								style={styles.input}
-								placeholder={'Password'}
-								placeholderTextColor={colors.grey100}
-								onChangeText={this.onPasswordChange}
-								secureTextEntry
-								onSubmitEditing={this.tryUnlock}
-								testID={'private-credential-password-text-input'}
-							/>
-							{warningIncorrectPassword && (
-								<Text style={styles.warningMessageText}>{warningIncorrectPassword}</Text>
-							)}
-						</View>
-						<View style={styles.buttonWrapper}>
-							<StyledButton
-								containerStyle={styles.button}
-								type={'confirm'}
-								onPress={this.tryUnlock}
-								testID={'submit-button'}
-							>
-								{strings('manual_backup_step_1.confirm')}
-							</StyledButton>
-						</View>
-					</View>
-				</KeyboardAwareScrollView>
-			</KeyboardAvoidingView>
-		);
-	}
+  const tryUnlock = () => {
+    tryUnlockWithPassword(password);
+  };
 
-	renderSeedphraseView = () => (
-		<ActionView
-			confirmTestID={'manual-backup-step-1-continue-button'}
-			confirmText={strings('manual_backup_step_1.continue')}
-			onConfirmPress={this.goNext}
-			confirmDisabled={this.state.seedPhraseHidden}
-			showCancelButton={false}
-			confirmButtonMode={'confirm'}
-		>
-			<View style={styles.wrapper} testID={'manual_backup_step_1-screen'}>
-				<Text style={styles.action}>{strings('manual_backup_step_1.action')}</Text>
-				<View style={styles.infoWrapper}>
-					<Text style={styles.info}>{strings('manual_backup_step_1.info')}</Text>
-				</View>
-				<View style={styles.seedPhraseWrapper}>
-					<View style={styles.wordColumn}>
-						{this.words.slice(0, 6).map((word, i) => (
-							<View key={`word_${i}`} style={styles.wordWrapper}>
-								<Text style={styles.word}>{`${i + 1}. ${word}`}</Text>
-							</View>
-						))}
-					</View>
-					<View style={styles.wordColumn}>
-						{this.words.slice(-6).map((word, i) => (
-							<View key={`word_${i}`} style={styles.wordWrapper}>
-								<Text style={styles.word}>{`${i + 7}. ${word}`}</Text>
-							</View>
-						))}
-					</View>
-					{this.state.seedPhraseHidden && this.renderSeedPhraseConcealer()}
-				</View>
-			</View>
-		</ActionView>
-	);
+  const getBlurType = () => {
+    let blurType = 'light';
+    switch (appTheme) {
+      case 'light':
+        blurType = 'light';
+        break;
+      case 'dark':
+        blurType = 'dark';
+        break;
+      case 'os':
+        blurType = Appearance.getColorScheme();
+        break;
+      default:
+        blurType = 'light';
+    }
+    return blurType;
+  };
 
+<<<<<<< Updated upstream
+=======
 	render() {
 		const { ready, currentStep, view } = this.state;
 		if (!ready) return this.renderLoader();
@@ -403,3 +397,285 @@ export default class ManualBackupStep1 extends PureComponent {
 		);
 	}
 }
+=======
+const ManualBackupStep1 = ({ route, navigation, appTheme }) => {
+  const [seedPhraseHidden, setSeedPhraseHidden] = useState(true);
+
+  const [password, setPassword] = useState(undefined);
+  const [warningIncorrectPassword, setWarningIncorrectPassword] =
+    useState(undefined);
+  const [ready, setReady] = useState(false);
+  const [view, setView] = useState(SEED_PHRASE);
+  const [words, setWords] = useState([]);
+
+  const { colors, themeAppearance } = useTheme();
+  const styles = createStyles(colors);
+
+  const currentStep = 1;
+  const steps = MANUAL_BACKUP_STEPS;
+
+  const updateNavBar = useCallback(() => {
+    navigation.setOptions(getOnboardingNavbarOptions(route, {}, colors));
+  }, [colors, navigation, route]);
+
+  const tryExportSeedPhrase = async (password) => {
+    const { KeyringController } = Engine.context;
+    const uint8ArrayMnemonic = await KeyringController.exportSeedPhrase(
+      password,
+    );
+    return uint8ArrayToMnemonic(uint8ArrayMnemonic, wordlist).split(' ');
+  };
+
+  useEffect(() => {
+    const getSeedphrase = async () => {
+      if (!words.length) {
+        try {
+          const credentials = await Authentication.getPassword();
+          if (credentials) {
+            setWords(await tryExportSeedPhrase(credentials.password));
+          } else {
+            setView(CONFIRM_PASSWORD);
+          }
+        } catch (e) {
+          setView(CONFIRM_PASSWORD);
+        }
+      }
+    };
+
+    getSeedphrase();
+    setWords(route.params?.words ?? []);
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    updateNavBar();
+  }, [updateNavBar]);
+
+  const onPasswordChange = (password) => {
+    setPassword(password);
+  };
+
+  const goNext = () => {
+    navigation.navigate('ManualBackupStep2', {
+      words,
+      steps,
+    });
+  };
+
+  const revealSeedPhrase = () => {
+    setSeedPhraseHidden(false);
+    InteractionManager.runAfterInteractions(() => {
+      AnalyticsV2.trackEvent(MetaMetricsEvents.WALLET_SECURITY_PHRASE_REVEALED);
+    });
+  };
+
+  const tryUnlockWithPassword = async (password) => {
+    setReady(false);
+    try {
+      const seedPhrase = await tryExportSeedPhrase(password);
+      setWords(seedPhrase);
+      setView(SEED_PHRASE);
+      setReady(true);
+    } catch (e) {
+      let msg = strings('reveal_credential.warning_incorrect_password');
+      if (e.toString().toLowerCase() !== WRONG_PASSWORD_ERROR.toLowerCase()) {
+        msg = strings('reveal_credential.unknown_error');
+      }
+      setWarningIncorrectPassword(msg);
+      setReady(true);
+    }
+  };
+
+  const tryUnlock = () => {
+    tryUnlockWithPassword(password);
+  };
+
+  const getBlurType = () => {
+    let blurType = 'light';
+    switch (appTheme) {
+      case 'light':
+        blurType = 'light';
+        break;
+      case 'dark':
+        blurType = 'dark';
+        break;
+      case 'os':
+        blurType = Appearance.getColorScheme();
+        break;
+      default:
+        blurType = 'light';
+    }
+    return blurType;
+  };
+
+>>>>>>> Stashed changes
+  const renderSeedPhraseConcealer = () => {
+    const blurType = getBlurType();
+
+    return (
+      <View style={styles.seedPhraseConcealerContainer}>
+        <BlurView blurType={blurType} blurAmount={5} style={styles.blurView} />
+        <View style={styles.seedPhraseConcealer}>
+          <FeatherIcons name="eye-off" size={24} style={styles.icon} />
+          <Text style={styles.reveal}>
+            {strings('manual_backup_step_1.reveal')}
+          </Text>
+          <Text style={styles.watching}>
+            {strings('manual_backup_step_1.watching')}
+          </Text>
+          <View style={styles.viewButtonWrapper}>
+            <StyledButton
+              type={'onOverlay'}
+              onPress={revealSeedPhrase}
+              testID={ManualBackUpStepsSelectorsIDs.VIEW_BUTTON}
+              containerStyle={styles.viewButtonContainer}
+            >
+              {strings('manual_backup_step_1.view')}
+            </StyledButton>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const renderConfirmPassword = () => (
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={'padding'}
+    >
+      <KeyboardAwareScrollView style={baseStyles.flexGrow} enableOnAndroid>
+        <View style={styles.confirmPasswordWrapper}>
+          <View style={[styles.content, styles.passwordRequiredContent]}>
+            <Text style={styles.title}>
+              {strings('manual_backup_step_1.confirm_password')}
+            </Text>
+            <View style={styles.text}>
+              <Text style={styles.label}>
+                {strings('manual_backup_step_1.before_continiuing')}
+              </Text>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder={'Password'}
+              placeholderTextColor={colors.text.muted}
+              onChangeText={onPasswordChange}
+              secureTextEntry
+              onSubmitEditing={tryUnlock}
+              testID={ManualBackUpStepsSelectorsIDs.CONFIRM_PASSWORD_INPUT}
+              keyboardAppearance={themeAppearance}
+            />
+            {warningIncorrectPassword && (
+              <Text style={styles.warningMessageText}>
+                {warningIncorrectPassword}
+              </Text>
+            )}
+          </View>
+          <View style={styles.buttonWrapper}>
+            <StyledButton
+              containerStyle={styles.button}
+              type={'confirm'}
+              onPress={tryUnlock}
+              testID={ManualBackUpStepsSelectorsIDs.SUBMIT_BUTTON}
+            >
+              {strings('manual_backup_step_1.confirm')}
+            </StyledButton>
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
+  );
+
+  const renderSeedphraseView = () => {
+    const wordLength = words.length;
+    const half = wordLength / 2 || 6;
+
+    return (
+      <ActionView
+        confirmTestID={ManualBackUpStepsSelectorsIDs.CONTINUE_BUTTON}
+        confirmText={strings('manual_backup_step_1.continue')}
+        onConfirmPress={goNext}
+        confirmDisabled={seedPhraseHidden}
+        showCancelButton={false}
+        confirmButtonMode={'confirm'}
+      >
+        <View
+          style={styles.wrapper}
+          testID={ManualBackUpStepsSelectorsIDs.STEP_1_CONTAINER}
+        >
+          <Text style={styles.action}>
+            {strings('manual_backup_step_1.action')}
+          </Text>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.info}>
+              {strings('manual_backup_step_1.info')}
+            </Text>
+          </View>
+          <View style={styles.seedPhraseWrapper}>
+            {seedPhraseHidden ? (
+              renderSeedPhraseConcealer()
+            ) : (
+              <React.Fragment>
+                <View style={styles.wordColumn}>
+                  {words.slice(0, half).map((word, i) => (
+                    <View key={`word_${i}`} style={styles.wordWrapper}>
+                      <Text style={styles.word}>{`${i + 1}. ${word}`}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.wordColumn}>
+                  {words.slice(-half).map((word, i) => (
+                    <View key={`word_${i}`} style={styles.wordWrapper}>
+                      <Text style={styles.word}>{`${
+                        i + (half + 1)
+                      }. ${word}`}</Text>
+                    </View>
+                  ))}
+                </View>
+                <ScreenshotDeterrent enabled isSRP />
+              </React.Fragment>
+            )}
+          </View>
+        </View>
+      </ActionView>
+    );
+  };
+
+  return ready ? (
+    <SafeAreaView style={styles.mainWrapper}>
+      <View style={styles.onBoardingWrapper}>
+        <OnboardingProgress currentStep={currentStep} steps={steps} />
+      </View>
+      {view === SEED_PHRASE ? renderSeedphraseView() : renderConfirmPassword()}
+    </SafeAreaView>
+  ) : (
+    <View style={styles.loader}>
+      <ActivityIndicator size="small" />
+    </View>
+  );
+};
+
+ManualBackupStep1.propTypes = {
+  /**
+  /* navigation object required to push and pop other views
+  */
+  navigation: PropTypes.object,
+  /**
+   * Object that represents the current route info like params passed to it
+   */
+  route: PropTypes.object,
+  /**
+   * Theme that app is set to
+   */
+  appTheme: PropTypes.string,
+};
+
+const mapStateToProps = (state) => ({
+  appTheme: state.user.appTheme,
+});
+
+export default connect(mapStateToProps)(ManualBackupStep1);
+<<<<<<< Updated upstream
+=======
+>>>>>>> upstream/main
+>>>>>>> Stashed changes

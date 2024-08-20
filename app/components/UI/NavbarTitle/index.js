@@ -11,21 +11,16 @@ import {
 } from 'react-native';
 import { fontStyles, colors as importedColors } from '../../../styles/common';
 import Networks from '../../../util/networks';
+import { toggleNetworkModal } from '../../../actions/modals';
 import { strings } from '../../../../locales/i18n';
 import Device from '../../../util/device';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import { NAVBAR_TITLE_NETWORKS_TEXT } from '../../../../wdio/screen-objects/testIDs/Screens/WalletScreen-testIds';
 import generateTestId from '../../../../wdio/utils/generateTestId';
-import Routes from '../../../constants/navigation/Routes';
-import { MetaMetricsEvents } from '../../../core/Analytics';
-import Analytics from '../../../core/Analytics/Analytics';
-import { withNavigation } from '@react-navigation/compat';
-import { selectProviderConfig } from '../../../selectors/networkController';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      justifyContent: 'center',
       alignItems: 'center',
       flex: 1,
     },
@@ -55,37 +50,6 @@ const createStyles = (colors) =>
       borderWidth: 1,
     },
   });
-	StyleSheet.create({
-		wrapper: {
-			alignItems: 'center',
-			flex: 1,
-		},
-		network: {
-			flexDirection: 'row',
-		},
-		networkName: {
-			fontSize: 11,
-			color: colors.text.alternative,
-			...fontStyles.normal,
-		},
-		networkIcon: {
-			width: 5,
-			height: 5,
-			borderRadius: 100,
-			marginRight: 5,
-			marginTop: Device.isIos() ? 4 : 5,
-		},
-		title: {
-			fontSize: 18,
-			...fontStyles.normal,
-			color: colors.text.default,
-		},
-		otherNetworkIcon: {
-			backgroundColor: importedColors.transparent,
-			borderColor: colors.border.default,
-			borderWidth: 1,
-		},
-	});
 
 /**
  * UI PureComponent that renders inside the navbar
@@ -94,13 +58,17 @@ const createStyles = (colors) =>
 class NavbarTitle extends PureComponent {
   static propTypes = {
     /**
-     * Object representing the configuration of the current selected network
+     * Object representing the selected the selected network
      */
-    providerConfig: PropTypes.object.isRequired,
+    network: PropTypes.object.isRequired,
     /**
      * Name of the current view
      */
     title: PropTypes.string,
+    /**
+     * Action that toggles the network modal
+     */
+    toggleNetworkModal: PropTypes.func,
     /**
      * Boolean that specifies if the title needs translation
      */
@@ -109,10 +77,6 @@ class NavbarTitle extends PureComponent {
      * Boolean that specifies if the network can be changed
      */
     disableNetwork: PropTypes.bool,
-    /**
-     * Object that represents the navigator
-     */
-    navigation: PropTypes.object,
   };
 
   static defaultProps = {
@@ -125,16 +89,7 @@ class NavbarTitle extends PureComponent {
     if (!this.props.disableNetwork) {
       if (!this.animating) {
         this.animating = true;
-        this.props.navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
-          screen: Routes.SHEET.NETWORK_SELECTOR,
-        });
-
-        Analytics.trackEventWithParameters(
-          MetaMetricsEvents.NETWORK_SELECTOR_PRESSED,
-          {
-            chain_id: this.props.providerConfig.chainId,
-          },
-        );
+        this.props.toggleNetworkModal();
         setTimeout(() => {
           this.animating = false;
         }, 500);
@@ -143,25 +98,21 @@ class NavbarTitle extends PureComponent {
   };
 
   render = () => {
-    const { providerConfig, title, translate } = this.props;
+    const { network, title, translate } = this.props;
     let name = null;
     const color =
-      (Networks[providerConfig.type] && Networks[providerConfig.type].color) ||
+      (Networks[network.provider.type] &&
+        Networks[network.provider.type].color) ||
       null;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
-	render = () => {
-		const { network, title, translate } = this.props;
-		let name = null;
-		const color = (Networks[network.provider.type] && Networks[network.provider.type].color) || null;
-		const colors = this.context.colors || mockTheme.colors;
-		const styles = createStyles(colors);
 
-    if (providerConfig.nickname) {
-      name = providerConfig.nickname;
+    if (network.provider.nickname) {
+      name = network.provider.nickname;
     } else {
       name =
-        (Networks[providerConfig.type] && Networks[providerConfig.type].name) ||
+        (Networks[network.provider.type] &&
+          Networks[network.provider.type].name) ||
         { ...Networks.rpc, color: null }.name;
     }
 
@@ -197,33 +148,14 @@ class NavbarTitle extends PureComponent {
       </TouchableOpacity>
     );
   };
-		return (
-			<TouchableOpacity
-				onPress={this.openNetworkList}
-				style={styles.wrapper}
-				activeOpacity={this.props.disableNetwork ? 1 : 0.2}
-				testID={'open-networks-button'}
-			>
-				{title ? (
-					<Text numberOfLines={1} style={styles.title}>
-						{realTitle}
-					</Text>
-				) : null}
-				<View style={styles.network}>
-					<View style={[styles.networkIcon, color ? { backgroundColor: color } : styles.otherNetworkIcon]} />
-					<Text numberOfLines={1} style={styles.networkName} testID={'navbar-title-network'}>
-						{name}
-					</Text>
-				</View>
-			</TouchableOpacity>
-		);
-	};
 }
 
 NavbarTitle.contextType = ThemeContext;
 
 const mapStateToProps = (state) => ({
-  providerConfig: selectProviderConfig(state),
+  network: state.engine.backgroundState.NetworkController,
 });
-
-export default withNavigation(connect(mapStateToProps)(NavbarTitle));
+const mapDispatchToProps = (dispatch) => ({
+  toggleNetworkModal: () => dispatch(toggleNetworkModal()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(NavbarTitle);

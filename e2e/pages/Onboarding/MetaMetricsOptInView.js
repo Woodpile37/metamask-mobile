@@ -1,24 +1,47 @@
 import {
   OPTIN_METRICS_I_AGREE_BUTTON_ID,
   OPTIN_METRICS_NO_THANKS_BUTTON_ID,
-} from '../../../wdio/features/testIDs/Screens/OptinMetricsScreen.testIds';
-import TestHelpers from '../../helpers';
+  OPTIN_METRICS_PRIVACY_POLICY_DESCRIPTION_CONTENT_1_ID,
+  METAMETRICS_OPT_IN_CONTAINER_ID,
+} from '../../../wdio/screen-objects/testIDs/Screens/OptinMetricsScreen.testIds';
+<<<<<<< HEAD
+import Matchers from '../../utils/Matchers';
+import Gestures from '../../utils/Gestures';
 
-const METAMETRICS_OPT_IN_CONTAINER_ID = 'metaMetrics-OptIn';
+class MetaMetricsOptIn {
+  get container() {
+    return Matchers.getElementByID(METAMETRICS_OPT_IN_CONTAINER_ID);
+  }
+
+  get optInMetricsContent() {
+    return Matchers.getElementByID(
+=======
+import TestHelpers from '../../helpers';
 export default class MetaMetricsOptIn {
   static async tapAgreeButton() {
-    await TestHelpers.waitAndTap(OPTIN_METRICS_I_AGREE_BUTTON_ID);
+    await TestHelpers.swipe(
+>>>>>>> upstream/testflight/4754-permission-system
+      OPTIN_METRICS_PRIVACY_POLICY_DESCRIPTION_CONTENT_1_ID,
+    );
   }
 
-  static async tapNoThanksButton() {
-    await TestHelpers.waitAndTap(OPTIN_METRICS_NO_THANKS_BUTTON_ID);
+  get iAgreeButton() {
+    return Matchers.getElementByID(OPTIN_METRICS_I_AGREE_BUTTON_ID);
   }
 
-  static async isVisible() {
-    await TestHelpers.checkIfVisible(METAMETRICS_OPT_IN_CONTAINER_ID);
+  get noThanksButton() {
+    return Matchers.getElementByID(OPTIN_METRICS_NO_THANKS_BUTTON_ID);
   }
 
-  static async isNotVisible() {
-    await TestHelpers.checkIfNotVisible(METAMETRICS_OPT_IN_CONTAINER_ID);
+  async tapAgreeButton() {
+    await Gestures.swipe(this.optInMetricsContent, 'up', 'slow', 0.6);
+    await Gestures.waitAndTap(this.iAgreeButton);
+  }
+
+  async tapNoThanksButton() {
+    await Gestures.swipe(this.optInMetricsContent, 'up', 'slow', 0.6);
+    await Gestures.waitAndTap(this.noThanksButton);
   }
 }
+
+export default new MetaMetricsOptIn();

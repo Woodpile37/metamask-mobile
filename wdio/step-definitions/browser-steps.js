@@ -1,5 +1,9 @@
 import { Given, Then, When } from '@wdio/cucumber-framework';
+<<<<<<< HEAD
 
+=======
+import WalletMainScreen from '../screen-objects/WalletMainScreen';
+>>>>>>> upstream/testflight/4754-permission-system
 import BrowserScreen from '../screen-objects/BrowserObject/BrowserScreen';
 import AddFavoriteScreen from '../screen-objects/BrowserObject/AddFavoriteScreen';
 import AddressBarScreen from '../screen-objects/BrowserObject/AddressBarScreen';
@@ -15,9 +19,13 @@ import NetworkListModal from '../screen-objects/Modals/NetworkListModal';
 import TabBarModal from '../screen-objects/Modals/TabBarModal';
 import ConnectedAccountsModal from '../screen-objects/Modals/ConnectedAccountsModal';
 import AccountListComponent from '../screen-objects/AccountListComponent';
+<<<<<<< HEAD
 import Gestures from '../helpers/Gestures';
 
 const TEST_DAPP = 'https://metamask.github.io/test-dapp/';
+=======
+import TabBarModal from '../screen-objects/Modals/TabBarModal';
+>>>>>>> upstream/testflight/4754-permission-system
 
 Given(/^I am on Home MetaMask website$/, async () => {
   await ExternalWebsitesScreen.isHomeFavoriteButtonDisplayed();
@@ -69,15 +77,34 @@ Then(/^select account component is displayed$/, async () => {
   await AccountListComponent.isComponentDisplayed();
 });
 
+<<<<<<< HEAD
 When(/^I navigate to "([^"]*)"$/, async function (text) {
   await BrowserScreen.tapUrlBar();
+<<<<<<< Updated upstream
   switch(text) {
     case 'test-dapp-erc20':
       await AddressBarScreen.editUrlInput(`${TEST_DAPP}?contract=${this.erc20}`);
+=======
+  switch (text) {
+    case 'test-dapp-erc20':
+      await AddressBarScreen.editUrlInput(
+        `${TEST_DAPP}?contract=${this.erc20}`,
+      );
+      break;
+    case 'test-dapp-erc721':
+      await AddressBarScreen.editUrlInput(
+        `${TEST_DAPP}?contract=${this.erc721}`,
+      );
+>>>>>>> Stashed changes
       break;
     default:
       await AddressBarScreen.editUrlInput(text);
   }
+=======
+When(/^I navigate to "([^"]*)"$/, async (text) => {
+  await BrowserScreen.tapUrlBar();
+  await AddressBarScreen.editUrlInput(text);
+>>>>>>> upstream/testflight/4754-permission-system
   await AddressBarScreen.submitUrlWebsite();
 });
 
@@ -373,18 +400,53 @@ Then(
   },
 );
 
+<<<<<<< HEAD
 When(/^I select "([^"]*)" network option$/, async (network) => {
   await NetworkListModal.waitForDisplayed();
+<<<<<<< Updated upstream
+=======
+  await NetworkListModal.tapTestNetworkSwitch();
+>>>>>>> Stashed changes
   await CommonScreen.tapOnText(network);
+=======
+When(/^I select "([^"]*)" network option$/, async (option) => {
+  switch (option) {
+    case 'Goerli':
+      await NetworkListModal.tapGoerliTestNetwork();
+      break;
+    default:
+      throw new Error('Condition not found');
+  }
+
+  await NetworkEducationModal.isNetworkEducationNetworkName(option);
+  await NetworkEducationModal.tapGotItButton();
+});
+
+Then(/^"([^"]*)" is selected for MMM app$/, async (option) => {
+  await BrowserScreen.tapNetworkAvatarIcon();
+
+  switch (option) {
+    case 'Goerli':
+      await NetworkListModal.isGoerliNetworkSelectedIconDisplayed();
+      break;
+    default:
+      throw new Error('Condition not found');
+  }
+
+  await NetworkListModal.tapNetworkListCloseIcon();
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 Given(/^I navigate to the browser$/, async () => {
   await TabBarModal.tapBrowserButton();
   await BrowserScreen.isScreenContentDisplayed();
+<<<<<<< HEAD
 });
 
 When(/^I navigate to the wallet$/, async () => {
   await TabBarModal.tapWalletButton();
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 When(/^I connect my active wallet to the Uniswap exchange page$/, async () => {
@@ -404,14 +466,44 @@ When(/^I scroll to the ERC20 section$/, async () => {
   await Gestures.swipeUp(1);
 });
 
+<<<<<<< Updated upstream
+=======
+When(/^I scroll to the ERC721 section$/, async () => {
+  await Gestures.swipeUp(1);
+  await Gestures.swipeUp(1);
+});
+
+>>>>>>> Stashed changes
 When(/^I transfer ERC20 tokens$/, async () => {
   await ExternalWebsitesScreen.tapDappTransferTokens();
   await AccountApprovalModal.tapConfirmButtonByText();
   await AccountApprovalModal.waitForDisappear();
 });
 
+<<<<<<< Updated upstream
 When(/^I approve ERC20 tokens$/, async () => {
   await ExternalWebsitesScreen.tapDappApproveTokens();
+=======
+When(/^I transfer an ERC721 token$/, async () => {
+  await ExternalWebsitesScreen.tapDappTransferNft();
+  await AccountApprovalModal.tapConfirmButtonByText();
+  await AccountApprovalModal.waitForDisappear();
+});
+
+When(/^I approve default ERC20 token amount$/, async () => {
+  await ExternalWebsitesScreen.tapDappApproveTokens();
+  await AccountApprovalModal.tapUseDefaultApproveByText();
+  await AccountApprovalModal.tapNextButtonByText();
+  await AccountApprovalModal.tapApproveButtonByText();
+  await AccountApprovalModal.waitForDisappear();
+});
+
+When(/^I approve the custom ERC20 token amount$/, async () => {
+  await ExternalWebsitesScreen.tapDappApproveTokens();
+  await AccountApprovalModal.setTokenAmount('1');
+  await AccountApprovalModal.tapNextButtonByText();
+  await AccountApprovalModal.tapNextButtonByText();
+>>>>>>> Stashed changes
   await AccountApprovalModal.tapApproveButtonByText();
   await AccountApprovalModal.waitForDisappear();
 });
@@ -446,6 +538,7 @@ Then(/^I should close the address view$/, async () => {
   await AddressBarScreen.tapUrlCancelButton();
 });
 
+<<<<<<< HEAD
 When(/^I tap on the Network Icon$/, async () => {
   await BrowserScreen.tapNetworkAvatarIcon();
 });
@@ -476,4 +569,24 @@ Then(/^I set "([^"]*)" as my primary account$/, async (text) => {
 
 When(/^I tap on Select all button$/, async () => {
   await AccountApprovalModal.tapSelectAllButton();
+=======
+Then(/^the created account is selected$/, async () => {
+  await AccountListComponent.isAccountTwoSelected();
+  await AccountListComponent.tapAccount('Account 2');
+>>>>>>> upstream/testflight/4754-permission-system
+});
+When(/^I tap on the Network Icon$/, async () => {
+  await BrowserScreen.tapNetworkAvatarIcon();
+});
+Then(/^the browser view is on the "([^"]*)" website$/, async (url) => {
+  if (url === 'https://www.reddit.com/') {
+    await ExternalWebsitesScreen.isRedditIconDisplayed();
+  }
+
+  await BrowserScreen.tapUrlBar();
+  await AddressBarScreen.isUrlValueContains(url);
+  await AddressBarScreen.tapUrlCancelButton();
+});
+When(/^I tap on the account icon on the Wallet screen$/, async () => {
+  await WalletMainScreen.tapIdenticon();
 });

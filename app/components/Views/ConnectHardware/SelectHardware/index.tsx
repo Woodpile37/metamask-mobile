@@ -5,7 +5,6 @@ import React, { useEffect } from 'react';
 import {
   View,
   SafeAreaView,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
@@ -19,9 +18,14 @@ import {
 import { getNavigationOptionsTitle } from '../../../UI/Navbar';
 import { fontStyles } from '../../../../styles/common';
 import { strings } from '../../../../../locales/i18n';
+import Routes from '../../../../constants/navigation/Routes';
+import Text, {
+  TextVariant,
+} from '../../../../component-library/components/Texts/Text';
 
 const createStyle = (colors: any) =>
   StyleSheet.create({
+    screen: { justifyContent: 'center' },
     container: {
       flex: 1,
       marginHorizontal: '5%',
@@ -62,13 +66,6 @@ const createStyle = (colors: any) =>
     },
   });
 
-// Ledger Logo
-const ledgerLogoLightImgPath = 'images/ledger-light.png';
-const ledgerLogoLight = require(ledgerLogoLightImgPath);
-
-const ledgerLogoDarkImgPath = 'images/ledger-dark.png';
-const ledgerLogoDark = require(ledgerLogoDarkImgPath);
-
 // QR Hardware Logo
 const qrHardwareLogoLightImgPath = 'images/qrhardware-light.png';
 const qrHardwareLogoLight = require(qrHardwareLogoLightImgPath);
@@ -93,12 +90,7 @@ const SelectHardwareWallet = () => {
   }, [navigation, colors]);
 
   const navigateToConnectQRWallet = () => {
-    navigation.navigate('ConnectQRHardwareFlow');
-  };
-
-  const navigateToConnectLedger = () => {
-    // eslint-disable-next-line no-console
-    console.log('navigateToConnectLedger');
+    navigation.navigate(Routes.HW.CONNECT_QR_DEVICE);
   };
 
   const renderHardwareButton = (image: any, onPress: any) => (
@@ -107,22 +99,23 @@ const SelectHardwareWallet = () => {
     </TouchableOpacity>
   );
 
+  const QRButton = () => {
+    const qrHardwareLogo = useAssetFromTheme(
+      qrHardwareLogoLight,
+      qrHardwareLogoDark,
+    );
+    return renderHardwareButton(qrHardwareLogo, navigateToConnectQRWallet);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>
+        <Text variant={TextVariant.BodyMD}>
           {strings('connect_hardware.select_hardware')}
         </Text>
       </View>
       <View style={styles.buttonsContainer}>
-        {renderHardwareButton(
-          useAssetFromTheme(ledgerLogoLight, ledgerLogoDark),
-          navigateToConnectLedger,
-        )}
-        {renderHardwareButton(
-          useAssetFromTheme(qrHardwareLogoLight, qrHardwareLogoDark),
-          navigateToConnectQRWallet,
-        )}
+        <QRButton />
       </View>
     </SafeAreaView>
   );

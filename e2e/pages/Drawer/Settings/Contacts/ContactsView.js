@@ -1,16 +1,18 @@
 import TestHelpers from '../../../../helpers';
 import {
-  CONTACT_ADD_BUTTON,
+  CONTACT_ADDRESS_INPUT,
   CONTACTS_CONTAINER_ID,
 } from '../../../../../wdio/screen-objects/testIDs/Screens/Contacts.testids';
 
+const ADD_CONTACT_BUTTON_ID = 'add-contact-button';
+
 export default class ContactsView {
   static async tapAddContactButton() {
-    if (device.getPlatform() === 'android') {
-      await TestHelpers.waitAndTapByLabel(CONTACT_ADD_BUTTON);
-    } else {
-      await TestHelpers.waitAndTap(CONTACT_ADD_BUTTON);
-    }
+    await TestHelpers.tap(ADD_CONTACT_BUTTON_ID);
+  }
+
+  static async clearAddressInputBox() {
+    await TestHelpers.clearField(CONTACT_ADDRESS_INPUT);
   }
 
   static async tapOnAlias(alias) {
@@ -30,7 +32,6 @@ export default class ContactsView {
   static async isContactAliasVisible(alias) {
     await TestHelpers.checkIfElementWithTextIsVisible(alias);
   }
-
   static async isContactAliasNotVisible(alias) {
     await TestHelpers.checkIfElementWithTextIsNotVisible(alias);
   }

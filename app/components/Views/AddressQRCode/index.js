@@ -7,8 +7,12 @@ import {
   View,
   Text,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { TouchableOpacity, Dimensions, StyleSheet, View, Text } from 'react-native';
 import { fontStyles } from '../../../styles/common';
+=======
+import { fontStyles, colors as importedColors } from '../../../styles/common';
+>>>>>>> Stashed changes
 import { connect } from 'react-redux';
 import QRCode from 'react-native-qrcode-svg';
 import { strings } from '../../../../locales/i18n';
@@ -19,6 +23,10 @@ import GlobalAlert from '../../UI/GlobalAlert';
 import { protectWalletModalVisible } from '../../../actions/user';
 import ClipboardManager from '../../../core/ClipboardManager';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+<<<<<<< Updated upstream
+=======
+import { selectSelectedAddress } from '../../../selectors/preferencesController';
+>>>>>>> Stashed changes
 
 const WIDTH = Dimensions.get('window').width - 88;
 
@@ -34,6 +42,7 @@ const createStyles = (colors) =>
       flex: 1,
       alignItems: 'center',
     },
+<<<<<<< Updated upstream
     qrCode: {
       marginBottom: 16,
       alignItems: 'center',
@@ -42,6 +51,20 @@ const createStyles = (colors) =>
       backgroundColor: colors.background.default,
       borderRadius: 8,
     },
+=======
+    qrCodeContainer: {
+      marginBottom: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 28,
+      backgroundColor: colors.background.default,
+      borderRadius: 8,
+    },
+    qrCode: {
+      padding: 8,
+      backgroundColor: importedColors.white,
+    },
+>>>>>>> Stashed changes
     addressWrapper: {
       alignItems: 'center',
       justifyContent: 'center',
@@ -71,6 +94,7 @@ const createStyles = (colors) =>
       color: colors.text.default,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		root: {
 			flex: 1,
@@ -119,6 +143,8 @@ const createStyles = (colors) =>
 			color: colors.text.default,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that renders a public address view
@@ -187,7 +213,6 @@ class AddressQRCode extends PureComponent {
           <TouchableOpacity
             style={styles.closeIcon}
             onPress={this.closeQrModal}
-            testID={'close-qr-modal'}
           >
             <IonicIcon
               name={'ios-close'}
@@ -195,6 +220,7 @@ class AddressQRCode extends PureComponent {
               color={colors.overlay.inverse}
             />
           </TouchableOpacity>
+<<<<<<< Updated upstream
           <View style={styles.qrCode}>
             <QRCode
               value={`ethereum:${this.props.selectedAddress}`}
@@ -202,15 +228,22 @@ class AddressQRCode extends PureComponent {
               color={colors.text.default}
               backgroundColor={colors.background.default}
             />
+=======
+          <View style={styles.qrCodeContainer}>
+            <View style={styles.qrCode}>
+              <QRCode
+                value={`ethereum:${this.props.selectedAddress}`}
+                size={Dimensions.get('window').width - 160}
+              />
+            </View>
+>>>>>>> Stashed changes
           </View>
           <View style={styles.addressWrapper}>
             <Text style={styles.addressTitle}>
               {strings('receive_request.public_address_qr_code')}
             </Text>
             <TouchableOpacity onPress={this.copyAccountToClipboard}>
-              <Text style={styles.address} testID={'public-address-input'}>
-                {this.processAddress()}
-              </Text>
+              <Text style={styles.address}>{this.processAddress()}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -218,6 +251,7 @@ class AddressQRCode extends PureComponent {
       </View>
     );
   }
+<<<<<<< Updated upstream
 	render() {
 		const colors = this.context.colors || mockTheme.colors;
 		const styles = createStyles(colors);
@@ -254,6 +288,12 @@ class AddressQRCode extends PureComponent {
 const mapStateToProps = (state) => ({
   selectedAddress:
     state.engine.backgroundState.PreferencesController.selectedAddress,
+=======
+}
+
+const mapStateToProps = (state) => ({
+  selectedAddress: selectSelectedAddress(state),
+>>>>>>> Stashed changes
   seedphraseBackedUp: state.user.seedphraseBackedUp,
 });
 

@@ -41,6 +41,7 @@ const createStyles = (colors) =>
 function SlippageModal({ isVisible, dismiss, onChange, slippage }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		modal: {
 			margin: 0,
@@ -91,6 +92,8 @@ function SlippageModal({ isVisible, dismiss, onChange, slippage }) {
 					<Text bold centered primary>
 						{strings('swaps.max_slippage')}
 					</Text>
+=======
+>>>>>>> Stashed changes
 
   return (
     <Modal

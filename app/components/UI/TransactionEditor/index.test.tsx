@@ -21,6 +21,7 @@ const initialState = {
   settings: {
     primaryCurrency: 'fiat',
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			AccountTrackerController: {
@@ -56,6 +57,8 @@ const initialState = {
 	settings: {
 		primaryCurrency: 'fiat',
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 

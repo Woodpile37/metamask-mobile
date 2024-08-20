@@ -6,9 +6,12 @@ describe('SanitizeUrl', () => {
     const sanitizedUrl = SanitizeUrl(urlString);
     expect(sanitizedUrl).toEqual('https://www.example.com');
   });
+<<<<<<< Updated upstream
 	it('should sanitize url', () => {
 		const urlString = 'https://www.example.com/';
 		const sanitizedUrl = SanitizeUrl(urlString);
 		expect(sanitizedUrl).toEqual('https://www.example.com');
 	});
+=======
+>>>>>>> Stashed changes
 });

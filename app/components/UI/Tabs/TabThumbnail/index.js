@@ -16,7 +16,10 @@ import {
   fontStyles,
   colors as importedColors,
 } from '../../../../styles/common';
+<<<<<<< Updated upstream
 import { fontStyles, colors as importedColors } from '../../../../styles/common';
+=======
+>>>>>>> Stashed changes
 import Device from '../../../../util/device';
 import AppConstants from '../../../../core/AppConstants';
 import { getHost } from '../../../../util/browser';
@@ -114,6 +117,7 @@ const createStyles = (colors) =>
       marginRight: -5,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		tabFavicon: {
 			alignSelf: 'flex-start',
@@ -193,6 +197,8 @@ const createStyles = (colors) =>
 			marginRight: -5,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 const { HOMEPAGE_URL } = AppConstants;
 const METAMASK_FOX = require('../../../../images/fox.png'); // eslint-disable-line import/no-commonjs
@@ -230,6 +236,7 @@ export default class TabThumbnail extends PureComponent {
     const Container = this.getContainer();
     const hostname = getHost(tab.url);
     const isHomepage = hostname === getHost(HOMEPAGE_URL);
+<<<<<<< Updated upstream
 	render() {
 		const { isActiveTab, tab, onClose, onSwitch } = this.props;
 		const colors = this.context.colors || mockTheme.colors;
@@ -237,6 +244,8 @@ export default class TabThumbnail extends PureComponent {
 		const Container = this.getContainer();
 		const hostname = getHost(tab.url);
 		const isHomepage = hostname === getHost(HOMEPAGE_URL);
+=======
+>>>>>>> Stashed changes
 
     return (
       <Container style={styles.checkWrapper} elevation={8}>

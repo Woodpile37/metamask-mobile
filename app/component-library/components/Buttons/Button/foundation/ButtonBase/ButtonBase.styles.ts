@@ -3,7 +3,6 @@ import { StyleSheet, ViewStyle } from 'react-native';
 
 // External dependencies.
 import { Theme } from '../../../../../../util/theme/models';
-import { ButtonSize, ButtonWidthTypes } from '../../Button.types';
 
 // Internal dependencies.
 import { ButtonBaseStyleSheetVars } from './ButtonBase.types';
@@ -20,43 +19,27 @@ const styleSheet = (params: {
   vars: ButtonBaseStyleSheetVars;
 }) => {
   const { vars, theme } = params;
-  const { style, size, labelColor, width, isDisabled } = vars;
-  const isAutoSize: boolean = size === ButtonSize.Auto;
-  let widthObject;
-  switch (width) {
-    case ButtonWidthTypes.Auto:
-      widthObject = { alignSelf: 'flex-start' };
-      break;
-    case ButtonWidthTypes.Full:
-      widthObject = { alignSelf: 'stretch' };
-      break;
-    default:
-      widthObject = { width };
-  }
+  const { style, size, labelColor } = vars;
+  const sizeAsNum = Number(size);
 
   return StyleSheet.create({
     base: Object.assign(
       {
         flexDirection: 'row',
         backgroundColor: theme.colors.background.alternative,
-        height: isAutoSize ? size : Number(size),
+        height: sizeAsNum,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: isAutoSize ? 0 : Number(size) / 2,
-        paddingHorizontal: isAutoSize ? 0 : 16,
-        ...(isDisabled && { opacity: 0.5 }),
-        ...widthObject,
+        borderRadius: sizeAsNum / 2,
+        paddingHorizontal: 16,
       } as ViewStyle,
       style,
     ) as ViewStyle,
-    startIcon: {
+    icon: {
       marginRight: 8,
     },
-    endIcon: {
-      marginLeft: 8,
-    },
     label: {
-      color: labelColor || theme.colors.text.default,
+      color: labelColor,
     },
   });
 };

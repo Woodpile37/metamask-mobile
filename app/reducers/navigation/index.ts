@@ -32,6 +32,7 @@ const navigationReducer = (state = initialState, action: any = {}) => {
     default:
       return state;
   }
+<<<<<<< Updated upstream
 	currentRoute: string;
 }
 
@@ -49,13 +50,18 @@ const navigationReducer = (state = initialState, action: any = {}) => {
 		default:
 			return state;
 	}
+=======
+>>>>>>> Stashed changes
 };
 
 /**
  * Selectors
  */
+<<<<<<< HEAD
+=======
 export const getCurrentRoute = (state: any) => state.navigation.currentRoute;
 export const getCurrentBottomNavRoute = (state: any) =>
   state.navigation.currentBottomNavRoute;
+>>>>>>> upstream/testflight/4754-permission-system
 
 export default navigationReducer;

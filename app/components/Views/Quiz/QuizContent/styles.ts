@@ -41,10 +41,13 @@ const styleSheet = (params: { theme: Theme }) => {
       marginVertical: 12,
       width: '100%',
     },
+<<<<<<< HEAD
     image: {
       width: 300,
       height: 250,
     },
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     bottomContainer: {
       width: '100%',
       marginTop: 25,

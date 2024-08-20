@@ -5,6 +5,10 @@ import { fontStyles } from '../../../../styles/common';
 import { strings } from '../../../../../locales/i18n';
 import WarningMessage from '../../../Views/SendFlow/WarningMessage';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
+<<<<<<< Updated upstream
+=======
+import { isTestNet } from '../../../../util/networks';
+>>>>>>> Stashed changes
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -36,6 +40,17 @@ const createStyles = (colors) =>
       textTransform: 'uppercase',
       textAlign: 'center',
     },
+<<<<<<< Updated upstream
+=======
+    testNestSummaryPrimary: {
+      ...fontStyles.normal,
+      color: colors.text.default,
+      fontSize: 44,
+      paddingTop: 16,
+      paddingBottom: 4,
+      textAlign: 'center',
+    },
+>>>>>>> Stashed changes
     summarySecondary: {
       ...fontStyles.normal,
       color: colors.text.alternative,
@@ -49,6 +64,7 @@ const createStyles = (colors) =>
       paddingTop: 12,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		confirmBadge: {
 			...fontStyles.normal,
@@ -91,6 +107,8 @@ const createStyles = (colors) =>
 			paddingTop: 12,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 /**
  * PureComponent that supports reviewing transaction summary
@@ -121,6 +139,13 @@ class TransactionReviewSummary extends PureComponent {
      * ETH or fiat, depending on user setting
      */
     primaryCurrency: PropTypes.string,
+<<<<<<< Updated upstream
+=======
+    /**
+     * Network provider chain id
+     */
+    chainId: PropTypes.string,
+>>>>>>> Stashed changes
   };
 
   renderWarning = () => (
@@ -137,6 +162,7 @@ class TransactionReviewSummary extends PureComponent {
       fiatValue,
       approveTransaction,
       primaryCurrency,
+<<<<<<< Updated upstream
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
@@ -156,6 +182,13 @@ class TransactionReviewSummary extends PureComponent {
 					<Text style={styles.confirmBadge} numberOfLines={1}>
 						{actionKey}
 					</Text>
+=======
+      chainId,
+    } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+    const isTestNetResult = isTestNet(chainId);
+>>>>>>> Stashed changes
 
     return (
       <View>
@@ -170,10 +203,31 @@ class TransactionReviewSummary extends PureComponent {
           </Text>
 
           {!conversionRate ? (
+<<<<<<< Updated upstream
             <Text style={styles.summaryPrimary}>{assetAmount}</Text>
           ) : (
             <View>
               <Text style={styles.summaryPrimary}>
+=======
+            <Text
+              style={
+                isTestNetResult
+                  ? styles.testNestSummaryPrimary
+                  : styles.summaryPrimary
+              }
+            >
+              {assetAmount}
+            </Text>
+          ) : (
+            <View>
+              <Text
+                style={
+                  isTestNetResult
+                    ? styles.testNestSummaryPrimary
+                    : styles.summaryPrimary
+                }
+              >
+>>>>>>> Stashed changes
                 {primaryCurrency === 'ETH' ? assetAmount : fiatValue}
               </Text>
               <Text style={styles.summarySecondary}>

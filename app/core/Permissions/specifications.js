@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+///: BEGIN:ONLY_INCLUDE_IF(snaps)
+import { endowmentCaveatSpecifications as snapsEndowmentCaveatSpecifications } from '@metamask/snaps-controllers';
+import { caveatSpecifications as snapsCaveatsSpecifications } from '@metamask/snaps-rpc-methods';
+///: END:ONLY_INCLUDE_IF
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 import {
   constructPermission,
   PermissionType,
@@ -8,7 +15,11 @@ import { CaveatTypes, RestrictedMethods } from './constants';
 /**
  * This file contains the specifications of the permissions and caveats
  * that are recognized by our permission system. See the PermissionController
+<<<<<<< HEAD
+ * README in @metamask/snaps-controllers for details.
+=======
  * README in @metamask/snap-controllers for details.
+>>>>>>> upstream/testflight/4754-permission-system
  */
 
 /**
@@ -58,13 +69,24 @@ export const getCaveatSpecifications = ({ getIdentities }) => ({
         const addressToCompare = address.toLowerCase();
         return allAccounts.includes(addressToCompare);
       });
+<<<<<<< HEAD
 
       return res;
+=======
+      return res.slice(0, 1);
+>>>>>>> upstream/testflight/4754-permission-system
     },
 
     validator: (caveat, _origin, _target) =>
       validateCaveatAccounts(caveat.value, getIdentities),
   },
+<<<<<<< HEAD
+  ///: BEGIN:ONLY_INCLUDE_IF(snaps)
+  ...snapsCaveatsSpecifications,
+  ...snapsEndowmentCaveatSpecifications,
+  ///: END:ONLY_INCLUDE_IF
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 });
 
 /**
@@ -73,6 +95,10 @@ export const getCaveatSpecifications = ({ getIdentities }) => ({
  *
  * @param {{
  *   getAllAccounts: () => Promise<string[]>,
+<<<<<<< HEAD
+=======
+ *   getIdentities: () => Record<string, Identity>,
+>>>>>>> upstream/testflight/4754-permission-system
  * }} options - Options bag.
  * @param options.getAllAccounts - A function that returns all Ethereum accounts
  * in the current MetaMask instance.
@@ -86,7 +112,11 @@ export const getCaveatSpecifications = ({ getIdentities }) => ({
 export const getPermissionSpecifications = ({ getAllAccounts }) => ({
   [PermissionKeys.eth_accounts]: {
     permissionType: PermissionType.RestrictedMethod,
+<<<<<<< HEAD
     targetName: PermissionKeys.eth_accounts,
+=======
+    targetKey: PermissionKeys.eth_accounts,
+>>>>>>> upstream/testflight/4754-permission-system
     allowedCaveats: [CaveatTypes.restrictReturnedAccounts],
 
     factory: (permissionOptions, requestData) => {

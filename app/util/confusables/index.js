@@ -18,6 +18,7 @@ const zeroWidthPoints = new Set([
   '\ufeff', // zero width no-break space
   '\u2028', // line separator
   '\u2029', // paragraph separator,
+<<<<<<< Updated upstream
 	const key = 'similarTo';
 	const collection = confusables(ensName).reduce(
 		(total, current) => (key in current ? [...total, current.point] : total),
@@ -33,6 +34,8 @@ const zeroWidthPoints = new Set([
 	'\ufeff', // zero width no-break space
 	'\u2028', // line separator
 	'\u2029', // paragraph separator,
+=======
+>>>>>>> Stashed changes
 ]);
 
 export const hasZeroWidthPoints = (char) => zeroWidthPoints.has(char);
@@ -46,6 +49,7 @@ export const getConfusablesExplanations = (confusableCollection) => [
         : `'${key}' ${strings('transaction.similar_to')} '${value}'`;
     }),
   ),
+<<<<<<< Updated upstream
 	...new Set(
 		confusableCollection.map((key) => {
 			const value = confusablesMap[key];
@@ -54,4 +58,6 @@ export const getConfusablesExplanations = (confusableCollection) => [
 				: `'${key}' ${strings('transaction.similar_to')} '${value}'`;
 		})
 	),
+=======
+>>>>>>> Stashed changes
 ];

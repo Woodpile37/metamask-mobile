@@ -1,5 +1,14 @@
+<<<<<<< HEAD
 import Selectors from './Selectors';
 
+=======
+<<<<<<<< HEAD:wdio/features/helpers/Gestures.js
+========
+import Selectors from './Selectors';
+
+/* global driver */
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/helpers/Gestures.js
+>>>>>>> upstream/testflight/4754-permission-system
 /**
  * To make a Gesture methods more robust for multiple devices and also
  * multiple screen sizes the advice is to work with percentages instead of
@@ -55,6 +64,7 @@ const SWIPE_DIRECTION = {
   },
 };
 
+<<<<<<< HEAD
 const Actions = {
   PRESS: 'press',
   LONGPRESS: 'longPress',
@@ -75,6 +85,21 @@ class Gestures {
     // simple touch action on element
     const elem = await element;
     await elem.isDisplayed();
+=======
+class Gestures  {
+  static async waitAndTap(element) {
+    const elem = await element;
+    await elem.waitForDisplayed();
+    await elem.click();
+  }
+
+  static async tap(element) {
+    // simple touch action on element
+    const elem = await element;
+<<<<<<<< HEAD:wdio/features/helpers/Gestures.js
+    await elem.click();
+========
+>>>>>>> upstream/testflight/4754-permission-system
     switch (tapType) {
       case 'TAP':
         (await elem).touchAction(Actions.TAP);
@@ -98,7 +123,10 @@ class Gestures {
 
   static async tapTextByXpath(text, tapType = 'TAP') {
     const elem = await Selectors.getXpathElementByText(text);
+<<<<<<< HEAD
     await elem.waitForDisplayed();
+=======
+>>>>>>> upstream/testflight/4754-permission-system
     switch (tapType) {
       case 'TAP':
         await elem.touchAction(Actions.TAP);
@@ -114,6 +142,7 @@ class Gestures {
     }
   }
 
+<<<<<<< HEAD
   static async tapByTextContaining(text, tapType = 'TAP') {
     const elem = await Selectors.getXpathElementByTextContains(text);
     await elem.isDisplayed();
@@ -152,6 +181,8 @@ class Gestures {
     ]);
   }
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
   static async longPress(element, waitTime) {
     const elem = await element;
     (await elem).touchAction([
@@ -159,11 +190,16 @@ class Gestures {
       { action: Actions.WAIT, ms: waitTime },
       Actions.RELEASE,
     ]);
+<<<<<<< HEAD
+=======
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/helpers/Gestures.js
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   static async typeText(element, text) {
     const elem = await element;
     await elem.waitForDisplayed();
+<<<<<<< HEAD
     (await elem).touchAction(Actions.TAP);
     await elem.clearValue();
     await elem.setValue(text, +'\n');
@@ -175,6 +211,11 @@ class Gestures {
     await elem.waitForDisplayed();
     await elem.clearValue();
     await elem.setValue(text, +'\n');
+=======
+    await elem.click();
+    await elem.clearValue();
+    await elem.setValue(text, + '\n');
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   /**
@@ -184,8 +225,12 @@ class Gestures {
   static async checkIfDisplayedWithSwipeUp(element, maxScrolls, amount = 0) {
     // If the element is not displayed and we haven't scrolled the max amount of scrolls
     // then scroll and execute the method again
+<<<<<<< HEAD
     const elem = await element;
     if (!(await elem.isDisplayed()) && amount <= maxScrolls) {
+=======
+    if (!(await element.isDisplayed()) && amount <= maxScrolls) {
+>>>>>>> upstream/testflight/4754-permission-system
       await this.swipeUp(0.85);
       await this.checkIfDisplayedWithSwipeUp(element, maxScrolls, amount + 1);
     } else if (amount > maxScrolls) {
@@ -345,4 +390,8 @@ class Gestures {
   }
 }
 
+<<<<<<< HEAD
 export default Gestures;
+=======
+export default Gestures
+>>>>>>> upstream/testflight/4754-permission-system

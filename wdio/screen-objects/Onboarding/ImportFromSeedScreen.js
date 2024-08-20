@@ -1,4 +1,5 @@
 import {
+<<<<<<< HEAD
   IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD,
   IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
   IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
@@ -32,17 +33,58 @@ class ImportFromSeed {
 
   get androidSeedPhraseInput() {
     return Selectors.getXpathElementByResourceId(
+=======
+  IMPORT_FROM_SEED_SCREEN_TITLE_ID,
+  IMPORT_FROM_SEED_SCREEN_SEED_PHRASE_INPUT_ID,
+  IMPORT_FROM_SEED_SCREEN_NEW_PASSWORD_INPUT_ID,
+  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_INPUT_ID,
+  IMPORT_FROM_SEED_SCREEN_SUBMIT_BUTTON_ID,
+<<<<<<<< HEAD:wdio/features/screen-objects/Onboarding/ImportFromSeedScreen.js
+  IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID
+} from '../../testIDs/Screens/ImportFromSeedScreen.testIds';
+========
+  IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
+  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
+} from '../testIDs/Screens/ImportFromSeedScreen.testIds';
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/screen-objects/Onboarding/ImportFromSeedScreen.js
+import Selectors from '../../helpers/Selectors';
+import Gestures from '../../helpers/Gestures';
+import assert from 'assert';
+
+class ImportFromSeed {
+  get screenTitle() {
+    return Selectors.getElementByPlatform(IMPORT_FROM_SEED_SCREEN_TITLE_ID);
+  }
+
+  get seedPhraseInput() {
+    return Selectors.getElementByPlatform(
+>>>>>>> upstream/testflight/4754-permission-system
       IMPORT_FROM_SEED_SCREEN_SEED_PHRASE_INPUT_ID,
     );
   }
 
+<<<<<<< HEAD
   get androidNewPasswordInput() {
     return Selectors.getXpathElementByResourceId(
       CREATE_PASSWORD_INPUT_FIRST_FIELD,
+=======
+  get newPasswordInput() {
+    return Selectors.getElementByPlatform(
+      IMPORT_FROM_SEED_SCREEN_NEW_PASSWORD_INPUT_ID,
+      true,
+    );
+  }
+
+  get confirmPasswordInput() {
+    return Selectors.getElementByPlatform(
+      IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_INPUT_ID,
+      true,
+>>>>>>> upstream/testflight/4754-permission-system
     );
   }
 
   get importButton() {
+<<<<<<< HEAD
     return Selectors.getXpathElementByText(IMPORT_FROM_SEED_SCREEN_SUBMIT_TEXT);
   }
 
@@ -62,27 +104,48 @@ class ImportFromSeed {
 
   get passwordStrengthLabel() {
     return Selectors.getXpathElementByResourceId(
+=======
+    return Selectors.getElementByPlatform(
+      IMPORT_FROM_SEED_SCREEN_SUBMIT_BUTTON_ID,
+    );
+  }
+
+  get passwordStrengthLabel() {
+    return Selectors.getElementByPlatform(
+>>>>>>> upstream/testflight/4754-permission-system
       IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
     );
   }
 
+<<<<<<< HEAD
   get passwordMatchIcon() {
     return Selectors.getXpathElementByResourceId(
+=======
+<<<<<<<< HEAD:wdio/features/screen-objects/Onboarding/ImportFromSeedScreen.js
+========
+  get passwordMatchIcon() {
+    return Selectors.getElementByPlatform(
+>>>>>>> upstream/testflight/4754-permission-system
       IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
     );
   }
 
+<<<<<<< HEAD
   get confirmPasswordText() {
     return Selectors.getXpathElementByText(
       IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD,
     );
   }
 
+=======
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/screen-objects/Onboarding/ImportFromSeedScreen.js
+>>>>>>> upstream/testflight/4754-permission-system
   async isScreenTitleVisible() {
     await expect(this.screenTitle).toBeDisplayed();
   }
 
   async typeSecretRecoveryPhrase(phrase) {
+<<<<<<< HEAD
     const platform = await driver.getPlatform();
     if (platform === 'iOS') {
       await Gestures.typeText(this.iosSeedPhraseInput, phrase);
@@ -116,6 +179,17 @@ class ImportFromSeed {
         confirmPassword,
       );
     }
+=======
+    await Gestures.typeText(this.seedPhraseInput, phrase);
+  }
+
+  async typeNewPassword(newPassword) {
+    await Gestures.typeText(this.newPasswordInput, newPassword);
+  }
+
+  async typeConfirmPassword(confirmPassword) {
+    await Gestures.typeText(this.confirmPasswordInput, confirmPassword);
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async clickImportButton() {
@@ -123,15 +197,28 @@ class ImportFromSeed {
     await Gestures.waitAndTap(this.importButton);
   }
 
+<<<<<<< HEAD
   async tapImportFromSeedTextToDismissKeyboard() {
     await Gestures.waitAndTap(this.confirmPasswordText);
   }
 
+=======
+<<<<<<<< HEAD:wdio/features/screen-objects/Onboarding/ImportFromSeedScreen.js
+  async verifyPasswordStrength(text){
+    await expect(this.passwordStrengthLabel).toHaveText(text);  
+  }
+
+  async verifyAlertText(text){
+    const msg = await driver.getAlertText();
+    assert(msg.includes(text));
+========
+>>>>>>> upstream/testflight/4754-permission-system
   async isPasswordStrengthTextCorrect(text) {
     await expect(this.passwordStrengthLabel).toHaveText(text);
   }
 
   async isAlertTextVisible(text) {
+<<<<<<< HEAD
     await driver.pause(1000);
     const message = driver.getAlertText();
     try {
@@ -145,6 +232,27 @@ class ImportFromSeed {
   async isPasswordMatchIconVisible() {
     await expect(this.passwordMatchIcon).toBeDisplayed();
   }
+=======
+    const message = await driver.getAlertText();
+    try {
+      expect(message.includes(text.trim())).toBe(true);
+    } catch (error) {
+      console.log(`Not able to get device alert text: `);
+    }
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/screen-objects/Onboarding/ImportFromSeedScreen.js
+  }
+
+  async tapOkInAlertMessage() {
+    await driver.acceptAlert();
+  }
+<<<<<<<< HEAD:wdio/features/screen-objects/Onboarding/ImportFromSeedScreen.js
+========
+
+  async isPasswordMatchIconVisible() {
+    await expect(this.passwordMatchIcon).toBeDisplayed();
+  }
+>>>>>>>> upstream/testflight/4754-permission-system:wdio/screen-objects/Onboarding/ImportFromSeedScreen.js
+>>>>>>> upstream/testflight/4754-permission-system
 }
 
 export default new ImportFromSeed();

@@ -1,15 +1,16 @@
 import Gestures from '../../helpers/Gestures';
 import Selectors from '../../helpers/Selectors';
+<<<<<<< HEAD
 import {
   ADDRESS_ALIAS_SAVE_BUTTON_ID,
   ADDRESS_ALIAS_TITLE_ID,
   ENTER_ALIAS_INPUT_BOX_ID
 } from '../testIDs/Screens/AddressBook.testids';
-import { ADD_ADDRESS_MODAL_CONTAINER_ID } from '../../../app/constants/test-ids';
+import { AddAddressModalSelectorsIDs } from "../../../e2e/selectors/Modals/AddAddressModal.selectors";
 
 class AddressBookModal {
   get container() {
-    return Selectors.getElementByPlatform(ADD_ADDRESS_MODAL_CONTAINER_ID);
+    return Selectors.getElementByPlatform(AddAddressModalSelectorsIDs.CONTAINER);
   }
 
   get addressInputField() {
@@ -33,11 +34,21 @@ class AddressBookModal {
     await container.waitForDisplayed();
   }
 
+=======
+import { ENTER_ALIAS_INPUT_BOX_ID } from '../testIDs/Screens/AddressBook.testids';
+
+class AddressBookModal {
+  get addressInputField() {
+    return Selectors.getElementByPlatform(ENTER_ALIAS_INPUT_BOX_ID);
+ }
+ 
+>>>>>>> upstream/testflight/4754-permission-system
   async fillAddressAliasField(text) {
     await Gestures.typeText(this.addressInputField, text);
   }
 
   async isCancelButtonEnabled() {
+<<<<<<< HEAD
     expect(this.cancelButton).toBeEnabled();
   }
 
@@ -51,6 +62,17 @@ class AddressBookModal {
 
   async tapTitle() {
     await Gestures.waitAndTap(this.title);
+=======
+    expect(await Selectors.getXpathElementByText('Cancel')).toBeEnabled();
+  }
+
+  async isSaveButtonEnabled() {
+    expect(await Selectors.getXpathElementByText('Save')).toBeEnabled();
+  }
+
+  async tapOnSaveButton() {
+    await Gestures.tap(await Selectors.getXpathElementByText('Save'));
+>>>>>>> upstream/testflight/4754-permission-system
   }
 
   async isContactNameVisible(contact) {
@@ -61,5 +83,8 @@ class AddressBookModal {
     expect(await Selectors.getXpathElementByText(contact)).not.toBeDisplayed();
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 export default new AddressBookModal();

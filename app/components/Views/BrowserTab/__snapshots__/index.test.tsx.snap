@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Browser should render correctly 1`] = `
+<<<<<<< HEAD
+<<<<<<< Updated upstream
 <ErrorBoundary
   view="BrowserTab"
 >
@@ -10,10 +12,38 @@ exports[`Browser should render correctly 1`] = `
         Object {
           "backgroundColor": "#FFFFFF",
           "flex": 1,
+=======
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+>>>>>>> upstream/testflight/4754-permission-system
         },
-        false,
-      ]
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
     }
+<<<<<<< HEAD
   >
     <View
       style={
@@ -228,4 +258,47 @@ exports[`Browser should render correctly 1`] = `
     />
   </View>
 </ErrorBoundary>
+=======
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "clearActions": [Function],
+        "dispatch": [Function],
+        "getActions": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+      },
+      "subscription": Subscription {
+        "handleChangeWrapper": [Function],
+        "listeners": Object {
+          "notify": [Function],
+        },
+        "onStateChange": [Function],
+        "parentSub": undefined,
+        "store": Object {
+          "clearActions": [Function],
+          "dispatch": [Function],
+          "getActions": [Function],
+          "getState": [Function],
+          "replaceReducer": [Function],
+          "subscribe": [Function],
+        },
+        "unsubscribe": null,
+      },
+    }
+=======
+>>>>>>> upstream/testflight/4754-permission-system
+  }
+>
+  <BrowserTab
+    defaultProtocol="https://"
+    initialUrl="https://metamask.io"
+  />
+</ContextProvider>
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> upstream/testflight/4754-permission-system
 `;

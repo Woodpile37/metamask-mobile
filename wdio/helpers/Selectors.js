@@ -17,6 +17,7 @@ class Selectors {
       return $(`-ios class chain:${id}`);
     }
   }
+<<<<<<< HEAD
 
   static async getXpathByContentDesc(id) {
     return driver.$$(`//*[@content-desc='${id}']`);
@@ -61,3 +62,8 @@ class Selectors {
 }
 
 export default Selectors;
+=======
+}
+
+export default Selectors
+>>>>>>> upstream/testflight/4754-permission-system

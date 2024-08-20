@@ -10,6 +10,7 @@ const initialState = {
   engine: {
     backgroundState: initialBackgroundState,
   },
+<<<<<<< Updated upstream
 	engine: {
 		backgroundState: {
 			NetworkController: {
@@ -19,6 +20,8 @@ const initialState = {
 			},
 		},
 	},
+=======
+>>>>>>> Stashed changes
 };
 const store = mockStore(initialState);
 
@@ -31,6 +34,7 @@ describe('QrScanner', () => {
     );
     expect(wrapper).toMatchSnapshot();
   });
+<<<<<<< Updated upstream
 	it('should render correctly', () => {
 		const wrapper = shallow(
 			<Provider store={store}>
@@ -48,4 +52,6 @@ describe('QrScanner', () => {
 		);
 		expect(wrapper).toMatchSnapshot();
 	});
+=======
+>>>>>>> Stashed changes
 });

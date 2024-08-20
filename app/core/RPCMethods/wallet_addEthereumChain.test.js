@@ -11,11 +11,14 @@ const correctParams = {
   blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
   nativeCurrency: { symbol: 'xDai', decimals: 18 },
   rpcUrls: ['https://rpc.gnosischain.com'],
+<<<<<<< Updated upstream
 	chainId: '0x64',
 	chainName: 'xDai',
 	blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
 	nativeCurrency: { symbol: 'xDai', decimals: 18 },
 	rpcUrls: ['https://rpc.xdaichain.com'],
+=======
+>>>>>>> Stashed changes
 };
 
 jest.mock('../Engine', () => ({
@@ -198,6 +201,7 @@ describe('RPC Method - wallet_addEthereumChain', () => {
       expect(error.message).toContain('does not match');
     }
   });
+<<<<<<< Updated upstream
 	it('should report chainId not matching rpcUrl returned chainId', async () => {
 		try {
 			await wallet_addEthereumChain({
@@ -210,6 +214,8 @@ describe('RPC Method - wallet_addEthereumChain', () => {
 			expect(error.message).toContain('does not match');
 		}
 	});
+=======
+>>>>>>> Stashed changes
 
   it('should report invalid chain name', async () => {
     try {

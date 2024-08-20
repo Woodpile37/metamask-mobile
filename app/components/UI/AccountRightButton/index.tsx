@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -14,7 +14,6 @@ import {
   Platform,
   EmitterSubscription,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Device from '../../../util/device';
 import AvatarAccount, {
   AvatarAccountType,
@@ -26,16 +25,11 @@ import Avatar, {
 } from '../../../component-library/components/Avatars/Avatar';
 import {
   getNetworkImageSource,
-  getNetworkNameFromProviderConfig,
+  getNetworkNameFromProvider,
 } from '../../../util/networks';
-import Badge, {
-  BadgeVariant,
-} from '../../../component-library/components/Badges/Badge';
+import { toggleNetworkModal } from '../../../actions/modals';
+import { BadgeVariants } from '../../../component-library/components/Badges/Badge/Badge.types';
 import BadgeWrapper from '../../../component-library/components/Badges/BadgeWrapper';
-import { selectProviderConfig } from '../../../selectors/networkController';
-import Routes from '../../../constants/navigation/Routes';
-import { MetaMetricsEvents } from '../../../core/Analytics';
-import Analytics from '../../../core/Analytics/Analytics';
 
 const styles = StyleSheet.create({
   leftButton: {
@@ -49,7 +43,6 @@ const styles = StyleSheet.create({
   placeholderInput: {
     height: 0,
     width: 0,
-    paddingVertical: 0,
   },
 });
 
@@ -64,9 +57,7 @@ const AccountRightButton = ({
 }: AccountRightButtonProps) => {
   // Placeholder ref for dismissing keyboard. Works when the focused input is within a Webview.
   const placeholderInputRef = useRef<TextInput>(null);
-  const { navigate } = useNavigation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
-
   const accountAvatarType = useSelector((state: any) =>
     state.settings.useBlockieIcon
       ? AvatarAccountType.Blockies
@@ -75,39 +66,47 @@ const AccountRightButton = ({
   /**
    * Current network
    */
-  const providerConfig = useSelector(selectProviderConfig);
-
-  const handleKeyboardVisibility = useCallback(
-    (visibility: boolean) => () => {
-      setIsKeyboardVisible(visibility);
-    },
-    [setIsKeyboardVisible],
+  const networkProvider = useSelector(
+    (state: any) => state.engine.backgroundState.NetworkController.provider,
   );
+  const dispatch = useDispatch();
+
+  const onKeyboardShown = useCallback(() => {
+    setIsKeyboardVisible(true);
+  }, [setIsKeyboardVisible]);
+
+  const onKeyboardHidden = useCallback(() => {
+    setIsKeyboardVisible(false);
+  }, [setIsKeyboardVisible]);
 
   // Listen to keyboard events.
   useEffect(() => {
     let hideSubscription: EmitterSubscription;
     let showSubscription: EmitterSubscription;
     if (Platform.OS === 'android') {
-      showSubscription = Keyboard.addListener('keyboardDidShow', () =>
-        handleKeyboardVisibility(true),
+      showSubscription = Keyboard.addListener(
+        'keyboardDidShow',
+        onKeyboardShown,
       );
-      hideSubscription = Keyboard.addListener('keyboardDidHide', () =>
-        handleKeyboardVisibility(false),
+      hideSubscription = Keyboard.addListener(
+        'keyboardDidHide',
+        onKeyboardHidden,
       );
     } else {
-      showSubscription = Keyboard.addListener('keyboardWillShow', () =>
-        handleKeyboardVisibility(true),
+      showSubscription = Keyboard.addListener(
+        'keyboardWillShow',
+        onKeyboardShown,
       );
-      hideSubscription = Keyboard.addListener('keyboardWillHide', () =>
-        handleKeyboardVisibility(false),
+      hideSubscription = Keyboard.addListener(
+        'keyboardWillHide',
+        onKeyboardHidden,
       );
     }
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
     };
-  }, [handleKeyboardVisibility]);
+  }, [onKeyboardShown, onKeyboardHidden]);
 
   const dismissKeyboard = useCallback(() => {
     if (!isKeyboardVisible) return;
@@ -115,42 +114,29 @@ const AccountRightButton = ({
     placeholderInputRef.current?.blur();
   }, [isKeyboardVisible]);
 
-  const handleButtonPress = useCallback(() => {
+  let onPressButton = () => {
     dismissKeyboard();
-    if (!selectedAddress && isNetworkVisible) {
-      navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
-        screen: Routes.SHEET.NETWORK_SELECTOR,
-      });
-      Analytics.trackEventWithParameters(
-        MetaMetricsEvents.NETWORK_SELECTOR_PRESSED,
-        {
-          chain_id: providerConfig.chainId,
-        },
-      );
-    } else {
-      onPress?.();
-    }
-  }, [
-    dismissKeyboard,
-    selectedAddress,
-    isNetworkVisible,
-    onPress,
-    navigate,
-    providerConfig.chainId,
-  ]);
+    onPress?.();
+  };
 
+  if (!selectedAddress && isNetworkVisible) {
+    onPressButton = () => {
+      dismissKeyboard();
+      dispatch(toggleNetworkModal(false));
+    };
+  }
   const networkName = useMemo(
-    () => getNetworkNameFromProviderConfig(providerConfig),
-    [providerConfig],
+    () => getNetworkNameFromProvider(networkProvider),
+    [networkProvider],
   );
 
   const networkImageSource = useMemo(
     () =>
       getNetworkImageSource({
-        networkType: providerConfig.type,
-        chainId: providerConfig.chainId,
+        networkType: networkProvider.type,
+        chainId: networkProvider.chainId,
       }),
-    [providerConfig],
+    [networkProvider],
   );
 
   const renderAvatarAccount = () => (
@@ -160,20 +146,18 @@ const AccountRightButton = ({
   return (
     <TouchableOpacity
       style={styles.leftButton}
-      onPress={handleButtonPress}
+      onPress={onPressButton}
       testID={'navbar-account-button'}
     >
       <TextInput style={styles.placeholderInput} ref={placeholderInputRef} />
       {selectedAddress ? (
         isNetworkVisible ? (
           <BadgeWrapper
-            badgeElement={
-              <Badge
-                variant={BadgeVariant.Network}
-                name={networkName}
-                imageSource={networkImageSource}
-              />
-            }
+            badgeProps={{
+              variant: BadgeVariants.Network,
+              name: networkName,
+              imageSource: networkImageSource,
+            }}
           >
             {renderAvatarAccount()}
           </BadgeWrapper>

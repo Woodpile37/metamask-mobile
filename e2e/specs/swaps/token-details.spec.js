@@ -1,6 +1,6 @@
 'use strict';
 
-import { Regression } from '../../tags';
+import { SmokeSwaps } from '../../tags';
 import WalletView from '../../pages/WalletView';
 import TokenOverview from '../../pages/TokenOverview';
 import {
@@ -9,9 +9,10 @@ import {
 } from '../../viewHelper';
 import Networks from '../../resources/networks.json';
 
-describe(Regression('Token Chart Tests'), () => {
-  beforeEach(async () => {
+describe(SmokeSwaps('Token Chart Tests'), () => {
+  beforeAll(async () => {
     jest.setTimeout(150000);
+    await device.launchApp();
   });
 
   it('should import wallet and go to the wallet view', async () => {

@@ -7,7 +7,10 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
+<<<<<<< Updated upstream
 import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+=======
+>>>>>>> Stashed changes
 import { fontStyles, baseStyles } from '../../../styles/common';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
@@ -90,6 +93,7 @@ const createStyles = (colors) =>
       paddingBottom: 10,
     },
   });
+<<<<<<< Updated upstream
 	StyleSheet.create({
 		dropdown: {
 			flexDirection: 'row',
@@ -161,6 +165,8 @@ const createStyles = (colors) =>
 			paddingBottom: 10,
 		},
 	});
+=======
+>>>>>>> Stashed changes
 
 export default class SelectComponent extends PureComponent {
   static propTypes = {
@@ -299,6 +305,7 @@ export default class SelectComponent extends PureComponent {
       </View>
     );
   };
+<<<<<<< Updated upstream
 
   render = () => (
     <View style={baseStyles.flexGrow}>{this.renderDropdownSelector()}</View>
@@ -366,6 +373,12 @@ export default class SelectComponent extends PureComponent {
 	};
 
 	render = () => <View style={baseStyles.flexGrow}>{this.renderDropdownSelector()}</View>;
+=======
+
+  render = () => (
+    <View style={baseStyles.flexGrow}>{this.renderDropdownSelector()}</View>
+  );
+>>>>>>> Stashed changes
 }
 
 SelectComponent.contextType = ThemeContext;

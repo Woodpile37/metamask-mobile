@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
@@ -6,6 +6,7 @@ import Coachmark from '../Coachmark';
 import setOnboardingWizardStep from '../../../../actions/wizard';
 import { strings } from '../../../../../locales/i18n';
 import onboardingStyles from './../styles';
+<<<<<<< HEAD
 import {
   fontStyles,
   colors as importedColors,
@@ -15,6 +16,15 @@ import AnalyticsV2 from '../../../../util/analyticsV2';
 import { ONBOARDING_WIZARD_STEP_DESCRIPTION } from '../../../../util/analytics';
 import { DrawerContext } from '../../../../components/Nav/Main/MainNavigator';
 import { useAppThemeFromContext, mockTheme } from '../../../../util/theme';
+=======
+import { colors as importedColors } from '../../../../styles/common';
+import {
+  MetaMetricsEvents,
+  ONBOARDING_WIZARD_STEP_DESCRIPTION,
+} from '../../../../core/Analytics';
+import AnalyticsV2 from '../../../../util/analyticsV2';
+import { useTheme } from '../../../../util/theme';
+>>>>>>> upstream/testflight/4754-permission-system
 
 const styles = StyleSheet.create({
   main: {
@@ -39,8 +49,12 @@ const styles = StyleSheet.create({
 const Step4 = (props) => {
   const { coachmarkRef, setOnboardingWizardStep } = props;
   const [viewTop, setViewTop] = useState(0);
+<<<<<<< HEAD
   const { drawerRef } = useContext(DrawerContext);
   const { colors } = useAppThemeFromContext() || mockTheme;
+=======
+  const { colors } = useTheme();
+>>>>>>> upstream/testflight/4754-permission-system
   const dynamicOnboardingStyles = onboardingStyles(colors);
 
   /**
@@ -66,7 +80,6 @@ const Step4 = (props) => {
    * Dispatches 'setOnboardingWizardStep' with next step
    */
   const onNext = () => {
-    drawerRef?.current?.showDrawer?.();
     setOnboardingWizardStep && setOnboardingWizardStep(5);
     AnalyticsV2.trackEvent(
       AnalyticsV2.ANALYTICS_EVENTS.ONBOARDING_TOUR_STEP_COMPLETED,
@@ -97,13 +110,10 @@ const Step4 = (props) => {
   const content = () => (
     <View style={dynamicOnboardingStyles.contentContainer}>
       <Text style={dynamicOnboardingStyles.content} testID={'step4-title'}>
-        <Text style={fontStyles.bold}>
-          {strings('onboarding_wizard.step4.content1')}{' '}
-        </Text>
-        {strings('onboarding_wizard.step4.content2')}
+        {strings('onboarding_wizard.step4.content1')}
       </Text>
       <Text style={dynamicOnboardingStyles.content}>
-        {strings('onboarding_wizard.step4.content3')}
+        {strings('onboarding_wizard.step4.content2')}
       </Text>
     </View>
   );

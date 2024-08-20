@@ -1,4 +1,5 @@
 @androidApp
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
 @regression
 @networks
 Feature: Add Networks
@@ -8,36 +9,68 @@ User should also have the ability to a add custom network via the custom network
   Scenario Outline: Adding a network via the new popular network flow
     Given the app displayed the splash animation
     And I have imported my wallet
+=======
+@ChainScenarios
+Feature: Adding Networks via the popular and custom networks flow
+  A user should be able to add a custom network via the popular network flow
+  A user should also have the ability to a add custom network via the custom network flow.
+
+
+  Scenario Outline: Adding a network via the new popular network flow
+    Given I have imported my wallet
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     And I tap No Thanks on the Enable security check screen
     And I tap No thanks on the onboarding welcome tutorial
+
     When I tap on the navbar network title button
     And I tap on the Add a Network button
     Then "POPULAR" tab is displayed on networks screen
     And "CUSTOM NETWORKS" tab is displayed on networks screen
     And I am on the Popular network view
+
     When I tap on network "<Network>" to add it
     Then the network approval modal should appear
+
     When I select approve
     Then the network approval modal has button "Switch Network" displayed
     And the network approval modal has button "Close" displayed
+
     When I tap on Switch network
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     Then "<Network>" should be displayed in network educational modal
     And I should see the added network name "<Network>" in the top navigation bar
     When I tap on the Settings tab option
+=======
+    Then I should see the added network name "<Network>" in the top navigation bar
+
+    #       And my token balance shows up correctly with token "ll"
+    When I tap on the burger menu
+    And I tap on "Settings" in the menu
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     And In settings I tap on "Networks"
     Then "<Network>" should be visible below the Custom Networks section
+
     When I tap on the Add Network button
     Then "<Network>" is not visible in the Popular Networks section
+
     Examples:
       | Network |
       | Palm    |
 
   Scenario Outline: Adding a network via the custom network flow
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     Given the network screen is displayed
+=======
+    Given I tap on the burger menu
+    And I tap on "Settings" in the menu
+    And In settings I tap on "Networks"
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     And I tap on the Add Network button
     Then "POPULAR" tab is displayed on networks screen
     And "CUSTOM NETWORKS" tab is displayed on networks screen
+
     When I tap on the "CUSTOM NETWORKS" tab
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     And I type "<Network>" into Network name field
     And I type "<rpcUrl>" into the RPC url field
     And I type "<ChainID>" into the Chain ID field
@@ -45,41 +78,82 @@ User should also have the ability to a add custom network via the custom network
     And I tap on the Add button to add Custom Network
     Then "<Network>" should be displayed in network educational modal
     And I should see the added network name "<Network>" in the top navigation bar
+=======
+
+    When I type "<Network>" into Network name field
+    And I type "<rpcUrl>" into the RPC url field
+    And I type "<ChainID>" into the Chain ID field
+    And I type "<Network>" into the Network symbol field
+
+    When I tap on the Add button
+    And I tap on Got it in the network education modal
+    Then I should see the added network name "<Network>" in the top navigation bar
+
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     Examples:
       | Network | rpcUrl                                | ChainID | Symbol |
       | Gnosis  | https://xdai-rpc.gateway.pokt.network | 100     | xDAI   |
 
   Scenario Outline: I can remove a custom network that was added via the popular network flow
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     Given I tap on the Settings tab option
+=======
+    Given I tap on the burger menu
+    And I tap on "Settings" in the menu
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     And In settings I tap on "Networks"
     And the network screen is displayed
     And I tap on the Add Network button
     Then "POPULAR" tab is displayed on networks screen
     And "CUSTOM NETWORKS" tab is displayed on networks screen
+
     When I tap on the "POPULAR" tab
     And I tap on network "<Network>" to add it
     And I select approve
     Then the network approval modal has button "Switch Network" displayed
     And the network approval modal has button "Close" displayed
+
     When I tap on Switch network
     Then "<Network>" should be displayed in network educational modal
     Then I should see the added network name "<Network>" in the top navigation bar
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     When I tap on the Settings tab option
     And In settings I tap on "Networks"
     And I tap and hold network "<Network>"
     And I click "Delete" on remove network modal
     Then "Ethereum Main Network" should be displayed in network educational modal
     And "<Network>" should be removed from the list of RPC networks
+=======
+
+    When I tap on the burger menu
+    And I tap on "Settings" in the menu
+    And In settings I tap on "Networks"
+    And I tap and hold network "<Network>"
+    Then I should see an alert window with the text "Do you want to remove this network?"
+
+    When I click "Delete" on remove network modal
+    Then "<Network>" should be removed from the list of RPC networks
+
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     Examples:
       | Network  |
       | Optimism |
 
   Scenario Outline: I can remove a custom network that was added via the custom network flow
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     Given the network screen is displayed
     When I tap on the Add Network button
+=======
+    Given I tap on the burger menu
+    And I tap on "Settings" in the menu
+    And In settings I tap on "Networks"
+    And I tap on the Add Network button
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     Then "POPULAR" tab is displayed on networks screen
     And "CUSTOM NETWORKS" tab is displayed on networks screen
+
     When I tap on the "CUSTOM NETWORKS" tab
+<<<<<<< HEAD:wdio/features/Networks/NetworkFlow.feature
     And I type "<Network>" into Network name field
     And I type "<rpcUrl>" into the RPC url field
     And I type "<ChainID>" into the Chain ID field
@@ -88,11 +162,26 @@ User should also have the ability to a add custom network via the custom network
     Then "<Network>" should be displayed in network educational modal
     Then I should see the added network name "<Network>" in the top navigation bar
     When I tap on the Settings tab option
+=======
+
+    When I type "<Network>" into Network name field
+    And I type "<rpcUrl>" into the RPC url field
+    And I type "<ChainID>" into the Chain ID field
+    And I type "<Symbol>" into the Network symbol field
+
+    When I tap on the Add button
+    And I tap on Got it in the network education modal
+    Then I should see the added network name "<Network>" in the top navigation bar
+
+    When I tap on the burger menu
+    And I tap on "Settings" in the menu
+>>>>>>> upstream/testflight/4754-permission-system:wdio/features/NetworkFlow.feature
     And In settings I tap on "Networks"
     And the network screen is displayed
     And I tap on network "<Network>" on networks screen
     And I tap the "Delete" button
     Then "<Network>" should be removed from the list of RPC networks
+
     Examples:
       | Network      | rpcUrl                 | ChainID |  |
       | Celo Mainnet | https://forno.celo.org | 42220   |  |
