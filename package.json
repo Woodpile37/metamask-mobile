@@ -12,19 +12,11 @@
     "clean:node": "rm -rf node_modules && yarn --frozen-lockfile",
     "clean": "yarn clean:ios && yarn clean:android && yarn clean:node && yarn pod:install",
     "clean-android": "yarn clean:android && yarn clean:node",
-<<<<<<< HEAD
-    "setup:react-native-webrtc": "cd node_modules/react-native-webrtc/tools && ./downloadBitcode.sh && cd ../../../",
-    "lint": "eslint '**/*.{js,ts,tsx}' --ignore-path=.prettierignore",
-    "lint:fix": "eslint '**/*.{js,ts,tsx}' --fix --ignore-path=.prettierignore",
-    "format": "prettier '**/*.{js,ts,tsx,json}' --write",
-    "setup": "yarn clean && yarn allow-scripts && ./scripts/postinstall.sh",
-=======
     "lint": "eslint '**/*.{js,ts,tsx}'",
     "lint:fix": "eslint '**/*.{js,ts,tsx}' --fix",
     "format": "prettier '**/*.{js,ts,tsx,json,feature}' --write",
     "setup": "yarn clean && yarn pod:install && yarn allow-scripts && ./scripts/postinstall.sh",
     "setup:e2e": "cd wdio && yarn install",
->>>>>>> upstream/testflight/4754-permission-system
     "start:ios": "./scripts/build.sh ios debug",
     "start:ios:qa": "./scripts/build.sh ios qaDebug",
     "start:ios:e2e": "./scripts/build.sh ios debugE2E",
@@ -133,10 +125,6 @@
     "@metamask/controllers": "30.3.0",
     "@metamask/design-tokens": "^1.7.0",
     "@metamask/etherscan-link": "^2.0.0",
-<<<<<<< HEAD
-    "@metamask/sdk-communication-layer": "^0.0.1-beta.3",
-    "@metamask/swaps-controller": "^6.6.0",
-=======
     "@metamask/gas-fee-controller": "^1.0.0",
     "@metamask/keyring-controller": "^1.0.1",
     "@metamask/message-manager": "^1.0.1",
@@ -147,7 +135,6 @@
     "@metamask/sdk-communication-layer": "^0.1.0",
     "@metamask/swaps-controller": "^6.8.0",
     "@metamask/transaction-controller": "^1.0.0",
->>>>>>> upstream/testflight/4754-permission-system
     "@ngraveio/bc-ur": "^1.1.6",
     "@react-native-async-storage/async-storage": "1.17.10",
     "@react-native-clipboard/clipboard": "^1.8.4",
